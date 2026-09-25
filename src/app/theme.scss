@@ -190,6 +190,13 @@ td { color: #646464; }
 .provider-content .status-badge, .provider-content .counter, .provider-content .incident-count { font-size:11px; padding:6px 10px; }
 .login-card .primary { font-size:14px; min-height:44px; }
 .login-card input { min-height:44px; font-size:14px; }
+.provider-content .page-heading .eyebrow { font-size:12px; }
+.provider-content .document-row { min-height:64px; }
+.provider-content .doc-type strong { font-size:14px; }
+.provider-content .doc-type small { font-size:12px; }
+.provider-content .doc-amount { font-size:14px; }
+.provider-content .document-row .status-badge { font-size:12px; }
+.provider-content .document-row time { font-size:13px; }
 .password-field { position:relative; display:flex; align-items:center; width:100%; min-height:42px; border:1px solid #dce4ef; border-radius:8px; background:#fff; transition:border-color .18s ease, box-shadow .18s ease; }
 .password-field:focus-within { border-color:#41699d; box-shadow:0 0 0 3px #eaf2fc; }
 .password-field input { flex:1; width:100%; min-width:0; border:0 !important; box-shadow:none !important; border-radius:8px; padding-right:8px; }
