@@ -1,0 +1,106 @@
+﻿
+@{
+    // ViewData["Title"] = "GestionarJustificacionesAdmin";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1550px;
+        }
+    }
+
+    .table > thead {
+        vertical-align: middle;
+    }
+
+</style>
+
+<input value="@Url.Action("ListarDocentes","Administrador")" id="inputListarDocentes" hidden />
+<input value="@Url.Action("ConsultarJustificacionesAdmin","Administrador")" id="inputListaJustificaciones" hidden />
+<input value="@Url.Action("AprobarJustificaciones","Administrador")" id="inputAprobarJustificaciones" hidden />
+<input value="@Url.Action("DenegarJustificaciones","Administrador")" id="inputDenegarJustificaciones" hidden />
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-check-circle"></i>
+        Gestionar Justificaciones
+    </h1>
+</div>
+ *@
+<div class="card shadow-lg mt-4 rounded-3">
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Estado:</label>
+                <select class="form-select" aria-label="Default select example" id="selectEstado">
+                    <option value="">Seleccione un estado</option>
+                    <option value="P">Pendiente</option>
+                    <option value="A">Aprobada</option>
+                    <option value="D">Denegada</option>
+                   
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Periodo:</label>
+                <select class="form-select" aria-label="Default select example" id="selectPeriodo">
+                    <option value="">Seleccione un periodo</option>
+                    @foreach (var item in Model)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                    
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Docente:</label>
+                <input type="text" class="form-control" id="idDocente">
+               
+            </div>
+           
+        </div>
+        <button class="btn btn-primary mt-4 mb-0" id="btnConsultar" onclick="consultarJustificaciones()">Consultar</button>
+        <button class="btn btn-primary mt-4 mb-0" id="btnAprobar" onclick="aprobarJustificaciones()">Aprobar</button>
+        <button class="btn btn-primary mt-4 mb-0" id="btnDenegar" onclick="denegarJustificaciones()">Denegar</button>
+        <div class="my-5"></div>
+        <div class="table-responsive">
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px;" id="idTablaGestJustificaciones">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Seleccionar</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Id Justificación</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fecha de justificación</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fecha de sesión</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Estado</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación justificada</th>
+                        <th class="bg-header-table" style="padding: 5px 100px; border-radius: 12px; color: white; margin: 10px;">Motivo</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Apellidos y Nombres del docente</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Curso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Sección</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Aula</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Hora inicio</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Hora fin</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Justificación entrada</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Justificación salida</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Nombre Archivo</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Archivo adjunto</th>
+
+                    </tr>
+                   
+                </thead>
+
+                <tbody>
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/GestionarJustificacionesAdmin.js?v=@Guid.NewGuid().ToString();"></script>
+}

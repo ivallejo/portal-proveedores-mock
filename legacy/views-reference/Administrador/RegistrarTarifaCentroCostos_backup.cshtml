@@ -1,0 +1,397 @@
+﻿
+@{
+    // ViewData["Title"] = "RegistrarTarifaCentroCostos";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+            padding:0;
+        }
+    }
+
+    .table > thead {
+        vertical-align: middle;
+    }
+
+    table.dataTable > tbody > tr.child span.dtr-title {
+        min-width: 0px;
+    }
+
+</style>
+
+<input value="@Url.Action("ConsultarTarifa","Administrador")" id="inputConsultarTarifa" hidden />
+<input value="@Url.Action("ListarSemestres","Administrador")" id="inputListarSemestres" hidden />
+<input value="@Url.Action("LlenarCombosTarifas","Administrador")" id="inputLlenarCombosTarifas" hidden />
+<input value="@Url.Action("AsignarTarifa","Administrador")" id="inputAsignarTarifa" hidden />
+<input value="@Url.Action("ConsultarTarifaDocente","Administrador")" id="inputConsultarTarifaDocente" hidden />
+<input value="@Url.Action("DesactivarTarifaDocente","Administrador")" id="inputDesactivarTarifaDocente" hidden />
+<input value="@Url.Action("EditarTarifaDocente","Administrador")" id="inputEditarTarifaDocente" hidden />
+<input value="@Url.Action("VerDocente","Administrador")" id="inputVerDocente" hidden />
+<input value="@Url.Action("AsignarTarifaGL","Administrador")" id="inputAsignarTarifaGL" hidden />
+
+
+<div class="card container mt-4">
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Organización:</label>
+                <select class="form-select" aria-label="Default select example" id="selectOrganizacion" onchange="MostrarOrganizacion()">
+                    <option value="">Seleccione una organización</option>
+                    <option value="INS">Instituto</option>
+                    <option value="ECA">Escuela Adex</option>
+                    <option value="ESC">Global Learning</option>
+                    
+
+                </select>
+            </div>
+            <div class="col-sm-4 form-group" id="divAnio" style="display:none;">
+                <label class="form-label">Año:</label>
+                <select class="form-select" aria-label="Default select example" id="selectAnio">
+                    <option value="">Seleccione un año</option>
+                    @{
+                        var currentYear = DateTime.Now.Year + 1; // Año actual +1
+                        for (int i = 0; i < 6; i++) // 6 iteraciones para mostrar el año actual +1 y cinco años menos
+                        {
+                            <option value="@currentYear">@currentYear</option>
+                            currentYear--;
+                        }
+                    }
+
+                </select>
+            </div>
+            <div class="col-sm-4 form-group" id="divSemestre" style="display:none;">
+                <label class="form-label">Semestre:</label>
+                <select class="form-select" aria-label="Default select example" id="selectSemestre">
+                    <option value="">Seleccione un semestre</option>
+                   
+                   
+                </select>
+            </div>
+            <div class="col-sm-4 form-group" id="divNombre" style="display:none;">
+                <label class="form-label">Nombre:</label>
+                <input type="text" class="form-control" id="idNombre">
+
+            </div>
+            <div class="col-sm-4 form-group" id="divProgramaGL" style="display:none;">
+                <label class="form-label">Programa:</label>
+                <select class="form-select" aria-label="Default select example" id="selectProgramaGL">
+                    <option value="">Seleccione un programa</option>
+                    @foreach (var programaGL in Model.ListprogramasGL)
+                    {
+                        <option value="@programaGL.sPrograma">@programaGL.sPrograma</option>
+                    }
+
+                </select>
+            </div>
+
+        </div>
+        <button class="btn btn-primary mt-4 mb-0" id="btnConsultarCostos" onclick="consultarCostos()">Consultar</button>
+@*         <button class="btn btn-primary mt-4 mb-0" id="btnConsultarCostosGL" onclick="consultarCostosGL()" style="display:none;">Consultar</button> *@
+        @* <button class="btn btn-primary mt-4 mb-0" id="btnMigrarCostos" onclick="migrarCostos()">Migrar</button> *@
+        <div class="my-5"></div>
+        <div class="table-responsive">
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px;display:none" id="idTablaRegistrarCentroCostos">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Código</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Modalidad</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Nombres Completos</th>
+                        <th style="background:#f9f9f9"></th>
+                        <th style="background:#f9f9f9"></th>
+                        
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px;display:none" id="idTablaRegistrarCentroCostosGL">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ID Curso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Nombre Curso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Centro de Costos</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Tarifa</th>
+                        <th style="background:#f9f9f9"></th>
+                        <th style="background:#f9f9f9"></th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAgregarTarifa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarTarifa" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="idNombreDocente"></h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <input type="hidden" class="form-control" id="codigoDocenteAgregarTarifa">
+                    <input type="hidden" class="form-control" id="nombreDocenteAgregarTarifa">
+
+                    <div class="col-md-12">
+                        <label class="form-label">Año</label>
+                        <select class="form-select" id="AnioAgregarTarifa" onchange="LlenarCombo(1)">
+
+                            <option value="">Seleccione un año</option>
+                            @{
+                                var currentYearTarifa = DateTime.Now.Year + 1; // Año actual +1
+                                for (int i = 0; i < 6; i++) // 6 iteraciones para mostrar el año actual +1 y cinco años menos
+                                {
+                                    <option value="@currentYearTarifa">@currentYearTarifa</option>
+                                    currentYearTarifa--;
+                                }
+                            }
+
+
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Semestre:</label>
+                        <select class="form-select" id="SemestreAgregarTarifa" onchange="LlenarCombo(1)">
+                            <option value="">Seleccione un semestre</option>
+                          
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Carrera:</label>
+                        <select class="form-select" id="CarreraAgregarTarifa" onchange="LlenarCombo(2)">
+                            <option value="">Seleccione una carrera</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Centro de Costo:</label>
+                        <select class="form-select" id="CentroCostoAgregarTarifa">
+                            <option value="">Seleccione centro de costo</option>
+                            @foreach (var tarifa in Model.TarifasIns)
+                            {
+                                <option value="@tarifa.nCentroCostos">@tarifa.sDescripcionCentroCostos</option>
+                            }
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Programa:</label>
+                        <select class="form-select" id="ProgramaAgregarTarifa">
+                            <option value="">Seleccione programa</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Tarifa por Hora:</label>
+                        <input type="number" class="form-control" id="HoraAgregarTarifa">
+                    </div>
+                    <button class="btn btn-primary mt-4 mb-4" onclick="AsignarCentroCosto()">Asignar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConsultarTarifa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarTarifa" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="idConsultarNombreDocente"></h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <input type="hidden" class="form-control" id="codigoDocenteConsultarTarifa">
+                    <input type="hidden" class="form-control" id="nombreDocenteConsultarTarifa">
+
+                    <div class="table-responsive">
+                        <table class="table text-nowrap" style="width:100%;border-spacing: 5px;" id="idTablaTarifarioDocente">
+                            <thead style="background-color:#207FE9; color:white;">
+                                <tr>
+                                    <th class="bg-header-table" style="padding: 5px 30px; border-radius: 12px; color: white; margin: 10px;">Tarifa</th>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Centro de Costo</th>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Año</th>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Semestre</th>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Programa</th>
+                                    <th style="background:white"></th>
+                                    <th style="background:white"></th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalVerDocentes" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalVerDocentes" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" >Consultar Docentes</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <input type="hidden" class="form-control" id="codigoDocenteConsultarTarifa">
+                    <input type="hidden" class="form-control" id="nombreDocenteConsultarTarifa">
+
+                    <div class="table-responsive">
+                        <table class="table text-nowrap" style="width:100%;border-spacing: 5px;text-align:center;" id="idTablaDocente">
+                            <thead style="background-color:#207FE9; color:white;">
+                                <tr>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Código</th>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Nombre Docente</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAgregarTarifaGL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarTarifaGL" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="idNombreDocente"></h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <input type="hidden" class="form-control" id="codigoProgramaAgregarTarifaGL">
+              
+
+                    <div class="col-md-12">
+                        <label class="form-label">Tarifa por hora:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="HoraAgregarTarifaGL" placeholder="Ingrese tarifa">
+                            <button type="button" class="btn btn-primary" onclick="mostrarSegundaTarifa()">+</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" id="idSegundaHora" style="display:none;">
+                        <label class="form-label">Segunda tarifa por hora:</label>
+                        <input type="number" class="form-control" id="segundaHoraAgregarTarifaGL">
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Año</label>
+                        <select class="form-select" id="AnioAgregarTarifaGL">
+
+                            <option value="">Seleccione un año</option>
+                            @{
+                                var currentYearTarifaGL = DateTime.Now.Year + 1; // Año actual +1
+                                for (int i = 0; i < 6; i++) // 6 iteraciones para mostrar el año actual +1 y cinco años menos
+                                {
+                                    <option value="@currentYearTarifaGL">@currentYearTarifaGL</option>
+                                    currentYearTarifaGL--;
+                                }
+                            }
+
+
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Semestre:</label>
+                        <select class="form-select" id="SemestreAgregarTarifaGL">
+                            <option value="">Seleccione un semestre</option>
+                            <option value="ENERO">Enero</option>
+                            <option value="FEBRERO">Febrero</option>
+                            <option value="MARZO">Marzo</option>
+                            <option value="ABRIL">Abril</option>
+                            <option value="MAYO">Mayo</option>
+                            <option value="JUNIO">Junio</option>
+                            <option value="JULIO">Julio</option>
+                            <option value="AGOSTO">Agosto</option>
+                            <option value="SEPTIEMBRE">Septiembre</option>
+                            <option value="OCTUBRE">Octubre</option>
+                            <option value="NOVIEMBRE">Noviembre</option>
+                            <option value="DICIEMBRE">Diciembre</option>
+                           
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label class="form-label">Centro de Costo:</label>
+                        <select class="form-select" id="CentroCostoAgregarTarifaGL">
+                            <option value="">Seleccione centro de costo</option>
+                            @foreach (var tarifa in Model.TarifasGL)
+                            {
+                                <option value="@tarifa.nCentroCostos">@tarifa.sDescripcionCentroCostos</option>
+                            }
+                           
+                        </select>
+                    </div>
+                   
+                    <button class="btn btn-primary mt-4 mb-4"  onclick="AsignarCentroCostoGL()">Asignar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/RegistroTarifaCentroCostos.js?v=@Guid.NewGuid().ToString();"></script>
+}

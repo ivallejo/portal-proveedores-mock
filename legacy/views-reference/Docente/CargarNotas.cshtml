@@ -1,0 +1,56 @@
+﻿
+@{
+    // ViewData["Title"] = "Carga de notas";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+    
+}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+
+<div class="mt-4">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="sections-tab" data-bs-toggle="tab" data-bs-target="#sections" type="button" role="tab" aria-controls="sections" aria-selected="true">Secciones</button>
+        </li>
+       
+        <li id="tab-evaluaciones" class="nav-item d-none" role="presentation">
+            <button class="nav-link" id="ec-tab" data-bs-toggle="tab" data-bs-target="#ec" type="button" role="tab" aria-controls="ec" aria-selected="false">Evaluaciones</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+
+        <div class="tab-pane fade show active" id="sections" role="tabpanel" aria-labelledby="sections-tab">
+            @await Html.PartialAsync("_notas_sections")
+        </div>
+
+        <div class="tab-pane fade" id="ec" role="tabpanel" aria-labelledby="ec-tab">
+            @await Html.PartialAsync("_notas_ecs")
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script src="~/js/Docente/Notas_source.js?v=@Guid.NewGuid().ToString();"></script>
+    <script src="~/js/Docente/NotasUtils.js?v=@Guid.NewGuid().ToString();"></script>
+    <script src="~/js/Docente/NotasAlumno.js?v=@Guid.NewGuid().ToString();"></script>
+
+    @* <script src="~/js/utils/global_utilities.js?v=1.2.3"></script> *@
+    
+    
+    <script>
+        const request_get_ecs = "@Url.Action("GetEvaluacionesContinuas","Docente")";
+        const listadoAsistentes = "@Url.Action("cargarAsistentes","Docente")";
+        const rq_carga_notas = "@Url.Action("cargarNotas_Alumnos","Docente")"; //
+        const rq_notas_sgk = "@Url.Action("getEC_sgk","Docente")";
+        const rq_carga_notas_finales = "@Url.Action("cargarNotasFinales", "Docente")";
+
+        //postCargaNotas
+        const rq_validate_Act_PF = "@Url.Action("promedioFinalCargable_rq", "Docente")";
+
+        //PARA EVALUAR LA VISIBILIDAD DE PROMEDIOS FINALES
+        const evaluarVisibilidadPF= "@Url.Action("evaluarVisibilidadPF", "Docente")";
+
+    </script>
+
+}

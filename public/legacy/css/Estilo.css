@@ -1,0 +1,333 @@
+﻿.border-radius-md {
+    border-radius: 0.5rem;
+}
+
+.icon-shape {
+    width: 48px;
+    height: 48px;
+    background-position: center;
+    border-radius: 0.75rem;
+}
+
+.bg-gradient-danger {
+    background-image: linear-gradient(310deg, #0080EE 0%, #1250c3 100%);
+}
+.responsive-table li {
+    border-radius: 3px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.responsive-table .table-header {
+    background-image: linear-gradient(310deg, #0080EE 0%, #1250c3 100%);
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color:white;
+}
+
+.responsive-table .table-row {
+    background-color: #fff;
+    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+}
+
+.responsive-table2 .table-row {
+    background-color: #fff;
+    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+}
+
+.responsive-table .col-1 {
+    flex-basis: 10%;
+}
+
+.responsive-table .col-2 {
+    flex-basis: 40%;
+}
+
+.responsive-table .col-3 {
+    flex-basis: 25%;
+}
+
+.responsive-table .col-4 {
+    flex-basis: 25%;
+}
+.j-form {
+    max-width: 520px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.j-form__item {
+    margin-bottom: 10px;
+}
+
+    .j-form__item:last-child {
+        margin-bottom: 0;
+    }
+
+.j-form__input {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.j-form__label {
+    display: flex;
+    height: 50px;
+    width: 100%;
+    padding: 20px;
+    padding-left: 65px;
+    position: relative;
+    background: #fff;
+    border: 3px solid #e7e7e7;
+    /*border: 3px solid #fff;*/
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+    .j-form__label:before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 7px solid #e7e7e7;
+        transform: translateY(-50%);
+        transition: .3s;
+    }
+
+.j-form__data {
+    display: flex;
+    align-self: center;
+}
+
+.j-form__alternative {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #67748e;
+}
+
+.j-form__label:hover {
+    border-color: #e7e7e7;
+}
+
+.j-form__input:checked ~ .j-form__label {
+    border-color: #0080EE;
+}
+
+    .j-form__input:checked ~ .j-form__label:before {
+        border-color: #0080EE;
+    }
+
+
+.j-box {
+    position: relative;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+    .j-box .j-percent {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        margin-left: 25px;
+    }
+
+        .j-box .j-percent > svg {
+            position: relative;
+            width: 90px;
+            height: 90px;
+        }
+
+            .j-box .j-percent > svg circle {
+                width: 90px;
+                height: 90px;
+                fill: none;
+                stroke-width: 8;
+                stroke: #000;
+                transform: translate(5px, 5px);
+                stroke-dasharray: 251;
+                stroke-dashoffset: 251;
+            }
+
+        .j-box .j-percent svg circle:nth-child(1) {
+            stroke-dashoffset: 0;
+            stroke: #f3f3f3;
+        }
+
+        .j-box .j-percent svg circle:nth-child(2) {
+            stroke: #69ce24;
+        }
+
+        .j-box .j-percent .j-number {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #111;
+            flex-direction: column;
+        }
+
+.j-text-tip {
+    font-size: .8rem;
+}
+
+.j-number-percent {
+    font-size: 1.3rem !important;
+}
+
+.j-number-percent-detail {
+    font-size: 12px !important;
+    position: absolute;
+    bottom: 25px;
+    color: #67748e;
+}
+
+
+.j-box .j-text {
+    padding: 10px 0 0;
+    color: #999;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center !important;
+}
+
+.j-buttons {
+    margin-top: 1.75rem;
+    max-width: 520px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+    .j-buttons > .btn {
+        margin-left: 30px;
+    }
+
+    .j-buttons a:hover {
+        color: #ff667c !important;
+    }
+
+@media (min-width: 992px) {
+
+    .j-box {
+        position: relative;
+        width: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+    }
+
+        .j-box .j-percent {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin-left: 0;
+        }
+
+            .j-box .j-percent svg {
+                position: relative;
+                width: 150px;
+                height: 150px;
+            }
+
+                .j-box .j-percent svg circle {
+                    width: 150px;
+                    height: 150px;
+                    fill: none;
+                    stroke-width: 10;
+                    stroke: #000;
+                    transform: translate(5px, 5px);
+                    stroke-dasharray: 440;
+                    stroke-dashoffset: 440;
+                }
+
+                    .j-box .j-percent svg circle:nth-child(1) {
+                        stroke-dashoffset: 0;
+                        stroke: #f3f3f3;
+                    }
+
+                    .j-box .j-percent svg circle:nth-child(2) {
+                        stroke: #69ce24;
+                    }
+
+            .j-box .j-percent .j-number {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #111;
+                flex-direction: column;
+            }
+
+    .j-number-percent {
+        padding-left: 15px;
+        font-size: 3rem !important;
+        margin-bottom: 5px;
+    }
+
+    .j-number-percent-detail {
+        font-size: 12px !important;
+        position: absolute;
+        bottom: 35px;
+        color: #67748e;
+        padding-right: 0;
+    }
+
+    .j-box .j-percent .j-number h2 {
+        font-size: 3rem;
+    }
+
+        .j-box .j-percent .j-number h2 span {
+            font-size: 1.5rem;
+        }
+
+    .j-box .j-text {
+        padding: 10px 0 0;
+        color: #999;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-align: center !important;
+    }
+}
+
+@media (min-width:576px) {
+    .j-text-tip {
+        font-size: 1rem;
+    }
+}
+
+
+.img-responsive-error {
+    max-height: 400px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.img-responsive-calificacion {
+    max-height: 300px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}

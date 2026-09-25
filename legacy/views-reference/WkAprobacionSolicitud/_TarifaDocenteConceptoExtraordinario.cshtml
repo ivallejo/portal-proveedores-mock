@@ -1,0 +1,50 @@
+<form autocomplete="off" id="frmTarifaDocente">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="tarifaDocenteModal" aria-labelledby="tarifaDocenteModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold">Aprobar o Rechazar</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <partial name="_DatosSolicitud.cshtml"></partial>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <textarea class="form-control" rows="3" id="ComentarioSolicitud" disabled name="ComentarioSolicitud" data-val="true" placeholder="" required></textarea>
+                        <label for="Workflow">Comentarios de solicitud</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de tarifas del periodo <span id="PeriodoAcademico"></span></h6></div>
+                <div class="col-md-12 mt-2">
+                    <div class="form-floating">
+                        <span>*Tarifas que cambiaron respecto al periodo anterior (<span id="TotalCambioTarifa" class="fw-bold">3</span>)</span>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-1 text-center">
+                    <span class="badge rounded-pill bg-danger">Cambio de tarifa</span>
+                </div>
+                <div class="col-md-12 mt-0 table-responsive">
+                    <table id="tblTarifas" class="table table-workflow" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>ID Tarifa</th>
+                                <th>Docente</th>
+                                <th>Tarifa</th>
+                                <th>Tarifa Diferencia</th>
+                                <th>Fecha Término</th>
+                                <th>Concepto</th>
+                                <th>Centro Costo</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="col-md-3 mt-3"></div>
+                <div class="col-md-6 mt-3">
+                    <a class="btn btn-primary form-control" id="btnExportar" href="" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+                </div>
+            </div>
+            <partial name="_AccionesSolicitud.cshtml"></partial>
+        </div>
+    </div>
+</form>
+<script src="~/js/workflow/aprobacion-solicitud/aprobacion-solicitud-tarifa-docente-concepto-extraordinario.js" asp-append-version="true"></script>

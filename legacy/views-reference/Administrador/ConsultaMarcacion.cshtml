@@ -1,0 +1,221 @@
+﻿@model SAD.Models.ConsultaMarcacionViewModel
+@{
+    // ViewData["Title"] = "Consulta Marcacion";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+    string txtDocente = Model != null ? Model.NomDocente : "";
+    string txtFechaIni = Model != null ? Model.FechaInicio : "";
+    string txtFechaFin = Model != null ? Model.FechaFinal : "";
+
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+            padding:0;
+        }
+    }
+
+    .table > thead {
+        vertical-align: middle;
+    }
+
+    @@media (max-width: 768px) {
+        td.child{
+            text-align:start;
+        }
+    }
+</style>
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-search"></i>
+        @ViewData["Title"]
+    </h1>
+</div>
+ *@
+@*<div class="col-md-12 card container-fluid">*@
+<div class="card container mt-4">
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label for="txtDocente" class="form-label">Docente:</label>
+                <input type="text" class="form-control" id="txtDocente" placeholder="Ingrese nombre docente" value="@txtDocente">
+            </div>
+            <div class="col-sm-4 form-group">
+                <label for="txtFechaIni" class="form-label">Fecha Inicio:</label>
+                <input type="date" class="form-control" id="txtFechaIni" value="@txtFechaIni">
+            </div>
+            <div class="col-sm-4 form-group">
+                <label for="txtFechaFin" class="form-label">Fecha Fin:</label>
+                <input type="date" class="form-control" id="txtFechaFin" value="@txtFechaFin">
+            </div>
+        </div>
+        <button class="btn btn-primary mt-4 mb-0" id="btnConsultar">Consultar Sesiones</button>
+        <button class="btn btn-success mt-4 mb-0" id="btnGenerarExcel">Exporta Excel</button>
+        <div class="my-5"></div>
+        <div class="table-responsive">
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px;text-align:center;" id="tbMarcaciones">
+                <thead>
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Id Sesión</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fecha de Sesión</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Apellidos y Nombres del docente</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Curso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Tema</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Aula</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Hora inicio</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Hora fin</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación entrada</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación salida</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Minutos de tardanza</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;display: none;">Orden Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalEditarMarcacion">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-content-demo">
+            <div class="modal-header">
+                <h6 class="modal-title">Editar Marcación</h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="global-loader-modal">
+                    <img src="~/images/loader.gif" width="150" class="loader-img" alt="Loader">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label for="txtTema" class="form-label">Tema:</label>
+                        <textarea class="form-control mb-4" placeholder="Ingrese Tema" id="txtTema" rows="1"></textarea>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="txtEntrada" class="form-label">Entrada:</label>
+                        <input type="time" class="form-control" id="txtEntrada" step="1">
+                    </div>
+
+                    <div class="col-md-3 form-group">
+                        <label for="txtSalida" class="form-label">Salida:</label>
+                        <input type="time" class="form-control" id="txtSalida" step="1">
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="txtMotivo" class="form-label">Motivo:</label>
+                        <textarea class="form-control mb-4" placeholder="Ingrese Motivo" id="txtMotivo" rows="1"></textarea>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-4 mb-4" id="btnGuardarMarcacion">Guardar Cambios</button>
+
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button active" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" data-bs-parent="#accordionExample">Detalles de Sesión</button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                            <div class="accordion-body">
+                                <div class="row flex-md-row">
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <p class="fw-bold">Id Sesion:</p>
+                                        <p id="lblSesionId"></p>
+                                        <p class="fw-bold">Curso:</p>
+                                        <p id="lblCurso"></p>
+
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <p class="fw-bold">Fecha:</p>
+                                        <p id="lblFecha"></p>
+                                        <p class="fw-bold">Hora inicio:</p>
+                                        <p id="lblHoraInicio"></p>
+                                        <p class="fw-bold">Hora final:</p>
+                                        <p id="lblHoraFinal"></p>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <p class="fw-bold">Sección:</p>
+                                        <p id="lblSeccion"></p>
+                                        <p class="fw-bold">Aula:</p>
+                                        <p id="lblAula"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button active" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo" data-bs-parent="#accordionExample">Detalle de Marcación</button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+                            <div class="accordion-body">
+                                <div class="row flex-md-row">
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <p class="fw-bold">Tema:</p>
+                                        <p id="lblTema"></p>
+
+                                    </div>
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <p class="fw-bold">Entrada:</p>
+                                        <p id="lblEntrada"></p>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <p class="fw-bold">Salida:</p>
+                                        <p id="lblSalida"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button active" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree" data-bs-parent="#accordionExample">Historial de Cambios</button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tbHistorialCambios" class="table text-nowrap" style="width:100%;border-spacing: 5px;text-align:center;">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ID</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fecha de Sesión</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación de Entrada</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación de Salida</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Tema</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Estado</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Motivo</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fecha de Modificación</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Usuario</th>
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;display: none;">Orden Fecha</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/ConsultaMarcacion.js" type="module"></script>
+}
+
+
+
+

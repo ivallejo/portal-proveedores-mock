@@ -1,0 +1,199 @@
+﻿
+@{
+    ViewData["Title"] = "Validacion de clases virtuales";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+    List<string> secciones = ViewData["Sections"] as List<string>;
+
+    List<string> headers = new List<string> { 
+         
+        "ID", 
+        "Año",
+        
+        "Ciclo", 
+        "Fecha Sesión", 
+        "Hora Inicio",
+        
+        "Hora Fin", 
+        "Evento", 
+        "Curso", 
+
+        "Seccion", 
+        "Tema",
+        
+        //los siguientes campos son trasladados a un modal
+        "Link", 
+        "Validado", 
+        //"Enviar Correo"
+        "Acciones"
+    };
+
+}
+
+<div class="page-header">
+    <h1 class="page-title">@ViewData["Title"]</h1>
+</div>
+ 
+
+<div class="col-md-12 container-fluid">
+
+    <div class="card">
+        <div class="card-body">
+            
+            <div class="row">
+
+                <div class="col-md-4 mr-1">
+                    <label>Sección:</label>
+                    <select class="form-control" id="cboSection">
+                        <option value="-1">Seleccione</option>
+                        @foreach (var seccion in secciones)
+                        {
+                            <option value="@seccion">@seccion</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-4 mr-1">
+                    <label for="startDate">Fecha Inicio:</label>
+                    <input type="date" maxlength="10" class="form-control" id="txtStartDate" placeholder="dd/mm/yyyy" />
+                </div>
+                <div class="col-md-4 mr-1">
+                    <label for="endDate">Fecha Fin:</label>
+                    <input type="date" maxlength="10" class="form-control" id="txtEndDate" placeholder="dd/mm/yyyy" />
+                </div>
+
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <button type="button" onclick="filterVirtualClass()" class="btn btn-primary">Consultar sesiones</button>
+        </div>
+    </div>
+    <br />
+    <br />
+
+    <div class="card">
+        <div class="card-body">
+            <div id="clasesVirtuales">
+                <div class="table-responsive table-responsive-docente">
+                    <table id="lstClasesVirtuales" class="table table-bordered text-nowrap border-bottom" style="width:100%;">
+                        <thead>
+                            <tr>
+                                @foreach (string header in headers)
+                                {
+                                    <th class="border-bottom-0 bg-primary text-white" width="1%">@header</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal" id="actions_modal" tabindex="-1" aria-labelledby="justificacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="justificacionModalLabel">
+                    Acciones
+                </h5>
+
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="hiddenInputs"  hidden>
+
+                    <div class="row" id="searchPostSubmit" hidden>
+                        <div class="col-4" hidden>
+                            section
+                            <input class="form-control" id="modal_text-section" disabled />
+                        </div>
+                        <div class="col-4" hidden>
+                            startdate
+                            <input class="form-control" id="modal_text-startDate" disabled />
+                        </div>
+                        <div class="col-4" hidden>
+                            enddate
+                            <input class="form-control" id="modal_text-endDate" disabled />
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="col-12" hidden>
+                        sIdSesion
+                        <input id="sIdSesion" class="form-control" disabled placeholder="sIdSesion" />
+                    </div>
+
+                </div>
+
+                <div class="request-body" id="inputs_submit">
+
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="txtLink">Link</label>
+                            <input id="txtLink" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2 col-2 custom-checkbox" id="checkbox_validate">
+                            @*<div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="validate">
+                                <label class="form-check-label" for="validate">
+                                    Validado
+                                </label>
+                            </div>*@
+                            <label class="form-check-label" for="validate">Validado</label>
+                            <input class="form-check-input" type="checkbox" id="validate" disabled>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" onclick="intermedia_save()" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-gray" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-checkbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .custom-checkbox .form-check-input {
+            width: 30px; /* Ajustar el tamaño del checkbox */
+            height: 30px; /* Ajustar el tamaño del checkbox */
+        }
+
+        .custom-checkbox .form-check-label {
+            margin-bottom: 5px; /* Espacio entre el label y el checkbox */
+        }
+</style>
+
+@section Scripts{
+    <script src="~/js/Docente/AulaVirtual.js?v=@Guid.NewGuid().ToString();"></script>
+    <script>
+        const requestList = "@Url.Action("getClasesVirtuales","Docente")";
+        const requestsaveLink = "@Url.Action("saveLink","Docente")";
+        const send_Mail = "@Url.Action("send_Mail_Info","Docente")";
+    </script>
+    <script>
+        $(document).ready(function(){
+            $('#lstClasesVirtuales').DataTable();
+        })
+    </script>
+}

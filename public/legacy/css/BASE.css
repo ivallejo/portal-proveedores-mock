@@ -1,0 +1,29 @@
+﻿.btn-principal {
+    width: 100%;
+    background-color: #0080EE;
+    color: white;
+    border-radius: 0 !important;
+    height: 35px;
+    border: #0080EE;
+}
+
+.m-10 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.mtp-5 {
+    margin-top: 5px;
+}
+
+.mtp-10 {
+    margin-top: 10px;
+}
+
+.mtp-15 {
+    margin-top: 15px;
+}
+
+.mtp-20 {
+    margin-top: 20px;
+}

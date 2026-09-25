@@ -1,0 +1,134 @@
+﻿@using SAD_BE;
+@using Newtonsoft.Json;
+@model List<OrganizationRedirect>
+
+@{
+    ViewData["Title"] = "redirectAV";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+    var distinctOrg = Model.GroupBy(m => m.desc_org) // Agrupa por el valor de desc_org 
+    .Select(g => g.First())   // Selecciona el primer elemento de cada grupo
+    .ToList();
+}
+
+
+@if (distinctOrg.Count() > 0)
+{
+    <script>
+        $(document).ready(function () {
+
+            var orgs = '@Html.Raw(JsonConvert.SerializeObject(distinctOrg))';
+            var jsonorgs = JSON.parse(orgs);
+            var countOrgs = jsonorgs.length;
+
+
+            if(countOrgs === 1) {
+                var actionSelected = '@distinctOrg[0].actionredirect';
+                $.ajax({
+                    url: actionSelected,
+                    type: 'GET', // O 'POST' según lo que necesites
+                    success: function (response) {
+                        var success = response.success;
+                        if (success) {
+                            
+                            @*Abro una nueva pestaña de aula virtual*@
+                            window.open(response.redirect,'_blank');
+                        }
+                        else {
+                            alerta_center(response.swal, "Advertencia", response.mensaje)
+                        }
+
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+            else {
+                $('#organizationModal').modal("show");
+            }
+
+        });
+
+    </script>
+
+    <button type="button" id="btn_RedirectFront" onclick="$('#organizationModal').modal('show')" class="btn btn-primary">Seleccionar Organización</button>
+
+    <div class="modal fade" id="organizationModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Seleccione organización</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="organizationSelect" class="form-label">Seleccione una opción:</label>
+                        <select class="form-select" id="organizationSelect" aria-label="Seleccionar organización">
+                            <option value="-1" selected>Seleccione Organización</option>
+                            @foreach (var item in distinctOrg)
+                            {
+                                <option value="@item.actionredirect">@item.desc_org</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn_Redirect" onclick="handleRedirect()" class="btn btn-primary">Ingresar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container py-4">
+        <div class="text-center p-4 bg-light border rounded shadow-sm">
+            <h3 class="fw-bold text-primary mb-3">No se encontraron datos.</h3>
+            <p class="text-muted">Usted no cuenta con sesiones programadas.</p>
+        </div>
+    </div>
+}
+
+
+@section Scripts{
+
+
+    <script>
+       
+
+        function handleRedirect(){
+            let actionSelected = $('#organizationSelect').val();
+
+            if (actionSelected ==='-1') {
+                alerta_center("warning", "Organización requerida", "Por favor, seleccione una organización.");
+            }
+            else{
+                $.ajax({
+
+                    url: actionSelected,
+                    type: 'GET',
+                    success: function (response) {
+                        var success = response.success;
+                        if (success) {
+                            //Abro una nueva pestaña de aula virtual
+
+                            //alert(1);
+
+                            //console.log(response);
+
+                            window.open(response.redirect, '_blank');
+                        }
+                        else {
+                            alerta_center(response.swal, "Advertencia", response.mensaje)
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+
+            }
+        }
+
+    </script>
+}

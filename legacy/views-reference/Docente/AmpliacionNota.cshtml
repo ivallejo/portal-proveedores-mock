@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewData["Title"] = "AmpliacionNota";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<div class="col-lg-12 mb-2">
+    Por favor complete los siguientes campos para poder registrar la ampliación de subir notas
+</div>
+
+<div class="col-lg-6 col-md-12 col-xs-12 mb-2" style="margin-top:5px;">
+    <span class="fw-bolder">Organización</span>
+    <select id="SlcOrganizacion" class="form-select" name="SlcOrganizacion" onchange="listarFiltrosOrganizacion(1)">
+        <option value="">Seleccione una organización</option>
+        <option value="ANUAL">Global Learning</option>
+        <option value="SEM">Instituto</option>
+        <option value="ECA">Escuela</option>
+    </select>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Periodo</span>
+        <select id="SlPeriodo" class="form-select" onchange="listarFiltrosOrganizacion(2)">
+            <option value="">Seleccione un periodo</option>
+        </select>
+    </div>
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Turno</span>
+        <select id="SlTurno" class="form-select" onchange="listarFiltrosOrganizacion(3)">
+            <option value="">Seleccione un turno</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Sección</span>
+        <select id="SlSeccion" class="form-select" onchange="listarFiltrosOrganizacion(4)">
+            <option value="">Seleccione una sección</option>
+        </select>
+    </div>
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Curso</span>
+        <select id="SlCurso" class="form-select" onchange="listarFiltrosOrganizacion(5)">
+            <option value="">Seleccione un curso</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Evaluación Continua</span>
+        <select id="SlEvaluacionContinua" class="form-select">
+            <option value="">Seleccione una evaluación continua</option>
+        </select>
+    </div>
+    
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Motivo</span>
+        <textarea class="form-control" id="idMotivo" rows="5"></textarea>
+    </div>
+
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Adjunto</span>
+        <input class="form-control" type="file" id="formFile">
+    </div>
+
+</div>
+
+
+<div class="row" style="margin-bottom:40px;">
+    <div class="col-lg-3 col-xs-12 mtp-5">
+        <input type="button" class="btn-principal" value="Registrar" onclick="registroAmpliacionNotas()">
+    </div>
+</div>
+
+<div id="cardJustificarAsistencia" class="card shadow-lg mt-4 rounded-3">
+    <div class="card-body">
+        <div id="justificacionDocente">
+            <div class="table-responsive table-responsive-docente">
+                <table id="lstAmpliacionNota" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                    <thead>
+                        <tr>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ORGANIZACIÓN</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">PERIODO</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">TURNO</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">SECCIÓN</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CÓDIGO CURSO</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">EVALUACIÓN CONTINUA</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">FECHA DE SOLICITUD</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ESTADO</th>
+                             <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">FECHA DE APROBACIÓN</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="justificarAsistenciaCard" class="table-cards">
+                <div id="contentCards-justificarAsitencia">
+                </div>
+                <div class="pagination">
+                    <!-- Links de paginación se generarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+        const requestList = "@Url.Action("listarAmpliacionNotas","Docente")";
+        const registroAmpliacion = "@Url.Action("RegistrarAmpliacionNotas","Docente")";
+        const listarFiltrosAmpliacion = "@Url.Action("listarFiltrosAmpliacionNotas","Docente")";
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            listarSesionesAmpliacionNota();
+
+        })
+
+
+    </script>
+
+    <script src="~/js/Docente/AmpliacionNota.js?v=@Guid.NewGuid().ToString();"></script>
+}

@@ -1,0 +1,259 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        table.dataTable thead th {
+            white-space: nowrap;
+        }
+
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            padding: 0;
+        }
+    }
+</style>
+
+<!-- Inputs ocultos para acciones del controlador -->
+<input type="hidden" id="inputListarPeriodoAcademicoPorId" value="@Url.Action("ListarPeriodoAcademicoPorId", "Administrador")" />
+<input type="hidden" id="inputObtenerPeriodoAnterior" value="@Url.Action("ObtenerPeriodoAnterior", "Administrador")" />
+<input type="hidden" id="inputObtenerDatosPeriodo" value="@Url.Action("ObtenerDatosPeriodo", "Administrador")" />
+<input type="hidden" id="inputInsertarPeriodoAcademico" value="@Url.Action("InsertarPeriodoAcademico", "Administrador")" />
+<input type="hidden" id="inputActualizarPeriodoAcademico" value="@Url.Action("ActualizarPeriodoAcademico", "Administrador")" />
+
+<!-- Botón de agregar -->
+<div class="card mt-4">
+    <div class="card-body">
+        <button class="btn btn-primary mt-4 mb-4" id="btnAgregarPeriodoAcademico" data-bs-toggle="modal" data-bs-target="#modalAgregarPeriodoAcademico">Agregar</button>
+
+        <div class="table-responsive">
+            <table class="table" id="tbPeriodoAcademico">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th>Organización</th>
+                        <th>Año académico</th>
+                        <th>Término</th>
+                        <th>Sesión</th>
+                        <th>Año previo</th>
+                        <th>Término previo</th>
+                        <th>Sesión previa</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Organizacion</td>
+                            <td>@item.AcademicYear</td>
+                            <td>@item.AcademicTerm</td>
+                            <td>@item.AcademicSession</td>
+                            <td>@item.PreviousAcademicYear</td>
+                            <td>@item.PreviousAcademicTerm</td>
+                            <td>@item.PreviousAcademicSession</td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="EditarPeriodo(@item.IdPeriodoAcademico)">Editar</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAgregarPeriodoAcademico" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarPeriodoAcademicoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAgregarPeriodoAcademicoLabel">Agregar Periodo Académico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Organización -->
+                <div class="mb-4">
+                    <label for="idOrganizacion" class="form-label fw-bold">Organización</label>
+                    <select class="form-select" id="idOrganizacion">
+                        <option value="">Seleccione una organización</option>
+                        <option value="INS">Instituto</option>
+                        <option value="ECA">Escuela Adex</option>
+                        <option value="ESC">Global Learning</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <!-- Card: Periodo Actual -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <strong>Periodo Académico Actual</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Año académico</label>
+                                    <select class="form-select" id="idAcademicYear">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Término</label>
+                                    <select class="form-select" id="idAcademicTerm">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3" id="grupoSesionActual">
+                                    <label class="form-label">Sesión</label>
+                                    <select class="form-select" id="idAcademicSession">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card: Periodo Anterior -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-secondary text-white">
+                                <strong>Periodo Académico Anterior</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Año académico anterior</label>
+                                    <select class="form-select" id="idPreviousAcademicYear">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Término anterior</label>
+                                    <select class="form-select" id="idPreviousAcademicTerm">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3" id="grupoSesionAnterior">
+                                    <label class="form-label">Sesión anterior</label>
+                                    <select class="form-select" id="idPreviousAcademicSession">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <!-- Botón guardar -->
+                <div class="mt-3 text-end">
+                    <button type="button" class="btn btn-primary" onclick="AgregarPeriodoAcademico()">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarPeriodoAcademico" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditarPeriodoAcademicoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarPeriodoAcademicoLabel">Editar Periodo Académico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="idPeriodoAcademicoEdit" />
+
+                <!-- Organización (bloqueado) -->
+                <div class="mb-4">
+                    <label for="idOrganizacionEdit" class="form-label fw-bold">Organización</label>
+                    <select class="form-select" id="idOrganizacionEdit" disabled>
+                        <option value="">Seleccione una organización</option>
+                        <option value="INS">Instituto</option>
+                        <option value="ECA">Escuela Adex</option>
+                        <option value="ESC">Global Learning</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <!-- Card: Periodo Actual -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <strong>Periodo Académico Actual</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Año académico</label>
+                                    <select class="form-select" id="idAcademicYearEdit">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Término</label>
+                                    <select class="form-select" id="idAcademicTermEdit">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3" id="grupoSesionActualEdit">
+                                    <label class="form-label">Sesión</label>
+                                    <select class="form-select" id="idAcademicSessionEdit">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card: Periodo Anterior -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-secondary text-white">
+                                <strong>Periodo Académico Anterior</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Año académico anterior</label>
+                                    <select class="form-select" id="idPreviousAcademicYearEdit">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Término anterior</label>
+                                    <select class="form-select" id="idPreviousAcademicTermEdit">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3" id="grupoSesionAnteriorEdit">
+                                    <label class="form-label">Sesión anterior</label>
+                                    <select class="form-select" id="idPreviousAcademicSessionEdit">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón guardar -->
+                <div class="mt-3 text-end">
+                    <button type="button" class="btn btn-primary" onclick="GuardarEdicionPeriodoAcademico()">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/GestionarPeriodoAcademico.js?v=@Guid.NewGuid().ToString();"></script>
+}

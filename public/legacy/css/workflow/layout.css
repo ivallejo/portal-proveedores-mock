@@ -1,0 +1,151 @@
+﻿.badge-tarifa {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+}
+.card-index {
+    background-color: #ffffff;
+}
+.dataTables_length{
+    margin-bottom: 0.3rem;
+}
+.table-workflow thead {
+    background-color: #F6F6F6;
+}
+
+    .table-workflow thead > tr > th {
+        padding: 0.7rem 0.5rem;
+    }
+.paginate_button .page-link {
+    height: 34.5px;
+    width:31px;
+    align-content: center;
+    border-radius:0px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.5em 0em !important;
+}
+.paginate_button .page-link {
+    height: 34.5px;
+    align-content: center;
+}
+table.dataTable {
+    font-size: 1rem;/* 14px;*/
+}
+.form-control, .form-select, .input-group-text {
+    border-radius: 0.4rem;
+}
+.title-seccion{
+    font-size:16px;
+}
+.offcanvas {
+    z-index: 1060;
+}
+.offcanvas-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.td-accion svg {
+    cursor: pointer;
+}
+.mobile-card{
+    background: #ffffff;
+}
+.pagination a {
+    background: none;
+    color: #0d6efd;
+}
+.btn-action-card {
+    border-radius: 25px;
+    padding:0.4rem;
+    color:#ffffff;
+    background: #0069d9;
+}
+.form-control::placeholder {
+    font-size: 14px !important;
+}
+.btn-action-table {
+    line-height: 1 !important;
+    border-radius: 15px;
+    min-width: 100px;
+    font-size: 0.8rem;
+}
+@media (max-width: 768px) {
+    .card-worklow {
+        margin-top: 0rem !important;
+        border: none;
+    }
+
+        .card-worklow .card-body {
+            padding: 0rem;
+        }
+}
+@media (max-width: 650px) {
+    .offcanvas-custom {
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 651px) {
+    .offcanvas-custom {
+        width: 50% !important;
+    }
+}
+/*personalización input, select*/
+.form-floating {
+    position: relative;
+}
+
+    .form-floating .form-control, .form-floating .form-select {
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        background-color: transparent;
+        padding: 0.5rem 0.75rem 0.5rem !important;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+
+    .form-floating > label {
+        top: 50%;
+        left: 0.8rem;
+        transform: translateY(-50%);
+        padding: 0 0.25rem;
+        background: #ffffff;
+        pointer-events: none;
+        height: inherit;
+        opacity: 1 !important;
+        color: #6c757d;
+    }
+
+    .form-floating .form-control:focus + label,
+    .form-floating .form-control:not(:placeholder-shown) + label,
+    .form-floating .form-select:focus + label,
+    .form-floating .form-select:not(:placeholder-shown) + label {
+        top: 0;
+        transform: translateY(-42%) scale(0.9);
+        color: #363636;
+    }
+
+    .form-floating .form-control::placeholder {
+        color: transparent;
+    }
+
+.form-floating > .form-control, .form-floating > .form-select {
+    height: calc(2.5rem);
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+.form-select:disabled {
+    background-color: #e9ecef;
+}
+
+.form-floating > textarea.form-control {
+    height: auto;
+}
+
+.input-group .form-control {
+    border-left: 1px solid #ced4da;
+}

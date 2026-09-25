@@ -1,0 +1,84 @@
+﻿@{
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+
+<form autocomplete="off" id="frmReportePagoDocente">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="reportePagoDocenteModal" aria-labelledby="reportePagoDocenteModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="reportePagoDocenteModalTitulo">Bandeja de Solicitudes</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <partial name="_DatosSolicitud.cshtml"></partial>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de Reporte de Pago de Docentes</h6></div>
+            </div>
+
+            <div class="">
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <select class="form-select edit-control" id="sel-organizacion" data-val="true" placeholder="" required>
+                                @foreach (var organizacion in organizaciones?.ToList())
+                                {
+                                    <option value="@organizacion.Key">@organizacion.Value</option>
+                                }
+                            </select>
+                            <label for="sel-organizacion">Organizaci&oacute;n</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control edit-control" id="input-rangofechas" data-val="true" placeholder="" />
+                            <label for="input-rangofechas">Rango de fechas del reporte</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <select class="form-select edit-control" id="sel-tipotarifa" data-val="true" placeholder="" required>
+                                <option value="1">Por docente</option>
+                                <option value="2">Por curso</option>
+                            </select>
+                            <label for="sel-tipotarifa">Tipo de tarifa</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="input-costoPromedioHora" data-val="true" disabled placeholder="" />
+                            <label for="input-costoPromedioHora">Costo promedio total</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="input-montoDiferencia" data-val="true" disabled placeholder="" />
+                            <label for="input-montoDiferencia">Monto Diferencia</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-auto">
+                <div class="col-md-6 mt-4">
+                    <a class="btn btn-primary form-control" id="btnExportar" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+                </div>
+                <div class="col-md-6 mt-4">
+                    <a class="btn btn-primary form-control" id="btnFormatoCsv" target="_blank"><i class="fas fa-download"></i> Generar Formato</a>
+                </div>
+            </div>
+
+            <partial name="_AccionesSolicitud.cshtml"></partial>
+        </div>
+    </div>
+</form>
+<script src="~/lib/bootstrap-daterangepicker/moment.min.js"></script>
+<script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+<script src="~/js/workflow/service/reporte-pago-docente-service.js" asp-append-version="true"></script>
+<script src="~/js/workflow/bandeja-solicitud/bandeja-solicitud-reporte-pago-docente.js" asp-append-version="true"></script>

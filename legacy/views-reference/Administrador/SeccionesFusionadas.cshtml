@@ -1,0 +1,270 @@
+﻿
+@{
+    // ViewData["Title"] = "SeccionesFusionadas";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+            padding:0;
+        }
+
+    }
+
+    @@media (max-width: 768px) {
+        .card-body {
+            padding: 1rem 0rem;
+        }
+    }
+
+    #modalAgregarSeccionHija .select2-container {
+        width: 100% !important;
+    }
+</style>
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-columns"></i>
+        Secciones Fusionadas
+    </h1>
+</div> *@
+<input value="@Url.Action("ListSemestre","Administrador")" id="inputSemestre" hidden/>
+<input value="@Url.Action("ListTurnos","Administrador")" id="inputTurnos" hidden />
+<input value="@Url.Action("ListCurso","Administrador")" id="inputCodigoCurso" hidden />
+<input value="@Url.Action("ListSeccion","Administrador")" id="inputSeccion" hidden />
+<input value="@Url.Action("GuardarSeccionPadre","Administrador")" id="inputGuardarSeccionPadre" hidden />
+<input value="@Url.Action("ListSeccionesHijas","Administrador")" id="inputListSeccionesHijas" hidden />
+<input value="@Url.Action("GuardarSeccionHija","Administrador")" id="inputGuardarSeccionHija" hidden />
+<input value="@Url.Action("DesactivarSeccionPadre","Administrador")" id="inputDesactivarSeccionPadre" hidden />
+<input value="@Url.Action("DesactivarSeccionHija","Administrador")" id="inputDesactivarSeccionHija" hidden />
+
+<div id="global-loader-modal" style=" display:none;">
+    <img src="~/images/loader.gif" width="150" class="loader-img" alt="Loader">
+</div>
+
+<div class="card container mt-4">
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Año:</label>
+                <select class="form-select" aria-label="Default select example" onchange="BuscarSemestre()" id="selectanios">
+                    <option value="">Seleccione un año</option>
+                    @foreach (var anio in ViewBag.Listanios)
+                    {
+                        <option value="@anio">@anio</option>
+                    }
+            
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Semestre:</label>
+                <select class="form-select" aria-label="Default select example" id="selectSemestres" onchange="BuscarTurno()">
+                
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Turno:</label>
+                <select class="form-select" aria-label="Default select example" id="selectTurnos" onchange="BuscarSeccion()">
+                
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Sección:</label>
+                <select class="form-select" aria-label="Default select example" id="selectSeccion" onchange="BuscarCurso()">
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Código de curso:</label>
+                <select class="form-select" aria-label="Default select example" id="selectCodigoCurso" >
+                 
+                </select>
+            </div>
+          
+        </div>
+        <button class="btn btn-primary mt-4 mb-0" id="btnAgregar" onclick="AgregarSeccionPadre()">Agregar</button>
+        @* <button class="btn btn-success mt-4 mb-0" id="btnGenerarExcel">Exporta Excel</button> *@
+        <div class="my-5"></div>
+        <div style="background:#f3f3f3; border-radius: 10px; padding:1rem;">
+            <div class="table-responsive">
+                <div id="filters" class="mb-3">
+                    <div class="row g-3">
+                        <div class="col-6 col-md">
+                            <input type="text" id="filterId" class="form-control form-control-sm" placeholder="Buscar Id">
+                        </div>
+                        <div class="col-6 col-md">
+                            <input type="text" id="filterYear" class="form-control form-control-sm" placeholder="Buscar Año">
+                        </div>
+                        <div class="col-6 col-md">
+                            <input type="text" id="filterSemestre" class="form-control form-control-sm" placeholder="Buscar Semestre">
+                        </div>
+                        <div class="col-6 col-md">
+                            <input type="text" id="filterTurno" class="form-control form-control-sm" placeholder="Buscar Turno">
+                        </div>
+                        <div class="col-12 col-md">
+                            <input type="text" id="filterCodigoCurso" class="form-control form-control-sm" placeholder="Buscar Código del curso">
+                        </div>
+                        <div class="col-6 col-md">
+                            <input type="text" id="filterSeccion" class="form-control form-control-sm" placeholder="Buscar Sección">
+                        </div>
+                        <div class="col-6 col-md">
+                            <input type="text" id="filterEstado" class="form-control form-control-sm" placeholder="Buscar Estado">
+                        </div>
+                    </div>
+                </div>
+                <table class="table text-nowrap" style="width:100%;border-spacing: 5px;" id="tbSeccionesFusionadas">
+                    <thead>
+                        <tr>
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Id</th>
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Año</th>
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Semestre</th>
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Turno</th>
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Código del curso</th>
+
+                            @* <th>Nombre del curso</th> *@
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Sección</th>
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Estado</th>
+                            <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Acción</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+                        @foreach (var seccion in ViewBag.ListSeccionesPadres)
+                        {
+                            <tr>
+                                <td class="text-center">@seccion.id_seccion_padre</td>
+                                <td class="text-center">@seccion.academic_year</td>
+                                <td class="text-center">@seccion.academic_term</td>
+                                <td class="text-center">@seccion.academic_session</td>
+                                <td class="text-center">@seccion.event_id</td>
+                                <td class="text-center">@seccion.section</td>
+                                <td class="text-center">@seccion.estado</td>
+                                <td style="display: table-cell; vertical-align: middle; text-align: center;">
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarSeccionHija"
+                                                                  onclick="SeccionesHijas(@seccion.id_seccion_padre)" title="Agregar Sección Hija">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="DesactivarSeccionPadre(@seccion.id_seccion_padre)" title="Eliminar Sección">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalAgregarSeccionHija" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarSeccionHija" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Registro de secciones</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="idseccionPadre" hidden/>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Año:</label>
+                        <select class="form-select" aria-label="Default select example" onchange="BuscarSemestreModal()" id="selectaniosModal">
+                            <option value="">Seleccione un año</option>
+                            @foreach (var anio in ViewBag.Listanios)
+                            {
+                                <option value="@anio">@anio</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Semestre:</label>
+                        <select class="form-select" aria-label="Default select example" id="selectSemestresModal" onchange="BuscarTurnoModal()">
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label">Turno:</label>
+                        <select class="form-select" aria-label="Default select example" id="selectTurnosModal" onchange="BuscarSeccionModal()">
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sección:</label>
+                        <select class="form-select" aria-label="Default select example" id="selectSeccionModal" onchange="BuscarCursoModal()">
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Código de curso:</label>
+                        <select class="form-select" aria-label="Default select example" id="selectCodigoCursoModal">
+                        </select>
+                    </div>
+                   
+                    <button class="btn btn-primary mt-4 mb-4" id="btnSeccionesHija" onclick="registrarSeccionesHijas()">Guardar</button>
+                </div>
+
+                <div style="background:#f3f3f3; border-radius: 10px; padding:1rem;">
+                    <div class="table-responsive">
+                        <div id="filters" class="mb-3">
+                            <div class="row g-3">
+                                <div class="col-12 col-md">
+                                    <input type="text" id="filterIdHijo" class="form-control form-control-sm" placeholder="Buscar Id">
+                                </div>
+                                <div class="col-12 col-md">
+                                    <input type="text" id="filterYearHijo" class="form-control form-control-sm" placeholder="Buscar Año">
+                                </div>
+                                <div class="col-12 col-md">
+                                    <input type="text" id="filterSemestreHijo" class="form-control form-control-sm" placeholder="Buscar Semestre">
+                                </div>
+                                <div class="col-12 col-md">
+                                    <input type="text" id="filterTurnoHijo" class="form-control form-control-sm" placeholder="Buscar Turno">
+                                </div>
+                                <div class="col-12 col-md">
+                                    <input type="text" id="filterCodigoCursoHijo" class="form-control form-control-sm" placeholder="Buscar Código del curso">
+                                </div>
+                                <div class="col-12 col-md">
+                                    <input type="text" id="filterSeccionHijo" class="form-control form-control-sm" placeholder="Buscar Sección">
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table" style="width:100%;border-spacing: 5px;" id="tbSeccionesFusionadasHijas">
+                            <thead>
+                                <tr>
+
+                                    <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Id</th>
+                                    <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Año</th>
+                                    <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Semestre</th>
+                                    <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Turno</th>
+                                    <th class="bg-header-table" style="padding: 5px 53px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;white-space:nowrap">Código del curso</th>
+                                    <th class="bg-header-table" style="padding: 5px 34px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Sección</th>
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;border-bottom: 0px;">Acción</th>
+                                </tr>
+                                
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/SeccionesFusionadas.js?v=@Guid.NewGuid().ToString();"></script>
+}

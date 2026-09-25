@@ -1,0 +1,136 @@
+﻿<link href="~/css/workflow/typeahead.css" rel="stylesheet" />
+<style>
+	.rad-group {
+		width: 95%;
+		text-align: left;
+		height: 70px;
+		display: grid;
+		align-items: center;
+	}
+
+	.d-show {
+		display: block !important;
+	}
+
+	.blocked {
+		color: #b9bec2 !important;
+	}
+</style>
+<form autocomplete="off" id="frmExcepcionTarifa">
+	<div class="offcanvas offcanvas-end offcanvas-custom" id="excepcionTarifaModal" aria-labelledby="excepcionTarifaModalLabel" data-bs-backdrop="true">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title fw-bold" id="excepcionTarifaModalTitulo">Bandeja de Solicitudes</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body d-flex flex-column">
+			<div class="row">
+				<partial name="_DatosSolicitud.cshtml"></partial>
+				<div class="col-md-12 mt-5"><h6 class="fw-bold title-seccion">Datos de Tarifas</h6></div>
+			</div>
+			<div class="row div-opciones-tarifa">
+				<div class="col-md-6 mt-2">
+					<button class="btn btn-outline-secondary form-control text-start btn-show active" id="btnIndividualModal">
+						<span class="fas fa-solid fa-file fs-5 mt-2"></span>
+						<p class="mt-2 mb-0">Registro individual</p>
+					</button>
+				</div>
+				<div class="col-md-6 mt-2">
+					<button class="btn btn-outline-secondary form-control text-start btn-show" id="btnMasivoModal">
+						<span class="fas fa-solid fa-folder fs-5 mt-2"></span>
+						<p class="mt-2 mb-0">Registro masivo</p>
+					</button>
+				</div>
+			</div>
+			<div class="row mt-2 div-individual-copia">
+				<div class="col-md-4 mt-2">
+					<div class="form-floating">
+						<select class="form-select" id="organizacion"></select>
+						<label for="organizacion">Organización</label>
+					</div>
+				</div>
+				<div class="col-md-4 mt-2">
+					<div class="form-floating">
+						<select class="form-select" id="periodo"></select>
+						<label for="periodo">Periodo</label>
+					</div>
+				</div>
+				<div class="col-md-4 mt-2">
+					<button class="btn btn-primary form-control" id="btnAgregarModal">Agregar</button>
+				</div>
+			</div>
+			<div class="row mt-2 div-individual">
+				<div class="col-md-4 mt-2">
+					<div class="form-floating">
+						<input type="text" id="tarifa" class="form-control" placeholder="Tarifa" required>
+						<label for="tarifa">Tarifa</label>
+					</div>
+				</div>
+				<div class="col-md-4 mt-2">
+					<div class="input-group input-group-typeahead-icon">
+						<span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+						<input type="text" id="docente" class="form-control" placeholder="Código o nombre de docente">
+					</div>
+				</div>
+				<div class="col-md-4 mt-2">
+					<div class="input-group input-group-typeahead-icon">
+						<span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+						<input type="text" id="curso" class="form-control" placeholder="Código o nombre de curso">
+					</div>
+				</div>
+			</div>
+			<div class="row mt-2 d-none div-masivo">
+				<div class="col-md-12 mt-2">
+					<div class="card">
+						<div class="card-body bg-light">
+							<div class="row">
+								<div class="col-md-1">
+									<button class="btn bg-white"><span class="fas fa-upload"></span></button>
+								</div>
+								<div class="col-md-6">
+									<p class="fw-bold m-0 p-0" id="inputLabelModal" name="documentos-label">Subir un excel</p>
+									<span class="text-muted">M&aacute;ximo 10MB por archivo - Formatos .xls, .xlsx</span>
+								</div>
+								<div class="col-md-2">
+									<button type="button" class="btn btn-primary form-control" name="btn-subir" id="btnCargarAdjuntoModal">Subir&nbsp;<span class="fas fa-upload"></span></button>
+								</div>
+								<div class="col-md-3">
+									<a class="btn btn-primary form-control" id="btnFormato" target="_blank"><i class="fas fa-download"></i> Des. Formato</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<input type="file" id="inputAdjuntoModal" class="form-control d-none" name="documentos" accept=".xls, .xlsx">
+				</div>
+			</div>
+			<div id="wkExcepcionTarifaContainer" class="card card-index mt-3 card-worklow">
+				<div class="card-body">
+					<div id="registroTarifaModal">
+						<div class="table-responsive table-responsive-workflow">
+							<table id="excepcionTarifaTable" class="table text-nowrap table-workflow" style="width:100%;">
+							</table>
+						</div>
+						<div id="wkExcepcionTarifaCard" class="table-cards">
+							<div id="contentCards-excepcionTarifa">
+							</div>
+							<div class="dataTables_paginate paging_simple_numbers">
+								<ul class="pagination" id="paginationCard">
+									<!-- Links de paginación se generarán aquí -->
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 mt-3"></div>
+				<div class="col-md-6 mt-3">
+					<a class="btn btn-primary form-control" id="btnExportar" href="" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+				</div>
+			</div>
+			<partial name="_AccionesSolicitud.cshtml"></partial>
+		</div>
+	</div>
+</form>
+@* <script src="~/js/workflow/service/periodo-academico-service.js" asp-append-version="true"></script> *@
+<script src="~/js/workflow/service/excepcion-tarifa-service.js" asp-append-version="true"></script>
+<script src="~/js/workflow/bandeja-solicitud/bandeja-solicitud-excepcion-tarifa.js" asp-append-version="true"></script>

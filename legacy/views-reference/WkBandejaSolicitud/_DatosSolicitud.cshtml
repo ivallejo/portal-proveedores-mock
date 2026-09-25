@@ -1,0 +1,51 @@
+﻿<div class="col-md-12 mb-2"><h6 class="fw-bold title-seccion">Datos de solicitud N° <span id="IdSolicitud"></span></h6></div>
+<div class="col-md-12 mt-2">
+    <div class="form-floating">
+        <select class="form-select" required id="IdWorkflow" name="IdWorkflow" disabled data-val="true" placeholder="">
+        </select>
+        <label for="IdWorkflow">Nombre del flujo</label>
+    </div>
+</div>
+<div class="col-md-12 mt-4">
+    <div class="form-floating">
+        <select class="form-select" id="IdFaseWorkflow" name="IdFaseWorkflow" disabled data-val="true" placeholder=""></select>
+        <label for="IdFaseWorkflow">Fase del flujo</label>
+    </div>
+</div>
+<div class="col-md-12 mt-4">
+    <div class="form-floating">
+        <input type="text" id="Solicitante" name="Solicitante" data-val="true" disabled placeholder="" required class="form-control text-capitalize" />
+        <label for="Workflow">Solicitante</label>
+    </div>
+</div>
+<div class="col-md-12 mt-4">
+    <div class="form-floating">
+        <input type="text" id="FechaCreacion" name="FechaCreacion" data-val="true" disabled placeholder="" required class="form-control" />
+        <label for="Workflow">Fecha de solicitud</label>
+    </div>
+</div>
+<div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de evaluación</h6></div>
+<div class="col-md-12 mt-3">
+    <div class="form-floating">
+        <input type="text" id="Evaluador" name="Evaluador" data-val="true" disabled placeholder="" required class="form-control text-capitalize" />
+        <label for="Workflow">Evaluador</label>
+    </div>
+</div>
+<div class="col-md-12 mt-3">
+    <div class="form-floating">
+        <input type="text" id="EstadoSolicitud" name="EstadoSolicitud" data-val="true" disabled placeholder="" required class="form-control" />
+        <label for="Workflow">Estado de solicitud</label>
+    </div>
+</div>
+<div class="col-md-12 mt-3" id="divMotivoRechazoSolicitud">
+    <div class="form-floating">
+        <input type="text" id="MotivoRechazoSolicitud" name="MotivoRechazoSolicitud" data-val="true" disabled placeholder="" required class="form-control" />
+        <label for="Workflow">Motivo de rechazo</label>
+    </div>
+</div>
+<div class="col-md-12 mt-3">
+    <div class="form-floating">
+        <textarea class="form-control" rows="3" id="ComentarioAtencion" disabled name="ComentarioAtencion" data-val="true" placeholder="" required></textarea>
+        <label for="Workflow">Comentario de atención</label>
+    </div>
+</div>

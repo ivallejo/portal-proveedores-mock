@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewData["Title"] = "Plantillas de Correo";
+    Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+}
+
+<div id="divContent">
+    <div class="row">
+        <div class="col-md-10">
+            <h3 class="fw-bold">
+                Correos
+            </h3>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary form-control" id="btnNuevo">Nuevo correo</button>
+        </div>
+    </div>
+    <div class="row mt-2">
+
+        <div class="col-md-4 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Nombre flujo:</span>
+                <select class="form-select" id="FiltroWorkflow">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Estado solicitud:</span>
+                <select class="form-select" id="FiltroEstado">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Fase solicitud:</span>
+                <select class="form-select" id="FiltroFase">
+                </select>
+            </div>
+        </div>
+        
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-5"></div>
+        <div class="col-md-2">
+            <button class="btn btn-primary form-control" id="btnBuscar">Buscar</button>
+        </div>
+    </div>
+    <div id="plantillaCorreoContainer" class="card card-index mt-4 d-none card-worklow">
+        <div class="card-body">
+            <div>
+                <div class="table-responsive table-responsive-workflow">
+                    <table id="wkCorreoTable" class="table text-nowrap table-workflow" style="width:100%;">
+                    </table>
+                </div>
+                <div id="wkCorreoCard" class="table-cards">
+                    <div id="contentCards-correo">
+                    </div>
+                    <div class="dataTables_paginate paging_simple_numbers">
+                        <ul class="pagination" id="paginationCard">
+                            <!-- Links de paginación se generarán aquí -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/plantilla-correo-workflow-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/plantilla-correo-workflow/plantilla-correo-workflow-index.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/parametro-workflow-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/fase-workflow-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/estado-solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/workflow-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

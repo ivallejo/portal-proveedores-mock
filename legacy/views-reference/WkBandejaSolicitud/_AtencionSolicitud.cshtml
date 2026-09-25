@@ -1,0 +1,51 @@
+﻿
+<form autocomplete="off" id="frmAtencionSolicitud">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="atencionSolicitudModal" aria-labelledby="atencionSolicitudModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold">Historial de Atención de Solicitud</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <div class="col-md-12 mb-2"><h6 class="fw-bold title-seccion">Datos de solicitud N° <span id="IdSolicitud"></span></h6></div>
+                <div class="col-md-12 mt-2">
+                    <div class="form-floating">
+                        <select class="form-select" required id="IdWorkflow" name="IdWorkflow" disabled data-val="true" placeholder="">
+                        </select>
+                        <label for="IdWorkflow">Nombre del flujo</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <select class="form-select" id="IdFaseWorkflow" name="IdFaseWorkflow" disabled data-val="true" placeholder=""></select>
+                        <label for="IdFaseWorkflow">Fase del flujo</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <input type="text" id="Solicitante" name="Solicitante" data-val="true" disabled placeholder="" required class="form-control text-capitalize" />
+                        <label for="Workflow">Solicitante</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <input type="text" id="FechaCreacion" name="FechaCreacion" data-val="true" disabled placeholder="" required class="form-control" />
+                        <label for="Workflow">Fecha de solicitud</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de atención</h6></div>
+                <div class="col-md-12 mt-3 table-responsive">
+                    <table id="tblAtencionSolicitud" class="table table-workflow" style="width:100%;">
+                    </table>
+                </div>
+
+            </div>
+            <div class="row mt-auto d-none">
+                <div class="col-md-6 mt-4">
+                    <button type="button" class="btn btn-outline-primary form-control" data-bs-dismiss="offcanvas">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/js/workflow/bandeja-solicitud/bandeja-solicitud-atencion-solicitud.js" asp-append-version="true"></script>

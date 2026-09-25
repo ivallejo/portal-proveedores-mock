@@ -1,0 +1,420 @@
+﻿
+@{
+    // ViewData["Title"] = "RegistrarTarifaCentroCostos";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+    var currentYear = DateTime.Now.Year + 1; // Año actual +1
+    var currentYearActualizar = DateTime.Now.Year + 1; // Año actual +1
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+            padding:0;
+        }
+    }
+
+    .table > thead {
+        vertical-align: middle;
+    }
+
+    table.dataTable > tbody > tr.child span.dtr-title {
+        min-width: 0px;
+    }
+
+    /* Switch personalizado para Bootstrap 5 */
+    .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        cursor: pointer;
+    }
+
+        .form-check-input:not(:checked) {
+            background-color: #dc3545; /* Rojo cuando está en "No" */
+            border-color: #dc3545;
+        }
+
+        .form-check-input:checked {
+            background-color: #28a745; /* Verde cuando está en "Sí" */
+            border-color: #28a745;
+        }
+
+    .form-check-label {
+        font-weight: bold;
+        font-size: 14px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .form-switch .form-check-input:focus {
+        border-color: rgba(40, 167, 69, 0.5);
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+</style>
+
+<input value="@Url.Action("ConsultarTarifa","Administrador")" id="inputConsultarTarifa" hidden />
+<input value="@Url.Action("ListarSemestres","Administrador")" id="inputListarSemestres" hidden />
+<input value="@Url.Action("LlenarCombosTarifas","Administrador")" id="inputLlenarCombosTarifas" hidden />
+<input value="@Url.Action("AsignarTarifa","Administrador")" id="inputAsignarTarifa" hidden />
+<input value="@Url.Action("ConsultarTarifaRegistro","Administrador")" id="inputConsultarTarifaRegistrar" hidden />
+
+
+<div class="card container mt-4">
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label class="form-label">Organización:</label>
+                <select class="form-select" aria-label="Default select example" id="selectOrganizacion" onchange="MostrarOrganizacion()">
+                    <option value="">Seleccione una organización</option>
+                    <option value="INS">Instituto</option>
+                    <option value="ECA">Escuela Adex</option>
+                    <option value="ESC">Global Learning</option>
+                    
+
+                </select>
+            </div>
+            <div class="col-sm-4 form-group" id="divAnio" style="display:none;">
+                <label class="form-label">Año:</label>
+                <select class="form-select" aria-label="Default select example" id="selectAnio">
+                    <option value="">Seleccione un año</option>
+                    @{
+                        for (int i = 0; i < 10; i++) // 10 iteraciones para mostrar el año actual +1 y cinco años menos
+                        {
+                            <option value="@currentYear">@currentYear</option>
+                            currentYear--;
+                        }
+                    }
+
+                </select>
+            </div>
+            <div class="col-sm-4 form-group" id="divSemestre" style="display:none;">
+                <label class="form-label">Periodo:</label>
+                <select class="form-select" aria-label="Default select example" id="selectPeriodo">
+                    <option value="">Seleccione un semestre</option>
+                   
+                   
+                </select>
+            </div>
+
+        </div>
+        <button class="btn btn-primary mt-4 mb-0" id="btnConsultarCostos" onclick="ConsultarCostos()">Consultar</button>
+        <button class="btn btn-primary mt-4 mb-0" id="btnAsignarCostos" onclick="ModalAsignarTarifa()" disabled>Registrar Tarifa</button>
+
+        <div class="my-5"></div>
+        <div class="table-responsive">
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px;display:none" id="idTablaRegistrarCentroCostos">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">AÑO</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">PERIODO</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">PROGRAMA</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CURSO</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CÓDIGO CENTRO COSTO</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CENTRO COSTO</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ESTADO</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ACCIONES</th>
+                        
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAgregarTarifa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarTarifa" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-12">
+                        <label class="form-label">Organización</label>
+                        <input type="text" class="form-control" id="idOrganizacion" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Año</label>
+                        <input type="text" class="form-control" id="idAnio" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Periodo</label>
+                        <input type="text" class="form-control" id="idPeriodo" readonly>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Programa</label>
+                        <select class="form-select" id="selectPrograma" onchange="LlenarCombo(2)">
+
+                            <option value="">Seleccione</option>
+                
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-12" id="tipoSesionPago">
+                        <label class="form-label mb-3" style="font-weight: bold; font-size: 14px;">Modalidad del curso:</label>
+
+                        <div class="d-flex flex-column gap-2">
+                            <!-- Switch para Síncrono -->
+                            <div class="d-flex align-items-center gap-3">
+                                <span style="font-weight: 500; font-size: 14px; min-width: 100px;">Síncrono:</span>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchSincrono" name="sincrono">
+                                    <label class="form-check-label" for="switchSincrono" id="labelSwitchSincrono">No</label>
+                                </div>
+                            </div>
+
+                            <!-- Switch para Asíncrono -->
+                            <div class="d-flex align-items-center gap-3">
+                                <span style="font-weight: 500; font-size: 14px; min-width: 100px;">Asíncrono:</span>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchAsincrono" name="asincrono">
+                                    <label class="form-check-label" for="switchAsincrono" id="labelSwitchAsincrono">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" id="divCodigoCursoRegistrar">
+                        <label class="form-label">Código de Curso:</label>
+                        <select class="form-select" id="selectCodigoCurso">
+                            <option value="">Seleccione</option>
+                           
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label class="form-label">Centro de Costo:</label>
+                        <select class="form-select" id="selectCentroCosto">
+                            <option value="">Seleccione</option>
+                         
+                        </select>
+                    </div>
+
+                     <div class="col-md-12">
+                        <label class="form-label">Concepto Codigo de curso (IMPORTE):</label>
+                        <select class="form-select" id="selectConceptoCursoImporte">
+                            <option value="">Seleccione</option>
+                         
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Concepto Codigo de curso (HORAS):</label>
+                        <select class="form-select" id="selectConceptoCursoHoras">
+                            <option value="">Seleccione</option>
+
+                        </select>
+                    </div>
+                   
+                    <button class="btn btn-primary mt-4 mb-4"  onclick="AsignarCentroCosto(1)">Asignar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarTarifa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditarTarifa" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <input id="inputid_tarifa_centro_costo" hidden/>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Organización</label>
+                        <select class="form-select" aria-label="Default select example" id="selectOrganizacionActualizar" onchange="MostrarOrganizacionActualizar()">
+                            <option value="">Seleccione una organización</option>
+                            <option value="INS">Instituto</option>
+                            <option value="ECA">Escuela Adex</option>
+                            <option value="ESC">Global Learning</option>
+
+
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Año</label>
+                        <select class="form-select" aria-label="Default select example" id="selectAnioActualizar" onchange="LlenarComboActualizar(1)">
+                            <option value="">Seleccione un año</option>
+                            @{
+                                for (int i = 0; i < 10; i++) // 10 iteraciones para mostrar el año actual +1 y cinco años menos
+                                {
+                                    <option value="@currentYearActualizar">@currentYearActualizar</option>
+                                    currentYearActualizar--;
+                                }
+                            }
+
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Periodo</label>
+                        <select class="form-select" aria-label="Default select example" id="selectPeriodoActualizar" onchange="LlenarComboActualizar(1)">
+                            <option value="">Seleccione un semestre</option>
+
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Programa</label>
+                        <select class="form-select" id="selectProgramaActualizar" onchange="LlenarComboActualizar(2)">
+
+                            <option value="">Seleccione</option>
+
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-12" id="tipoSesionPagoAct">
+                        <label class="form-label mb-3" style="font-weight: bold; font-size: 14px;">Modalidad del curso:</label>
+
+                        <div class="d-flex flex-column gap-2">
+                            <!-- Switch para Síncrono -->
+                            <div class="d-flex align-items-center gap-3">
+                                <span style="font-weight: 500; font-size: 14px; min-width: 100px;">Síncrono:</span>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchSincronoAct" name="sincrono">
+                                    <label class="form-check-label" for="switchSincrono" id="labelSwitchSincrono">No</label>
+                                </div>
+                            </div>
+
+                            <!-- Switch para Asíncrono -->
+                            <div class="d-flex align-items-center gap-3">
+                                <span style="font-weight: 500; font-size: 14px; min-width: 100px;">Asíncrono:</span>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchAsincronoAct" name="asincrono">
+                                    <label class="form-check-label" for="switchAsincrono" id="labelSwitchAsincrono">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" id="divCodigoCursoActualizar">
+                        <label class="form-label">Código de Curso:</label>
+                        <select class="form-select" id="selectCodigoCursoActualizar">
+                            <option value="">Seleccione</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Centro de Costo:</label>
+                        <select class="form-select" id="selectCentroCostoActualizar">
+                            <option value="">Seleccione</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Concepto Codigo de curso (IMPORTE):</label>
+                        <select class="form-select" id="selectConceptoCursoImporteActualizar">
+                            <option value="">Seleccione</option>
+
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Concepto Codigo de curso (HORAS):</label>
+                        <select class="form-select" id="selectConceptoCursoHorasActualizar">
+                            <option value="">Seleccione</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" id="selectEstadoActualizar">
+                            <option value="">Seleccione</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary mt-4 mb-4" onclick="AsignarCentroCosto(2)">Actualizar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/RegistroTarifaCentroCostos.js?v=@Guid.NewGuid().ToString();"></script>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        initializeSwitchesModalidad();
+        initializeSwitchesModalidadActualizar();
+    });
+    function initializeSwitchesModalidad() {
+        // Configurar switch Síncrono
+        $('#switchSincrono').change(function () {
+            var isChecked = $(this).is(':checked');
+            var labelText = isChecked ? 'Sí' : 'No';
+            $('#labelSwitchSincrono').text(labelText);
+        });
+
+        // Configurar switch Asíncrono
+        $('#switchAsincrono').change(function () {
+            var isChecked = $(this).is(':checked');
+            var labelText = isChecked ? 'Sí' : 'No';
+            $('#labelSwitchAsincrono').text(labelText);
+        });
+
+        // Establecer estados iniciales (ambos en "No")
+        $('#switchSincrono').prop('checked', false);
+        $('#labelSwitchSincrono').text('No');
+
+        $('#switchAsincrono').prop('checked', false);
+        $('#labelSwitchAsincrono').text('No');
+    }
+    function initializeSwitchesModalidadActualizar() {
+        // Configurar switch Síncrono Actualizar
+        $('#switchSincronoAct').change(function () {
+            var isChecked = $(this).is(':checked');
+            var labelText = isChecked ? 'Sí' : 'No';
+            $('#labelSwitchSincronoAct').text(labelText);
+        });
+
+        // Configurar switch Asíncrono Actualizar
+        $('#switchAsincronoAct').change(function () {
+            var isChecked = $(this).is(':checked');
+            var labelText = isChecked ? 'Sí' : 'No';
+            $('#labelSwitchAsincronoAct').text(labelText);
+        });
+
+        // Establecer estados iniciales (ambos en "No")
+        $('#switchSincronoAct').prop('checked', false);
+        $('#labelSwitchSincronoAct').text('No');
+
+        $('#switchAsincronoAct').prop('checked', false);
+        $('#labelSwitchAsincronoAct').text('No');
+    }
+</script>

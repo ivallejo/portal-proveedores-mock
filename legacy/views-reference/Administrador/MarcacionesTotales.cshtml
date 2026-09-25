@@ -1,0 +1,123 @@
+﻿@{
+    // ViewData["Title"] = "Sesiones Totales";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+}
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+        }
+    }
+
+    .table > thead {
+        vertical-align: middle;
+    }
+
+</style>
+
+<input value="@Url.Action("DescargarExcelSesiones", "Administrador")" id="inputDescargarExcelSesiones" hidden />
+@* <input value="@Url.Action("DescargarExcelJustificaciones","Administrador")" id="inputDescargarExcelJustificaciones" hidden /> *@
+<input value="@Url.Action("ExcelSesionesTotales", "WkSolicitud")" id="inputDescargarExcelJustificaciones" hidden />
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-th-list"></i>
+        @ViewData["Title"]
+    </h1>
+</div> *@
+
+<div class="card container mt-4">
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-3 form-group">
+                <label for="txtDocente" class="form-label">Unidad de negocio:</label>
+                <select id="cboUnidadNegocio" class="form-control form-select" data-bs-placeholder="Seleccione Unidad de Negocio">
+                    <option value="INS">Instituto</option>
+                    <option value="ECA">Escuela Adex</option>
+                    <option value="ESC">Global Learning</option>
+                </select>
+            </div>
+            <div class="col-sm-3 form-group">
+                <label for="txtFechaIni" class="form-label">Fecha Inicio:</label>
+                <input type="date" class="form-control" id="txtFechaIni" value="">
+            </div>
+            <div class="col-sm-3 form-group">
+                <label for="txtFechaFin" class="form-label">Fecha Fin:</label>
+                <input type="date" class="form-control" id="txtFechaFin" value="">
+            </div>
+            <div class="col-sm-3 form-group">
+                <label for="cboTipoTarifa" class="form-label">Tipo de tarifa:</label>
+                <select id="cboTipoTarifa" class="form-control form-select">
+                    <option value="DOCENTE">DOCENTE</option>
+                    <option value="CURSO">CURSO</option>
+                </select>
+            </div>
+
+        </div>
+        <button class="btn btn-primary mt-4 mb-0" id="btnConsultar">Consultar</button>
+
+        <button class="btn btn-primary mt-4 mb-0" id="btnExportarMarcaciones">Exportar a Excel</button>
+        <div class="my-5"></div>
+        <div class="table-responsive">
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px;" id="idTablaMarcacionesTotales">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ID Sesión</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fecha Sesión</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Código Docente</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">DNI Docente</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Docente</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Cod. Curso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Curso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Sección</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Aula</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Sede</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Hora Ingreso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Hora Salida</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Horas Dictadas</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Horas Programadas</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación Ingreso</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Marcación Salida</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Horas Marcadas</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Min. Tardanza</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Tarifa/Hora</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Centro Costos</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Descripción C.Costos</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Semestre</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Año</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Estado Sesión</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Mensaje</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Fuente</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Tipo Sección</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Año Maestro</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Semestre Maestro</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Turno Maestro</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Min. Marcados</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Min. Desc. Break</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Horas Contadas</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Tarifa Final</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Factor Usado</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Monto Calculado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<input value="@Url.Action("DescargarExcelMarcacionesConTarifa", "Administrador")" id="inputDescargarExcelMarcaciones" hidden />
+<input value="@Url.Action("ConsultarMarcacionesConTarifa", "Administrador")" id="inputConsultarMarcaciones" hidden />
+
+@section Scripts {
+    <script src="~/js/MarcacionesTotales.js" type="module"></script>
+
+}

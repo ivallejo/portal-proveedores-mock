@@ -1,0 +1,93 @@
+﻿@using SAD_Utils
+@{
+    var identificadores = new List<KeyValuePair<string, string>>() {
+                    new KeyValuePair<string, string>(
+                        ConstantesWorkflow.JustificacionAsistenciaSolicitudIdentificador.Entrada, "Sólo entrada"),
+                    new KeyValuePair<string, string>(
+                        ConstantesWorkflow.JustificacionAsistenciaSolicitudIdentificador.Salida, "Sólo salida"),
+                    new KeyValuePair<string, string>(
+                        ConstantesWorkflow.JustificacionAsistenciaSolicitudIdentificador.EntradaYSalida, "Entrada y salida") };
+}
+<form autocomplete="off" id="frmJustificacionAsistencia">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="justificacionAsistenciaModal" aria-labelledby="justificacionAsistenciaModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold">Aprobar o Rechazar</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <partial name="_DatosSolicitud.cshtml"></partial>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de justificación</h6></div>
+                <div class="col-md-12 mt-3">
+                    <div class="form-floating">
+                        <input type="text" id="Sesion" name="Sesion" data-val="true" disabled placeholder="" required class="form-control" />
+                        <label for="Workflow">Sesión</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <select class="form-select" required id="Identificador" name="Identificador" disabled data-val="true" placeholder="">
+                            @if (identificadores != null)
+                            {
+                                foreach (var identificador in identificadores)
+                                {
+                                    <option value="@identificador.Key">@identificador.Value</option>
+                                }
+                            }
+                        </select>
+                        <label for="Workflow">Identificador</label> 
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <input type="text" id="HoraEntrada" name="HoraEntrada" data-val="true" disabled placeholder="" required class="form-control" />
+                        <label for="Workflow">Hora de entrada</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <input type="text" id="HoraSalida" name="HoraSalida" data-val="true" disabled placeholder="" required class="form-control" />
+                        <label for="Workflow">Hora de salida</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <input type="text" id="TemaClase" name="TemaClase" data-val="true" disabled placeholder="" required class="form-control" />
+                        <label for="Workflow">Tema de clase</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <textarea class="form-control" rows="3" id="MotivoJustificacion" disabled name="MotivoJustificacion" data-val="true" placeholder="" required></textarea>
+                        <label for="Workflow">Motivo de justificación</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <div class="card">
+                        <div class="card-body bg-light">
+                            <div class="row">
+                                <div class="col-md-1 d-flex align-items-center">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                                <div class="col-md-7">
+                                    <p class="fw-bold m-0 p-0" name="documentos-label">Evidencia</p>
+                                    <span class="text-muted" id="Adjunto"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" id="btnAdjunto" class="btn btn-primary form-control"><i class="fas fa-download"></i> Descargar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" class="form-control d-none" name="documentos" accept=".doc, .docx, .pdf">
+                </div>
+                <div class="col-md-3 mt-3"></div>
+                <div class="col-md-6 mt-3">
+                    <a class="btn btn-primary form-control" id="btnExportar" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+                </div>
+            </div>
+            <partial name="_AccionesSolicitud.cshtml"></partial>
+        </div>
+    </div>
+</form>
+<script src="~/js/workflow/aprobacion-solicitud/aprobacion-solicitud-justificacion-asistencia.js" asp-append-version="true"></script>

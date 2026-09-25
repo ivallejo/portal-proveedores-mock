@@ -1,0 +1,140 @@
+﻿@{
+    ViewData["Title"] = "Registro de solicitud de justificación";
+    Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+    var identificadores = (IEnumerable<KeyValuePair<string, string>>)Model.Identificadores;
+}
+
+<div id="divContent">
+    <form autocomplete="off" id="frmAccion">
+        <input type="hidden" name="idsesion" value="@Model.IdSesion" />
+        <input type="hidden" name="fechasesion" value="@Model.FechaSesion" />
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="fw-bold">
+                    Registro de solicitud de justificación
+                    <a href="@ViewBag.UrlRetorno" class="btn btn-primary float-end" name="btn-regresar">Regresar</a>
+                </h3>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-8 offset-md-2">
+                <div class="card card-index mt-4 card-worklow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" name="curso" readonly value="@($"{Model.Curso} - {Model.Seccion} - {Model.FechaSesion}")">
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">Hora inicio:</span>
+                                    <input type="text" class="form-control" name="hora-inicio" readonly value="@Model.HoraInicio">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">Hora fin:</span>
+                                    <input type="text" class="form-control" name="hora-fin" readonly value="@Model.HoraFin">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-index mt-4 card-worklow">
+                    <div class="card-body">
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" required name="identificador" data-val="true" placeholder="">
+                                        @if (identificadores != null)
+                                        {
+                                            foreach (var identificador in identificadores?.ToList())
+                                            {
+                                                <option value="@identificador.Key">@identificador.Value</option>
+                                            }
+                                        }
+                                    </select>
+                                    <label for="identificador">Identificador</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="hora-entrada" placeholder="" required data-val="true" value="@Model.HoraEntrada" disabled>
+                                    <label for="hora-entrada">Hora de entrada</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="hora-salida" placeholder="" required data-val="true" value="@Model.HoraSalida" disabled>
+                                    <label for="hora-salida">Hora de salida</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="tema" data-val="true" placeholder="" value="@Model.Tema" required>
+                                    <label for="tema">Tema de clase</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <textarea class="form-control" rows="3" name="motivo-justificacion" data-val="true" placeholder="" required></textarea>
+                                    <label for="motivo-justificacion">Motivo de justificaci&oacute;n</label>
+                                </div>
+                            </div>
+                        </div>
+                        @* <div class="row mt-2">
+                        <div class="col-md-12 mt-2">
+                        <div class="form-floating">
+                        <input type="text" class="form-control" name="identificador" placeholder="" readonly value="@Model.Identificador">
+                        <label for="identificador">Identificador</label>
+                        </div>
+                        </div>
+                        </div> *@
+                        <div class="row mt-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="card">
+                                    <div class="card-body bg-light">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <button class="btn bg-white"><span class="fas fa-upload"></span></button>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <p class="fw-bold m-0 p-0" name="documentos-label">Agrega documentos</p>
+                                                <span class="text-muted">M&aacute;ximo 10MB por archivo - Formatos .pdf, .doc, .docx</span>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="button" class="btn btn-primary form-control" name="btn-subir">Subir&nbsp;<span class="fas fa-upload"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control d-none" name="documentos" accept=".doc, .docx, .pdf">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4 offset-md-4">
+                        <button type="button" class="btn btn-primary form-control" name="btn-enviar">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment-with-locales.min.js"></script>
+    <script src="~/js/workflow/service/solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/solicitud/solicitud-justificacion-asistencia-create.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

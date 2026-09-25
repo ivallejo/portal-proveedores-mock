@@ -1,0 +1,72 @@
+﻿@{
+    List<string> headers = new List<string>()
+    {
+        "FOTO",
+        "CÓDIGO",
+        "NOMBRES",
+        "SECCION",
+        "MODALIDAD",
+        "ESTATUS ASISTENCIA",
+        "COMENTARIOS"
+    };
+}
+
+<div class="container-fluid" style="padding: 0 !important">
+    <div class="d-flex justify-content-center">
+        <div class="card col-md-12">
+
+            <div id="target-asists">
+                <!--Aquí se imprime la información-->
+                    @*<div class="card-header"></div>*@
+                    
+                    <div class="card-body">
+                        <div class="mb-3 mt-3" id="detailsCurso">
+                            <!--Aqui se imprimirá un card con la informacion de la sesión-->
+
+                            <!---->
+                            <br /> 
+                        </div>
+
+                        <div class="card-body">
+
+                            <div id="asists-target">
+                            <div class="table-responsive table-responsive-docente">
+                                <table id="lstAsistencia" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                                        <thead>
+                                            <tr>
+                                                @foreach (string header in headers)
+                                                {
+                                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px; pointer-events:none; cursor:default;">
+                                                        @header
+                                                    </th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="marcacionesCard" class="table-cards">
+                                    <div id="contentCards-asistenciaAlumnos">
+                                    </div>
+                                    <div class="pagination">
+                                        <!-- Links de paginación se generarán aquí -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                    <button id="btnSendAttendance" class="btn btn-primary" onclick="sendAttendance()">Guardar</button>
+                    </div>
+                <!---->
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,195 @@
+﻿@using SAD_BE;
+@using Newtonsoft.Json;
+@{
+    //ViewData["Title"] = "carne_docente";
+    Layout = null;
+    // string qr_path = ViewBag.QRpath as string;
+    // string cod_docente = ViewBag.CodDocente as string;
+    // (string, string) names = ViewBag.names;
+    // string img = ViewBag.Profile as string;
+
+    string qr_path = ViewData["QRpath"] as string;
+    string cod_docente = ViewData["CodDocente"] as string;
+    var names = ViewData["name"] as string;
+    var apellido = ViewData["apellido"] as string;
+    string img = ViewData["Profile"] as string;
+     // = ViewBag.Profile as string;
+
+
+    img = (img == "https://intranet.adexperu.edu.pe/images/avatar.png") ? "" : img;
+
+    string session = Context.Session.GetString("attrSession") ?? "";
+
+
+    var attr = JsonConvert.DeserializeObject<SessionAttr>(session);
+
+    int index = 0;
+    var menu = $"/{attr.menus[index].url}" ?? ""; //primer menu siempre y cuando el menu contenga el layout
+    // menu = "";
+
+    if (menu.Contains("carne_docente"))
+    {
+        index++;  //pasa al siguiente menu
+        menu = $"/{attr.menus[index].url}";
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <title>SAD - Mi carnet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Font Awesome JS -->
+    <link rel="stylesheet" href="../css/carnet.css?ver=3">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/utils/swalMaster.js"></script>
+
+</head>
+<body class="adex">
+   
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                @{
+                    //var data = Model.ListaUsuarios.FirstOrDefault();
+                }
+
+                @*@if (string.IsNullOrEmpty(data.RUTA_FOTO))*@
+                @if (false)
+                {
+                    <div class="brand">
+                        <img src="../images/logoblanco.png">
+                    </div>
+                    <div class="carnet-detail">
+
+                        <div class="name">Para poder ver tu carné, tu fotografía debe haber sido registrada y validada</div>
+
+                    </div>
+                    <div class="row mtp-25">
+
+                        <div class="col-lg-12 col-xs-12">
+                            <a href="@menu" class="btn btn-principal13">REGRESAR</a>
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="brand">
+                        @* <img src="../images/logoblanco.png"> *@
+                        <img src="../images/logo-white.png" class="mb-2">
+                    </div>
+                    <div class="carnet-detail">
+                        <div class="avatar">
+                            <img src="@(!string.IsNullOrEmpty(img) ? img : "../img/user.png")">
+                            
+                        </div>
+
+                        <div class="header">Docente</div>
+                        <div class="name">@names <br>@apellido</div>
+                        <div class="code">COD. @cod_docente</div>
+                        
+                        <div class="qr">
+                            @*<img src="@Model.QRCode">*@
+                            <img id="qrComposer" src="@qr_path">
+                        </div>
+
+                        <div class="items">
+                            <div class="item">@DateTime.Now.ToShortDateString()</div>
+                            <div class="item" id="reloj">
+                                <img src="../images/ic-reloj.png"> 00:00:00
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mtp-25">
+                        <div class="col-lg-12 col-xs-12">
+                            <a href="@menu" class="btn btn-principal13">REGRESAR</a>
+                            @* <a href="@Url.Action(menu.View,menu.Controller)" class="btn btn-principal13">REGRESAR</a> *@
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+
+    </div>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            clockUpdate();
+            setInterval(clockUpdate, 1000);
+            setInterval(generateQR, 120000);
+            //setInterval(generateQR, 5000);
+        })
+
+        function clockUpdate() {
+            var date = new Date();
+            function addZero(x) {
+                if (x < 10) {
+                    return x = '0' + x;
+                } else {
+                    return x;
+                }
+            }
+
+            function twelveHour(x) {
+                if (x > 12) {
+                    return x = x - 12;
+                } else if (x == 0) {
+                    return x = 12;
+                } else {
+                    return x;
+                }
+            }
+
+            var h = addZero(twelveHour(date.getHours()));
+            var m = addZero(date.getMinutes());
+            var s = addZero(date.getSeconds());
+
+            $('#reloj').html('<img src="../images/ic-reloj.png"> ' + h + ': ' + m + ': ' + s)
+        }
+    
+        function generateQR(){
+            var image = $('#qrComposer');
+
+            try{
+
+                $.ajax({
+                    url: "@Url.Action("generateQR","Docente")",
+                    type: "POST",
+                    success: function (response) {
+                        let status = response.success;
+                        if (status) {
+                            let src = response.path;
+                            console.log("qr generado exitosamente")
+                            $('#qrComposer').attr("src", src)
+                        }
+                        else{
+                            console.error("Ocurrió un error al realizar",response.mensaje);
+                        }
+                    },
+                    error:function(error){
+                        alerta_center("error","Error al generar QR",error.responseText);
+                    }
+                })
+            }
+            catch(error){
+                alerta_center("error", "Excepción encontrada", `Ocurrió una excepción al generar el QR: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

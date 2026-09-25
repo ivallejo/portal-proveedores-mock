@@ -1,0 +1,201 @@
+﻿@{
+	ViewData["Title"] = "Tarifa de Docentes";
+	Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+	var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+<link href="~/css/workflow/typeahead.css" rel="stylesheet" />
+<style>
+	.rad-group {
+		width: 95%;
+		text-align: left;
+		height: 70px;
+		display: grid;
+		align-items: center;
+	}
+
+	.d-show {
+		display: block !important;
+	}
+
+	.blocked {
+		color: #b9bec2 !important;
+	}
+
+	.custom-switch {
+		transform: scale(1.8);
+	}
+</style>
+<div id="divContent">
+	<div class="row">
+		<div class="col-md-10">
+			<h3 class="fw-bold">
+				Registro de Tarifas de Docente
+			</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3 mt-2">
+			<button class="btn btn-outline-secondary form-control text-start btn-show active" id="btnIndividual">
+				<span class="fas fa-solid fa-file fs-5 mt-2"></span>
+				<p class="mt-2 mb-0">Registro individual</p>
+			</button>
+		</div>
+		<div class="col-md-3 mt-2">
+			<button class="btn btn-outline-secondary form-control text-start btn-show" id="btnMasivo">
+				<span class="fas fa-solid fa-folder fs-5 mt-2"></span>
+				<p class="mt-2 mb-0">Registro masivo</p>
+			</button>
+		</div>
+		<div class="col-md-3 mt-2">
+			<button class="btn btn-outline-secondary form-control text-start btn-show" id="btnCopiar">
+				<span class="fas fa-solid fa-copy fs-5 mt-2"></span>
+				<p class="mt-2 mb-0">Copiar de periodo anterior</p>
+			</button>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-sm-12 col-md-5">
+			<div class="fw-bold">
+				Ingresa la información solicitada
+			</div>
+		</div>
+	</div>
+	<div class="row div-individual-copia">
+		<div class="col-md-6 mt-4">
+			<div class="form-floating">
+				<select class="form-select" id="organizacion">
+					@foreach (var organizacion in organizaciones?.ToList())
+					{
+						<option value="@organizacion.Key">@organizacion.Value</option>
+					}
+				</select>
+				<label for="organizacion">Organización</label>
+			</div>
+		</div>
+		<div class="col-md-6 mt-4">
+			<div class="form-floating">
+				<select class="form-select" id="periodo"></select>
+				<label for="organizacion">Periodo</label>
+			</div>
+		</div>
+		<div class="col-md-6 mt-4 div-individual">
+			<div class="form-floating">
+				<input type="text" id="tarifa" class="form-control" data-val="true" placeholder="">
+				<label for="tarifa">Tarifa</label>
+			</div>
+		</div>
+		<div class="col-md-6 mt-4 div-individual">
+			<div class="input-group input-group-typeahead-icon">
+				<span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+				<input type="text" id="docente" class="form-control" placeholder="Código o nombre de docente">
+			</div>
+		</div>
+		<div class="col-md-6 mt-4">
+			<button class="btn btn-primary form-control" id="btnAgregar">Agregar</button>
+		</div>
+	</div>
+	<div class="row mt-2 d-none div-masivo">
+		<form autocomplete="off" id="frmUpload">
+			<div class="col-md-12 mt-2">
+				<div class="card">
+					<div class="card-body bg-light">
+						<div class="row">
+							<div class="col-md-1">
+								<button class="btn bg-white"><span class="fas fa-upload"></span></button>
+							</div>
+							<div class="col-md-6">
+								<p class="fw-bold m-0 p-0" name="documentos-label">Subir un excel</p>
+								<span class="text-muted">M&aacute;ximo 10MB por archivo - Formatos .xls, .xlsx</span>
+							</div>
+							<div class="col-md-2">
+								<button type="button" class="btn btn-primary form-control" name="btn-subir">Subir&nbsp;<span class="fas fa-upload"></span></button>
+							</div>
+							<div class="col-md-3">
+								<a class="btn btn-primary form-control" id="btnFormato" target="_blank"><i class="fas fa-download"></i> Descargar Formato</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<input type="file" class="form-control d-none" name="documentos" accept=".xls, .xlsx">
+			</div>
+		</form>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-12 mt-4">
+			<div class="form-floating">
+				<textarea class="form-control" id="comentario" rows="4" placeholder></textarea>
+				<label for="comentario">Comentarios de solicitud</label>
+			</div>
+		</div>
+	</div>
+	<div id="wkTarifaDocenteContainer" class="card card-index mt-4 card-worklow">
+		<div class="card-body">
+			<div id="registroTarifa">
+				<div class="table-responsive table-responsive-workflow">
+					<table id="tarifaDocenteTable" class="table text-nowrap table-workflow" style="width:100%;">
+					</table>
+				</div>
+				<div id="wkTarifaDocenteCard" class="table-cards">
+					<div id="contentCards-tarifaDocente">
+					</div>
+					<div class="dataTables_paginate paging_simple_numbers">
+						<ul class="pagination" id="paginationCard">
+							<!-- Links de paginación se generarán aquí -->
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="div-copiar d-none">
+		<div class="row mt-4 ">
+			<div class="col-sm-12 col-md-5">
+				<div class="fw-bold">
+					Docentes que no tienen asignación en el periodo actual
+				</div>
+			</div>
+			<div class="col-sm-12 col-md-4">
+				<div class="form-check form-switch">
+					<input class="form-check-input custom-switch" type="checkbox" role="switch" id="btnPeriodoAnt"><label class="form-check-label" for="btnPeriodoAnt"></label>
+				</div>
+			</div>
+		</div>
+		<div class="card card-index mt-3 card-worklow d-none" id="docentePeriodoAnterior">
+			<div class="card-body">
+				<div>
+					<div class="table-responsive table-responsive-workflow">
+						<table id="docenteAnteriorTable" class="table text-nowrap table-workflow" style="width:100%;">
+						</table>
+					</div>
+					<div id="wkTarifaDocenteAnteriorCard" class="table-cards">
+						<div id="contentCards-tarifaDocenteAnterior">
+						</div>
+						<div class="dataTables_paginate paging_simple_numbers">
+							<ul class="pagination" id="paginationCard">
+								<!-- Links de paginación se generarán aquí -->
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-4 mt-2">
+		</div>
+		<div class="col-md-4 mt-2">
+			<button class="btn btn-primary form-control" id="btnGuardar">Registrar Solicitud</button>
+		</div>
+		<div class="col-md-4 mt-2">
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/typeahead/typeahead.jquery.js" asp-append-version="true"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/bloodhound.min.js"></script>
+	<script src="~/js/workflow/service/tarifa-docente-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/tarifa-docente/tarifa-docente-index.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

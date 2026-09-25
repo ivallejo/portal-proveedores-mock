@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewData["Title"] = "Bandeja de Solicitudes";
+    Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+    string userName = Context.Session.GetString("UserName") ?? "";
+}
+<link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
+<div id="divContent">
+    <input type="hidden" id="input-usuariosesion" value="@userName" />
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="fw-bold">
+                @ViewData["Title"]
+            </h3>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-4 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Organización:</span>
+                <select class="form-select" id="FiltroOrganizacion">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Nombre de flujo:</span>
+                <select class="form-select" id="FiltroWorkflow">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Estado:</span>
+                <select class="form-select" id="FiltroEstado">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Fechas de solicitud:</span>
+                <input type="text" id="filtroFecha" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-8 mt-2"></div>
+        <div class="col-md-5 mt-2"></div>
+        <div class="col-md-2 mt-2">
+            <button class="btn btn-primary form-control" id="btnBuscar">Buscar</button>
+        </div>
+
+    </div>
+
+    <div id="bandejaContainer" class="card card-index mt-4 d-none card-worklow">
+        <div class="card-body">
+            <div>
+                <div class="table-responsive table-responsive-workflow">
+                    <table id="wkBandejaTable" class="table table-workflow" style="width:100%;">
+                    </table>
+                </div>
+                <div id="wkBandejaCard" class="table-cards">
+                    <div id="contentCards-bandeja">
+                    </div>
+                    <div class="dataTables_paginate paging_simple_numbers">
+                        <ul class="pagination" id="paginationCard">
+                            <!-- Links de paginación se generarán aquí -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/workflow-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/fase-workflow-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/parametro-workflow-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/estado-solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/motivo-rechazo-solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/atencion-solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-daterangepicker/moment.min.js"></script>
+    <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+    <script src="~/js/workflow/bandeja-solicitud/bandeja-solicitud-index.js" asp-append-version="true"></script>
+
+    <script src="~/js/typeahead/typeahead.jquery.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/bloodhound.min.js"></script>
+}
+
+

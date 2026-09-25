@@ -1,0 +1,255 @@
+﻿@using SAD_BE;
+@using Newtonsoft.Json;
+@using System;
+@using System.Collections.Generic;
+@using System.Linq;
+@{
+
+
+        string GetNameFromValue(string text)
+        {
+            List<DictionaryItem> dictionary = new List<DictionaryItem>
+            {
+                new DictionaryItem { Name = "MAÑANA", Value = "MAÑANA" },
+                new DictionaryItem { Name = "TARDE", Value = "TAR" },
+                new DictionaryItem { Name = "NOCHE", Value = "NOC" }
+            };
+
+            // Buscar el objeto en el diccionario que tenga el Value igual al texto proporcionado
+            var foundItem = dictionary.FirstOrDefault(item => item.Value == text);
+
+            // Si se encuentra, devolver el Name; si no, devolver el texto original
+            return foundItem != null ? foundItem.Name : text;
+        }
+}
+
+@try
+{
+    Layout = null;
+
+    @* List<SessionSchedule> sessions = ViewBag.Sessions; *@
+    List<SessionSchedule> sessions = ViewData["Sessions"] as List<SessionSchedule>;
+
+
+ @*    
+    var sIdCurso = ViewBag.sIdCurso as string;
+    var sSeccion = ViewBag.sSeccion as string;
+    var sAnio = ViewBag.sAnio as string;
+    var sSemestre = ViewBag.sSemestre as string;
+    var academic_session = ViewBag.academic_session as string;
+    var event_sub_type = ViewBag.event_sub_type as string;
+    int statusCode = ViewBag.statusCode;
+    List<raw_Sessions> response_hijas = ViewBag.SesionesHijas as List<raw_Sessions> ?? new List<raw_Sessions>();
+ *@
+    var sIdCurso = ViewData["sIdCurso"] as string;
+    var sSeccion = ViewData["sSeccion"] as string;
+    var sAnio = ViewData["sAnio"] as string;
+    var sSemestre = ViewData["sSemestre"] as string;
+    var academic_session = ViewData["academic_session"] as string;
+    var event_sub_type = ViewData["event_sub_type"] as string;
+    int statusCode = (int)ViewData["statusCode"];
+
+    List<raw_Sessions> response_hijas = ViewData["SesionesHijas"] as List<raw_Sessions> ?? new List<raw_Sessions>();
+
+
+
+    List<string> headers = new List<string> { "AÑO", "SEMESTRE", "SECCION", "ID CURSO", "TURNO","MODALIDAD" };
+    <div class="row mb-3" hidden >
+
+        <input type="text" id="sAnio" value="@sAnio" disabled />
+        <input type="text" id="sSemestre" value="@sSemestre" disabled />
+        <input type="text" id="sSeccion" value="@sSeccion" disabled />
+        <input type="text" id="sIdCurso" value="@sIdCurso" disabled />
+
+        <input type="text" id="academic_session" value="@academic_session" disabled />
+        <input type="text" id="event_sub_type" value="@event_sub_type" disabled />
+
+        <input type="text" id="attendance_date" value="attendance_date" disabled />
+
+    </div>
+
+
+    @if (statusCode == 200)
+    {
+        @if (response_hijas.Count > 1)
+        {
+            var collapseId = $"collapse_{sAnio}_{sSemestre}_{sSeccion}_{sIdCurso}";
+            <div class="container px-4 mb-4" id="hijasToggle_ec">
+                <p>
+                    <button id="idtgl_@collapseId"
+                            class="btn btn-primary"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="@collapseId"
+                            aria-expanded="false"
+                            aria-controls="@collapseId"
+                            onclick="toggleCollapse('@collapseId')">
+                        Ver detalle S. fusionadas
+                    </button>
+                </p>
+                <div class="collapse" id="@collapseId">
+                    <div class="card card-body">
+                        <!-- Contenedor de tarjetas móviles con scroll en caso de desbordamiento -->
+                        <div class="sHijasMobile" style="overflow-y:auto; max-height: 400px;">
+                            <div class="row">
+                                @foreach (var item in response_hijas)
+                                {
+                                    var academic_session_m = GetNameFromValue(@item.academic_session);
+                                    <div class="col-12 mb-4">
+                                        <div class="card sHijas">
+                                            <div class="card-header" style="background: #207fe9;"></div>
+                                            <div class="card-body">
+                                                <h6>Año/Semestre: <strong>@item.sAnio/@item.sSemestre</strong> </h6>
+                                                <h6>Sección: <strong>@item.sSeccion</strong> </h6>
+                                                <h6>Id Curso: <strong>@item.sIdCurso</strong> </h6>
+                                                <h6>Id Turno: <strong>@academic_session_m</strong> </h6>
+                                                <h6>Modalidad: <strong>@item.modalidad</strong> </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Tabla con scroll horizontal en pantallas pequeñas -->
+                        <div class="sHijasPC" id="hijasContent" style="overflow-x: auto;">
+                            <table id="lstSeccionesFusionadas" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        @foreach (var head in headers)
+                                        {
+                                            <th class="bg-header-table" style="padding: 5px; color: white; margin: 10px;border: 1px solid white;">@head</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in response_hijas)
+                                    {
+                                        var academic_session_xl = GetNameFromValue(@item.academic_session);
+                                        <tr>
+                                            <td>@item.sAnio</td>
+                                            <td>@item.sSemestre</td>
+                                            <td>@item.sSeccion</td>
+                                            <td>@item.sIdCurso</td>
+                                            <td>@academic_session_xl</td>
+                                            <td>@item.modalidad</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (sessions.Count > 0)
+        {
+            @foreach (var session in sessions)
+            {
+                <div class="col-12 px-2 mb-4">
+                    @* <div class="card h-100"> *@
+                    <div class="card">
+                        <div class="card-header" style="cursor: pointer; text-align: center; padding: 0.2rem 0.2rem;">
+                            <!-- Cursor pointer para todo el encabezado -->
+                            <h5 class="card-title fw-bold m-0">
+                                <i class="fas fa-calendar-alt me-2"></i> <!-- Icono de calendario -->
+                                @session.Month
+                            </h5>
+                        </div>
+                        <div class="card-body" style="display: none;">
+                            <!-- Inicialmente oculto -->
+                            <div class="row mt-3">
+                                @foreach (var date in session.dates)
+                                {
+                                    // Formato de fecha y hora
+                                    DateTime fecha = DateTime.Parse(date.date);
+                                    string fechaFormateada = fecha.ToString("dddd, dd 'de' MMMM 'de' yyyy"); // Ejemplo: "viernes, 23 de septiembre de 2023"
+                                    string horaIngreso = date.horaIngreso;
+                                    string horaSalida = date.horaSalida;
+                                    var details_date = date.secciones_info;
+                                    string serialize = JsonConvert.SerializeObject(details_date);
+                                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(serialize);
+                                    string sectionsEncoded = Convert.ToBase64String(bytes);
+                                    
+
+                                    <div class="col-12 col-sm-6 mb-2">
+                                        <a class="sessions btn btn-outline-primary h-100 w-100"
+                                           onclick="buscarParticipantes('@sAnio','@sSemestre'
+                                                ,'@sSeccion','@sIdCurso','@academic_session','@date.date','@sectionsEncoded')"
+                                           style="text-align: left;">
+                                            <span class="fecha">@fechaFormateada</span><br />
+                                            <span class="horas" style="font-weight: bold;">@horaIngreso - @horaSalida</span>
+                                        </a>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h4 class="fw-bold text-primary">No se encontraron sesiones programadas.</h4>
+        }
+    }
+    else if (statusCode == 407)
+    {
+        <h4 class="fw-bold text-danger">La sesión caducó </h4>
+        <p>Por favor inicie sesión nuevamente.</p>
+    }
+    
+
+}
+catch (Exception ex)
+{
+    var stackTrace = ViewData["StackTrace"] as string;
+
+    <h4 class="fw-bold text-danger">Se ha producido un error al cargar las sesiones </h4>
+    <p>Se ha producido un error al realizar la solicitud: @ex.Message</p>
+}
+
+
+
+<style>
+
+    .sessions:hover {
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .sessions:hover .fecha {
+        color: white;
+    }
+    .sessions {
+        white-space: normal;
+    }
+
+    .collapse {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+    }
+
+    .collapse.show {
+        max-height: 500px; /* Ajusta este valor según la altura esperada */
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('.card-header').click(function () {
+            $(this).next('.card-body').slideToggle(300); // Cambia el tiempo de animación aquí
+        });
+    });
+    function toggleCollapse(collapseId) {
+        var collapseElement = document.getElementById(collapseId);
+
+        if (collapseElement.classList.contains("show")) {
+            collapseElement.classList.remove("show");
+        } else {
+            collapseElement.classList.add("show");
+        }
+    }
+</script>

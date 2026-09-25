@@ -1,0 +1,290 @@
+﻿@using SAD_BE;
+@{
+
+    // List<Sesiones_AsistenciaBE> lst = ViewBag.SesionesAsistibles;
+    List<Sesiones_AsistenciaBE> lst = ViewData["SesionesAsistibles"] as List<Sesiones_AsistenciaBE>;
+
+    Sesiones_AsistenciaBE f_Item = lst[0];
+
+    string firstIdButton = $"v-pills-{f_Item.sAnio}-tab";
+    string firstIdPanel = $"v-pills-{f_Item.sAnio}";
+
+    const int max_cols = 12; 
+    var monthOrder = new List<string> { "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE",
+                                    "MAÑANA", "TAR", "NOC"};
+}
+<style>
+    .xd {
+        width: 100%;
+    }
+
+    .fecha {
+        color: #007bff; /* Color azul para la fecha */
+    }
+
+    .horas {
+        color: #dc3545; /* Color rojo para las horas */
+    }
+
+    .nav-tabs-anios .nav-link {
+        border-radius: 10px 10px 0 0;
+        padding: 0.2rem 1rem !important;
+        margin-right: 5px; /* Añade un pequeño espacio entre pestañas */
+        color: #007bff;
+        border: 1px solid #ddd;
+        background-color: #f8f9fa;
+    }
+
+    /* Estilo para la pestaña activa */
+    .nav-tabs-anios .nav-link.active {
+        background-color: #007bff; /* Color de fondo para la pestaña activa */
+        color: white; /* Color del texto */
+        border-color: #007bff; /* Color del borde */
+    }
+
+    .nav-tabs-sem {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+    }
+
+/* Estilo general para cada pestaña */
+.nav-tabs-sem .nav-link {
+    border-radius: 10px;
+    padding: 0.2rem 1rem !important;
+    margin-right: 5px;
+    color: #5b5b5b;
+    font-size: 1.5rem;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15); /* Sombra para efecto de elevación */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transición para suavizar cambios */
+}
+
+/* Efecto al pasar el cursor por la pestaña */
+.nav-tabs-sem .nav-link:hover {
+    background-color: #e2e6ea; /* Color más oscuro para el hover */
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+}
+
+/* Estilo para la pestaña activa */
+.nav-tabs-sem .nav-link.active {
+    background-color: #007bff; /* Fondo oscuro para destacar la pestaña activa */
+    color: white;
+    border-color: #007bff;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25); /* Sombra más fuerte en la pestaña activa */
+}
+
+/* Ajustes para dispositivos móviles */
+@@media (max-width: 768px) {
+    .nav-tabs-sem .nav-link {
+        font-size: 1rem;
+        padding: 0.2rem 0.8rem !important;
+    }
+}
+
+    .tab-pane-anios {
+        padding: 10px;
+        background: #e5e5e5;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .tab-pane-sem {
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 15px;
+    }
+
+    .text-orange {
+        color: #d77e0a; /* O el color hexadecimal deseado */
+    }
+</style>
+@if (lst.Count() > 0) //me aseguro de q no sea null en el controller
+{
+
+    <div class="card col-md-12">
+            <div class="card-header" hidden>
+                <h4>Seleccione la Sección</h4>
+            </div>
+            <div class="card-body">
+                <!-- Tabs for Years -->
+            <ul class="nav nav-tabs nav-tabs-anios" id="v-pills-tab" role="tablist">
+                    @foreach (var anio_sesion in lst)
+                    {
+                        string idButton = $"{anio_sesion.sAnio}";
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link custom-tab" id="v-pills-@idButton-tab" data-bs-toggle="tab" data-bs-target="#v-pills-@idButton" type="button" role="tab" aria-controls="v-pills-@idButton" aria-selected="true">
+                                @idButton
+                            </button>
+                        </li>
+                    }
+                </ul>
+
+                <!-- Content for Each Year -->
+                <div class="tab-content" id="v-pills-tabContent">
+
+                <div class="row d-flex justify-content-end mt-2 mb-2 px-3">
+                    <button onclick="leyendaSecciones()"
+                            class="btn btn-sm btn-success shake_element col-1" title="Más información acerca de las secciones">
+                        <i class="fas fa-info"></i>
+                    </button>
+                </div>
+                    @foreach (var anioSession in lst)
+                    {
+                        string idButton = $"{anioSession.sAnio}";
+                        var sSemestres = anioSession.details.Select(d => d.sSemestre).Distinct().OrderBy(s => s).ToList();
+                    
+                    <div class="tab-pane tab-pane-anios fade" id="v-pills-@idButton" role="tabpanel" aria-labelledby="v-pills-@idButton-tab">
+                            <!-- Tabs for Semesters -->
+                        <ul class="nav nav-tabs nav-tabs-sem mb-2" id="semestre-tab-@idButton" role="tablist">
+                                @foreach (var semestre in sSemestres)
+                                {
+                                    string semestreId = $"{anioSession.sAnio}-{semestre}";
+                                    <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="semestre-@semestreId-tab" data-bs-toggle="tab" data-bs-target="#semestre-@semestreId" type="button" role="tab" aria-controls="semestre-@semestreId" aria-selected="false" onclick="hideMessage(@anioSession.sAnio)">
+                                            @semestre
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+
+                            <!-- Content for Each Semester -->
+                            <div class="tab-content" id="semestre-tabContent-@idButton">
+                                <!-- Message to display initially -->
+                            <div id="selectMessage-@anioSession.sAnio" class="text-center my-2" style="padding:15px;">
+                                    <h3 style="color:gray">Seleccionar un semestre</h3>
+                                </div>
+                            
+                                @foreach (var semestre in sSemestres)
+                                {
+                                    string semestreId = $"{anioSession.sAnio}-{semestre}";
+                                    @* var sTurnos = anioSession.details.Where(d => d.sSemestre == semestre).Select(t => t.academic_session).Distinct().OrderBy(tt => tt).ToList(); *@
+                                var sTurnos = anioSession.details
+                                .Where(d => d.sSemestre == semestre)
+                                .Select(t => t.academic_session)
+                                .Distinct()
+                                .OrderBy(tt =>
+                                {
+                                    int index = monthOrder.IndexOf(tt);
+                                    return index == -1 ? int.MaxValue : index; // Coloca los elementos fuera del scope al final
+                                })
+                                .ToList();
+
+
+                                <div class="tab-pane tab-pane-sem fade" id="semestre-@semestreId" role="tabpanel" aria-labelledby="semestre-@semestreId-tab">
+                                        <div class="row">
+                                            @foreach (var turno in sTurnos)
+                                            {
+                                                var turnoList = anioSession.details.Where(ds => ds.sSemestre == semestre && ds.academic_session == turno).ToList();
+                                                // Calcular la clase de columna en función del número de elementos en turnoList
+                                            string colClass = sTurnos.Count() == 1 ? "col-sm-12" : (sTurnos.Count() == 3 ? "col-sm-4" : "col-sm-6");
+                                            if (turnoList.Count() != 0)
+                                                {
+                                                
+
+                                                <div class="@colClass col-12">
+                                                        <div>
+                                                            <h5>
+                                                                @* @turno *@
+                                                                <!-- Mostrar ícono según el turno -->
+                                                                @if (turno == "NOC")
+                                                                {
+                                                                    <strong>NOCHE</strong>
+                                                                    <i class="fas fa-moon ms-2 text-muted" title="Turno Noche"></i>
+                                                                }
+                                                                else if (turno == "MAÑANA")
+                                                                {
+                                                                    <strong>MAÑANA</strong>
+                                                                    <i class="fas fa-sun ms-2 text-warning" title="Turno Mañana"></i>
+                                                                }
+                                                                else if (turno == "TAR")
+                                                                {
+                                                                    <strong>TARDE</strong>
+                                                                    <i class="fas fa-sun ms-2 text-orange" title="Turno Tarde"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <strong>@turno</strong>
+                                                                }
+                                                            </h5>
+                                                        </div>
+                                                        <div class="row">
+                                                            @foreach (var detail in anioSession.details.Where(d => d.sSemestre == semestre && d.academic_session == turno))
+                                                            {
+                                                                <div class="col-md-12 col-sm-12 mb-3">
+                                                                    @{
+                                                                        string anio = anioSession.sAnio; //academic_year
+                                                                        string sSemestre = detail.sSemestre;//academic_term
+                                                                        string sSeccion = detail.sSeccion; //section
+                                                                        string sIdCurso = detail.sIdCurso; //event_id
+                                                                        string event_med_name = detail.event_med_name;//
+                                                                        string event_sub_type = detail.event_sub_type;//event_sub_type
+                                                                        string academic_session = detail.academic_session;//academic_session
+                                                                        bool esPadre = detail.esPadre;
+
+                                                                        string detailsss = $"sSeccion: {sSeccion} - sIdCurso: {sIdCurso}";
+
+                                                                        string rootclass = "btn btn-outline";
+                                                                        string classButon = esPadre == true ? $"{rootclass}-info fw-bold shake_element bw-2" : $"{rootclass}-primary";
+                                                                        string tooltipSH = esPadre == true ? "data-toggle='tooltip' data-placement='top' title='Sección fusionada'" : string.Empty;
+                                                                    }
+                                                                    <button class="@classButon xd" @Html.Raw(tooltipSH);
+                                                                            onclick="chargeECs('@anio','@sSemestre','@sSeccion','@sIdCurso','@event_med_name','@academic_session')">
+                                                                        <i class="fas fa-book"></i> <span class="mx-2">@detail.event_med_name</span>
+                                                                        <i class="fas fa-clipboard-list"></i> <span class="mx-2">@detail.event_sub_type</span>
+                                                                        <i class="fas fa-users"></i> <span class="mx-2">@detail.sSeccion | @detail.sIdCurso</span>
+                                                                    </button>
+                                                                    <div id="div_@sSeccion@sIdCurso" class="detail-view" style="display:none; background: gray; padding: 1rem 0;">
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    }
+                </div>
+
+
+
+
+            </div>
+            
+            <div class="card-footer" hidden>
+                <button class="btn btn-primary">Continuar</button>
+            </div>
+
+        </div>
+
+
+<script>
+    function hideMessage(anio) {
+        document.getElementById('selectMessage-' + anio).style.display = 'none';
+    }
+    function append_Child_Class() {
+        var tabElement = document.getElementById("@firstIdButton");
+        var fadeElement = document.getElementById("@firstIdPanel");
+        tabElement.classList.add("active");
+        fadeElement.classList.add("show", "active");
+        console.log("First element activated successfully")
+    }
+
+    append_Child_Class();
+
+</script>
+
+
+}
+else
+{
+
+<h4>La sesión caducó, por favor inicie sesión nuevamente.</h4>
+}
+

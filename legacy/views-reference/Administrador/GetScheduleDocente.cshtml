@@ -1,0 +1,218 @@
+﻿@using Microsoft.AspNetCore.Html;
+@using SAD.Extensions;
+@using System.Globalization;
+@using Newtonsoft.Json;
+@{
+    @using SAD_BE;
+    @model SAD.Models.ViewModelCalendarMessage;
+    Layout = null;
+
+    var schedule = Html.Raw(Json.Serialize(Model.CalendarHeads));
+    int contador = 1; // Inicializa el contador en 1
+    string current_date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+
+    string tokenSessionStorage = Guid.NewGuid().ToString();
+
+
+    // SAD_BE.BE_DOCENTE_SCHEDULE usuario = ViewBag.usuario as BE_DOCENTE_SCHEDULE;
+    SAD_BE.BE_DOCENTE_SCHEDULE usuario = ViewData["usuario"] as BE_DOCENTE_SCHEDULE;
+
+    string slug_auxiliar = $"{Context.Session.GetString("slug_aux")}" ?? "/";
+
+    if (!string.IsNullOrEmpty(slug_auxiliar))
+    {
+        slug_auxiliar = $"/{slug_auxiliar}";
+    }
+
+    if (usuario == null)
+    {
+        Console.WriteLine("Error en la obtencion de datos");
+        usuario = new BE_DOCENTE_SCHEDULE();
+    }
+
+    #region configuraciones para horario mobile
+
+    List<ViewModelCalendarMobile> mobile_schedule = Model.CalendarMobileHeads;
+    string content_mobille = JsonConvert.SerializeObject(mobile_schedule);
+
+    // Configura la cultura en español
+    var spanishCulture = new CultureInfo("es-ES");
+
+    // Agrupar por meses primero
+    var eventsByMonth = mobile_schedule
+        .GroupBy(item => new DateTime(DateTime.Parse(item.FechaSesión).Year, DateTime.Parse(item.FechaSesión).Month, 1))
+        .OrderBy(monthGroup => monthGroup.Key);
+
+    #endregion
+
+    #region nueva logica
+    var eventsByMonth_t = mobile_schedule
+    .GroupBy(item => new DateTime(DateTime.Parse(item.FechaSesión).Year, DateTime.Parse(item.FechaSesión).Month, 1))
+    .OrderBy(monthGroup => monthGroup.Key)
+    .Select(monthGroup => new
+    {
+        Month = monthGroup.Key,
+        Weeks = monthGroup
+            .GroupBy(item => DateTime.Parse(item.FechaSesión).StartOfWeek(DayOfWeek.Monday))
+            .OrderBy(weekGroup => weekGroup.Key)
+            .Select(weekGroup => new
+            {
+                StartOfWeek = weekGroup.Key,
+                Events = weekGroup.ToList()
+            })
+            .ToList()
+    })
+    .ToList();
+
+    var weeksJson = Json.Serialize(eventsByMonth_t);
+
+
+    #endregion
+
+    var calendarEl = Model.target; //trabajaremos en base a este contexto
+
+    string rutaHijas = Url.Action("getSectionsHijas", "Docente");
+
+    string context_anio = usuario.academic_year;
+    string context_semestre = usuario.academic_term;
+}
+
+@*VARIABLES OCULTOS*@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+<script>
+    var months = @Html.Raw(weeksJson);
+</script>
+@try
+{
+    @if (usuario != null && schedule != null)
+    {
+        <script>
+            var dataSchedule = @Html.Raw(Json.Serialize(Model.CalendarHeads));
+
+            @* console.log(@Json.Serialize(mobile_schedule)); *@
+        </script>
+
+        <!-- CONTAINER -->
+        <div class="main-container container-fluid mb-4">
+
+            <div class="row" id="elementPC">
+                <div class="col-md-12" id="calendariopc">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row">
+                                @if (Model.CalendarHeads.Count > 0)
+                                {
+                                    <div class="">
+                                        <div class="mb-3">
+                                            <label style="color:black;">@usuario.nombres <br /> Cod. @usuario.codAlumno</label>
+                                            <br>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="">
+                                        <div class="mb-3">
+                                            <h4 class="fw-bold">Usted no cuenta con sesiones programadas para el periodo @usuario.academic_year@usuario.academic_term.</h4>
+                                            <br>
+                                        </div>
+                                    </div>
+                                }
+
+
+                                <div class="col-md-12 col-xl-12">
+                                    <h3 class="d-flex" style="color: #207fe9; font-size: 20px;align-items:center;font-weight:bold;">
+                                        Mi horario semanal @usuario.academic_year@usuario.academic_term
+                                    </h3>
+                                    <!--aqui se imprimirá el result del fullcallendar-->
+                                    @* <div id='calendar2'> *@
+                                    <div id='@calendarEl'>
+                                    </div>
+                                    <!---->
+                                </div>
+
+                            </div>
+                        </div>
+
+                        @if (!usuario.academic_term.Contains("ANUAL"))
+                        {
+                            <div class="card-footer">
+                                <div class="col-md-10 col-xl-12" style="padding-top: 20px;">
+                                    <button class="btn btn-lg btn-primary" style="background-color: #D2EDFF !important; border-color: #D2EDFF !important; color: #207FE9 !important; font-weight: bold;">Presencial</button>
+                                    <button class="btn btn-lg btn-primary" style="background-color: #f1fae0 !important; border-color: #f1fae0 !important; color: #45630c !important; font-weight: bold; ">Virtual</button>
+                                    <button class="btn btn-lg btn-primary" style="background-color: #d2acfa !important; border-color: #d2acfa !important; color: #483b57 !important; font-weight: bold; ">Asíncrono</button>
+                                    <button class="btn btn-lg btn-primary" style="background-color: #FFDFDF !important; border-color: #FFDFDF !important; color: #7C0000 !important; font-weight: bold; ">Híbrido</button>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Contenedor para las semanas -->
+            <div id="elementMobile">
+
+                <div id="week-tabs">
+                    @* @tokenSessionStorage *@
+                    <div id="header_mobile_@calendarEl"></div>
+                    <div class="week-navigation">
+                        <button id="prev-week"
+                                onclick="navigateWeek(-1, '@calendarEl','@context_anio','@context_semestre','@tokenSessionStorage','@rutaHijas')">
+
+                            <img src="../img/prev.png" width="40" height="40" style="cursor:pointer;">
+                        </button>
+
+                        <span id="week-label_@calendarEl"></span>
+
+                        <button id="next-week"
+                                onclick="navigateWeek(1,'@calendarEl','@context_anio','@context_semestre','@tokenSessionStorage','@rutaHijas')">
+                            <img src="../img/next.png" width="40" height="40" style="cursor:pointer;">
+                        </button>
+                    </div>
+
+                    <div id="week-content_@calendarEl">
+                        <!-- Aquí se cargará el contenido de la semana seleccionada -->
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <style>
+            @@font-face {
+                font-family: FuenteMuseoSans;
+                src: url(fonts/MuseoSans-300.otf)
+            }
+
+        </style>
+    }
+    else
+    {
+        <h4 class="fw-bold text-danger">Se ha producido un error al cargar el horario </h4>
+        <p id="errorTrace">
+            @Model.MessageStatus&nbsp;
+            Si el problema persiste, por favor ponerse en contacto con&nbsp;<strong class="fw-bold">servicedesk.ti@adexperu.org.pe</strong>
+        </p>
+    }
+}
+catch (Exception ex)
+{
+    <h4 class="fw-bold text-danger">Se ha producido un error inesperado</h4>
+    <p id="errorTrace">
+        Detalles del error: @ex.Message
+        <br />Si el problema persiste, por favor, póngase en contacto con&nbsp;
+        <strong class="fw-bold">servicedesk.ti@adexperu.org.pe</strong>
+    </p>
+}
+
+
+<script>
+    var weeks =  buildWeeks(months, '@tokenSessionStorage');
+    var currentWeekIndex = findCurrentWeekIndex(weeks, '@current_date');
+    loadWeekContent(currentWeekIndex, '@calendarEl', weeks, '@context_anio', '@context_semestre', '@rutaHijas');
+</script>

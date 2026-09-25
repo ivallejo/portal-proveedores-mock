@@ -1,0 +1,166 @@
+@{
+	ViewData["Title"] = "Reporte General de Tarifa de Docentes Concepto Extraordinario";
+	Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+	var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+	var estadosSolicitud = (IEnumerable<KeyValuePair<int, string>>)ViewBag.EstadoSolicitud;
+}
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="~/js/jqwidgets/jquery.mobile-1.4.5.min.css"> 
+<link rel="stylesheet" href="~/js/jqwidgets/jqx.base.css" type="text/css" />
+<style>
+	.custom-switch {
+		transform: scale(1.8);
+	}
+
+	.form-switch {
+		padding-left: 4em;
+	}
+	.input-group {
+		align-items: center;
+		height: 100%;
+	}
+</style>
+<div id="divContent">
+	<div class="row">
+		<div class="col-md-10">
+			<h3 class="fw-bold">
+				Reporte de Tarifas por Docentes Concepto Extraordinario
+			</h3>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-sm-12 col-md-5">
+			<div class="fw-bold">
+				Ingresa la información solicitada
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Organización:</span>
+				<select class="form-select" id="organizacion">
+					@foreach (var organizacion in organizaciones?.ToList())
+					{
+						<option value="@organizacion.Key">@organizacion.Value</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="col-md-3 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Periodo:</span>
+				<select class="form-select" id="periodo">
+				</select>
+			</div>
+		</div>
+		<div class="col-md-3 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Estado:</span>
+				<select class="form-select" id="estado">
+					@foreach (var estadoSol in estadosSolicitud?.ToList())
+					{
+						<option value="@estadoSol.Key">@estadoSol.Value</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2 mt-2">
+			<div class="input-group">
+				<div class="col-sm-6 col-md-6">
+					<span style="font-size:1rem;">Tarifa final:</span>
+				</div>
+				<div class="col-sm-6 col-md-6">
+					<div class="form-check form-switch">
+						<input class="form-check-input custom-switch" type="checkbox" role="switch" id="check-final" />
+					</div>
+				</div>
+			</div>
+			@* <div class="input-group">
+			<span class="input-group-text bg-white">Tarifa final:</span>
+			<div class="form-check form-switch">
+			<input class="form-check-input custom-switch" type="checkbox" role="switch" id="check-final" />
+			</div>
+			</div> *@
+		</div>
+		<div class="col-md-1 mt-2">
+			<button class="btn btn-primary form-control" id="btnBuscar">Buscar</button>
+		</div>
+	</div>
+	<div id="tabDocenteReporte" class="mt-4">
+		<ul>
+			<li><a href="#tbReporteGeneral">General</a></li>
+			<li><a href="#tbReporteEstadistico">Estadístico</a></li>
+		</ul>
+		<div id="tbReporteGeneral">
+			<div class="col-md-3 offset-md-9 mt-2">
+				<button class="btn btn-primary form-control" id="btnExportar"><i class="fas fa-file-excel"></i> Exportar</button>
+			</div>
+			<div class="card card-index mt-3 card-worklow">
+				<div class="card-body">
+					<div id="registroTarifa">
+						<div class="table-responsive table-responsive-workflow">
+							<table id="tarifaDocenteTable" class="table text-nowrap table-workflow" style="width:100%;">
+							</table>
+						</div>
+						<div id="wkTarifaDocenteCard" class="table-cards mt-2">
+							<div id="contentCards-tarifaDocente">
+							</div>
+							<div class="dataTables_paginate paging_simple_numbers">
+								<ul class="pagination" id="paginationCard">
+									<!-- Links de paginación se generarán aquí -->
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="tbReporteEstadistico" class="ui-grid-a my-breakpoint">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="col-sm-12 col-md-5">
+						<div class="fw-bold">
+							Gráfica de tarifas por docente
+						</div>
+					</div>
+					<span>
+						Esta gráfica lineal representa la cantidad de docentes asociados a cada nivel tarifario, permitiendo identificar tendencias o concentraciones según las distintas escalas de pago.
+					</span>
+				</div>
+				<div class="ui-block-a mt-2" >
+					<div id='jqxChart' style="width:100%; height:400px;">
+					</div>
+				</div>
+			</div>
+			<div class="row mt-4">
+				<div class="col-md-12">
+					<div class="col-sm-12 col-md-5">
+						<div class="fw-bold">
+							Gráfica de porcentaje según montos tarifarios
+						</div>
+					</div>
+					<span>
+						Este gráfico de tipo pie muestra cómo se distribuyen los diferentes montos tarifarios en términos porcentuales, permitiendo visualizar el peso relativo de cada categoría dentro del total.
+					</span>
+				</div>
+				<div class="ui-block-b card card-index mt-2 card-worklow">
+					<div id='chartContainer' style="width:100%; height: 400px;">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@section Scripts {
+	<script src="~/js/jqwidgets/jqxcore.js" asp-append-version="true"></script>
+	<script src="~/js/jqwidgets/jqxdraw.js" asp-append-version="true"></script>
+	<script src="~/js/jqwidgets/jqxchart.core.js" asp-append-version="true"></script>
+	<script src="~/js/jqwidgets/jqxdata.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/tarifa-docente-concepto-extraordinario-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+	@* <script src="~/js/workflow/service/periodo-academico-service.js" asp-append-version="true"></script> *@
+	<script src="~/js/workflow/tarifa-docente-concepto-extraordinario/tarifa-docente-concepto-extraordinario-repo-general-index.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/tarifa-docente-concepto-extraordinario/tarifa-docente-concepto-extraordinario-repo-estadistico-index.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

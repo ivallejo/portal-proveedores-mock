@@ -1,0 +1,283 @@
+﻿
+
+@{
+    // ViewData["Title"] = "Registro Asistencia";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+    List<string> headers = new List<string> {
+        "ID",
+        "FECHA DE SESIÓN",
+        "CURSO",
+        "AULA",
+        "HORARIO",
+        "MARCACIÓN",
+        "ASISTENCIA","JUSTIFICACIÓN"
+    };
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+    /* Estilo para mostrar Marcación y Tardanza en el mismo nivel */
+    .marcacion-container, .tardanza-container {
+        display: flex;
+        justify-content: space-between; /* Separar el título y el contenido */
+        align-items: start; /* Alinear verticalmente al centro */
+        margin-bottom: 10px; /* Añadir espacio entre líneas */
+    }
+
+    .marcacion-container strong, .tardanza-container strong {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .marcacion, .tardanza {
+        font-size: 1rem;
+        color: #666;
+        text-align: right; /* Alinear el contenido a la derecha */
+    }
+
+    .tardanza-sin {
+        background-color: rgb(20 97 43 / 63%);
+        padding: 1px 5px;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .tardanza-min {
+        background-color: rgba(255, 0, 0, 0.56);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: white;
+    }
+
+    /* Reduce el tamaño de letra del título */
+    .small-title {
+        font-size: 1rem; /* Ajusta según el tamaño deseado */
+        font-weight: normal;
+    }
+
+    .bg-ultimasolicitud {
+        background-color: #D1E7DD;
+    }
+
+    tr.bg-ultimasolicitud > td {
+        background-color: #D1E7DD;
+    }
+</style>
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-calendar-alt title-icono"></i>
+        @ViewData["Title"]
+    </h1>
+</div> *@
+
+
+<div id="cardAsistencias" class="card shadow-lg mt-4 rounded-3">
+    <div class="card-body">
+        <div class="text-center mb-2">
+            <span class="badge rounded-pill bg-ultimasolicitud">&nbsp;</span> &Uacute;ltima justificaci&oacute;n solicitada
+        </div>
+        <div id="asistenciaDocente">
+            <div class="table-responsive table-responsive-docente">
+                <table id="lstAsistencia" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                    <thead>
+                        <tr>
+                            @foreach (string header in headers)
+                            {
+                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">@header</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="asistenciasCard" class="table-cards">
+                <div id="contentCards-asistencias">
+                </div>
+                <div class="pagination">
+                    <!-- Links de paginación se generarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--modals asistencia-->
+<div class="modal fade" id="asistencia_modal" tabindex="-1" aria-labelledby="asistenciaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title small-title" id="asistenciaModalLabel">
+                    Curso-Seccion-Aula
+                </h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="idHidden" hidden>
+                    <label for="nIdSesion">nIdSesion</label>
+                    <input id="nIdSesion" readonly class="form-control" />
+
+                    <label for="dFechaSesion">dFechaSesion</label>
+                    <input id="dFechaSesion" readonly class="form-control" />
+
+
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="txtTema" class="col-form-label">Tema:</label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" class="form-control" id="txtTema" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+                <button type="button" onclick="marcarIngreso()" id="btnSendingreso" class="btn btn-sm btn-success">
+                    <i class="fas fa-sign-in-alt"></i> Marcar Ingreso
+                </button>
+                <button type="button" onclick="marcarSalida()" id="btnSendSalida" class="btn btn-sm btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Marcar Salida
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal justificacion-->
+<div class="modal fade" id="justificacion_modal" tabindex="-1" aria-labelledby="justificacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="justificacionModalLabel">
+                    Curso-Seccion-Aula
+                </h5>
+
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div id="idHiddenJustify" hidden>
+                            <label for="nIdSesionJusti">nIdSesion</label>
+                            <input id="nIdSesionJusti" readonly class="form-control" />
+
+                            <label for="fechaSesion">fechaSesion</label>
+                            <input id="fechaSesion" readonly class="form-control" />
+
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <span id="ContentPlaceHolder1_Label4" class="text-content-val" style="color:#207FE9;">1. Primero: Debe ingresar el tema de la clase a dictar.</span>
+                            <br>
+                            <span id="ContentPlaceHolder1_lblTemaJustificar" class="control-label">Tema : </span>
+                        </div>
+                        <div class="col-md-12">
+                            <input name="txtTemaJustificar" type="text" id="txtTemaJustificar" class="form-control">
+                            <span id="ContentPlaceHolder1_RegularExpressionValidator2" style="color:Red;visibility:hidden;">*Ingrese solo letras o números</span>
+                            <br>
+                        </div>
+                        <div class="col-md-12">
+                            <span id="ContentPlaceHolder1_Label5" class="text-content-val" style="color:#207FE9;">2. Segundo: Debe colocar la hora de inicio de la clase que está justificando.</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span id="ContentPlaceHolder1_label">Marcación de entrada:</span>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="datetimepicker4">
+
+                                <!--value marcacion entrada-->
+                                <input name="txtMarcacionEntrada" disabled type="text" id="txtMarcacionEntrada"  placeholder="hh:mm:ss" data-format="hh:mm:ss" readonly>
+
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="col-md-12">
+                            <span id="ContentPlaceHolder1_Label6" class="text-content-val" style="color:#207FE9;">3. Tercero: Debe colocar la hora del término de la clase que está justificando.</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span id="ContentPlaceHolder1_label7">Marcación de salida:</span>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="datetimepicker5">
+
+                                <!--value marcacion salida-->
+                                <input name="txtMarcacionSalida" disabled type="text" id="txtMarcacionSalida" placeholder="hh:mm:ss" data-format="hh:mm:ss" readonly>
+
+                            </div>
+
+                        </div>
+                        <br>
+                        <br>
+                        <div class="col-md-12">
+                            <span id="ContentPlaceHolder1_Label8" class="text-content-val" style="color:#207FE9;">4. Cuarto: Debe ingresar el motivo de la falta.</span>
+                            <br>
+                            <span id="ContentPlaceHolder1_Label9" class="control-label">Justificación:</span>
+                        </div>
+                        <div class="col-md-12">
+                            <textarea name="txtJustificacion" rows="2" cols="20" id="txtJustificacion" class="form-control"></textarea>
+                            <span id="ContentPlaceHolder1_RegularExpressionValidator3" style="color:Red;visibility:hidden;">*Ingrese solo letras o números</span>
+
+                        </div>
+                        <br>
+
+                        <div class="col-md-12">
+                            <span id="ContentPlaceHolder1_Label1" class="text-content-val" style="color:#207FE9;">5. Quinto: Adjuntar documento para justificar su inasistencia a clases.</span>
+                            <div class="">
+                                <input type="file" name="_FileUpload" id="fileUpload" class="filestyle" data-buttonname="btn-primary" style="width:300px;">
+                                <span id="ContentPlaceHolder1_UploadStatusLabel" style="font-size:Smaller;"></span>
+                            </div>
+                            <div class="form-inline">
+
+
+                                <span class="icon-span-filestyle glyphicon glyphicon-folder-open" style="color: white"></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="justificacion_asistencia()" id="btnSend_j" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-gray" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    
+    <script>
+        $(document).ready(function(){
+            consultarSesiones();
+        })
+    </script>
+
+    <script>
+        const requestSesiones = "@Url.Action("consultarSesiones","Docente")";
+        const requestMarcacionIngreso = "@Url.Action("marcacionAsistencia","Docente")";
+        const requestMarcacionSalida = "@Url.Action("marcacionSalida","Docente")";
+
+        const requestJustificacion = "@Url.Action("justificacion_click","Docente")";
+    </script>
+
+    <script src="~/js/Docente/RegistroAsistencia.js?v=@Guid.NewGuid().ToString();"></script>
+
+    
+
+}

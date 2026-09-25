@@ -1,0 +1,244 @@
+﻿@{
+    // ViewData["Title"] = "GestionarPeriodos";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        table.dataTable thead th {
+            white-space: nowrap;
+        }
+
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            padding: 0;
+        }
+    }
+
+</style>
+
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-hourglass-half"></i>
+        Gestionar Periodos
+    </h1>
+</div> *@
+@* <input value="@Url.Action("RegistrarPeriodo", "Administrador")" id="inputRegistrarPeriodo" hidden />
+<input value="@Url.Action("ActualizarPeriodo", "Administrador")" id="inputActualizarPeriodo" hidden />
+<input value="@Url.Action("ListarPeriodosSemestre", "Administrador")" id="inputListarPeriodoSemestre" hidden /> *@
+<input type="hidden" id="inputRegistrarRegistroBreak" value="@Url.Action("InsertarRegistroBreak", "Administrador")" />
+<input type="hidden" id="inputActualizarBreak" value="@Url.Action("ActualizarRegistroBreak", "Administrador")" />
+<input type="hidden" id="inputListarBreak" value="@Url.Action("ListarRegistroBreakPorId", "Administrador")" />
+<input type="hidden" id="inputActualizarEstadoRegistroBreak" value="@Url.Action("ActualizarEstadoRegistroBreak", "Administrador")" />
+
+<input type="hidden" id="inputObtenerAniosSesiones" value="@Url.Action("ObtenerAniosSesiones", "Administrador")" />
+<input type="hidden" id="inputObtenerSemestresPorAnio" value="@Url.Action("ObtenerSemestresPorAnio", "Administrador")" />
+<input type="hidden" id="inputObtenerTurnosPorAnioYSemestre" value="@Url.Action("ObtenerTurnosPorAnioYSemestre", "Administrador")" />
+
+
+<div class="card mt-4">
+    <div class="card-body">
+        <button class="btn btn-primary mt-4 mb-4" id="btnAgregarBreak" data-bs-toggle="modal" data-bs-target="#modalAgregarBreak">Agregar</button>
+
+        <div class="table-responsive">
+            <table class="table" id="tbRegistroBreak">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th style="border-radius: 12px;">Año académico</th>
+                        <th style="border-radius: 12px;">Término</th>
+                        <th style="border-radius: 12px;">Sesión</th>
+                        <th style="border-radius: 12px;">Condicional</th>
+                        <th style="border-radius: 12px;">Minuto programado</th>
+                        <th style="border-radius: 12px;">Descuento minuto</th>
+                        <th style="border-radius: 12px;">Estado</th>
+                        <th style="border-radius: 12px;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.AcademicYear</td>
+                            <td>@item.AcademicTerm</td>
+                            <td>@item.AcademicSession</td>
+                            <td>@item.Condicional</td>
+                            <td>@item.MinutoProgramado</td>
+                            <td>@item.DescuentoMinuto</td>
+                            <td>
+                                <div class="form-check form-switch d-flex align-items-center">
+                                    <input class="form-check-input cambiarEstadoRegistroBreak"
+                                           type="checkbox"
+                                           role="switch"
+                                           data-id="@item.IdRegistroBreak"
+                                           @(item.Estado == true ? "checked" : "") />
+                                    <span class="ms-2 fw-bold @(item.Estado == true ? "text-success" : "text-danger")">
+                                        @(item.Estado == true ? "Activo" : "Inactivo")
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="EditarBreak(@item.IdRegistroBreak)">Editar</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modalAgregarBreak" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarBreak" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Registro de Break</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Año académico</label>
+                    <select class="form-select" id="idAcademicYear">
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Término</label>
+                    <select class="form-select" id="idAcademicTerm">
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Sesión</label>
+                    <select class="form-select" id="idAcademicSession">
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Condicional</label>
+                    <select class="form-select" id="idCondicional">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="MAYOR">MAYOR</option>
+                        <option value="MENOR">MENOR</option>
+                        <option value="IGUAL">IGUAL</option>
+                        <option value="MAYOR O IGUAL">MAYOR O IGUAL</option>
+                        <option value="MENOR O IGUAL">MENOR O IGUAL</option>
+                    </select>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label">Minuto programado</label>
+                    <input type="text" class="form-control" id="idMinutoProgramado" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descuento minuto</label>
+                    <input type="text" class="form-control" id="idDescuentoMinuto" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" onclick="AgregarRegistroBreak()">Guardar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalActualizarBreak" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalActualizarBreakLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalActualizarBreakLabel">Actualizar Break</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="idActualizarBreakId" />
+
+                <div class="mb-3">
+                    <label class="form-label">Año académico</label>
+                    <select class="form-select" id="idActualizarAcademicYear" disabled>
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Término</label>
+                    <select class="form-select" id="idActualizarAcademicTerm" disabled>
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Sesión</label>
+                    <select class="form-select" id="idActualizarAcademicSession" disabled>
+                        <option value="">-- Seleccionar --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Condicional</label>
+                    <select class="form-select" id="idActualizarCondicional">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="MAYOR">MAYOR</option>
+                        <option value="MENOR">MENOR</option>
+                        <option value="IGUAL">IGUAL</option>
+                        <option value="MAYOR O IGUAL">MAYOR O IGUAL</option>
+                        <option value="MENOR O IGUAL">MENOR O IGUAL</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Minuto programado</label>
+                    <input type="text" class="form-control" id="idActualizarMinutoProgramado" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descuento minuto</label>
+                    <input type="text" class="form-control" id="idActualizarDescuentoMinuto" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+              @*   <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="idActualizarEstado">
+                        <label class="form-check-label" for="idActualizarEstado" id="lblActualizarEstado">Inactivo</label>
+                    </div>
+                </div> *@
+
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" onclick="ActualizarRegistroBreak()">Guardar cambios</button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/GestionarBreak.js?v=@Guid.NewGuid().ToString();"></script>
+}

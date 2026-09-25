@@ -1,0 +1,374 @@
+﻿@{
+    ViewData["Title"] = "Horario Administrador";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+@using Newtonsoft.Json;
+@using SAD_BE;
+@model List<ViewModelCalendarMessage>
+@{
+    var print_target = Guid.NewGuid();   
+}
+<script>
+    var organizations = @Html.Raw(JsonConvert.SerializeObject(Model));
+</script>
+
+<link href="~/css/site.css" rel="stylesheet" />
+<script src="~/js/index.global.js"></script>
+
+<style>
+    /* Estilos personalizados para el input */
+    #codDocenteInput {
+        padding: 0.8rem 1.2rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        width: clamp( 250px, 300px, 400px);
+        transition: border-color 0.3s ease;
+        /* height: 40px; */
+    }
+
+    #codDocenteInput:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Estilos personalizados para el botón */
+    #cargarHorarioBtn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        /* margin-top: 20px; */
+    }
+
+  
+
+</style>
+
+<div class="container-fluid mt-4" style="display: grid; align-content: center;">
+    <div class="row">
+            
+       @*         <input type="text"
+       id="codDocenteInput"
+       class="form-control"
+       placeholder="Ingrese código de docente"
+       value="@ViewBag.CodDocente"/>
+        <div class="col-md-2 aux2">
+            <button id="cargarHorarioBtn" class="btn btn-primary">Cargar Horario</button>
+        </div> *@
+
+        <div class="input-container">
+            <input type="text"
+                   id="codDocenteInput"
+                   placeholder="Ingrese código de docente"
+                   value="@ViewBag.CodDocente" style="width:100%;"/>
+        </div>
+        <div class="button-container aux2" style="margin-top:8px">
+            <button id="cargarHorarioBtn" class="btn btn-primary">Cargar Horario</button>
+        </div>
+        
+
+         
+
+        <div class="row mb-0 mt-2">
+            <div class="col-md-12">
+            <div id="docenteInfo" class="alert alert-info" style="display: none;">
+            <h5>Datos del Docente</h5>
+                <p class="mb-0">
+                <strong>Nombre:</strong> <span id="docenteNombre"></span><br>
+                <strong>Código:</strong> <span id="docenteCodigo"></span><br>
+                <strong>DNI:</strong> <span id="docenteDNI"></span>
+                </p>
+            </div>
+            </div>
+            </div> 
+    </div>
+
+    @if (!string.IsNullOrEmpty(Context.Session.GetString("CurrentCodDocente")))
+    {
+        @if (Model?.Count() > 0)
+        {
+            <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist" style="margin-bottom: 0px;">
+                @foreach (var index in Model)
+                {
+                    var identifier = $"tab-{index.Anio}{index.Semestre}";
+                    var value = $"{index.Anio}-{index.Semestre}";
+
+                    <button class="nav-link" id="@identifier-tab" data-bs-toggle="tab" data-bs-target="#@identifier"
+                            type="button" role="tab" aria-controls="@identifier" aria-selected="true">
+                        @value
+                    </button>
+                }
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="container py-5">
+                    <div class="text-center p-4 bg-light border rounded shadow-sm">
+                        <h3 class="fw-bold text-primary mb-3">Seleccione año y semestre</h3>
+                        <p class="text-muted">Para visualizar su horario respectivo, seleccione el año y el semestre que desea ver.</p>
+                    </div>
+                </div>
+            </div>
+
+            @foreach (var index in Model)
+            {
+                var identifier = $"tab-{index.Anio}{index.Semestre}";
+                var value = $"{index.Anio}-{index.Semestre}";
+                var id_element = $"result{index.Anio}{index.Semestre}";
+
+                <div class="tab-pane fade mt-4" id="@identifier" role="tabpanel" aria-labelledby="@identifier-tab">
+                    <div id="idloadingHorario_@value" style="display:block;">
+                        <div class="container_l">
+                            <div class="loader_l">
+                                <div class="cube_l"></div>
+                                <div class="cube_l"></div>
+                                <div class="cube_l"></div>
+                                <div class="cube_l"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="@id_element">
+                        <!--aquí se imprime el horario, ahora bajo un enfoque de tabs-->
+                    </div>
+
+                </div>
+            }
+        </div>
+        }
+        else
+        {
+            @* <div class="container py-4">
+                <div class="text-center p-4 bg-light border rounded shadow-sm">
+                    <h3 class="fw-bold text-primary mb-3">No se encontraron datos.</h3>
+                    <p class="text-muted">El docente @Context.Session.GetString("CurrentCodDocente") no cuenta con sesiones programadas.</p>
+                </div>
+            </div> *@
+
+            <div class="container py-4">
+    <div class="text-center p-4 bg-light border rounded shadow-sm">
+        <h3 class="fw-bold text-primary mb-3">No se encontraron datos.</h3>
+        <p class="text-muted">El docente @ViewBag.NombreDocente (@ViewBag.CodDocente) no cuenta con sesiones programadas.</p>
+    </div>
+</div>
+        }
+    }
+    else
+    {
+        @* <div class="container py-4">
+            <div class="text-center p-4 bg-light border rounded shadow-sm">
+                <h3 class="fw-bold text-primary mb-3">Ingrese un código de docente</h3>
+                <p class="text-muted">Por favor, ingrese un código de docente válido para visualizar el horario.</p>
+            </div>
+        </div> *@
+
+        <div class="container py-4">
+    <div class="text-center p-4 bg-light border rounded shadow-sm">
+        <h3 class="fw-bold text-primary mb-3">Ingrese un código de docente</h3>
+        <p class="text-muted">
+            @if (!string.IsNullOrEmpty(ViewBag.NombreDocente))
+            {
+                <span>Docente actual: @ViewBag.NombreDocente (@ViewBag.CodDocente)</span>
+            }
+            else
+            {
+                <span>Por favor, ingrese un código de docente válido para visualizar el horario.</span>
+            }
+        </p>
+    </div>
+</div>
+    }
+</div>
+
+
+@section Scripts{
+    <script src="~/js/Admin/admin_docente_calendar.js?v=1.4.0"></script>
+
+    <!--functions para la carga de horario-->
+    <!--OK_-->
+    <script>
+        const getSchedule = "@Url.Action("GetScheduleDocente", "Administrador")"
+        const getSchedule_data = "@Url.Action("GetScheduleData", "Administrador")"
+        const searchChildSections = "@Url.Action("GetSeccionesHijasDocente", "Administrador")";
+    </script>
+
+    <script>
+        $(document).ready(async function () {
+            for (var item of organizations) {
+                var random = Math.floor(Math.random() * 2024);
+                var anio = item.Anio;
+                var semestre = item.Semestre;
+                var target = "#result" + anio + semestre;
+                var print_target = anio + semestre + random;
+                // var print_target = '@print_target';
+                var loaderId = "idloadingHorario_" + anio + '-' + semestre;
+
+                try {
+                    showModalLoader();
+                    await cargarhorariopost(target, anio, semestre, print_target, loaderId); // Esperar a que termine antes de continuar
+                } catch (error) {
+                    console.error("Error al cargar horario:", error);
+                }
+            }
+        });
+
+
+
+    </script>
+
+    <script>
+        // Configurar código inicial
+        $(document).ready(function() {
+            // Forzar recarga limpia al volver
+            if(performance.navigation.type === 2){
+                sessionStorage.removeItem('reloading');
+                location.reload();
+            }
+            
+            // Manejar botón de carga
+            $('#cargarHorarioBtn').click(function () {
+                const codDocente = $('#codDocenteInput').val();
+                if(!codDocente) {
+                    alert('Por favor ingrese un código de docente');
+                    return;
+                }
+                
+                $.post('@Url.Action("SetDocenteSession", "Administrador")', 
+                    { codDocente: codDocente }, 
+                    function() {
+                        sessionStorage.setItem('reloading', 'true');
+                        location.reload();
+                    }
+                );
+            });
+        });
+    </script>
+
+    <script>
+        // Limpiar sesión al recargar
+        window.onbeforeunload = function() {
+            sessionStorage.removeItem('reloading');
+        }
+    </script>
+
+    <script>
+        // Configurar código inicial
+$(document).ready(function() {
+    // Cargar datos iniciales si existen en sesión
+    const currentCodDocente = '@Context.Session.GetString("CurrentCodDocente")';
+    if (currentCodDocente) {
+        cargarDatosDocente(currentCodDocente);
+    }
+
+    // Manejar botón de carga
+    $('#cargarHorarioBtn').click(async function() {
+        const codDocente = $('#codDocenteInput').val();
+        if (!codDocente) {
+            alert('Por favor ingrese un código de docente');
+            return;
+        }
+        
+        try {
+            const response = await $.post('@Url.Action("SetDocenteSession", "Administrador")', { 
+                codDocente: codDocente 
+            });
+
+            if (response.success) {
+                // Actualizar UI sin recargar
+                $('#docenteNombre').text(response.nombre);
+                $('#docenteCodigo').text(response.codigo);
+                $('#docenteDNI').text(response.dni);
+                $('#docenteInfo').fadeIn();
+                
+                // Recargar solo la sección del horario
+                await recargarHorario();
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    });
+});
+
+async function recargarHorario() {
+    try {
+        // Limpiar contenido previo
+        $('#nav-tab, #nav-tabContent').empty();
+        
+        // Obtener y renderizar nuevo horario
+        const response = await $.get('@Url.Action("DocenteHorario", "Administrador")');
+        $('#nav-tabContent').html($(response).find('#nav-tabContent').html());
+        $('#nav-tab').html($(response).find('#nav-tab').html());
+        
+        // Re-inicializar componentes si es necesario
+    } catch (error) {
+        console.error("Error al recargar horario:", error);
+    }
+}
+
+async function cargarDatosDocente(codDocente) {
+    try {
+        const response = await $.get('@Url.Action("GetDatosDocente", "Administrador")', {
+            codDocente: codDocente
+        });
+        
+        $('#docenteNombre').text(response.nombre);
+        $('#docenteCodigo').text(response.codigo);
+        $('#docenteDNI').text(response.dni);
+        $('#docenteInfo').fadeIn();
+    } catch (error) {
+        console.error("Error cargando datos docente:", error);
+    }
+}
+    </script>
+
+    <script>
+    $("#codDocenteInput").autocomplete({
+    source: function (request, response) {
+        $.ajax({
+            url: 'ListarDocenteCodeNameCode',
+            method: "GET",
+            data: { filter: request.term },
+            success: function (data) {
+                if (data.success) {
+                    const sugerencias = data.resultado.map(docente => ({
+                        label: docente.nameCodeDocente, // Muestra el nombre + código
+                        value: docente.codeDocente // Valor real a enviar (código)
+                    }));
+                    response(sugerencias);
+                } else {
+                    console.error(data.resultado);
+                    response([]);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                response([]);
+            }
+        });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+        event.preventDefault();
+        $(this).val(ui.item.value); // Establece el valor del input como el código
+        // Alternativa si quieres mostrar el nombre pero guardar el código:
+        // $(this).val(ui.item.label);
+        // $("#codDocenteHidden").val(ui.item.value);
+    },
+    focus: function(event, ui) {
+        event.preventDefault();
+        $(this).val(ui.item.label); // Muestra el nombre completo al navegar
+    }
+});
+    </script>
+
+}

@@ -1,0 +1,113 @@
+﻿
+@{
+    // ViewData["Title"] = "GestionarFeriados";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+}
+
+<link href="~/css/site.css" rel="stylesheet" />
+<script src="~/js/index.global.js"></script>
+
+<input value="@Url.Action("ActualizarFeriados","Administrador")" id="inputActualizarFeriados" hidden />
+<input value="@Url.Action("EliminarFeriado","Administrador")" id="inputDesabilitarEvento" hidden />
+
+<style>
+    #calendar {
+        max-width: 100%; /* Ajusta el ancho */
+        height: 50%; /* Ajusta la altura si es necesario */
+        margin: 0 auto; /* Centrar el calendario horizontalmente */
+    }
+
+    /* Clase para pintar el fondo de los eventos y centrar el texto */
+    .fc-bg-event {
+        background-color: red !important;
+        border-color: red !important;
+        color: white !important; /* Color del texto en blanco */
+        text-align: center !important; /* Centrar el texto */
+        vertical-align: middle; /* Alinear verticalmente */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #calendar {
+        max-width: 100%;    /* Asegura que el calendario no se salga del contenedor */
+        margin: 0 auto;     /* Centra el calendario */
+        padding: 10px;      /* Añade un poco de padding para dispositivos pequeños */
+    }
+
+    @@media (max-width: 768px) {
+        #calendar {
+            font-size: 12px; /* Reducir el tamaño de fuente en pantallas pequeñas */
+        }
+        .fc .fc-toolbar-title {
+            font-size: 12px;
+        }
+
+        .container-fluid {
+            max-width: 100%;
+            padding: 0;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        #calendar {
+            font-size: 10px; /* Reducir aún más en dispositivos muy pequeños */
+        }
+    }
+
+    .fc-toolbar-title{
+        background: #207fe9;
+        border-radius: 8px;
+        color: white;
+        padding: 4px;
+    }
+</style>
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-sun"></i>
+        Gestionar Feriados
+    </h1>
+</div> *@
+
+<input hidden value='@TempData["eventosFeriadosJson"]' id="eventosFeriadosJson" />
+
+<div class="container-fluid mt-4">
+    <div id="calendar"></div>
+</div>
+
+<!-- Modal personalizado -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">Agregar Feriado</h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+              
+                    <div class="mb-3">
+                        <label for="eventTitle" class="form-label">Motivo</label>
+                        <input type="text" class="form-control" id="motivoEvento" placeholder="Ingresa el motivo">
+                    </div>
+                    <input type="text" class="form-control" id="eventStart" placeholder="Ingresa el motivo" readonly>
+                    
+              
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="saveEvent" class="btn btn-primary" onclick="desactivarEvento()">Desactivar Feriado</button>
+                <button type="button" id="saveEvent" class="btn btn-primary" onclick="guardarEvento()">Guardar Feriado</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+
+    <script src="~/js/GestionarFeriados.js?v=@Guid.NewGuid().ToString();"></script>
+
+}

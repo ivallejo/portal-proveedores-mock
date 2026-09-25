@@ -1,0 +1,56 @@
+<form autocomplete="off" id="frmTarifaDocente">
+	<div class="offcanvas offcanvas-end offcanvas-custom" id="tarifaDocenteModal" aria-labelledby="tarifaDocenteModalLabel" data-bs-backdrop="true">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title fw-bold" id="tarifaDocenteModalTitulo">Detalle de Tarifas por Docentes Concepto Extraordinario</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body d-flex flex-column">
+			<div class="row">
+				<div class="col-md-12 mt-2">
+					<div class="form-floating">
+						<input type="text" id="organizacion" class="form-control" placeholder="Organizacion" disabled>
+						<label for="organizacion">Organizacion</label>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 mt-2">
+					<div class="form-floating">
+						<input type="text" id="periodo" class="form-control" placeholder="Periodo" disabled>
+						<label for="periodo">Periodo</label>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 mt-5"><h6 class="fw-bold title-seccion">Datos de Tarifas</h6></div>
+			</div>
+			<div id="wkTarifaDocenteContainer" class="card card-index mt-3 card-worklow">
+				<div class="card-body">
+					<div id="registroTarifaModal">
+						<div class="table-responsive table-responsive-workflow">
+							<table id="tarifaDocenteTableModal" class="table text-nowrap table-workflow" style="width:100%;">
+							</table>
+						</div>
+						<div id="wkTarifaDocenteCard" class="table-cards">
+							<div id="contentCards-tarifaDocente">
+							</div>
+							<div class="dataTables_paginate paging_simple_numbers">
+								<ul class="pagination" id="paginationCard">
+									<!-- Links de paginación se generarán aquí -->
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 mt-3"></div>
+				<div class="col-md-6 mt-3">
+					<a class="btn btn-primary form-control" id="btnExportar" href="" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script src="~/js/workflow/service/solicitud-service.js" asp-append-version="true"></script>
+<script src="~/js/workflow/tarifa-docente-concepto-extraordinario/tarifa-docente-concepto-extraordinario-repo-general-consulta.js" asp-append-version="true"></script>

@@ -1,0 +1,72 @@
+﻿@{
+	ViewData["Title"] = "Reporte de Pagos de Docentes";
+	Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+<link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
+<div id="divContent">
+    <form autocomplete="off" id="frmAccion">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="fw-bold">
+                    Registro
+                </h3>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-8 offset-md-2">
+                <div class="card card-index mt-4 card-worklow">
+                    <div class="card-body">
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="sel-organizacion" data-val="true" placeholder="" required>
+                                        @foreach (var organizacion in organizaciones?.ToList())
+                                        {
+                                            <option value="@organizacion.Key">@organizacion.Value</option>
+                                        }
+                                    </select>
+                                    <label for="sel-organizacion">Organizaci&oacute;n</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="input-rangofechas" data-val="true" placeholder="" />
+                                    <label for="input-rangofechas">Rango de fechas del reporte</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="sel-tipotarifa" data-val="true" placeholder="" required>
+                                        <option value="1">Por docente</option>
+                                        <option value="2">Por curso</option>
+                                    </select>
+                                    <label for="sel-tipotarifa">Tipo de tarifa</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4 offset-md-4">
+                        <button type="button" class="btn btn-primary form-control" id="btn-registrar">Registrar solicitud</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-daterangepicker/moment.min.js"></script>
+    <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+    <script src="~/js/workflow/service/reporte-pago-docente-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/reporte-pago-docente/reporte-pago-docente-index.js" asp-append-version="true"></script>
+}

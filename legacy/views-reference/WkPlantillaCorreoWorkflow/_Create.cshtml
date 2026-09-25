@@ -1,0 +1,126 @@
+﻿
+<link href="~/lib/summernote/summernote-bs5.min.css" rel="stylesheet" />
+<form autocomplete="off" id="frmAccion">
+	<div class="offcanvas offcanvas-end offcanvas-custom" id="nuevoCorreoModal" aria-labelledby="nuevoCorreoModalLabel" data-bs-backdrop="true">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title fw-bold" id="tituloNuevoCorreoModal">Nuevo Correo</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body d-flex flex-column">
+			<div class="row">
+				<div class="col-md-12 mb-2"><h6 class="fw-bold title-seccion">Datos generales</h6></div>
+				<div class="col-md-12 mt-2">
+					<div class="form-floating">
+						<select class="form-select" required id="IdWorkflow" name="IdWorkflow" data-val="true" placeholder="">
+						</select>
+						<label for="IdWorkflow">Nombre del flujo</label>
+					</div>
+				</div>
+				<div class="col-md-12 mt-4">
+					<div class="form-floating">
+						<select class="form-select" required id="IdEstadoSolicitud" name="IdEstadoSolicitud" data-val="true" placeholder=""></select>
+						<label for="IdEstadoSolicitud">Estado</label>
+					</div>
+				</div>
+				<div class="col-md-12 mt-4" id="divFaseWorkflow">
+					<div class="form-floating">
+						<select class="form-select" id="IdFaseWorkflow" name="IdFaseWorkflow" data-val="true" placeholder=""></select>
+						<label for="IdFaseWorkflow">Fase del flujo</label>
+					</div>
+				</div>
+				<div class="col-md-12 mt-4" id="divDestinatario">
+					<div class="form-floating">
+						<select class="form-select" id="Destinatario" required name="Destinatario" data-val="true" placeholder=""></select>
+						<label for="Workflow">Destinatarios</label>
+					</div>
+				</div>
+				<div class="col-md-12 mt-4">
+					<div class="form-floating">
+						<input type="text" id="Asunto" name="Asunto" data-val="true" placeholder="" required class="form-control" />
+						<label for="Workflow">Asunto</label>
+					</div>
+				</div>
+				<div class="col-md-12 mt-3">
+					<label class="">Estado</label>
+					<div class="mt-1">
+						<div class="form-check-inline">
+							<label class="container-radio">
+								Activo
+								<input type="radio" id="Activo" name="Estado" checked class="form-check-input" value="1" />
+								<span class="checkmark"></span>
+							</label>
+						</div>
+						<div class="form-check-inline">
+							<label class="container-radio">
+								Inactivo
+								<input type="radio" id="Inactivo" name="Estado" class="form-check-input" value="0" />
+								<span class="checkmark"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 mt-2">
+					<button type="button" class="btn btn-outline-primary" id="btnVerVariables" data-bs-toggle="modal" data-bs-target="#exampleModal">Ver variables</button>
+				</div>
+				<div class="col-md-12 mt-2">
+					<div class="alert alert-secondary alert-dismissible fade show d-none" role="alert" id="div-alert-variables">
+						<div><span class="fw-bold">GENERALES</span></div>
+						<p class="mb-0"><strong>{{idSolicitud}}</strong> Identificador único de la solicitud.</p>
+						<p class="mb-0"><strong>{{nombreDestinatario}}</strong> Nombre del destinatario.</p>
+						<p class="mb-0"><strong>{{nombreSolicitante}}</strong> Nombre del solicitante.</p>
+						<p class="mb-0"><strong>{{motivoRechazo}}</strong> Motivo del rechazo de la solicitud.</p>
+						<p class="mb-0"><strong>{{urlSolicitud}}</strong> Url para acceder a la aprobación de la solicitud.</p>
+						<div class="mt-3"><span class="fw-bold">JUSTIFICACION INASISTENCIA</span></div>
+						<p class="mb-0"><strong>{{nombreCurso}}</strong> Nombre del curso.</p>
+						<p class="mb-0"><strong>{{seccion}}</strong> Sección.</p>
+						<p class="mb-0"><strong>{{idSesion}}</strong> Identificador de la sesión.</p>
+						<p class="mb-0"><strong>{{fechaSesion}}</strong> Fecha de la sesión.</p>
+						<p class="mb-0"><strong>{{horaInicioSesion}}</strong> Hora de inicio de la sesión.</p>
+						<p class="mb-0"><strong>{{horaFinSesion}}</strong> Hora de fin de la sesión.</p>
+						<p class="mb-0"><strong>{{horaEntradaMarcacion}}</strong> Hora de entrada de la marcarción.</p>
+						<p class="mb-0"><strong>{{horaSalidaMarcacion}}</strong> Hora de salida de la marcarción.</p>
+						<p class="mb-0"><strong>{{motivoJustificacion}}</strong> Motivo de justificación de la solicitud.</p>
+						<div class="mt-3"><span class="fw-bold">TARIFA DE DOCENTE</span></div>
+						<p class="mb-0"><strong>{{nombreOrganizacion}}</strong> Nombre de la organización.</p>
+						<p class="mb-0"><strong>{{nombrePeriodoAcademico}}</strong> Nombre del periodo académico.</p>
+						<p class="mb-0"><strong>{{comentario}}</strong> Comentario.</p>
+						<p class="mb-0"><strong>{{lista.docentes}}</strong> Lista de elementos: codigoDocente, nombreDocente, tarifa.</p>
+						<p class="mb-0"><strong>{{lista.cursos}}</strong> Lista de elementos: codigoCurso, nombreCurso, tarifa.</p>
+						<p class="mb-0"><strong>{{lista.excepciones}}</strong> Lista de elementos: codigoDocente, nombreDocente, codigoCurso, nombreCurso, tarifa.</p>
+						<div class="mt-3"><span class="fw-bold">LIMITES DE MARCACI&Oacute;N</span></div>
+						<p class="mb-0"><strong>{{minutosAntesEntrada}}</strong> Minutos antes de entrada.</p>
+						<p class="mb-0"><strong>{{minutosDespuesEntrada}}</strong> Minutos despu&eacute;s de entrada.</p>
+						<p class="mb-0"><strong>{{minutosAntesSalida}}</strong> Minutos antes de salida.</p>
+						<p class="mb-0"><strong>{{minutosDespuesSalida}}</strong> Minutos despu&eacute;s de salida.</p>
+						<p class="mb-0"><strong>{{factor}}</strong> Factor (Global Learning).</p>
+						<p class="mb-0"><strong>{{factorTurnoManana}}</strong> Factor turno mañana.</p>
+						<p class="mb-0"><strong>{{factorTurnoTarde}}</strong> Factor turno tarde.</p>
+						<p class="mb-0"><strong>{{factorTurnoNoche}}</strong> Factor turno noche.</p>
+						<div class="mt-3"><span class="fw-bold">PAGO DOCENTE</span></div>
+						<p class="mb-0"><strong>{{nombreOrganizacion}}</strong> Nombre de la organización.</p>
+						<p class="mb-0"><strong>{{fechaInicio}}</strong> Fecha de Inicio (dd/mm/aaaa).</p>
+						<p class="mb-0"><strong>{{fechaFin}}</strong> Fecha Fin (dd/mm/aaaa).</p>
+						<p class="mb-0"><strong>{{nombreTipoTarifa}}</strong> Nombre de Tipo Tarifa.</p>
+						<p class="mb-0"><strong>{{montoTotal}}</strong> Monto promedio total estimado.</p>
+						<p class="mb-0"><strong>{{montoDiferencia}}</strong> Monto Diferencial.</p>
+						<button type="button" class="btn-close" aria-label="Close"></button>
+					</div>
+				</div>
+				<div class="col-md-12 mt-2">
+					<textarea id="Plantilla" name="Plantilla" data-val="false" class="form-control"></textarea>
+				</div>
+			</div>
+			<div class="row mt-auto">
+				<div class="col-md-6 mt-2">
+					<button type="button" class="btn btn-primary form-control" id="btnGuardar">Guardar</button>
+				</div>
+				<div class="col-md-6 mt-2">
+					<button type="button" class="btn btn-outline-primary form-control" data-bs-dismiss="offcanvas">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script src="~/lib/summernote/summernote-bs5.min.js"></script>
+<script src="~/lib/summernote/lang/summernote-es-es.min.js"></script>
+<script src="~/js/workflow/plantilla-correo-workflow/plantilla-correo-workflow-create.js" asp-append-version="true"></script>

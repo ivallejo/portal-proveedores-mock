@@ -1,0 +1,217 @@
+﻿@{
+    string fullName = Context.Session.GetString("FullName") ?? "";
+    string userName = Context.Session.GetString("UserName") ?? "";
+    string mail = Context.Session.GetString("Mail") ?? "";
+    string peopleId = Context.Session.GetString("PeopleID") ?? "";
+    string imgProfile = Context.Session.GetString("ImgProfile") ?? "";
+    
+    string prefixUrl = "../images";
+}
+<!doctype html>
+<html lang="es-es" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="description" content="Sistema de Asistencia Docente">
+    <meta name="author" content="ADEX CCAA">
+    <!-- FAVICON -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/images/brand/favicon.ico" />
+
+    <!-- TITLE -->
+    <title>@ViewData["Title"] - SAD </title>
+
+    <link rel="shortcut icon" href="../images/favicon.ico">
+
+    <link href="~/css/jquery-ui.css" rel="stylesheet" />
+    <link href="../css/portal.css?ver=4" rel="stylesheet"> <!--principal-->
+    <link href="../css/boxicons.css" rel="stylesheet">
+    <link href="~/css/roboto.css" rel="stylesheet" />
+@*    <link href="../lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">*@
+    <link id="style" href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js?v=4"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/brands.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="../js/Common.js?v=4"></script>
+    <!-- DATA TABLE JS-->
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="~/assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+    <script src="~/js/jquery-ui.js"></script>
+    <script src="~/js/index.global.js"></script>
+
+    <!-- Color Theme js -->
+    <script src="~/assets/js/themeColors.js"></script>
+
+    <!-- CUSTOM JS -->
+    @*<script src="~/assets/js/custom.js"></script>*@
+    <link id="theme" rel="stylesheet" type="text/css" media="all" href="~/assets/colors/color1.css" />
+
+    <!-- Yandex.Metrika counter -->
+
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+            m[i].l = 1 * new Date();
+            for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
+            (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(92322156, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/92322156" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+</head>
+
+<body class="app sidebar-mini ltr light-mode adex" id="bodyprincipal">
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <button type="button" id="sidebarCollapse"  class="close-menu btn">
+                <i class="fas fa-align-justify"></i>
+            </button>
+            <div class="brand">
+                <img src="../images/logo.png" class="d-none d-md-flex" alt="Logo ADEX Instituto">
+                <img src="../images/logo-white.png" class="d-flex d-md-none" alt="Logo ADEX Instituto">
+            </div>
+
+            <div class="col navbar-content" style="padding-right:6px !important;">
+                <div class="current-datetime">
+                    <bold>@DateTime.Now.ToLongDateString()</bold>
+                </div>
+                <div id="Div_ultnot" style="display:none"></div>
+                <div class="profile">
+                    <div class="avatar">
+                        <img id="foto" src="@(!string.IsNullOrEmpty(@imgProfile) ? @imgProfile : "../images/avatar.png")">
+                    </div>
+                    <div class="name">
+                        Hola, <bold>@fullName </bold><br>
+                        Cod. @peopleId
+
+                    </div>
+                </div>
+            </div>
+
+        </nav>
+    </header>
+
+
+    <!-- GLOBAL-LOADER -->
+    <div id="global-loader" hidden>
+        <img src="~/assets/images/loader.gif" width="150" class="loader-img" alt="Loader">
+    </div>
+    <!-- /GLOBAL-LOADER -->
+    
+    <!-- PAGE -->
+    <div class="wrapperui">
+		<nav id="sidebar">
+            <ul class="list-sidebar components" id="menu">
+                <div class="profile">
+                    <div class="name">
+                        Hola, <bold>@fullName </bold><br>
+                        Cod. @peopleId
+                    </div>
+                </div>
+
+                <li>
+                    <a href="@Url.Action("ConsultaMarcacion","Administrador")" class="active">
+                        <div class="sidebar_icon">
+                            <img src="@prefixUrl/ic_house_r.svg">
+                        </div>Consultar Sesion
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("SesionesTotales","Administrador")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Todas las Sesiones</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("ProgramarSesiones","Administrador")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Programa Sesiones</a>
+                </li>
+
+                <li class="slide">
+                    <hr style="opacity:1;" />
+                </li>
+
+                <li>
+                    <a href="@Url.Action("RegistrarAsistencia","Docente")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Registrar Asistencia</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("MisMarcaciones","Docente")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Mis Marcaciones</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("JustificarAsistencia","Docente")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Justificar Asistencias</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Justificaciones","Docente")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Justificaciones</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("ClasesVirtuales","Docente")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Clases Virtuales</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Horario","Docente")"><div class="sidebar_icon"><img src="@prefixUrl/ic_house_r.svg"></div>Cons. Horario</a>
+                </li>
+
+
+            </ul>
+
+			<div class="close-menu"> </div>
+
+		</nav>
+
+        <div id="content">
+            <div class="container-fluid">
+              <div id="search-result">					
+		      </div>
+                <div class="internal-content" id="div_render">
+                    @RenderBody()
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    
+
+    <!-- FULL CALENDAR JS -->
+    <script src='~/assets/plugins/fullcalendar/moment.min.js'></script>
+    <script src='~/assets/plugins/fullcalendar/fullcalendar.min.js'></script>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/utils/swalMaster.js"></script>
+
+    <script>
+        function toggleActiveClass() {
+            var sidebar = $('#sidebar');
+            if (sidebar.hasClass('active')) {
+                sidebar.removeClass('active');
+            } else {
+                sidebar.addClass('active');
+            }
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

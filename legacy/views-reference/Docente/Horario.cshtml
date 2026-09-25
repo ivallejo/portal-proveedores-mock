@@ -1,0 +1,123 @@
+﻿@{
+    // ViewData["Title"] = "Horario";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+@using Newtonsoft.Json;
+@using SAD_BE;
+@model List<ViewModelCalendarMessage>
+@{
+    var print_target = Guid.NewGuid();   
+}
+<script>
+    var organizations = @Html.Raw(JsonConvert.SerializeObject(Model));
+</script>
+
+<link href="~/css/site.css" rel="stylesheet" />
+<script src="~/js/index.global.js"></script>
+
+<div class="container-fluid mt-4">
+
+    @if (Model.Count() > 0)
+    {
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                @foreach (var index in Model)
+                {
+                    var identifier = $"tab-{index.Anio}{index.Semestre}";
+                    var value = $"{index.Anio}-{index.Semestre}";
+
+                    <button class="nav-link" id="@identifier-tab" data-bs-toggle="tab" data-bs-target="#@identifier"
+                            type="button" role="tab" aria-controls="@identifier" aria-selected="true">
+                        @value
+                    </button>
+                }
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="container py-5">
+                    <div class="text-center p-4 bg-light border rounded shadow-sm">
+                        <h3 class="fw-bold text-primary mb-3">Seleccione año y semestre</h3>
+                        <p class="text-muted">Para visualizar su horario respectivo, seleccione el año y el semestre que desea ver.</p>
+                    </div>
+                </div>
+            </div>
+
+            @foreach (var index in Model)
+            {
+                var identifier = $"tab-{index.Anio}{index.Semestre}";
+                var value = $"{index.Anio}-{index.Semestre}";
+                var id_element = $"result{index.Anio}{index.Semestre}";
+
+                <div class="tab-pane fade mt-4" id="@identifier" role="tabpanel" aria-labelledby="@identifier-tab">
+                    <div id="idloadingHorario_@value" style="display:block;">
+                        <div class="container_l">
+                            <div class="loader_l">
+                                <div class="cube_l"></div>
+                                <div class="cube_l"></div>
+                                <div class="cube_l"></div>
+                                <div class="cube_l"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="@id_element">
+                        <!--aquí se imprime el horario, ahora bajo un enfoque de tabs-->
+                    </div>
+
+                </div>
+            }
+        </div>
+
+    }
+    else
+    {
+        <div class="container py-4">
+            <div class="text-center p-4 bg-light border rounded shadow-sm">
+                <h3 class="fw-bold text-primary mb-3">No se encontraron datos.</h3>
+                <p class="text-muted">Usted no cuenta con sesiones programadas.</p>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts{
+    <script src="~/js/FullCalendar_3/docente_calendar.js?v=1.4.0"></script>
+
+    <!--functions para la carga de horario-->
+    <!--OK_-->
+    <script>
+        const getSchedule = "@Url.Action("getSchedule", "Docente")"
+        const getSchedule_data = "@Url.Action("getSchedule_data", "Docente")"
+        const searchChildSections = "@Url.Action("getSectionsHijas", "Docente")";
+    </script>
+
+    <script>
+        $(document).ready(async function () {
+            for (var item of organizations) {
+                var random = Math.floor(Math.random() * 2024);
+                var anio = item.Anio;
+                var semestre = item.Semestre;
+                var target = "#result" + anio + semestre;
+                var print_target = anio + semestre + random;
+                // var print_target = '@print_target';
+                var loaderId = "idloadingHorario_" + anio + '-' + semestre;
+
+                try {
+                    showModalLoader();
+                    await cargarhorariopost(target, anio, semestre, print_target, loaderId); // Esperar a que termine antes de continuar
+                } catch (error) {
+                    console.error("Error al cargar horario:", error);
+                }
+            }
+        });
+
+
+
+    </script>
+
+    
+}

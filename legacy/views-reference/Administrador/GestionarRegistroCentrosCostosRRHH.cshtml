@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewData["Title"] = "GestionarRegistroCentrosCostosRRHH";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<div class="col-lg-12 mb-2">
+    Por favor complete los siguientes campos para poder registrar los centros de costos
+</div>
+
+<div class="col-lg-6 col-md-12 col-xs-12 mb-2" style="margin-top:5px;">
+    <span class="fw-bolder">Organización</span>
+    <select id="SlcOrganizacion" class="form-select" name="SlcOrganizacion">
+        <option value="">Seleccione una organización</option>
+        <option value="ESC">Global Learning</option>
+        <option value="INS">Instituto</option>
+        <option value="ECA">Escuela</option>
+    </select>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Código interno</span>
+        <input type="number" class="form-control" id="idintcentrocosto">
+
+    </div>
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Código</span>
+        <input type="text" class="form-control" id="idcodigocentrocosto">
+    </div>
+    <div class="col-lg-6 col-xs-12 mtp-5">
+        <span class="fw-bolder">Descripción</span>
+        <input type="text" class="form-control" id="iddesccentrocosto">
+
+    </div>
+</div>
+
+
+
+<div class="row" style="margin-bottom:40px;">
+    <div class="col-lg-3 col-xs-12 mtp-5">
+        <input type="button" class="btn-principal" value="Registrar" onclick="registroCentroCostos()">
+    </div>
+</div>
+
+<div class="card shadow-lg mt-4 rounded-3">
+    <div class="card-body">
+        <div>
+            <div class="table-responsive">
+                <table id="lstCentrosCostosRRHH" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                    <thead>
+                        <tr>
+                            
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CÓDIGO INTERNO NOMINUS</th>
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CÓDIGO</th>
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">DESCRIPCIÓN</th>
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ORGANIZACIÓN</th>
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ESTADO</th>
+                            <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ACCIONES</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalActualizarCentroCosto">
+    <div class="modal-dialog modal-dialog-centered text-center" role="document">
+        <div class="modal-content modal-content-demo">
+            <div class="modal-header">
+                <h6 class="modal-title">Actualizar centro costos</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="text-align: left !important">
+
+                    <input type="hidden" class="form-control" id="idnIdRegistroActualizar">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Organización</label>
+                            <select class="form-control form-select" id="idOrganizacionActualizar">
+                                <option value="">Seleccione una organización</option>
+                                <option value="ESC">Global Learning</option>
+                                <option value="INS">Instituto</option>
+                                <option value="ECA">Escuela</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Código interno</label>
+                            <input type="text" class="form-control" id="idCodigoInternoActualizar">
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Código</label>
+                            <input type="text" class="form-control" id="idCodigoCentroCostoActualizar">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">Descripción</label>
+                            <input type="text" class="form-control" id="idDescCentroCostoActualizar">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-control form-select" id="idEstadoActualizar">
+                            <option value="">Seleccione</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="editarCentroCostos()">Actualizar</button> <button class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        const requestList = "@Url.Action("listarCentroCostos", "Administrador")";
+        const registrarCentroCostos = "@Url.Action("RegistrarCentroCosto", "Administrador")";
+        const datosCentroCostos = "@Url.Action("TraerCentroCostos", "Administrador")";
+        const actualizarCentroCostos = "@Url.Action("ActualizarCentroCosto", "Administrador")";
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            listarCentrosCostos();
+
+        })
+
+
+    </script>
+
+    <script src="~/js/GestionarCentroCostos.js?v=@Guid.NewGuid().ToString();"></script>
+}

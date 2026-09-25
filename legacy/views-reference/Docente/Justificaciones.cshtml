@@ -1,0 +1,123 @@
+﻿
+@{
+    // ViewData["Title"] = "Mis Justificaciones";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+    // List<string> secciones =ViewBag.Sections;
+    // List <string>  cursos = ViewBag.Courses;
+
+    List<string> secciones = ViewData["Sections"] as List<string>;
+    List<string> cursos = ViewData["Courses"] as List<string>;
+
+    List<string> headers = 
+    new List<string> { 
+        "Fecha Justificación", 
+        "Fecha Sesión", 
+        "Estado Justificación", 
+        "Curso", 
+        "Motivo", 
+        "Aula", 
+        "Horario",
+        "Horario Justificado"
+    };
+
+}
+
+
+<div class="card shadow-lg border-0 rounded-3 mt-4">
+    <div class="card-body p-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label for="checkDate" class="form-label fw-bold">Fecha de sesión:</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="fas fa-calendar-alt"></i></span>
+                    <input id="checkDate" type="date" class="form-control form-control-sm" placeholder="dd/mm/yyyy" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Seccion:</label>
+                <select class="form-select  form-select-sm" id="cboSecciones">
+                    <option value="-1">Seleccione</option>
+                    @foreach (var seccion in secciones)
+                    {
+                        <option value="@seccion">@seccion</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Curso:</label>
+                <select class="form-select  form-select-sm" id="cboCursos">
+                    <option value="-1">Seleccione</option>
+                    @foreach (var curso in cursos)
+                    {
+                        <option value="@curso">@curso</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="button" onclick="searchJustificaciones()" class="btn btn-sm btn-primary">Consultar justificaciones</button>
+        <button type="button" onclick="descargarExcel()" class="btn btn-sm btn-primary">Descargar Excel</button>
+    </div>
+</div>
+
+
+<div id="cardJustificaciones" class="card shadow-lg mt-4 rounded-3">
+    <div class="card-body">
+        <div id="justificacionesDocente">
+            <div class="table-responsive table-responsive-docente">
+                <table id="lstJustificaciones" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                    <thead>
+                        <tr>
+                            @foreach (string header in headers)
+                            {
+                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">@header.ToUpper()</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="justificacionesCard" class="table-cards">
+                <div id="contentCards-justificaciones">
+                </div>
+                <div class="pagination">
+                    <!-- Links de paginación se generarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/js/Docente/Justificaciones.js?v=@Guid.NewGuid().ToString();"></script>
+
+    <script>
+        const requestJustificaciones = "@Url.Action("filtrarJustificaciones","Docente")";
+        const requestDescargarExcel = "@Url.Action("ExcelJusrificaciones", "WkSolicitud")";
+    </script>
+
+
+    <script>
+        $(document).ready(function(){
+            $('#lstJustificaciones').DataTable({
+                "language": {
+                    url: "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json",
+                    searchPlaceholder: "Buscar"
+                },
+                "initComplete": function (settings, json) {
+                    // Cambiar el texto de "Buscar:" en el label
+                    $('.dataTables_filter label').contents().filter(function () {
+                        return this.nodeType === 3;  // Filtra los nodos de texto
+                    }).first().replaceWith('');  // Reemplaza con el nuevo texto
+                }
+            });
+        })
+    </script>
+}
+

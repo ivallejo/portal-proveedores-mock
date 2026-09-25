@@ -1,0 +1,187 @@
+﻿
+@using SAD_BE
+@using Newtonsoft.Json;
+
+@model List<Lista_Menu_opcion>
+
+@{
+    // ViewData["Title"] = "ActualizarMenu";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+    int contador = 0;
+
+    var source_docen = Model.Where(r => r.FlagDocente == true).ToList();
+    string source_config = JsonConvert.SerializeObject(source_docen);
+    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(source_config);
+    string contentEncoded = Convert.ToBase64String(bytes);
+
+    string test = "";
+    List<string> headers =
+    new List<string> {"Id","Título","URL","Nro Orden"};
+
+}
+<input value="@Url.Action("ActualizarOpcionMenu","Administrador")" id="inputActualizarOpcionMenu" hidden />
+<input value="@Url.Action("RegistrarOpcionMenu","Administrador")" id="inputRegistrarOpcionMenu" hidden />
+
+@* <h1>Gestionar opciones del menú</h1>
+
+<br /> *@
+
+<button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#modalAgregarMenu" >Registrar Nuevo Menu</button>
+<button class="btn btn-success mt-4" onclick="prepareOrdenMenuDocentes('@contentEncoded')">Configurar orden menús Docente</button>
+
+
+    <table class="table table-borderless" id="tblMenus">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>URL</th>
+                <th>Flag Super Administrador</th>
+                <th>Flag Administrador</th>
+                <th>Flag Docente</th>
+                <th>Actualizar</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        <input type="hidden" name="ListMenuOptions[@contador].Id" value="@item.id_menu">
+                        <input type="hidden" name="ListMenuOptions[@contador].nroOrden" value="@item.nroOrden">
+                        <input type="text" name="ListMenuOptions[@contador].nom_menu" value="@item.nom_menu" class="form-control small">
+                    </td>
+                    <td>
+                    <input type="text" name="ListMenuOptions[@contador].path_menu" value="@item.path_menu" class="form-control small">
+                    </td>
+                    <td>
+                        <input type="checkbox" name="ListMenuOptions[@contador].FlagSuperAdministrador" @(item.FlagSuperAdmin ? "checked" : "")>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="ListMenuOptions[@contador].FlagAdministrador" @(item.FlagAdministrador ? "checked" : "")>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="ListMenuOptions[@contador].FlagDocente" @(item.FlagDocente ? "checked" : "")>
+                    </td>
+                   
+                    <td>
+                        <button type="button" class="btn btn-primary" onclick="actualizarMenu('@contador')" >Actualizar</button>
+                    </td>
+                </tr>
+
+                contador++;
+            }
+
+        </tbody>
+    </table>
+
+<div class="modal fade" id="modalAgregarMenu" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarSeccionHija" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Registro de secciones</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-12">
+                        <label class="form-label">Título:</label>
+                        <input type="text" class="form-control" id="tituloAgregar">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">URL:</label>
+                        <input type="text" class="form-control" id="URLAgregar">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Icono:</label>
+                        <input type="text" class="form-control" id="IconoAgregar">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Roles:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="3" id="checkSuperAdmin">
+                            <label class="form-check-label">
+                                Super Administrador
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="checkAdmin">
+                            <label class="form-check-label">
+                                Administrador
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="2" id="checkDocente">
+                            <label class="form-check-label">
+                                Docente
+                            </label>
+                        </div>
+                    </div>
+                   
+                    <button class="btn btn-primary mt-4 mb-4" id="btnSeccionesHija" onclick="registrarMenuOpcion()">Guardar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* Modal Configurar orden Menus *@
+<div class="modal fade" id="modalMenuOrden" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarSeccionHija" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Gestion de orden de menús</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+            
+                <div class="table-responsive">
+                    <table id="lstOrdenMenu" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                        <thead>
+                            <tr>
+                                @foreach (string header in headers)
+                                {
+                                    <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">@header</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <p  hidden id="errorMessage" style="color: red;"></p>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="commitValues()" class="btn btn-primary">Guardar Orden</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script src="~/js/ActualizarMenu.js?v=@Guid.NewGuid().ToString();"></script>
+
+    <script>
+        const rq_actualizarOrden = "@Url.Action("ActualizarOrdenMennus", "Administrador")";
+    </script>
+
+}
+

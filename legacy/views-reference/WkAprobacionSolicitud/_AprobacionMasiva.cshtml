@@ -1,0 +1,34 @@
+﻿<form autocomplete="off" id="frmAprobacionMasiva">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="aprobacionMasivaModal" aria-labelledby="aprobacionMasivaModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold modal-title"></h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <div class="col-md-12 mt-2 container-sel-motivo-rechazo">
+                    <div class="form-floating">
+                        <select class="form-select" required id="IdMotivoAprobacionMasiva" name="IdMotivoAprobacionMasiva" data-val="true" placeholder="">
+                        </select>
+                        <label for="IdMotivoAprobacionMasiva">Motivo de rechazo</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="form-floating">
+                        <textarea class="form-control" maxlength="400" rows="3" id="ComentarioAtencion" name="ComentarioAtencion" data-val="true" placeholder="" required></textarea>
+                        <label for="ComentarioAtencion">Descripción de motivo</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-auto">
+                <div class="col-md-6 mt-2">
+                    <button type="button" class="btn btn-primary form-control" id="btn-procesar-aprobacion-masiva">Procesar</button>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <button type="button" class="btn btn-outline-primary form-control" data-bs-dismiss="offcanvas">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@* <script src="~/js/workflow/aprobacion-solicitud/aprobacion-masiva-modal.js" asp-append-version="true"></script> *@

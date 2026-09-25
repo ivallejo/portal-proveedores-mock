@@ -1,0 +1,106 @@
+﻿
+@using SAD_BE
+@{
+    // ViewData["Title"] = "RegistroUsuario";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+    int contador = 0;
+
+    List<(int, string)> roles = ViewBag.roles;
+    List<UsuarioAdminBE> usuarioAdminLista = ViewBag.usuarioAdminLista;
+}
+
+<input value="@Url.Action("ActualizarRegistroUsuario","Administrador")" id="inputActualizarRegistroUsuario" hidden />
+<input value="@Url.Action("RegistrarUsuario","Administrador")" id="inputRegistrarUsuario" hidden />
+
+@* <h1>Registro Usuario</h1>
+
+<br /> *@
+<button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#modalAgregarUsuario">Registrar Nuevo Usuario</button>
+
+
+<table class="table table-borderless">
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in usuarioAdminLista)
+        {
+            <tr>
+                <td>
+                    <input type="hidden" name="ListMenuOptions[@contador].Id" value="@item.id_match">
+                    <input type="text" name="ListMenuOptions[@contador].people_id" value="@item.people_id" class="form-control small">
+                </td>
+                <td>
+                    <select class="form-select" name="ListMenuOptions[@contador].roles">
+                        @foreach (var rol in roles)
+                        {
+                            if (item.id_rol == rol.Item1)
+                            {
+                                <option value="@rol.Item1" selected>@rol.Item2</option>
+                            }
+                            else
+                            {
+                                <option value="@rol.Item1">@rol.Item2</option>
+                            }
+                        }
+                    </select>
+                </td>
+                <td>
+                    <input type="checkbox" name="ListMenuOptions[@contador].estado" @(item.estado ? "checked" : "")>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary" onclick="actualizarUsuarios('@contador')">Actualizar</button>
+                </td>
+            </tr>
+            contador++;
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="modalAgregarUsuario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarUsuario" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Registro de usuarios</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Usuario:</label>
+                        <input type="text" class="form-control" id="usuarioAgregar">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Rol:</label>
+                        <select class="form-select" id="RolAgregar">
+                            @foreach (var rol in roles)
+                            {
+                                    <option value="@rol.Item1">@rol.Item2</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary mt-4 mb-4" id="btnSeccionesHija" onclick="registrarUsuario()">Guardar</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/js/RegistroUsuario.js"></script>
+
+}
+

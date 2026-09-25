@@ -1,0 +1,70 @@
+﻿
+<form autocomplete="off" id="frmReportePagoDocente">
+	<div class="offcanvas offcanvas-end offcanvas-custom" id="reportePagoDocenteModal" aria-labelledby="reportePagoDocenteModalLabel" data-bs-backdrop="true">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title fw-bold" id="reportePagoDocenteModalTitulo">Bandeja de Solicitudes</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body d-flex flex-column">
+			<div class="row">
+				<partial name="_DatosSolicitud.cshtml"></partial>
+				<div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de l&iacute;mite de marcaci&oacute;n</h6></div>
+			</div>
+
+			<div class="">
+				<div class="row mt-2">
+					<div class="col-md-12">
+						<div class="form-floating">
+							<input type="text" class="form-control edit-control" id="input-nombreorganizacion" data-val="true" placeholder="" disabled />
+							<label for="sel-organizacion">Organizaci&oacute;n</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col-md-12">
+						<div class="form-floating">
+							<input type="text" class="form-control edit-control" id="input-rangoFechas" data-val="true" placeholder="" disabled />
+							<label for="input-rangoFechas">Rango de fechas del reporte</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col-md-12">
+						<div class="form-floating">
+							<input type="text" class="form-control edit-control" id="input-tipoTarifa" data-val="true" placeholder="" disabled />
+							<label for="input-tipoTarifa">Tipo de tarifa</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col-md-12">
+						<div class="form-floating">
+							<input type="text" class="form-control edit-control" id="input-costoPromedioHora" data-val="true" disabled placeholder="" />
+							<label for="input-costoPromedioHora">Costo promedio total</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4">
+					<div class="col-md-12">
+						<div class="form-floating">
+							<input type="text" class="form-control" id="input-montoDiferencia" data-val="true" disabled placeholder="" />
+							<label for="input-montoDiferencia">Monto Diferencia</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-auto">
+				<div class="col-md-6 mt-4">
+					<a class="btn btn-primary form-control" id="btnExportar" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+				</div>
+				<div class="col-md-6 mt-4">
+					<a class="btn btn-primary form-control" id="btnFormatoCsv" target="_blank"><i class="fas fa-download"></i> Generar Formato</a>
+				</div>
+			</div>
+
+			<partial name="_AccionesSolicitud.cshtml"></partial>
+		</div>
+	</div>
+</form>
+
+<script src="~/js/workflow/aprobacion-solicitud/aprobacion-solicitud-reporte-pago-docente.js" asp-append-version="true"></script>

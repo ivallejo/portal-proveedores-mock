@@ -1,0 +1,207 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+    @@media (min-width: 1400px) {
+
+        .container-xxl,
+        .container-xl,
+        .container-lg,
+        .container-md,
+        .container-sm,
+        .container {
+            max-width: 100%;
+            padding: 0;
+        }
+    }
+
+    .table>thead {
+        vertical-align: middle;
+    }
+
+    table.dataTable>tbody>tr.child span.dtr-title {
+        min-width: 0px;
+    }
+</style>
+
+<div class="card container mt-4">
+
+    <div class="card-body">
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                    type="button" role="tab" aria-controls="nav-home" aria-selected="true">Individual</button>
+                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Masivo</button>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                <br />
+
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">CÓDIGO</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="idCodigoRegistrar">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">NOMBRE LARGO</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="idNombreLargoRegistrar">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">UNIDAD DE MEDIDA</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" aria-label="Default select example" id="idUnidadMedidaRegistrar">
+                            <option value="">Seleccione</option>
+                            <option value="Importe">Importe</option>
+                            <option value="Horas">Horas</option>
+                            <option value="Extraordinario">Extraordinario</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">NOMBRE BOLETA</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="idNombreBoletaRegistrar">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary mt-4 mb-0" id="btnAsignarIndividualCostos"
+                    onclick="registroConceptoCodigosIndividual()">Registrar</button>
+
+            </div>
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+                <br />
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <label class="form-label">Archivo Conceptos Código de curso:</label>
+                        <input class="form-control" type="file" id="idFileConceptoCodigoCurso">
+                    </div>
+
+                </div>
+                <button class="btn btn-primary mt-4 mb-0" onclick="registroConceptoCodigos()">Registrar</button>
+                <a class="btn btn-primary mt-4 mb-0" href="/plantillas/conceptoCodigoCursos.xlsx">Descargar
+                    Plantilla</a>
+
+            </div>
+        </div>
+
+
+        <div class="my-5"></div>
+        <div class="table-responsive">
+            <table class="table text-nowrap" style="width:100%;border-spacing: 5px" id="idTablaConcepto">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table"
+                            style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">CÓDIGO</th>
+                        <th class="bg-header-table"
+                            style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">NOMBRE LARGO</th>
+                        <th class="bg-header-table"
+                            style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">UNIDAD DE MEDIDA</th>
+                        <th class="bg-header-table"
+                            style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">NOMBRE QUE SE MUESTRA
+                            EN BOLETA</th>
+                        <th class="bg-header-table"
+                            style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ESTADO</th>
+                        <th class="bg-header-table"
+                            style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">ACCIÓN</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalActualizarConceptoCodigo" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="modalActualizarConceptoCodigo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal"
+                    aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <input type="hidden" class="form-control" id="idCodigoInternoActualizar">
+
+                    <div class="col-md-12">
+                        <label class="form-label">CÓDIGO</label>
+                        <input type="text" class="form-control" id="idCodigoActualizar">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">NOMBRE LARGO</label>
+                        <input type="text" class="form-control" id="idNombreLargoActualizar">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">UNIDAD DE MEDIDA</label>
+                        <select class="form-select" aria-label="Default select example" id="idUnidadMedidaActualizar">
+                            <option value="">Seleccione</option>
+                            <option value="Importe">Importe</option>
+                            <option value="Horas">Horas</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">NOMBRE BOLETA</label>
+                        <input type="text" class="form-control" id="idNombreBoletaActualizar">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">ESTADO</label>
+                        <select class="form-select" id="idEstadoActualizar">
+                            <option value="">Seleccione</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary mt-4 mb-4" onclick="actualizarConceptoCodigo()">Asignar</button>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        const requestList = "@Url.Action("listarConceptoCodigoCurso", "Administrador")";
+        const registrarConceptoCodigoCurso = "@Url.Action("registrarConceptoCodigoCursoArchivo", "Administrador")";
+        const registrarConceptoCodigoCursoIndividual = "@Url.Action("registrarConceptoCodigoCurso", "Administrador")";
+        const datosConceptoCodigo = "@Url.Action("TraerConceptoCodigoCurso", "Administrador")";
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            listarConceptoCodigos();
+
+        })
+
+
+    </script>
+
+    <script src="~/js/GestionarConceptoCodigoCursos.js?v=@Guid.NewGuid().ToString();"></script>
+}

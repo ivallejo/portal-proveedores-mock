@@ -1,0 +1,45 @@
+﻿@{
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+<form autocomplete="off" id="frmTarifaCurso">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="tarifaCursoModal" aria-labelledby="tarifaCursoModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="tarifaCursoModalTitulo">Aprobar o Rechazar</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <partial name="_DatosSolicitud.cshtml"></partial>
+                <div class="col-md-12 mt-3">
+                    <div class="form-floating">
+                        <textarea class="form-control" id="txt-comentario" rows="4" placeholder disabled=""></textarea>
+                        <label for="txt-comentario">Comentarios de solicitud</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de tarifas del periodo <span id="PeriodoAcademico"></span></h6></div>
+                <div class="col-md-12 mt-2">
+                    <div class="form-floating">
+                        <span>*Tarifas que cambiaron respecto al periodo anterior (<span id="TotalCambioTarifa" class="fw-bold">3</span>)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12 table-responsive">
+                    <table id="tbl-tarifas" class="table table-workflow text-nowrap" style="width:100%;">
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6 offset-md-3 mt-3">
+                    <a class="btn btn-primary form-control" id="btnExportar" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+                </div>
+            </div>
+
+            <partial name="_AccionesSolicitud.cshtml"></partial>
+        </div>
+    </div>
+</form>
+
+<script src="~/js/workflow/aprobacion-solicitud/aprobacion-solicitud-tarifa-curso.js" asp-append-version="true"></script>

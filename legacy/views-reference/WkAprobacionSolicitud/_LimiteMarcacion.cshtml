@@ -1,0 +1,97 @@
+﻿@{
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+
+<form autocomplete="off" id="frmLimiteMarcacion">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="limiteMarcacionModal" aria-labelledby="limiteMarcacionModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="limiteMarcacionModalTitulo">Bandeja de Solicitudes</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <partial name="_DatosSolicitud.cshtml"></partial>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de l&iacute;mite de marcaci&oacute;n</h6></div>
+            </div>
+
+            <div class="">
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control edit-control" id="input-nombreorganizacion" data-val="true" placeholder="" disabled />
+                            <label for="sel-organizacion">Organizaci&oacute;n</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control edit-control" id="input-nombreperiodo" data-val="true" placeholder="" disabled />
+                            <label for="sel-periodo">Periodo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-minantesentrada" data-val="true" placeholder="" required disabled />
+                            <label for="input-minantesentrada">Minutos antes de entrada</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-mindespuesentrada" data-val="true" placeholder="" required disabled />
+                            <label for="input-mindespuesentrada">Minutos despu&eacute;s de entrada</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-minantessalida" data-val="true" placeholder="" required disabled />
+                            <label for="input-minantessalida">Minutos antes de salida</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-mindespuessalida" data-val="true" placeholder="" required disabled />
+                            <label for="input-mindespuessalida">Minutos despu&eacute;s de salida</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-factorturnomanana" data-val="true" placeholder="" required disabled />
+                            <label for="input-factorturnomanana">Factor de turno mañana</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="divFactorTardeModal">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-factorturnotarde" data-val="true" placeholder="" required disabled />
+                            <label for="input-factorturnotarde">Factor de turno tarde</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4" id="divRowFactorNocheModal">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="number" class="form-control edit-control" id="input-factorturnonoche" data-val="true" placeholder="" required disabled />
+                            <label for="input-factorturnonoche">Factor de turno noche</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6 offset-md-3 mt-3">
+                    <a class="btn btn-primary form-control" id="btnExportar" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+                </div>
+            </div>
+
+            <partial name="_AccionesSolicitud.cshtml"></partial>
+        </div>
+    </div>
+</form>
+
+<script src="~/js/workflow/aprobacion-solicitud/aprobacion-solicitud-limite-marcacion.js" asp-append-version="true"></script>

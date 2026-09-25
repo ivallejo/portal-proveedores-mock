@@ -1,0 +1,118 @@
+﻿@{
+	ViewData["Title"] = "Reporte General de Excepción de Tarifas de Docentes";
+	Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+	var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+	var estadosSolicitud = (IEnumerable<KeyValuePair<int, string>>)ViewBag.EstadoSolicitud;
+}
+<style>
+	.custom-switch {
+		transform: scale(1.8);
+	}
+
+	.form-switch {
+		padding-left: 4em;
+	}
+
+	.input-group {
+		align-items: center;
+		height: 100%;
+	}
+</style>
+<div id="divContent">
+	<div class="row">
+		<div class="col-md-10">
+			<h3 class="fw-bold">
+				Reporte de Excepción de Tarifas por Docentes
+			</h3>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-sm-12 col-md-5">
+			<div class="fw-bold">
+				Ingresa la información solicitada
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-3 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Organización:</span>
+				<select class="form-select" id="organizacion">
+					@foreach (var organizacion in organizaciones?.ToList())
+					{
+						<option value="@organizacion.Key">@organizacion.Value</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="col-md-3 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Periodo:</span>
+				<select class="form-select" id="periodo">
+				</select>
+			</div>
+		</div>
+		<div class="col-md-3 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Estado:</span>
+				<select class="form-select" id="estado">
+					@foreach (var estadoSol in estadosSolicitud?.ToList())
+					{
+						<option value="@estadoSol.Key">@estadoSol.Value</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2 mt-2">
+			<div class="input-group">
+				<div class="col-sm-6 col-md-6">
+					<span style="font-size:1rem;">Tarifa final:</span>
+				</div>
+				<div class="col-sm-6 col-md-6">
+					<div class="form-check form-switch">
+						<input class="form-check-input custom-switch" type="checkbox" role="switch" id="check-final" />
+					</div>
+				</div>
+			</div>
+			@* <div class="input-group">
+			<span class="input-group-text bg-white">Tarifa final:</span>
+			<div class="form-check form-switch">
+			<input class="form-check-input custom-switch" type="checkbox" role="switch" id="check-final" />
+			</div>
+			</div> *@
+		</div>
+		<div class="col-md-1 mt-2">
+			<button class="btn btn-primary form-control" id="btnBuscar">Buscar</button>
+		</div>
+	</div>
+	<div class="col-md-2 mt-4">
+		<button class="btn btn-primary form-control" id="btnExportar"><i class="fas fa-file-excel"></i> Exportar</button>
+	</div>
+	<div id="wkTarifaDocenteContainer" class="card card-index mt-2 card-worklow">
+		<div class="card-body">
+			<div id="registroTarifa">
+				<div class="table-responsive table-responsive-workflow">
+					<table id="tarifaDocenteTable" class="table text-nowrap table-workflow" style="width:100%;">
+					</table>
+				</div>
+				<div id="wkTarifaDocenteCard" class="table-cards mt-2">
+					<div id="contentCards-tarifaDocente">
+					</div>
+					<div class="dataTables_paginate paging_simple_numbers">
+						<ul class="pagination" id="paginationCard">
+							<!-- Links de paginación se generarán aquí -->
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/workflow/service/excepcion-tarifa-service.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+	@* <script src="~/js/workflow/service/periodo-academico-service.js" asp-append-version="true"></script> *@
+	<script src="~/js/workflow/excepcion-tarifa/excepcion-tarifa-repo-general-index.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

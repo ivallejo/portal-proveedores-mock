@@ -1,0 +1,113 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+
+<div id="divContent">
+    <form autocomplete="off" id="frmAccion">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="fw-bold">
+                    Registro de l&iacute;mites de marcaci&oacute;n
+                </h3>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-8 offset-md-2">
+
+                <div class="card card-index mt-4 card-worklow">
+                    <div class="card-body">
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="sel-organizacion" data-val="true" placeholder="" required>
+                                        @foreach (var organizacion in organizaciones?.ToList())
+                                        {
+                                            <option value="@organizacion.Key">@organizacion.Value</option>
+                                        }
+                                    </select>
+                                    <label for="sel-organizacion">Organizaci&oacute;n</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <select class="form-select" id="sel-periodo" data-val="true" placeholder="" required></select>
+                                    <label for="sel-periodo">Periodo</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-primary form-control" id="btn-copiar">Copiar periodo anterior</button>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-minantesentrada" data-val="true" placeholder="" required />
+                                    <label for="input-minantesentrada">Minutos antes de entrada</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-mindespuesentrada" data-val="true" placeholder="" required />
+                                    <label for="input-mindespuesentrada">Minutos despu&eacute;s de entrada</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-minantessalida" data-val="true" placeholder="" required />
+                                    <label for="input-minantessalida">Minutos antes de salida</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-mindespuessalida" data-val="true" placeholder="" required />
+                                    <label for="input-mindespuessalida">Minutos despu&eacute;s de salida</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-factorturnomanana" data-val="true" placeholder="" required />
+                                    <label for="input-factorturnomanana">Factor de turno mañana</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="divFactorTarde">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-factorturnotarde" data-val="true" placeholder="" required />
+                                    <label for="input-factorturnotarde">Factor de turno tarde</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4" id="divRowFactorNoche">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="input-factorturnonoche" data-val="true" placeholder="" required />
+                                    <label for="input-factorturnonoche">Factor de turno noche</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4 offset-md-4">
+                        <button type="button" class="btn btn-primary form-control" id="btn-registrar">Registrar solicitud</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+    @* <script src="~/js/workflow/service/periodo-academico-service.js" asp-append-version="true"></script> *@
+    <script src="~/js/workflow/service/limite-marcacion-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/limite-marcacion/limite-marcacion-index.js" asp-append-version="true"></script>
+}

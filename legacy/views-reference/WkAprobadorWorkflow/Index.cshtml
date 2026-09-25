@@ -1,0 +1,95 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+    var flujos = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Flujos;
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+    var gruposAprobadores = (IEnumerable<KeyValuePair<string, string>>)ViewBag.GruposAprobadores;
+}
+
+<div id="divContent">
+    <div class="row">
+        <div class="col-md-10">
+            <h3 class="fw-bold">
+                Aprobadores
+            </h3>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary form-control" id="btnNuevo">Nuevo aprobador</button>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-4 col-sm-6 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Nombre de flujo:</span>
+                <select class="form-select" id="FiltroFlujo">
+                    @foreach (var flujo in flujos?.ToList())
+                    {
+                        <option value="@flujo.Key">@flujo.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Organizaci&oacute;n:</span>
+                <select class="form-select" id="FiltroOrganizacion">
+                    @foreach (var organizacion in organizaciones?.ToList())
+                    {
+                        <option value="@organizacion.Key">@organizacion.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Periodo:</span>
+                <select class="form-select" id="FiltroPeriodo">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mt-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white">Grupo de aprobadores:</span>
+                <select class="form-select" id="FiltroGrupoAprobadores">
+                    @foreach (var grupoAprobador in gruposAprobadores?.ToList())
+                    {
+                        <option value="@grupoAprobador.Key">@grupoAprobador.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-5"></div>
+        <div class="col-md-2 mt-2 text-center">
+            <button class="btn btn-primary form-control" id="btnBuscar">Buscar</button>
+        </div>
+    </div>
+
+    <div id="wkAprobadorWorkflowContainer" class="card card-index mt-4 d-none card-worklow">
+        <div class="card-body">
+            <div id="marcacionesDocente">
+                <div class="table-responsive table-responsive-workflow">
+                    <table id="wkAprobadorWorkflowTable" class="table text-nowrap table-workflow" style="width:100%;">
+                    </table>
+                </div>
+                <div id="wkAprobadorWorkflowCard" class="table-cards">
+                    <div id="contentCards-grupoUsuario">
+                    </div>
+                    <div class="dataTables_paginate paging_simple_numbers">
+                        <ul class="pagination" id="paginationCard">
+                            <!-- Links de paginación se generarán aquí -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/workflow/service/util-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/periodo-academico-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/service/aprobador-workflow-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/aprobador-workflow/aprobador-workflow-index.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

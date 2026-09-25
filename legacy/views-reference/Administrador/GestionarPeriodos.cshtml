@@ -1,0 +1,217 @@
+﻿
+@{
+    // ViewData["Title"] = "GestionarPeriodos";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+}
+
+<style>
+
+    @@media (min-width: 1400px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        table.dataTable thead th {
+            white-space: nowrap;
+        }
+
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            padding:0;
+        }
+
+    }
+
+</style>
+
+
+@* <div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-hourglass-half"></i>
+        Gestionar Periodos
+    </h1>
+</div> *@
+<input value="@Url.Action("RegistrarPeriodo","Administrador")" id="inputRegistrarPeriodo" hidden />
+<input value="@Url.Action("ActualizarPeriodo","Administrador")" id="inputActualizarPeriodo" hidden />
+<input value="@Url.Action("ListarPeriodosSemestre","Administrador")" id="inputListarPeriodoSemestre" hidden />
+
+<div class="card mt-4">
+
+    <div class="card-body">
+
+
+        <button class="btn btn-primary mt-4 mb-4" id="btnAgregar" data-bs-toggle="modal" data-bs-target="#modalAgregarGestionarPeriodos" >Agregar</button>
+
+        <div class="table-responsive">
+            <table class="table" style="width:100%;border-spacing: 5px;border-collapse: separate;" id="tbPeriodos">
+                <thead style="background-color:#207FE9; color:white;">
+                    <tr>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Periodo</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Minutos de tolerancia</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Límite de minutos antes de la hora de entrada</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Límite de minutos antes de la hora de salida</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Límite de minutos después de la hora de salida</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Minutos de conversión para turno mañana</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Minutos de conversión para turno tarde</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Minutos de conversión para turno noche</th>
+                        <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">Acción</th>
+                    </tr>
+                   
+                </thead>
+
+                <tbody>
+                
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @item.sPeriodo
+                            </td>
+                            <td>
+                                @item.nMinToleranciaTardanza
+                            </td>
+                            <td>
+                                @item.nMinLimAntesEntrada
+                            </td>
+                            <td>
+                                @item.nMinLimAntesSalida
+                            </td>
+                            <td>
+                                @item.nMinLimDesSalida
+                            </td>
+                            <td>
+                                @item.nFactorTurnoM
+                            </td>
+                             <td>
+                                @item.nFactorTurnoT
+                            </td>
+                            <td>
+                                @item.nFactorTurnoN
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" onclick="VisualizarGestionarPeriodos('@item.sPeriodo')">Actualizar</button>
+                            </td>
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalAgregarGestionarPeriodos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalAgregarGestionarPeriodos" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Registro de periodos</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Periodo</label>
+                    <input type="text" class="form-control" id="idPeriodo">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minutos de tolerancia</label>
+                    <input type="number" class="form-control" id="idMinutoTolerancia">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Límite de minutos antes de la hora de entrada</label>
+                    <input type="number" class="form-control" id="idMinLimAntesEntrada">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Límite de minutos antes de la hora de salida</label>
+                    <input type="number" class="form-control" id="idMinLimAntesSalida">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Límite de minutos después de la hora de salida </label>
+                    <input type="number" class="form-control" id="idMinLimDesSalida">
+                </div>
+                <div class="mb-3">
+                    <label  class="form-label">Minutos de conversión para turno mañana</label>
+                    <input type="number" class="form-control" id="idFactorTurnoM">
+                </div>
+                <div class="mb-3">
+                    <label  class="form-label">Minutos de conversión para turno tarde</label>
+                    <input type="number" class="form-control" id="idFactorTurnoT">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minutos de conversión para turno noche</label>
+                    <input type="number" class="form-control" id="idFactorTurnoN">
+                </div>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" onclick="AgregarGestionarPeriodos()">Guardar</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalActualizarGestionarPeriodos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalActualizarGestionarPeriodos" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Actualización de periodos</h1>
+                <button type="button" class="btn btn-sm btn-outline-secondary close-button" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i> <!-- Ícono de cierre, opcional -->
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Periodo</label>
+                    <input type="text" class="form-control" id="idActualizarPeriodo">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minutos de tolerancia</label>
+                    <input type="number" class="form-control" id="idActualizarMinutoTolerancia">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Límite de minutos antes de la hora de entrada</label>
+                    <input type="number" class="form-control" id="idActualizarMinLimAntesEntrada">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Límite de minutos antes de la hora de salida</label>
+                    <input type="number" class="form-control" id="idActualizarMinLimAntesSalida">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Límite de minutos después de la hora de salida </label>
+                    <input type="number" class="form-control" id="idActualizarMinLimDesSalida">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minutos de conversión para turno mañana</label>
+                    <input type="number" class="form-control" id="idActualizarFactorTurnoM">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minutos de conversión para turno tarde</label>
+                    <input type="number" class="form-control" id="idActualizarFactorTurnoT">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Minutos de conversión para turno noche</label>
+                    <input type="number" class="form-control" id="idActualizarFactorTurnoN">
+                </div>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" onclick="ActualizarGestionarPeriodos()">Guardar</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/GestionarPeriodos.js?v=@Guid.NewGuid().ToString();"></script>
+}

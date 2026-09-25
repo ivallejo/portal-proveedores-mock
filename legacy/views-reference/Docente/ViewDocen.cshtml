@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Vista de Prueba";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+    var htmlContent = "<h5>Promedio calculado de las siguientes EC:</h5> <h6>EC1 : 16</h6> <h6>EC1 : 15</h6> <h6>EC1 : 17</h6>";
+}
+@using SAD_BE;
+@model List<ViewModelCalendarMessage>
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        @foreach (var index in Model)
+        {
+            var identifier = $"tab-{index.Anio}{index.Semestre}";
+            var value = $"{index.Anio}-{index.Semestre}";
+
+            <button class="nav-link" id="@identifier-tab" data-bs-toggle="tab" data-bs-target="#@identifier"
+                    type="button" role="tab" aria-controls="@identifier" aria-selected="true">
+                @value
+            </button>
+        }
+    </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="container py-5">
+            <div class="text-center p-4 bg-light border rounded shadow-sm">
+                <h3 class="fw-bold text-primary mb-3">Seleccione año y semestre</h3>
+                <p class="text-muted">Para visualizar su horario respectivo, seleccione el año y el semestre que desea ver.</p>
+            </div>
+        </div>
+    </div>
+
+    @foreach (var index in Model)
+    {
+        var identifier = $"tab-{index.Anio}{index.Semestre}";
+        var value = $"{index.Anio}-{index.Semestre}";
+
+        <div class="tab-pane fade" id="@identifier" role="tabpanel" aria-labelledby="@identifier-tab">
+            @* @Html.Partial("NombreDeVistaParcial", index) *@
+            XDD
+        </div>
+    }
+</div>

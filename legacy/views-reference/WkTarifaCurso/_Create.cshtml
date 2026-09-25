@@ -1,0 +1,35 @@
+﻿@{
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+<form autocomplete="off" id="frmAccion">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="nuevaTarifaModal" aria-labelledby="nuevaTarifaModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="tituloNuevaTarifaModal">Nuevo Grupo</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" id="editar-organizacion" name="editar-organizacion" placeholder>
+                            @foreach (var organizacion in organizaciones?.ToList())
+                            {
+                                    <option value="@organizacion.Key">@organizacion.Value</option>
+                            }
+                        </select>
+                        <label for="editar-organizacion">Organizaci&oacute;n</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-auto">
+                <div class="col-md-6 mt-2">
+                    <button class="btn btn-primary form-control" id="btnGuardar">Guardar</button>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <button type="button" class="btn btn-outline-primary form-control" data-bs-dismiss="offcanvas">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@* <script src="~/js/workflow/grupo-usuario/grupo-usuario-create.js" asp-append-version="true"></script> *@

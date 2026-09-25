@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "Registro de reprogramación";
+    Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+    var identificadores = (IEnumerable<KeyValuePair<string, string>>)Model.Identificadores;
+}
+
+<div id="divContent">
+    <form autocomplete="off" id="frmAccion">
+        <input type="hidden" name="idsesion" value="@Model.IdSesion" />
+        <input type="hidden" name="fechasesion" value="@Model.FechaSesion" />
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="fw-bold">
+                    Registro de solicitud de reprogramación
+                    <a href="@ViewBag.UrlRetorno" class="btn btn-primary float-end" name="btn-regresar">Regresar</a>
+                </h3>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-8 offset-md-2">
+                <div class="card card-index mt-4 card-worklow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" name="curso" readonly value="@($"{Model.Curso} - {Model.Seccion} - {Model.FechaSesion}")">
+                            </div>
+                            <div class="col-md-8 mt-2">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">Programa de Estudio:</span>
+                                    <input type="hidden" class="form-control" name="cod-programa-estudio" readonly value="@Model.codCarrera">
+                                    <input type="text" class="form-control" name="programa-estudio" readonly value="@($"{Model.codCarrera} - {Model.descCarrera}")">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">Cantidad de estudiantes:</span>
+                                    <input type="text" class="form-control" name="cantidad-estudiantes" readonly value="@Model.cantidadEstudiantes">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-index mt-4 card-worklow">
+                    <div class="card-body">
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" required name="identificador" data-val="true" placeholder="">
+                                        @if (identificadores != null)
+                                        {
+                                            foreach (var identificador in identificadores?.ToList())
+                                            {
+
+                                                <option value="@identificador.Key">@identificador.Value</option>
+                                            }
+                                        }
+                                    </select>
+                                    <label for="identificador">Identificador</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="jefe-academico" placeholder="" required data-val="true">
+                                    <label for="jefe-academico">Jefe Académico</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="tema" data-val="true" placeholder="">
+                                    <label for="tema">Tema de clase</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" name="fecha-recuperacion" data-val="true" placeholder="">
+                                    <label for="fecha-recuperacion">Fecha de Recuperación</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mt-6">
+                                <div class="form-floating">
+                                    <input type="time" class="form-control" name="hora-inicio" data-val="true" placeholder="">
+                                    <label for="hora-inicio">Hora Inicio</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-6">
+                                <div class="form-floating">
+                                    <input type="time" class="form-control" name="hora-fin" data-val="true" placeholder="">
+                                    <label for="hora-fin">Hora Fin</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12 mt-3">
+                                <div class="form-floating">
+                                    <textarea class="form-control" rows="4" name="motivo-reprogramacion" data-val="true" placeholder="" required></textarea>
+                                    <label for="motivo-reprogramacion">Motivo de la recuperación o adelanto</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4 offset-md-4">
+                        <button type="button" class="btn btn-primary form-control" name="btn-enviar">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment-with-locales.min.js"></script>
+    <script src="~/js/workflow/service/solicitud-service.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/solicitud/solicitud-reprogramacion-create.js" asp-append-version="true"></script>
+    <script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+}

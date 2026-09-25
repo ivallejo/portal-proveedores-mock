@@ -1,0 +1,41 @@
+﻿@{
+	ViewData["Title"] = "View";
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="SAD">
+	<meta name="author" content="menssssssssssssssssssssito">
+	<title>SAD</title>
+	<link rel="shortcut icon" href="../images/favicon.ico">
+	<link href="../css/portal.css?ver=4" rel="stylesheet">
+	<link href="../css/boxicons.css" rel="stylesheet">
+	<link href="~/css/jquery-ui.css" rel="stylesheet" />
+	<link href="~/css/roboto.css" rel="stylesheet" />
+	<link href="../lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	<script src="~/js/bootstrap.bundle.min.js"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="../js/Common.js?ver=4"></script>
+	<script src="~/js/jquery-ui.js"></script>
+</head>
+
+<body>
+	<div class="d-flex align-items-center justify-content-center vh-100">
+		<div class="text-center">
+			<div class="col-12" style="margin-bottom:30px;">
+			</div>
+			<img src="../images/disconected.jpg" class="img-fluid" />
+			<h3 class="display-1 fw-bold">Su sesión ha expirado</h3>
+			<p class="lead">
+				Por favor, ingrese nuevamente al sistema.
+			</p>
+			<a href="@Url.Action("Access","Auth")" class="col-4 btn btn-principal">Refrescar sesión</a>
+		</div>
+	</div>
+</body>
+</html>

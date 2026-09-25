@@ -1,0 +1,202 @@
+﻿@{
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+<form autocomplete="off" id="frmTarifaCurso">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="tarifaCursoModal" aria-labelledby="tarifaCursoModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="tarifaCursoModalTitulo">Bandeja de Solicitudes</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <partial name="_DatosSolicitud.cshtml"></partial>
+                <div class="col-md-12 mt-4"><h6 class="fw-bold title-seccion">Datos de tarifa</h6></div>
+            </div>
+
+            <div class="row tarifa-opcionesregistro">
+                <div class="col-md-6 mt-2">
+                    <button class="btn btn-outline-secondary form-control text-start btn-show active" id="btn-ndividual" data-show="div-container-individual">
+                        <span class="fas fa-solid fa-file fs-5 mt-2"></span>
+                        <p class="mt-2 mb-0">Registro individual</p>
+                    </button>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <button class="btn btn-outline-secondary form-control text-start btn-show" id="btn-asivo" data-show="div-container-masivo">
+                        <span class="fas fa-solid fa-folder fs-5 mt-2"></span>
+                        <p class="mt-2 mb-0">Registro masivo</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="div-container-individual" class="tarifa-container">
+                <div class="row mt-2">
+                    <div class="col-md-6 mt-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="sel-organizacion-individual" data-val="true" placeholder="" required>
+                                @foreach (var organizacion in organizaciones?.ToList())
+                                {
+                                    <option value="@organizacion.Key">@organizacion.Value</option>
+                                }
+                            </select>
+                            <label for="organizacion">Organizaci&oacute;n</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="sel-periodo-individual" data-val="true" placeholder="" required>
+                            </select>
+                            <label for="periodo">Periodo</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="sel-tipo-sesion-individual">
+                                <option value="">Seleccione</option>
+                                <option value="Síncrono">Síncrono</option>
+                                <option value="Asíncrono">Asíncrono</option>
+                                <option value="Ambos">Ambos</option>
+                            </select>
+                            <label for="sel-tipo-sesion-individual">Tipo de Sesión</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="sel-curso-individual" data-val="true" placeholder="" required>
+                            </select>
+                            <label for="curso" style="top:-5px;">Curso</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <div class="form-floating">
+                            <input type="number" id="input-tarifa-individual" class="form-control" data-val="true" placeholder="" required>
+                            <label for="tarifa">Tarifa</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <button type="button" class="btn btn-primary form-control" id="btn-agregar-individual">Agregar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="div-container-masivo" class="tarifa-container d-none">
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body bg-light">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <button class="btn bg-white"><span class="fas fa-upload"></span></button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="fw-bold m-0 p-0" id="file-masivo-filename">Subir un excel</p>
+                                        <span class="text-muted">M&aacute;ximo 10MB por archivo - Formatos .xlsx</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary form-control" id="btn-subir-masivo">Subir&nbsp;<span class="fas fa-upload"></span></button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a class="btn btn-primary form-control" id="btn-descarga-formato" target="_blank"><i class="fas fa-download"></i> Des. Formato</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="file" class="form-control d-none" id="file-masivo" accept=".xlsx">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="alert alert-warning alert-dismissible fade show d-none" role="alert" id="div-alert-masivo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-12 mt-3">
+                    <div class="form-floating">
+                        <textarea class="form-control edit-control" id="txt-comentario" name="txt-comentario" rows="4" data-val="true" placeholder=""></textarea>
+                        <label for="txt-comentario">Comentarios de solicitud</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12 table-responsive">
+                    <table id="tbl-tarifas" class="table table-workflow text-nowrap" style="width:100%;">
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6 offset-md-3 mt-3">
+                    <a class="btn btn-primary form-control" id="btnExportar" target="_blank"><i class="fas fa-file-excel"></i> Exportar Solicitud</a>
+                </div>
+            </div>
+
+            <partial name="_AccionesSolicitud.cshtml"></partial>
+        </div>
+    </div>
+</form>
+
+<div class="offcanvas offcanvas-end offcanvas-custom" id="div-modal-tarifa" aria-labelledby="tarifaModal" data-bs-backdrop="true">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title fw-bold" id="tituloNuevaTarifaModal">Editar Tarifa</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+        <input type="hidden" id="input-idcurso-editar" />
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="form-floating">
+                    <select class="form-select" id="sel-organizacion-editar" placeholder disabled>
+                        @foreach (var organizacion in organizaciones?.ToList())
+                        {
+                            <option value="@organizacion.Key">@organizacion.Value</option>
+                        }
+                    </select>
+                    <label for="sel-organizacion-editar">Organizaci&oacute;n</label>
+                </div>
+            </div>
+            <div class="col-md-12 mt-4">
+                <div class="form-floating">
+                    <select class="form-select" id="sel-periodo-editar" placeholder disabled>
+                    </select>
+                    <label for="sel-periodo-editar">Periodo</label>
+                </div>
+            </div>
+            <div class="col-md-12 mt-4">
+                <div class="form-floating">
+                    <select class="form-select" id="sel-tipo-sesion-editar">
+                        <option value="">Seleccione</option>
+                        <option value="Síncrono">Síncrono</option>
+                        <option value="Asíncrono">Asíncrono</option>
+                        <option value="Ambos">Ambos</option>
+                    </select>
+                    <label for="sel-tipo-sesion-editar">Tipo de Sesión</label>
+                </div>
+            </div>
+            <div class="col-md-12 mt-4">
+                <div class="form-floating">
+                    <select class="form-select" id="sel-curso-editar" placeholder disabled>
+                    </select>
+                    <label for="sel-curso-editar" style="top:-5px;">Curso</label>
+                </div>
+            </div>
+            <div class="col-md-12 mt-4">
+                <div class="form-floating">
+                    <input type="text" id="input-tarifa-editar" class="form-control" placeholder>
+                    <label for="input-tarifa-editar">Tarifa</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-auto">
+            <div class="col-md-6 mt-2">
+                <button class="btn btn-primary form-control" id="btn-guardar-editar">Guardar</button>
+            </div>
+            <div class="col-md-6 mt-2">
+                <button type="button" class="btn btn-outline-primary form-control" data-bs-dismiss="offcanvas">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/workflow/service/tarifa-curso-service.js" asp-append-version="true"></script>
+<script src="~/js/workflow/bandeja-solicitud/bandeja-solicitud-tarifa-curso.js" asp-append-version="true"></script>

@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Programar Sesiones";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+
+}
+
+
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-tasks"></i>
+        @ViewData["Title"]
+    </h1>
+</div>
+
+<div class="col-md-12 card container-fluid">
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-sm-4 form-group">
+                <label for="cboPeriodo" class="form-label">Periodo:</label>
+                <select id="cboPeriodo" class="form-control form-select" data-bs-placeholder="Seleccione un Periodo">
+                    <option value="-1">Seleccione un Periodo</option>
+                </select>
+            </div>
+            <div class="col-sm-4 form-group">
+                <label for="txtSeccion" class="form-label">Sección:</label>
+                <input type="text" class="form-control" id="txtSeccion" value="">
+            </div>
+            <div class="col-sm-4 form-group">
+                <label for="txtIdCurso" class="form-label">ID Curso:</label>
+                <input type="text" class="form-control" id="txtIdCurso" value="">
+            </div>
+        </div>
+        <button class="btn btn-primary mt-4 mb-4" id="btnConsultar">Consultar</button>
+
+        <div class="contenedor-jefe">
+            
+        </div>
+        <div class="table-responsive">
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/ProgramarSesiones.js" type="module"></script>
+
+}

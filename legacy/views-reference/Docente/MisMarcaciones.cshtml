@@ -1,0 +1,150 @@
+﻿
+@{
+    // ViewData["Title"] = "Mis marcaciones";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/NewLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout_Intranet.cshtml";
+    // List<string> secciones = ViewBag.Sections;
+    // List<string> cursos = ViewBag.Courses;
+
+    List<string> secciones = ViewData["Sections"] as List<string>;
+    List<string> cursos = ViewData["Courses"] as List<string>;
+
+    List<string> headers =
+    new List<string> {
+        "Fecha",
+        "Curso",
+        "Aula",
+        "Marcación",
+        "Tardanza"
+    };
+
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+    /* Estilo para mostrar Marcación y Tardanza en el mismo nivel */
+    .marcacion-container, .tardanza-container {
+        display: flex;
+        justify-content: space-between; /* Separar el título y el contenido */
+        align-items: start; /* Alinear verticalmente al centro */
+        margin-bottom: 10px; /* Añadir espacio entre líneas */
+    }
+
+    .marcacion-container strong, .tardanza-container strong {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .marcacion, .tardanza {
+        font-size: 1rem;
+        color: #666;
+        text-align: right; /* Alinear el contenido a la derecha */
+    }
+
+    .tardanza-sin {
+        background-color: rgb(20 97 43 / 63%);
+        padding: 1px 5px;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .tardanza-min {
+        background-color: rgba(255, 0, 0, 0.56);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: white;
+    }
+</style>
+
+
+<div class="card shadow-lg border-0 rounded-3 mt-4">
+    <div class="card-body p-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label for="StartDate" class="form-label fw-bold">Fecha Inicio:</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="fas fa-calendar-alt"></i></span>
+                    <input id="StartDate" type="date" class="form-control form-control-sm" placeholder="dd/mm/yyyy" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="EndDate" class="form-label fw-bold">Fecha Fin:</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="fas fa-calendar-alt"></i></span>
+                    <input id="EndDate" type="date" class="form-control form-control-sm" placeholder="dd/mm/yyyy" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Sección:</label>
+                <select class="form-select  form-select-sm" id="cboSecciones">
+                    <option value="-1">Seleccione</option>
+                    @foreach (var seccion in secciones)
+                    {
+                        <option value="@seccion">@seccion</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Curso:</label>
+                <select class="form-select form-select-sm" id="cboCursos">
+                    <option value="-1">Seleccione</option>
+                    @foreach (var curso in cursos)
+                    {
+                        <option value="@curso">@curso</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light d-flex text-end p-3">
+        <button type="button" onclick="searchChecks()" class="btn btn-sm btn-primary me-2 shadow-sm">
+            <i class="fas fa-search"></i> Consultar Marcaciones
+        </button>
+        <button type="button" onclick="generateReport()" class="btn btn-sm btn-success shadow-sm">
+            <i class="fas fa-file-excel"></i> Reporte Excel
+        </button>
+    </div>
+</div>
+
+<div id="cardMarcaciones" class="card shadow-lg mt-4 rounded-3 d-none">
+    <div class="card-body">
+        <div id="marcacionesDocente">
+            <div class="table-responsive table-responsive-docente">
+                <table id="lstMarcaciones" class="table text-nowrap" style="width:100%;border-spacing: 5px;">
+                    <thead>
+                        <tr>
+                            @foreach (string header in headers)
+                            {
+                                <th class="bg-header-table" style="padding: 5px; border-radius: 12px; color: white; margin: 10px;">@header.ToUpper()</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="marcacionesCard" class="table-cards">
+                <div id="contentCards-marcaciones">
+                </div>
+                <div class="pagination">
+                    <!-- Links de paginación se generarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <!--Request de listados-->
+    <script>
+        const requestListado = "@Url.Action("buscarMarcaciones", "Docente")";
+        const reporteMarcaciones = "@Url.Action("generarReporte", "Docente")";
+
+    </script>
+
+    @* <script src="~/js/Docente/MisMarcaciones.js?v=1.0.1"></script> *@
+
+    <script src="~/js/Docente/MisMarcaciones.js?v=@Guid.NewGuid().ToString();"></script>
+}

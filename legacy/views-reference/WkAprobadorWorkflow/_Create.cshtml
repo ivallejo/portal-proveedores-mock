@@ -1,0 +1,99 @@
+﻿@{
+    var flujos = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Flujos;
+    var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+    var gruposAprobadores = (IEnumerable<KeyValuePair<string, string>>)ViewBag.GruposAprobadores;
+    var fases = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Fases;
+}
+<form autocomplete="off" id="frmAccion">
+    <div class="offcanvas offcanvas-end offcanvas-custom" id="nuevoAprobadorWorkflowModal" aria-labelledby="nuevoAprobadorWorkflowModalLabel" data-bs-backdrop="true">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="tituloNuevoAprobadorWorkflowModal">Nuevo aprobador</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="row">
+                <div class="col-md-12 mb-2"><h6 class="fw-bold title-seccion">Datos generales</h6></div>
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" required id="idWorkflow" name="idWorkflow" data-val="true" placeholder="">
+                            @foreach (var flujo in flujos?.ToList())
+                            {
+                                <option value="@flujo.Key">@flujo.Value</option>
+                            }
+                        </select>
+                        <label for="idWorkflow">Nombre del flujo</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" required id="organizacion" name="organizacion" data-val="true" placeholder="">
+                            @foreach (var organizacion in organizaciones?.ToList())
+                            {
+                                <option value="@organizacion.Key">@organizacion.Value</option>
+                            }
+                        </select>
+                        <label for="organizacion">Organizaci&oacute;n</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" required id="idPeriodoAcademico" name="idPeriodoAcademico" data-val="true" placeholder="">
+                        </select>
+                        <label for="idPeriodoAcademico">Periodo</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12 mb-2"><h6 class="fw-bold title-seccion">Aprobadores</h6></div>
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" id="idFaseWorkflow" data-val="true" placeholder="">
+                            @foreach (var fase in fases?.ToList())
+                            {
+                                <option value="@fase.Key">@fase.Value</option>
+                            }
+                        </select>
+                        <label for="fase">Fase</label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-9 mt-4">
+                            <div class="form-floating">
+                                <select class="form-select" id="idGrupo" data-val="true" placeholder="">
+                                    @foreach (var grupoAprobador in gruposAprobadores?.ToList())
+                                    {
+                                        <option value="@grupoAprobador.Key">@grupoAprobador.Value</option>
+                                    }
+                                </select>
+                                <label for="grupoAprobador">Grupo</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-4">
+                            <button type="button" class="btn btn-primary form-control" id="btnAgregarGrupo">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12 table-responsive">
+                    <table id="tblGrupos" class="table table-workflow" style="width:100%;">
+                    </table>
+                </div>
+            </div>
+            <div class="row mt-auto">
+                <div class="col-md-6 mt-2">
+                    <button type="button" class="btn btn-primary form-control" id="btnGuardar">Guardar</button>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <button type="button" class="btn btn-outline-primary form-control" data-bs-dismiss="offcanvas">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/js/workflow/aprobador-workflow/aprobador-workflow-create.js" asp-append-version="true"></script>

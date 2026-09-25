@@ -1,0 +1,67 @@
+﻿@{
+	ViewData["Title"] = "Reporte Estadístico de Tarifa de Docentes";
+	Layout = "~/Views/Shared/_Layout_Workflow.cshtml";
+	var organizaciones = (IEnumerable<KeyValuePair<string, string>>)ViewBag.Organizaciones;
+}
+<div id="divContent">
+	<div class="row">
+		<div class="col-md-10">
+			<h3 class="fw-bold">
+				Reporte de Tarifas por Docentes
+			</h3>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-sm-12 col-md-5">
+			<div class="fw-bold">
+				Ingresa la información solicitada
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Organización:</span>
+				<select class="form-select" id="organizacion">
+					@foreach (var organizacion in organizaciones?.ToList())
+					{
+						<option value="@organizacion.Key">@organizacion.Value</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="col-md-4 mt-2">
+			<div class="input-group">
+				<span class="input-group-text bg-white">Periodo:</span>
+				<select class="form-select" id="periodo">
+				</select>
+			</div>
+		</div>
+		<div class="col-md-4 mt-2">
+			<button class="btn btn-primary form-control" id="btnBuscar">Buscar</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="card card-index mt-4 card-worklow">
+			<div id='jqxChart' style="width:850px; height:400px; position: relative; left: 0px; top: 0px;">
+			</div>
+		</div>
+	</div>
+	<div class="row mt-3">
+		<div class="card card-index mt-4 card-worklow">
+			<div id='chartContainer' style="width: 850px; height: 500px;">
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/jqwidgets/jqxcore.js" asp-append-version="true"></script>
+	<script src="~/js/jqwidgets/jqxdraw.js" asp-append-version="true"></script>
+	<script src="~/js/jqwidgets/jqxchart.core.js" asp-append-version="true"></script>
+	<script src="~/js/jqwidgets/jqxdata.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/service/tarifa-docente-service.js" asp-append-version="true"></script>
+	@* <script src="~/js/workflow/service/periodo-academico-service.js" asp-append-version="true"></script> *@
+	<script src="~/js/workflow/tarifa-docente/tarifa-docente-repo-estadistico-index.js" asp-append-version="true"></script>
+	<script src="~/js/workflow/constantes.js" asp-append-version="true"></script>
+	}
