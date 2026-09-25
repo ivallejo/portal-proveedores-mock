@@ -204,6 +204,12 @@ td { color: #646464; }
 .provider-content .detail-grid p b { font-size:13px; color:#253C6D; }
 .provider-content .detail-grid p small { font-size:12px; color:#41464d; }
 .provider-content .detail-grid p span { font-size:13px; font-weight:600; color:#253C6D; }
+.provider-content .approval-top strong { font-size:16px; }
+.provider-content .approval-top small { font-size:12px; }
+.provider-content .approval-data { font-size:12px; }
+.provider-content .approval-data b { font-size:14px; }
+.provider-content .approval-actions input { font-size:13px; min-height:43px; }
+.provider-content .approval-actions button { font-size:13px; }
 .password-field { position:relative; display:flex; align-items:center; width:100%; min-height:42px; border:1px solid #dce4ef; border-radius:8px; background:#fff; transition:border-color .18s ease, box-shadow .18s ease; }
 .password-field:focus-within { border-color:#41699d; box-shadow:0 0 0 3px #eaf2fc; }
 .password-field input { flex:1; width:100%; min-width:0; border:0 !important; box-shadow:none !important; border-radius:8px; padding-right:8px; }
