@@ -177,6 +177,19 @@ td { color: #646464; }
 .login-card label { color:#202124; font-size:14px; }
 .provider-content input, .provider-content select, .provider-content textarea, .provider-content button, .provider-content option, .login-card input, .login-card select, .login-card button, .login-card option { font-family:'Poppins', sans-serif !important; }
 .provider-content > .toast { width:100%; max-width:1080px; box-sizing:border-box; margin-left:auto; margin-right:auto; }
+.provider-content { font-size:14px; }
+.provider-content .page-heading h1 { font-size:27px; }
+.provider-content .page-heading p { font-size:13px; }
+.provider-content .panel-title h2, .provider-content .form-panel h2 { font-size:18px; }
+.provider-content .panel-title p { font-size:12px; }
+.provider-content .primary, .provider-content .secondary { font-size:13px; padding:11px 18px; }
+.provider-content .form-grid input, .provider-content .form-grid select, .provider-content .conditional-box input, .provider-content .conditional-box select, .provider-content .filters select, .provider-content .approval-actions input, .provider-content .approval-data select { min-height:43px; padding:11px 12px; font-size:13px; }
+.provider-content .form-grid label, .provider-content .conditional-box > label { font-size:13px; }
+.provider-content td { font-size:14px; }
+.provider-content th { font-size:12px; }
+.provider-content .status-badge, .provider-content .counter, .provider-content .incident-count { font-size:11px; padding:6px 10px; }
+.login-card .primary { font-size:14px; min-height:44px; }
+.login-card input { min-height:44px; font-size:14px; }
 .password-field { position:relative; display:flex; align-items:center; width:100%; min-height:42px; border:1px solid #dce4ef; border-radius:8px; background:#fff; transition:border-color .18s ease, box-shadow .18s ease; }
 .password-field:focus-within { border-color:#41699d; box-shadow:0 0 0 3px #eaf2fc; }
 .password-field input { flex:1; width:100%; min-width:0; border:0 !important; box-shadow:none !important; border-radius:8px; padding-right:8px; }
