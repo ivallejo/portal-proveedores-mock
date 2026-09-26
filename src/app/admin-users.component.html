@@ -46,7 +46,6 @@
             <th>Identificador</th>
             <th>Rol</th>
             <th>Estado</th>
-            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -62,17 +61,26 @@
               </select>
             </td>
             <td>
-              <span
-                class="status-badge"
-                [class.aprobado]="user.isActive"
-                [class.rechazado]="!user.isActive"
-                >{{ user.isActive ? 'Activo' : 'Inactivo' }}</span
-              >
-            </td>
-            <td>
-              <button class="secondary" (click)="toggleStatus(user)">
-                {{ user.isActive ? 'Desactivar' : 'Activar' }}
-              </button>
+              <div class="user-status-control">
+                <span
+                  class="status-badge"
+                  [class.aprobado]="user.isActive"
+                  [class.rechazado]="!user.isActive"
+                  >{{ user.isActive ? 'Activo' : 'Inactivo' }}</span
+                >
+                <button
+                  type="button"
+                  class="status-toggle"
+                  [class.active]="user.isActive"
+                  role="switch"
+                  [attr.aria-checked]="user.isActive"
+                  [attr.aria-label]="user.isActive ? 'Desactivar usuario' : 'Activar usuario'"
+                  [title]="user.isActive ? 'Desactivar usuario' : 'Activar usuario'"
+                  (click)="toggleStatus(user)"
+                >
+                  <span></span>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

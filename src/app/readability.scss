@@ -276,9 +276,46 @@
   line-height: 1.35;
 }
 .admin-users-table td small {
-  color: #7a88a0;
+  color: #52627d;
   font-size: 13px;
   line-height: 1.4;
+}
+.user-status-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.status-toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #d0d5dd;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+.status-toggle span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.25);
+  transition: transform 0.18s ease;
+}
+.status-toggle.active {
+  background: #253c6d;
+}
+.status-toggle.active span {
+  transform: translateX(16px);
+}
+.status-toggle:focus-visible {
+  outline: 3px solid rgba(37, 60, 109, 0.2);
+  outline-offset: 2px;
 }
 .admin-pagination-bottom {
   justify-content: space-between;
