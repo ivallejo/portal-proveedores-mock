@@ -592,15 +592,13 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  margin: 18px 0;
-  padding: 14px;
-  border: 1px solid #d8eadf;
-  border-radius: 9px;
-  background: #f2fbf5;
+  margin: 24px 0;
+  padding: 0;
 }
 .sap-provider-summary > i {
   color: #287a53;
-  font-size: 22px;
+  margin-top: 3px;
+  font-size: 26px;
 }
 .sap-provider-summary small,
 .sap-provider-summary strong,
@@ -609,35 +607,40 @@
 }
 .sap-provider-summary small {
   color: #287a53;
-  font-size: 11px;
+  font-size: 13px;
   margin-bottom: 4px;
 }
 .sap-provider-summary small:nth-of-type(2) {
-  margin-top: 10px;
+  margin-top: 16px;
 }
 .sap-provider-summary strong {
   color: #253c6d;
-  font-size: 14px;
+  font-size: 17px;
+  line-height: 1.4;
 }
 .sap-provider-summary span {
-  color: #657594;
-  font-size: 12px;
+  color: #52627d;
+  font-size: 15px;
+  line-height: 1.4;
   margin-top: 3px;
 }
 .terms-box {
-  margin: 18px 0;
-  padding: 14px;
-  border: 1px solid #dce4ef;
-  border-radius: 9px;
-  background: #fbfcfe;
+  margin: 24px 0;
+  padding: 0;
 }
 .terms-check {
   display: flex !important;
   align-items: center !important;
   gap: 8px;
   color: #253c6d;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
+}
+.terms-box p {
+  margin-top: 12px;
+  color: #52627d;
+  font-size: 14px;
+  line-height: 1.55;
 }
 .terms-check input {
   width: 16px;

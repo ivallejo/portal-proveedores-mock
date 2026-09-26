@@ -42,7 +42,9 @@ export class SapProviderService {
   private obfuscateEmail(email: string): string {
     const [localPart, domain] = email.split('@');
     if (!localPart || !domain) return email;
-    const visibleCharacters = Math.min(2, localPart.length);
-    return `${localPart.slice(0, visibleCharacters)}${'*'.repeat(Math.max(2, localPart.length - visibleCharacters))}@${domain}`;
+    const domainParts = domain.split('.');
+    const domainName = domainParts.shift() || domain;
+    const domainSuffix = domainParts.length ? `.${domainParts.join('.')}` : '';
+    return `${localPart.slice(0, 3)}*****${domainName.slice(-3)}${domainSuffix}`;
   }
 }
