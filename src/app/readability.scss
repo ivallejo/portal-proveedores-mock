@@ -474,3 +474,73 @@
     padding-right: 16px;
   }
 }
+
+.registration-ruc-field {
+  display: flex;
+  gap: 8px;
+}
+.registration-ruc-field input {
+  flex: 1;
+  min-width: 0;
+}
+.registration-ruc-field .secondary {
+  flex: 0 0 auto;
+}
+.sap-provider-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px solid #d8eadf;
+  border-radius: 9px;
+  background: #f2fbf5;
+}
+.sap-provider-summary > i {
+  color: #287a53;
+  font-size: 22px;
+}
+.sap-provider-summary small,
+.sap-provider-summary strong,
+.sap-provider-summary span {
+  display: block;
+}
+.sap-provider-summary small {
+  color: #287a53;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.sap-provider-summary strong {
+  color: #253c6d;
+  font-size: 14px;
+}
+.sap-provider-summary span {
+  color: #657594;
+  font-size: 12px;
+  margin-top: 3px;
+}
+.terms-box {
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px solid #dce4ef;
+  border-radius: 9px;
+  background: #fbfcfe;
+}
+.terms-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #253c6d;
+  font-size: 13px;
+  font-weight: 500;
+}
+.terms-check input {
+  width: 16px;
+  height: 16px;
+}
+.terms-box p {
+  margin: 10px 0 0;
+  color: #657594;
+  font-size: 11px;
+  line-height: 1.5;
+}

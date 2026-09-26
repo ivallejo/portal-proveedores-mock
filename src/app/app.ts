@@ -7,6 +7,7 @@ import { ContabilizacionService } from './contabilizacion.service';
 import { DocumentoService } from './documento.service';
 import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
+import { SapProviderService } from './sap-provider.service';
 import { environment } from '../environments/environment';
 import { DocumentType, Role, SpecialSubtype } from './models';
 
@@ -32,6 +33,7 @@ export class App {
   readonly aprobacionService = inject(AprobacionService);
   readonly contabilizacionService = inject(ContabilizacionService);
   readonly adminService = inject(AdminService);
+  readonly sapProviderService = inject(SapProviderService);
   readonly screen = signal<Screen>('dashboard');
   readonly menuOpen = signal(false);
   readonly loading = signal(false);
@@ -56,9 +58,13 @@ export class App {
   readonly showRegistrationConfirmPassword = signal(false);
   readonly showRegistration = signal(false);
   readonly registrationLoading = signal(false);
+  readonly registrationSapLoading = signal(false);
   readonly registrationMessage = signal('');
   readonly registrationCompleted = signal(false);
-  readonly registration = { ruc: '', email: '', company: '', password: '', confirmPassword: '' };
+  readonly registrationValidated = signal(false);
+  readonly registrationTermsAccepted = signal(false);
+  readonly registrationKeyRequested = signal(false);
+  readonly registration = { ruc: '', email: '', company: '' };
   readonly uploadedFiles = signal<{ name: string; kind: string }[]>([]);
   readonly requester = { area: 'Operaciones', email: 'solicitante@naviera.com' };
   readonly query = signal('');
@@ -181,43 +187,74 @@ export class App {
   openRegistration(): void {
     this.registrationMessage.set('');
     this.registrationCompleted.set(false);
+    this.registrationValidated.set(false);
+    this.registrationTermsAccepted.set(false);
+    this.registrationKeyRequested.set(false);
+    this.registration.ruc = '';
+    this.registration.company = '';
+    this.registration.email = '';
     this.showRegistration.set(true);
   }
   closeRegistration(): void {
     this.showRegistration.set(false);
     this.registrationMessage.set('');
     this.registrationCompleted.set(false);
+    this.registrationValidated.set(false);
+    this.registrationKeyRequested.set(false);
   }
   finishRegistration(): void {
     this.username.set(this.registration.email);
     this.password.set('');
     this.showRegistration.set(false);
     this.registrationCompleted.set(false);
+    this.registrationKeyRequested.set(false);
   }
   register(): void {
-    if (
-      !this.registration.ruc ||
-      !this.registration.email ||
-      !this.registration.company ||
-      !this.registration.password
-    ) {
-      this.registrationMessage.set('Completa todos los campos para continuar.');
+    if (!this.registrationValidated()) {
+      this.registrationMessage.set('Primero valida el RUC para continuar.');
       return;
     }
-    if (this.registration.password !== this.registration.confirmPassword) {
-      this.registrationMessage.set('Las contraseñas no coinciden.');
+    if (!this.registrationTermsAccepted()) {
+      this.registrationMessage.set('Debes aceptar los términos y condiciones.');
       return;
     }
     this.registrationLoading.set(true);
     this.registrationMessage.set('');
-    this.auth.register(this.registration).subscribe({
-      next: () => {
-        this.registrationLoading.set(false);
-        this.registrationCompleted.set(true);
+    this.sapProviderService
+      .requestAccessKey({
+        ruc: this.registration.ruc,
+        companyName: this.registration.company,
+        email: this.registration.email,
+      })
+      .subscribe({
+        next: () => {
+          this.registrationLoading.set(false);
+          this.registrationKeyRequested.set(true);
+        },
+        error: (err) => {
+          this.registrationLoading.set(false);
+          this.registrationMessage.set(
+            err.error?.message || 'No fue posible completar el registro.',
+          );
+        },
+      });
+  }
+  validateRegistrationRuc(): void {
+    this.registrationMessage.set('');
+    this.registrationValidated.set(false);
+    this.registrationSapLoading.set(true);
+    this.sapProviderService.lookupByRuc(this.registration.ruc).subscribe({
+      next: (provider) => {
+        this.registration.company = provider.companyName;
+        this.registration.email = provider.email;
+        this.registrationValidated.set(true);
+        this.registrationSapLoading.set(false);
       },
-      error: (err) => {
-        this.registrationLoading.set(false);
-        this.registrationMessage.set(err.error?.message || 'No fue posible completar el registro.');
+      error: (error) => {
+        this.registrationSapLoading.set(false);
+        this.registrationMessage.set(
+          error.message || 'No encontramos información para el RUC indicado.',
+        );
       },
     });
   }

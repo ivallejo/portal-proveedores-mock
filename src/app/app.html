@@ -1,6 +1,6 @@
 <main *ngIf="!auth.user(); else portal" class="login-page">
   <section
-    *ngIf="showRegistration() && !registrationCompleted(); else loginCard"
+    *ngIf="showRegistration() && !registrationKeyRequested(); else loginCard"
     class="login-card registration-card"
   >
     <button class="back-link" type="button" (click)="closeRegistration()">
@@ -10,92 +10,73 @@
       <span></span>
       <div><b>Portal de Proveedores</b></div>
     </div>
-    <p class="eyebrow">REGISTRO DE PROVEEDOR</p>
-    <h1>Crea tu cuenta</h1>
-    <p class="muted">Registra los datos de tu empresa para solicitar acceso al portal.</p>
+    <p class="eyebrow">REGISTRO ONLINE</p>
+    <h1>Registro Online</h1>
+    <p class="muted">
+      Valida tu RUC para consultar tus datos registrados en SAP y solicitar tu clave de acceso.
+    </p>
     <form (ngSubmit)="register()">
       <label
-        >RUC *<input [(ngModel)]="registration.ruc" name="ruc" placeholder="Ingresa tu RUC"
-      /></label>
-      <label
-        >Razón social *<input
-          [(ngModel)]="registration.company"
-          name="company"
-          placeholder="Nombre de tu empresa"
-      /></label>
-      <label
-        >Correo corporativo *<input
-          type="email"
-          [(ngModel)]="registration.email"
-          name="email"
-          placeholder="correo@empresa.com"
-      /></label>
-      <label
-        >Contraseña *
-        <div class="password-field">
+        >RUC *
+        <div class="registration-ruc-field">
           <input
-            [(ngModel)]="registration.password"
-            name="registrationPassword"
-            [type]="showRegistrationPassword() ? 'text' : 'password'"
-            autocomplete="new-password"
-            placeholder="Crea una contraseña segura"
+            [(ngModel)]="registration.ruc"
+            name="ruc"
+            placeholder="Ingresa tu RUC"
+            maxlength="11"
+            inputmode="numeric"
+            [disabled]="registrationSapLoading() || registrationValidated()"
           /><button
+            class="secondary"
             type="button"
-            class="password-toggle"
-            (click)="showRegistrationPassword.set(!showRegistrationPassword())"
-            [attr.aria-label]="
-              showRegistrationPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'
-            "
+            [disabled]="registrationSapLoading() || registrationValidated()"
+            (click)="validateRegistrationRuc()"
           >
-            <i
-              class="bx"
-              [class.bx-show]="!showRegistrationPassword()"
-              [class.bx-hide]="showRegistrationPassword()"
-            ></i>
-          </button></div
-      ></label>
-      <label
-        >Confirmar contraseña *
-        <div class="password-field">
-          <input
-            [(ngModel)]="registration.confirmPassword"
-            name="confirmPassword"
-            [type]="showRegistrationConfirmPassword() ? 'text' : 'password'"
-            autocomplete="new-password"
-            placeholder="Repite tu contraseña"
-          /><button
-            type="button"
-            class="password-toggle"
-            (click)="showRegistrationConfirmPassword.set(!showRegistrationConfirmPassword())"
-            [attr.aria-label]="
-              showRegistrationConfirmPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'
-            "
-          >
-            <i
-              class="bx"
-              [class.bx-show]="!showRegistrationConfirmPassword()"
-              [class.bx-hide]="showRegistrationConfirmPassword()"
-            ></i>
-          </button></div
-      ></label>
+            {{ registrationSapLoading() ? 'Validando...' : 'Validar' }}
+          </button>
+        </div></label
+      >
+      <div *ngIf="registrationValidated()" class="sap-provider-summary">
+        <i class="bx bx-check-circle"></i>
+        <div>
+          <small>Información encontrada en SAP</small><strong>{{ registration.company }}</strong
+          ><span>{{ registration.email }}</span>
+        </div>
+      </div>
+      <div *ngIf="registrationValidated()" class="terms-box">
+        <label class="terms-check"
+          ><input
+            type="checkbox"
+            [ngModel]="registrationTermsAccepted()"
+            (ngModelChange)="registrationTermsAccepted.set($event)"
+            name="termsAccepted"
+          />
+          <span>Acepto los términos y condiciones</span></label
+        >
+        <p>
+          La empresa se compromete a guardar absoluta reserva y mantener la confidencialidad de la
+          información personal de sus proveedores respetando las disposiciones contenidas en la Ley
+          N°29733 Ley de Protección de datos personales.
+        </p>
+      </div>
       <p *ngIf="registrationMessage()" class="form-message success-message">
         {{ registrationMessage() }}
       </p>
-      <button class="primary full" [disabled]="registrationLoading()">
-        {{ registrationLoading() ? 'Registrando...' : 'Crear cuenta' }}
+      <button class="primary full" [disabled]="registrationLoading() || !registrationValidated()">
+        {{ registrationLoading() ? 'Enviando clave...' : 'Solicitar clave' }}
       </button>
     </form>
   </section>
-  <section *ngIf="registrationCompleted()" class="login-card registration-success-card">
+  <section *ngIf="registrationKeyRequested()" class="login-card registration-success-card">
     <div class="success-mark"><i class="bx bx-check"></i></div>
     <p class="eyebrow">REGISTRO COMPLETADO</p>
     <h1>¡Cuenta creada!</h1>
     <p class="muted">
-      Tu cuenta de proveedor fue creada correctamente. Ya puedes ingresar al portal con tu correo y
-      contraseña.
+      Hemos enviado una clave temporal al correo registrado en SAP. Revisa tu bandeja de entrada
+      para continuar.
     </p>
     <div class="registered-email">
-      <small>Correo registrado</small><strong>{{ registration.email }}</strong>
+      <small>Clave enviada a</small><strong>{{ registration.email }}</strong>
     </div>
     <button class="primary full" type="button" (click)="finishRegistration()">
       Ir a iniciar sesión
