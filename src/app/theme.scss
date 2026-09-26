@@ -1051,7 +1051,7 @@ td {
     box-shadow 0.18s ease;
 }
 .password-field:focus-within {
-  border-color: #41699d;
+  border-color: #253c6d;
   box-shadow: 0 0 0 3px #eaf2fc;
 }
 .password-field input {
@@ -1077,7 +1077,7 @@ td {
   cursor: pointer;
 }
 .password-toggle:hover {
-  color: #41699d;
+  color: #253c6d;
   background: #edf2fa;
 }
 .password-toggle i {
@@ -1111,14 +1111,14 @@ td {
   line-height: 1.1;
 }
 .login-logo strong {
-  color: #41699d;
+  color: #253c6d;
   font-size: 0;
 }
 .login-logo strong::after {
   content: none;
 }
 .login-logo b {
-  color: #41699d;
+  color: #253c6d;
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.025em;
@@ -1289,7 +1289,7 @@ td {
   gap: 10px;
 }
 .doc-type > i {
-  color: #41699d;
+  color: #253c6d;
   font-size: 23px;
 }
 .doc-type strong,
@@ -1336,7 +1336,7 @@ td {
 }
 .registrado,
 .en-validación {
-  color: #41699d;
+  color: #253c6d;
   background: #edf2fa;
 }
 .skeleton-table {
@@ -1395,7 +1395,7 @@ td {
   background: #f8fafe;
 }
 .conditional-box h3 {
-  color: #41699d;
+  color: #253c6d;
   font-size: 13px;
   margin: 0 0 14px;
 }
@@ -1418,7 +1418,7 @@ td {
 }
 .info-note i,
 .route-note i {
-  color: #41699d;
+  color: #253c6d;
   font-size: 17px;
   vertical-align: -3px;
 }
@@ -1438,7 +1438,7 @@ td {
   margin-top: 25px;
 }
 .secondary {
-  color: #41699d;
+  color: #253c6d;
   border: 1px solid #cfd9e8;
   background: #fff;
   border-radius: 7px;
@@ -1465,15 +1465,15 @@ td {
   border-radius: 50%;
   margin-right: 6px;
   background: #edf2fa;
-  color: #41699d;
+  color: #253c6d;
 }
 .stepper span.active {
-  color: #41699d;
+  color: #253c6d;
   border-color: #ed7624;
 }
 .stepper span.active b {
   color: #fff;
-  background: #41699d;
+  background: #253c6d;
 }
 .table-panel {
   padding: 0;
@@ -1490,7 +1490,7 @@ td {
   padding: 8px;
 }
 .row-link {
-  color: #41699d;
+  color: #253c6d;
   background: none;
   border: 0;
   padding: 0;
@@ -1500,7 +1500,7 @@ td {
 .icon-button {
   border: 0;
   background: none;
-  color: #41699d;
+  color: #253c6d;
   font-size: 19px;
 }
 .expanded-row td {
@@ -1605,7 +1605,7 @@ td {
   color: #8b96a8;
 }
 .empty-state i {
-  color: #41699d;
+  color: #253c6d;
   font-size: 42px;
 }
 .empty-state h3 {
