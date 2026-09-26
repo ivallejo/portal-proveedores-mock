@@ -203,7 +203,7 @@ export class App {
     this.registrationKeyRequested.set(false);
   }
   finishRegistration(): void {
-    this.username.set(this.registration.email);
+    this.username.set(this.registration.ruc);
     this.password.set('');
     this.showRegistration.set(false);
     this.registrationCompleted.set(false);

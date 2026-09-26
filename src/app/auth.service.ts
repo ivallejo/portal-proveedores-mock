@@ -22,8 +22,8 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   readonly user = signal<User | null>(null);
   private readonly apiUrl = `${environment.apiUrl}/auth`;
-  login(username: string, password: string): Observable<User> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email: username, password }).pipe(
+  login(identifier: string, password: string): Observable<User> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { identifier, password }).pipe(
       tap((response) => localStorage.setItem('web-proveedores.access-token', response.accessToken)),
       map((response) => this.toUser(response.user)),
       tap((user) => this.user.set(user)),

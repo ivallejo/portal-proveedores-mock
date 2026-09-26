@@ -102,12 +102,12 @@
       <p class="muted">Ingresa para gestionar tus documentos de cobro.</p>
       <form (ngSubmit)="login()">
         <label
-          >Correo electrónico<input
+          >RUC o usuario<input
             [ngModel]="username()"
             (ngModelChange)="username.set($event)"
             name="username"
             autocomplete="username"
-            placeholder="Ingresa tu correo" /></label
+            placeholder="Ingresa tu RUC o usuario" /></label
         ><label
           >Contraseña
           <div class="password-field">
