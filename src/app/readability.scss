@@ -527,8 +527,8 @@
   background: #fbfcfe;
 }
 .terms-check {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
   gap: 8px;
   color: #253c6d;
   font-size: 13px;
