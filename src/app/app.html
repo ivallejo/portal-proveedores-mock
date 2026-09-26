@@ -10,7 +10,6 @@
       <span></span>
       <div><b>Portal de Proveedores</b></div>
     </div>
-    <p class="eyebrow">REGISTRO ONLINE</p>
     <h1>Registro Online</h1>
     <p class="muted">
       Valida tu RUC para consultar tus datos registrados en SAP y solicitar tu clave de acceso.
@@ -27,20 +26,30 @@
             inputmode="numeric"
             [disabled]="registrationSapLoading() || registrationValidated()"
           /><button
-            class="secondary"
+            class="secondary registration-validate-button"
+            [class.validation-success]="registrationValidated()"
+            [class.validation-loading]="registrationSapLoading()"
             type="button"
             [disabled]="registrationSapLoading() || registrationValidated()"
             (click)="validateRegistrationRuc()"
           >
-            {{ registrationSapLoading() ? 'Validando...' : 'Validar' }}
+            {{
+              registrationSapLoading()
+                ? 'Validando...'
+                : registrationValidated()
+                  ? 'Validado'
+                  : 'Validar'
+            }}
           </button>
         </div></label
       >
       <div *ngIf="registrationValidated()" class="sap-provider-summary">
         <i class="bx bx-check-circle"></i>
         <div>
-          <strong>{{ registration.company }}</strong
-          ><span>{{ registration.email }}</span>
+          <small>Nombre / razón social</small>
+          <strong>{{ registration.company }}</strong>
+          <small>Correo</small>
+          <span>{{ registration.email }}</span>
         </div>
       </div>
       <div *ngIf="registrationValidated()" class="terms-box">

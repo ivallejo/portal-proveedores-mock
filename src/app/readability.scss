@@ -571,6 +571,23 @@
 .registration-ruc-field .secondary {
   flex: 0 0 auto;
 }
+.registration-validate-button {
+  min-width: 96px;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+.registration-validate-button.validation-success {
+  border-color: #2f9b68;
+  color: #fff;
+  background: #2f9b68;
+}
+.registration-validate-button.validation-loading {
+  border-color: #52627d;
+  color: #fff;
+  background: #52627d;
+}
 .sap-provider-summary {
   display: flex;
   align-items: flex-start;
@@ -594,6 +611,9 @@
   color: #287a53;
   font-size: 11px;
   margin-bottom: 4px;
+}
+.sap-provider-summary small:nth-of-type(2) {
+  margin-top: 10px;
 }
 .sap-provider-summary strong {
   color: #253c6d;

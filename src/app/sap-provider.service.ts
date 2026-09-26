@@ -32,10 +32,17 @@ export class SapProviderService {
       companyName: `Proveedor registrado ${normalizedRuc.slice(-4)}`,
       email: `contacto${normalizedRuc.slice(-4)}@empresa.com`,
     };
-    return of(provider).pipe(delay(700));
+    return of({ ...provider, email: this.obfuscateEmail(provider.email) }).pipe(delay(700));
   }
 
   requestAccessKey(provider: SapProvider): Observable<{ sent: boolean; email: string }> {
     return of({ sent: true, email: provider.email }).pipe(delay(900));
+  }
+
+  private obfuscateEmail(email: string): string {
+    const [localPart, domain] = email.split('@');
+    if (!localPart || !domain) return email;
+    const visibleCharacters = Math.min(2, localPart.length);
+    return `${localPart.slice(0, visibleCharacters)}${'*'.repeat(Math.max(2, localPart.length - visibleCharacters))}@${domain}`;
   }
 }
