@@ -351,8 +351,15 @@
 }
 .provider-content {
   position: relative;
+  height: calc(100vh - 84px);
+  overflow-x: hidden;
+  overflow-y: auto;
   min-height: calc(100vh - 84px);
   padding: 18px 10px 24px;
+}
+.provider-shell {
+  height: 100vh;
+  overflow: hidden;
 }
 .login-card {
   max-width: 470px;
@@ -434,6 +441,7 @@
     top: 78px;
   }
   .provider-content {
+    height: calc(100vh - 78px);
     min-height: calc(100vh - 78px);
     padding: 20px 16px;
   }
