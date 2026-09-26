@@ -161,10 +161,12 @@
 .new-user-button {
   position: absolute;
   top: 22px;
-  right: max(17px, calc((100% - 1200px) / 2));
+  right: 17px;
   min-height: 40px;
   padding: 9px 14px;
   border-radius: 6px;
+  background: #253c6d;
+  color: #fff;
   font-weight: 500;
   font-size: 15px;
   z-index: 1;
@@ -194,7 +196,7 @@
   font-size: 24px;
 }
 .provider-content .page {
-  max-width: 1200px;
+  max-width: 100%;
 }
 .provider-content > .admin-page,
 .provider-content > .new-user-button,
@@ -355,7 +357,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   min-height: calc(100vh - 84px);
-  padding: 18px 10px 24px;
+  padding: 18px 4px 24px;
 }
 .provider-shell {
   height: 100vh;
