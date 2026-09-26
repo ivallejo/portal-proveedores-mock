@@ -22,7 +22,7 @@ export class AdminUsersComponent {
   readonly error = signal('');
   readonly search = signal('');
   readonly page = signal(1);
-  readonly pageSize = signal(10);
+  readonly pageSize = signal(5);
   readonly showForm = signal(false);
   readonly selectedRole = signal('Área Usuaria');
   readonly roles = ['Proveedor', 'Área Usuaria', 'CxP', 'Administrador'];
