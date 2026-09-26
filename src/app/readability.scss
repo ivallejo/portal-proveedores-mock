@@ -253,11 +253,12 @@
   color: #344054 !important;
   border-bottom: 1px solid #e4e7ec;
   padding: 13px 20px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
 }
 .admin-users-table td {
   padding: 14px 20px;
+  font-size: 15px;
 }
 .admin-users-table tbody tr {
   transition: background-color 0.18s ease;
@@ -270,10 +271,14 @@
 }
 .admin-users-table td:first-child b {
   color: #253c6d;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.35;
 }
 .admin-users-table td small {
   color: #7a88a0;
+  font-size: 13px;
+  line-height: 1.4;
 }
 .admin-pagination-bottom {
   justify-content: space-between;
