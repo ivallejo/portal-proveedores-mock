@@ -198,6 +198,12 @@
 .provider-content .page {
   max-width: 100%;
 }
+.admin-page {
+  width: 100%;
+  max-width: 100% !important;
+  margin-left: 0;
+  margin-right: 0;
+}
 .provider-content > .admin-page,
 .provider-content > .new-user-button,
 .provider-content > .modal-backdrop,
@@ -210,6 +216,9 @@
   border-radius: 18px;
   box-shadow: 0 8px 24px rgba(32, 58, 101, 0.06);
   overflow: hidden;
+}
+.admin-users-table {
+  width: 100%;
 }
 .admin-users-table .panel-title {
   padding: 20px;
