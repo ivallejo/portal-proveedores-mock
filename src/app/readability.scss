@@ -199,10 +199,10 @@
   max-width: 100%;
 }
 .admin-page {
-  width: 100%;
+  width: calc(100% - 32px);
   max-width: 100% !important;
-  margin-left: 0;
-  margin-right: 0;
+  margin-left: 16px;
+  margin-right: 16px;
 }
 .provider-content > .admin-page,
 .provider-content > .new-user-button,
@@ -444,6 +444,11 @@
   word-break: break-word;
 }
 @media (max-width: 800px) {
+  .admin-page {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
   .provider-header {
     height: 78px;
     padding: 0 18px;
