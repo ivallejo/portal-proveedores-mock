@@ -197,7 +197,7 @@
           [class.active]="screen() === 'usuarios'"
           (click)="navigate('usuarios')"
         >
-          <i class="nav-icon bx bx-user-plus"></i><span>mejoremos </span></button
+          <i class="nav-icon bx bx-user-plus"></i><span>Usuarios y roles</span></button
         ><button><i class="nav-icon bx bx-bar-chart-alt-2"></i><span>Reportes</span></button>
       </nav>
       <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">
@@ -214,7 +214,6 @@
       <section *ngIf="screen() === 'dashboard'" class="page">
         <div class="page-heading">
           <div>
-            <span class="eyebrow">RESUMEN</span>
             <h1>Hola, {{ auth.user()?.name }}</h1>
             <p>Consulta el estado de tu operación documental.</p>
           </div>
