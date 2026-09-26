@@ -1,0 +1,17 @@
+[10:59 a. m., 14/9/2026] Willian Mamani Cutipa: Hay que adecuar esto
+[11:00 a. m., 14/9/2026] Willian Mamani Cutipa: •	WEB:
+	Módulo de seguridad.
+	Módulo de configuración de opciones de la WEB (Por ejemplo, solicitantes, correos, flujo de aprobaciones, otros).
+	Módulo de recepción de documentos, según lo detallado en el anexo 1. Extranet/Intranet.
+	Módulo de contabilización, según lo detallado en el anexo 2. Intranet.
+	Módulo de Consultas de documentos registrados, dirigido a los colaboradores de Naviera.
+	Módulo de consulta de estado de cuenta del proveedor y CRE (opciones actuales de la WEB vigente).
+	Workflow de aprobaciones/derivaciones de documentos.
+
+
+•	SAP: Nuestra recomendación es que todos los servicios se centralicen en SAP (CERTICA, SUNAT, Otros).
+	Servicio de consulta OC CERTICA.
+	Servicio de validación de duplicidad.
+	Servicio de validación SUNAT.
+	Servicio de validación CERTICA.
+	Servicio de contabilización (CERTICA/SAP).

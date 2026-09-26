@@ -1,0 +1,151 @@
+<section class="page admin-page">
+  <div class="page-heading">
+    <div>
+      <h1>Usuarios y roles</h1>
+      <p>Crea usuarios internos y controla sus permisos de acceso.</p>
+    </div>
+  </div>
+
+  <div *ngIf="message()" class="toast success">{{ message() }}</div>
+  <div *ngIf="error()" class="toast error">{{ error() }}</div>
+
+  <section class="panel table-panel admin-users-table">
+    <div class="panel-title">
+      <div>
+        <h2>Usuarios registrados</h2>
+        <p>{{ allUsers().length }} usuarios en el sistema</p>
+      </div>
+      <div class="admin-inline-controls">
+        <label class="page-size-select"
+          >Mostrar
+          <select [ngModel]="pageSize()" (ngModelChange)="setPageSize($event)">
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          registros
+        </label>
+        <label class="admin-search"
+          ><i class="bx bx-search"></i><span>Buscar:</span
+          ><input
+            [ngModel]="search()"
+            (ngModelChange)="setSearch($event)"
+            placeholder="Buscar usuario"
+        /></label>
+      </div>
+    </div>
+
+    <div *ngIf="loading()" class="skeleton-table"><i></i><i></i><i></i></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Identificador</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users()">
+            <td>
+              <b>{{ user.companyName }}</b
+              ><small>{{ user.email }}</small>
+            </td>
+            <td>{{ user.ruc }}</td>
+            <td>
+              <select [ngModel]="user.role" (ngModelChange)="changeRole(user, $event)">
+                <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+              </select>
+            </td>
+            <td>
+              <span
+                class="status-badge"
+                [class.aprobado]="user.isActive"
+                [class.rechazado]="!user.isActive"
+                >{{ user.isActive ? 'Activo' : 'Inactivo' }}</span
+              >
+            </td>
+            <td>
+              <button class="secondary" (click)="toggleStatus(user)">
+                {{ user.isActive ? 'Desactivar' : 'Activar' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="admin-pagination admin-pagination-bottom">
+      <span>Página {{ page() }} de {{ pageCount() }}</span>
+      <div>
+        <button class="icon-button" [disabled]="page() === 1" (click)="setPage(page() - 1)">
+          <i class="bx bx-chevron-left"></i></button
+        ><button
+          *ngFor="let item of paginationPages()"
+          class="page-button"
+          [class.active]="item === page()"
+          (click)="setPage(item)"
+        >
+          {{ item }}</button
+        ><button
+          class="icon-button"
+          [disabled]="page() === pageCount()"
+          (click)="setPage(page() + 1)"
+        >
+          <i class="bx bx-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <button *ngIf="!showForm()" class="new-user-button primary" (click)="openForm()">
+    <i class="bx bx-plus"></i> Nuevo usuario
+  </button>
+
+  <div *ngIf="showForm()" class="modal-backdrop">
+    <section class="user-modal panel">
+      <div class="panel-title">
+        <div>
+          <h2>Nuevo usuario</h2>
+          <p>Completa los datos y asigna el rol inicial.</p>
+        </div>
+        <button class="icon-button" type="button" (click)="closeForm()">
+          <i class="bx bx-x"></i>
+        </button>
+      </div>
+      <div *ngIf="error()" class="toast error">{{ error() }}</div>
+      <div class="form-grid">
+        <label
+          >Correo electrónico *<input
+            type="email"
+            [(ngModel)]="newUser.email"
+            placeholder="usuario@naviera.com" /></label
+        ><label
+          >Nombre o empresa *<input
+            [(ngModel)]="newUser.companyName"
+            placeholder="Nombre del usuario" /></label
+        ><label
+          >RUC *<input [(ngModel)]="newUser.ruc" placeholder="RUC o identificador interno" /></label
+        ><label
+          >Contraseña temporal *<input
+            type="password"
+            [(ngModel)]="newUser.password"
+            placeholder="Contraseña inicial" /></label
+        ><label
+          >Rol *<select [ngModel]="selectedRole()" (ngModelChange)="selectedRole.set($event)">
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+          </select></label
+        >
+      </div>
+      <div class="form-actions">
+        <button class="secondary" type="button" (click)="closeForm()">Cancelar</button
+        ><button class="primary" [disabled]="loading()" (click)="createUser()">
+          {{ loading() ? 'Creando...' : 'Crear usuario' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</section>

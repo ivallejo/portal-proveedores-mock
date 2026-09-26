@@ -1,9 +1,55 @@
-@font-face { font-family:'Poppins'; src:url('/fonts/poppins/Poppins-Regular.ttf') format('truetype'); font-weight:400; }
-@font-face { font-family:'Poppins'; src:url('/fonts/poppins/Poppins-Medium.ttf') format('truetype'); font-weight:500; }
-@font-face { font-family:'Poppins'; src:url('/fonts/poppins/Poppins-SemiBold.ttf') format('truetype'); font-weight:600; }
-@font-face { font-family:'Poppins'; src:url('/fonts/poppins/Poppins-Bold.ttf') format('truetype'); font-weight:700; }
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-Medium.ttf') format('truetype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
 @import './boxIcons.css';
-@font-face { font-family:'MuseoSans'; src:url('/legacy/fonts/MuseoSans-300.otf') format('opentype'); font-weight:300; }
-@font-face { font-family:'MuseoSans'; src:url('/legacy/fonts/MuseoSans-500.otf') format('opentype'); font-weight:500; }
-@font-face { font-family:'MuseoSans'; src:url('/legacy/fonts/MuseoSans-700.otf') format('opentype'); font-weight:700; }
-:root { font-family:'Poppins',Arial,'Segoe UI',sans-serif; color:#17253d; background:#f5f7fb; } * { box-sizing:border-box; } body { margin:0; } button,input { font:inherit; } button { cursor:pointer; }
+@font-face {
+  font-family: 'MuseoSans';
+  src: url('/legacy/fonts/MuseoSans-300.otf') format('opentype');
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'MuseoSans';
+  src: url('/legacy/fonts/MuseoSans-500.otf') format('opentype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'MuseoSans';
+  src: url('/legacy/fonts/MuseoSans-700.otf') format('opentype');
+  font-weight: 700;
+}
+:root {
+  font-family: 'Outfit', Arial, 'Segoe UI', sans-serif;
+  color: #17253d;
+  background: #f5f7fb;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
