@@ -330,7 +330,9 @@
               >Fecha de emisión<input type="date" [(ngModel)]="form.fecha" /></label
             ><label *ngIf="isRole('Proveedor')"
               >Tipo de ingreso *<select [ngModel]="form.tipo" (ngModelChange)="setType($event)">
-                <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
+                <option *ngFor="let type of providerDocumentTypes" [value]="type">
+                  {{ type }}
+                </option>
               </select></label
             ><label *ngIf="isRole('Colaborador interno')"
               >Tipo de documento *<input value="Documento especial" readonly

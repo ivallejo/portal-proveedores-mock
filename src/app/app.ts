@@ -122,6 +122,7 @@ export class App {
     'Sin Orden de Compra',
     'Documento especial',
   ];
+  readonly providerDocumentTypes: DocumentType[] = ['Con Orden de Compra', 'Sin Orden de Compra'];
   readonly specialTypes: SpecialSubtype[] = [
     'Boleto aéreo',
     'Recibo público',
