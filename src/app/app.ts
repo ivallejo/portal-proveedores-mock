@@ -137,7 +137,7 @@ export class App {
   readonly form = {
     numero: 'F001-000205',
     proveedor: 'Proveedor Andino SAC',
-    providerId: 'P-1001',
+    providerId: '20123456789',
     sociedad: 'Naviera Transoceánica S.A.',
     tipo: 'Con Orden de Compra' as DocumentType,
     oc: 'OC-45000128',
@@ -205,6 +205,11 @@ export class App {
     this.auth.login(this.username(), this.password()).subscribe({
       next: () => {
         this.loading.set(false);
+        const currentUser = this.auth.user();
+        if (currentUser?.role === 'Proveedor') {
+          this.form.providerId = currentUser.providerId || '';
+          this.form.proveedor = currentUser.name;
+        }
         if (this.auth.user()?.role === 'Colaborador interno') {
           this.form.tipo = 'Documento especial';
           this.form.oc = '';
