@@ -970,6 +970,17 @@
 .registration-success-card h1 {
   margin-top: 18px;
 }
+.registration-success-card .success-mark {
+  width: auto;
+  height: auto;
+  margin: 8px auto 20px;
+  color: #ed7624;
+  background: transparent;
+  box-shadow: none;
+}
+.registration-success-card .success-mark i {
+  font-size: 48px;
+}
 .success-mark {
   width: 70px;
   height: 70px;
