@@ -158,6 +158,12 @@
         <div><strong>NAVIERA TRANSOCEÁNICA S.A.</strong><b>Portal de Proveedores</b></div>
       </div>
       <div class="header-actions">
+        <label *ngIf="(auth.user()?.roles?.length || 0) > 1" class="active-role-selector">
+          <span>Trabajando como</span>
+          <select [ngModel]="auth.user()?.role" (ngModelChange)="setActiveRole($event)">
+            <option *ngFor="let role of auth.user()?.roles" [value]="role">{{ role }}</option>
+          </select>
+        </label>
         <div class="user-actions">
           <button
             class="user-menu"

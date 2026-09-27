@@ -52,6 +52,13 @@ export class AuthService {
     localStorage.removeItem('portal-proveedores.mock-session');
     this.user.set(null);
   }
+  setActiveRole(role: Role): void {
+    const current = this.user();
+    if (!current || !current.roles.includes(role)) return;
+    const updated = { ...current, role };
+    this.user.set(updated);
+    localStorage.setItem('portal-proveedores.mock-session', JSON.stringify(updated));
+  }
   private toUser(user: {
     email: string;
     companyName: string;

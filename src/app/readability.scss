@@ -567,6 +567,22 @@
   display: flex;
   gap: 8px;
 }
+.active-role-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #52627d;
+  font-size: 12px;
+}
+.active-role-selector select {
+  min-height: 34px;
+  padding: 5px 10px;
+  border: 1px solid #dce4ef;
+  border-radius: 7px;
+  color: #253c6d;
+  background: #fff;
+  font: inherit;
+}
 .registration-ruc-field input {
   flex: 1;
   min-width: 0;

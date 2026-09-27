@@ -447,6 +447,10 @@ export class App {
   isRole(role: Role): boolean {
     return this.auth.user()?.role === role;
   }
+  setActiveRole(role: Role): void {
+    this.auth.setActiveRole(role);
+    this.screen.set(this.landingScreen());
+  }
   loadApprovals(): void {
     this.loading.set(true);
     this.aprobacionService.pendientes().subscribe((items) => {
