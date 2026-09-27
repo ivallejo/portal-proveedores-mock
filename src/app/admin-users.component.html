@@ -147,20 +147,32 @@
           >RUC (solo proveedores)<input
             [(ngModel)]="newUser.ruc"
             placeholder="Opcional para usuarios internos" /></label
-        ><label
+        ><label class="temporary-password-field"
           >Contraseña temporal *<input
             type="password"
             [(ngModel)]="newUser.password"
-            placeholder="Contraseña inicial" /></label
-        ><label
-          >Roles *<select
-            multiple
-            [ngModel]="selectedRoles()"
-            (ngModelChange)="setSelectedRoles($event)"
-          >
-            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-          </select></label
-        >
+            placeholder="Contraseña inicial"
+        /></label>
+      </div>
+      <div class="role-selector">
+        <div class="role-selector-heading">
+          <div>
+            <h3>Roles *</h3>
+            <p>Selecciona uno o más roles para este usuario.</p>
+          </div>
+          <span>{{ selectedRoles().length }} seleccionados</span>
+        </div>
+        <div class="role-options-grid">
+          <label *ngFor="let role of roles" class="role-option-card">
+            <input
+              type="checkbox"
+              [checked]="selectedRoles().includes(role)"
+              (change)="toggleSelectedRole(role)"
+            />
+            <span class="role-check"><i class="bx bx-check"></i></span>
+            <span>{{ role }}</span>
+          </label>
+        </div>
       </div>
       <div class="form-actions">
         <button class="secondary" type="button" (click)="closeForm()">Cancelar</button

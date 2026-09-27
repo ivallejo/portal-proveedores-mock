@@ -210,6 +210,11 @@ export class AdminUsersComponent {
   setSelectedRoles(roles: Role[]): void {
     this.selectedRoles.set(roles.length ? roles : ['Proveedor']);
   }
+  toggleSelectedRole(role: Role): void {
+    this.selectedRoles.update((roles) =>
+      roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role],
+    );
+  }
 
   toggleStatus(user: AdminUser): void {
     this.adminService.setStatus(user.id, !user.isActive).subscribe({
