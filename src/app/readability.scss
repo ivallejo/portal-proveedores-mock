@@ -563,6 +563,10 @@
 .provider-content .workflow-table {
   margin-top: 24px;
 }
+.provider-content .workflow-page {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+}
 .workflow-approvers {
   display: flex;
   flex-direction: column;
