@@ -308,13 +308,27 @@
               <h2>Workflows configurados</h2>
               <p>{{ workflowService.workflows().length }} workflows en el sistema</p>
             </div>
-            <label class="admin-search"
-              ><i class="bx bx-search"></i><span>Buscar:</span
-              ><input
-                placeholder="Nombre o tipo de documento"
-                [ngModel]="workflowSearch()"
-                (ngModelChange)="workflowSearch.set($event)"
-            /></label>
+            <div class="admin-inline-controls">
+              <label class="page-size-select"
+                >Mostrar<select
+                  [ngModel]="workflowPageSize()"
+                  (ngModelChange)="setWorkflowPageSize($event)"
+                >
+                  <option [value]="5">5</option>
+                  <option [value]="10">10</option>
+                  <option [value]="25">25</option>
+                  <option [value]="50">50</option>
+                  <option [value]="100">100</option>
+                </select>
+                registros</label
+              ><label class="admin-search"
+                ><i class="bx bx-search"></i><span>Buscar:</span
+                ><input
+                  placeholder="Nombre o tipo de documento"
+                  [ngModel]="workflowSearch()"
+                  (ngModelChange)="setWorkflowSearch($event)"
+              /></label>
+            </div>
           </div>
           <div class="table-wrap">
             <table>
@@ -328,7 +342,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let workflow of filteredWorkflows()">
+                <tr *ngFor="let workflow of workflowsPage()">
                   <td>
                     <strong>{{ workflow.name }}</strong
                     ><small>{{ workflow.description }}</small>
@@ -371,6 +385,38 @@
           </div>
           <div *ngIf="!filteredWorkflows().length" class="empty-table">
             No encontramos workflows con ese criterio.
+          </div>
+          <div class="admin-pagination admin-pagination-bottom">
+            <span
+              >Página {{ workflowPage() }} de {{ workflowPageCount() }} ·
+              {{ filteredWorkflows().length }} workflows</span
+            >
+            <div>
+              <button
+                class="icon-button"
+                [disabled]="workflowPage() === 1"
+                (click)="setWorkflowPage(workflowPage() - 1)"
+                aria-label="Página anterior"
+              >
+                <i class="bx bx-chevron-left"></i>
+              </button>
+              <button
+                *ngFor="let page of workflowPaginationPages()"
+                class="page-button"
+                [class.active]="page === workflowPage()"
+                (click)="setWorkflowPage(page)"
+              >
+                {{ page }}
+              </button>
+              <button
+                class="icon-button"
+                [disabled]="workflowPage() === workflowPageCount()"
+                (click)="setWorkflowPage(workflowPage() + 1)"
+                aria-label="Página siguiente"
+              >
+                <i class="bx bx-chevron-right"></i>
+              </button>
+            </div>
           </div>
         </section>
       </section>

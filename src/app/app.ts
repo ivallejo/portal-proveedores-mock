@@ -115,6 +115,8 @@ export class App {
   readonly adminUserError = signal('');
   readonly adminUserLoading = signal(false);
   readonly workflowSearch = signal('');
+  readonly workflowPage = signal(1);
+  readonly workflowPageSize = signal(5);
   readonly showWorkflowForm = signal(false);
   readonly editingWorkflow = signal<ApprovalWorkflow | null>(null);
   readonly workflowError = signal('');
@@ -154,6 +156,16 @@ export class App {
           `${item.name} ${item.description} ${item.documentType}`.toLowerCase().includes(term),
       );
   });
+  readonly workflowPageCount = computed(() =>
+    Math.max(1, Math.ceil(this.filteredWorkflows().length / this.workflowPageSize())),
+  );
+  readonly workflowsPage = computed(() => {
+    const start = (this.workflowPage() - 1) * this.workflowPageSize();
+    return this.filteredWorkflows().slice(start, start + this.workflowPageSize());
+  });
+  readonly workflowPaginationPages = computed(() =>
+    Array.from({ length: this.workflowPageCount() }, (_, index) => index + 1),
+  );
   readonly adminUserSearch = signal('');
   readonly adminUserPage = signal(1);
   readonly adminUserPageSize = signal(10);
@@ -852,6 +864,17 @@ export class App {
       ? [...workflow.approvalLevels]
       : ['Área Usuaria'];
     this.showWorkflowForm.set(true);
+  }
+  setWorkflowSearch(value: string): void {
+    this.workflowSearch.set(value);
+    this.workflowPage.set(1);
+  }
+  setWorkflowPageSize(value: string): void {
+    this.workflowPageSize.set(Number(value));
+    this.workflowPage.set(1);
+  }
+  setWorkflowPage(page: number): void {
+    this.workflowPage.set(Math.min(Math.max(page, 1), this.workflowPageCount()));
   }
   closeWorkflowForm(): void {
     this.showWorkflowForm.set(false);
