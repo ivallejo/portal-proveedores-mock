@@ -338,7 +338,10 @@
               >Tipo de documento *<input value="Documento especial" readonly
             /></label>
           </div>
-          <div *ngIf="form.tipo === 'Sin Orden de Compra' && isRole('Proveedor')">
+          <div
+            *ngIf="form.tipo === 'Sin Orden de Compra' && isRole('Proveedor')"
+            class="conditional-box"
+          >
             <h3><i class="bx bx-user-voice"></i> Área solicitante</h3>
             <label
               >Área responsable<select [(ngModel)]="requester.area">
@@ -365,7 +368,7 @@
               </div>
             </div>
           </div>
-          <div *ngIf="form.tipo === 'Sin Orden de Compra'">
+          <div *ngIf="form.tipo === 'Sin Orden de Compra'" class="conditional-box">
             <h3><i class="bx bx-file"></i> Documento sin OC</h3>
             <p>El comprobante será validado automáticamente contra SUNAT y duplicidad.</p>
           </div>
