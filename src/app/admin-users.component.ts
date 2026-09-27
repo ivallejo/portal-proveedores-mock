@@ -25,7 +25,7 @@ export class AdminUsersComponent {
   readonly pageSize = signal(5);
   readonly showForm = signal(false);
   readonly selectedRole = signal('Área Usuaria');
-  readonly roles = ['Proveedor', 'Área Usuaria', 'CxP', 'Administrador'];
+  readonly roles = ['Proveedor', 'Colaborador interno', 'Área Usuaria', 'CxP', 'Administrador'];
   readonly newUser = { email: '', companyName: '', ruc: '', password: '' };
 
   readonly filteredUsers = computed(() => {

@@ -190,6 +190,12 @@
         >
           <i class="nav-icon bx bx-receipt"></i><span>Mis documentos</span></button
         ><button
+          *ngIf="isRole('Colaborador interno')"
+          [class.active]="screen() === 'registrar'"
+          (click)="navigate('registrar')"
+        >
+          <i class="nav-icon bx bx-file-plus"></i><span>Documentos especiales</span></button
+        ><button
           *ngIf="isRole('Área Usuaria')"
           [class.active]="screen() === 'aprobaciones'"
           (click)="navigate('aprobaciones')"
@@ -296,11 +302,19 @@
               >Número de documento *<input
                 [(ngModel)]="form.numero"
                 placeholder="Ej. F001-000200" /></label
-            ><label>Proveedor<input [(ngModel)]="form.proveedor" /></label
-            ><label
+            ><label *ngIf="isRole('Proveedor')"
+              >Proveedor<input [(ngModel)]="form.proveedor" /></label
+            ><label *ngIf="isRole('Colaborador interno')"
+              >RUC del proveedor<input
+                [(ngModel)]="form.proveedor"
+                placeholder="Ingresa el RUC" /></label
+            ><label *ngIf="isRole('Proveedor')"
               >Sociedad<select [(ngModel)]="form.sociedad">
                 <option>Naviera Transoceánica S.A.</option>
                 <option>Naviera Transoceánica Perú S.A.</option>
+                <option>Ultratag S.A.</option>
+                <option>Petral S.A.</option>
+                <option>RENADSA S.A.</option>
               </select></label
             ><label
               >Importe total *<input
@@ -309,11 +323,13 @@
                 min="0"
                 placeholder="0.00" /></label
             ><label>Fecha de emisión<input type="date" [(ngModel)]="form.fecha" /></label
-            ><label
+            ><label *ngIf="isRole('Proveedor')"
               >Tipo de documento *<select [ngModel]="form.tipo" (ngModelChange)="setType($event)">
                 <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
               </select></label
-            >
+            ><label *ngIf="isRole('Colaborador interno')"
+              >Tipo de documento *<input value="Documento especial" readonly
+            /></label>
           </div>
           <div *ngIf="form.tipo === 'Con Orden de Compra'" class="conditional-box">
             <h3><i class="bx bx-purchase-tag"></i> Información de orden de compra</h3>
@@ -588,16 +604,27 @@
         <div class="panel-title">
           <div>
             <h2>Archivos del documento</h2>
-            <p>Adjunta PDF, XML, CDR y PDFs adicionales para unificar el expediente.</p>
+            <p *ngIf="isRole('Proveedor')">
+              Adjunta PDF, XML, CDR y PDFs adicionales para unificar el expediente.
+            </p>
+            <p *ngIf="isRole('Colaborador interno')">
+              Adjunta únicamente el PDF del documento especial.
+            </p>
           </div>
           <i class="bx bx-cloud-upload upload-icon"></i>
         </div>
-        <label class="upload-zone"
+        <label *ngIf="isRole('Proveedor')" class="upload-zone"
           ><input type="file" multiple accept=".pdf,.xml,.cdr" (change)="addFiles($event)" /><i
             class="bx bx-upload"
           ></i
           ><strong>Selecciona tus archivos</strong
           ><small>PDF, XML o CDR · máximo 10 MB por archivo</small></label
+        >
+        <label *ngIf="isRole('Colaborador interno')" class="upload-zone"
+          ><input type="file" accept=".pdf" (change)="addFiles($event)" /><i
+            class="bx bx-upload"
+          ></i
+          ><strong>Selecciona el PDF</strong><small>Solo PDF · máximo 10 MB</small></label
         >
         <div *ngIf="uploadedFiles().length" class="file-list">
           <div *ngFor="let file of uploadedFiles()">
@@ -609,7 +636,10 @@
             </button>
           </div>
         </div>
-        <div *ngIf="form.tipo !== 'Con Orden de Compra'" class="requester-box">
+        <div
+          *ngIf="form.tipo !== 'Con Orden de Compra' && isRole('Proveedor')"
+          class="requester-box"
+        >
           <h3><i class="bx bx-user-voice"></i> Área solicitante</h3>
           <div class="form-grid">
             <label

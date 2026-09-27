@@ -1,4 +1,4 @@
-export type Role = 'Proveedor' | 'Área Usuaria' | 'CxP' | 'Administrador';
+export type Role = 'Proveedor' | 'Colaborador interno' | 'Área Usuaria' | 'CxP' | 'Administrador';
 export type DocumentType = 'Con Orden de Compra' | 'Sin Orden de Compra' | 'Documento especial';
 export type DocumentStatus =
   | 'Registrado'

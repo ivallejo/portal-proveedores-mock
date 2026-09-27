@@ -171,7 +171,12 @@ export class App {
     this.auth.login(this.username(), this.password()).subscribe({
       next: () => {
         this.loading.set(false);
-        this.screen.set('dashboard');
+        if (this.auth.user()?.role === 'Colaborador interno') {
+          this.form.tipo = 'Documento especial';
+          this.form.oc = '';
+          this.selectedSpecial.set('');
+        }
+        this.screen.set(this.landingScreen());
       },
       error: (err) => {
         this.loading.set(false);
@@ -316,6 +321,13 @@ export class App {
     if (screen === 'aprobaciones') this.loadApprovals();
     if (screen === 'contabilizacion') this.loadAccounting();
     if (screen === 'usuarios') this.loadAdminUsers();
+  }
+  landingScreen(): Screen {
+    const role = this.auth.user()?.role;
+    if (role === 'Colaborador interno') return 'registrar';
+    if (role === 'Área Usuaria') return 'aprobaciones';
+    if (role === 'CxP') return 'contabilizacion';
+    return 'dashboard';
   }
   loadAdminUsers(): void {
     this.adminUserLoading.set(true);
