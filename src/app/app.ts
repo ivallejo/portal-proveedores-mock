@@ -777,6 +777,12 @@ export class App {
   setAccountingPage(page: number): void {
     this.accountingPage.set(page);
   }
+  attachmentNames(item: Documento): string[] {
+    return (item.details['archivos'] || '')
+      .split(',')
+      .map((file) => file.trim())
+      .filter(Boolean);
+  }
   setComment(id: number, value: string): void {
     this.approvalComment.update((values) => ({ ...values, [id]: value }));
   }

@@ -587,7 +587,9 @@
                           class="document-detail-section document-files"
                         >
                           <h4>Archivos adjuntos</h4>
-                          <p><i class="bx bx-paperclip"></i>{{ item.details['archivos'] }}</p>
+                          <p *ngFor="let file of attachmentNames(item)">
+                            <i class="bx bx-paperclip"></i>{{ file }}
+                          </p>
                         </div>
                       </div>
                     </td>
