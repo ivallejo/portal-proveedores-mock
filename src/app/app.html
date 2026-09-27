@@ -605,7 +605,7 @@
           <div>
             <h2>Archivos del documento</h2>
             <p *ngIf="isRole('Proveedor')">
-              Adjunta PDF, XML, CDR y PDFs adicionales para unificar el expediente.
+              Adjunta los archivos requeridos: {{ requiredFilesText() }}.
             </p>
             <p *ngIf="isRole('Colaborador interno')">
               Adjunta únicamente el PDF del documento especial.
@@ -630,10 +630,37 @@
           <div *ngFor="let file of uploadedFiles()">
             <i class="bx bx-file"></i
             ><span
-              >{{ file.name }}<small>{{ file.kind }} · listo para unificar</small></span
+              >{{ file.name
+              }}<small
+                >{{ file.kind }} ·
+                {{ isRole('Proveedor') ? 'listo para unificar' : 'listo para validar' }}</small
+              ></span
             ><button type="button" class="icon-button" (click)="removeFile(file.name)">
               <i class="bx bx-x"></i>
             </button>
+          </div>
+        </div>
+        <div *ngIf="xmlSummary()" class="xml-summary">
+          <div class="xml-summary-heading">
+            <i class="bx bx-file-blank"></i>
+            <div>
+              <strong>Resumen leído del XML</strong
+              ><small>Verifica los datos antes de continuar</small>
+            </div>
+          </div>
+          <div class="xml-summary-grid">
+            <span
+              >Empresa emisora<strong>{{ xmlSummary()?.emisor }}</strong></span
+            >
+            <span
+              >Moneda<strong>{{ xmlSummary()?.moneda }}</strong></span
+            >
+            <span
+              >Importe<strong>S/ {{ xmlSummary()?.importe | number: '1.2-2' }}</strong></span
+            >
+            <span
+              >Descripción<strong>{{ xmlSummary()?.descripcion }}</strong></span
+            >
           </div>
         </div>
         <div

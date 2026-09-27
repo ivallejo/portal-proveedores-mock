@@ -66,6 +66,12 @@ export class App {
   readonly registrationKeyRequested = signal(false);
   readonly registration = { ruc: '', email: '', company: '' };
   readonly uploadedFiles = signal<{ name: string; kind: string }[]>([]);
+  readonly xmlSummary = signal<{
+    emisor: string;
+    moneda: string;
+    importe: number;
+    descripcion: string;
+  } | null>(null);
   readonly requester = { area: 'Operaciones', email: 'solicitante@naviera.com' };
   readonly query = signal('');
   readonly adminUsers = signal<AdminUser[]>([]);
@@ -270,6 +276,14 @@ export class App {
       kind: file.name.split('.').pop()?.toUpperCase() || 'PDF',
     }));
     this.uploadedFiles.update((current) => [...current, ...files]);
+    if (files.some((file) => file.kind === 'XML')) {
+      this.xmlSummary.set({
+        emisor: this.form.proveedor || 'Proveedor Andino SAC',
+        moneda: 'PEN',
+        importe: this.form.importe,
+        descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
+      });
+    }
     input.value = '';
   }
   removeFile(name: string): void {
@@ -452,19 +466,35 @@ export class App {
     if (type !== 'Documento especial') this.selectedSpecial.set('');
     if (type === 'Con Orden de Compra') this.form.validateSunat = true;
   }
+  isSunatDocument(): boolean {
+    return this.form.numero.trim().toUpperCase().startsWith('E');
+  }
+  requiredFilesText(): string {
+    if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
+    return this.isSunatDocument() ? 'PDF + XML + sustentos' : 'PDF + XML + CDR + sustentos';
+  }
   submitDocument(): void {
     this.error.set('');
     this.message.set('');
+    const fileKinds = this.uploadedFiles().map((file) => file.kind);
+    const hasPdf = fileKinds.includes('PDF');
+    const hasXml = fileKinds.includes('XML');
+    const hasCdr = fileKinds.includes('CDR');
+    const missingProviderFiles =
+      this.isRole('Proveedor') && (!hasPdf || !hasXml || (!this.isSunatDocument() && !hasCdr));
     if (
       !this.form.numero ||
       !this.form.importe ||
       !this.uploadedFiles().length ||
+      missingProviderFiles ||
       (this.form.tipo === 'Con Orden de Compra' && !this.form.oc) ||
       (this.form.tipo === 'Documento especial' && !this.selectedSpecial()) ||
       (this.form.tipo !== 'Con Orden de Compra' && (!this.requester.area || !this.requester.email))
     ) {
       this.error.set(
-        'Completa los campos obligatorios y adjunta al menos un archivo para continuar.',
+        this.isRole('Proveedor')
+          ? `Adjunta los archivos requeridos: ${this.requiredFilesText()}.`
+          : 'Completa los campos obligatorios y adjunta el PDF para continuar.',
       );
       return;
     }
@@ -504,6 +534,7 @@ export class App {
     this.form.validateSunat = true;
     this.selectedSpecial.set('');
     this.uploadedFiles.set([]);
+    this.xmlSummary.set(null);
     this.form.details = {
       vuelo: 'LA2451',
       pasajero: 'Juan Sebastián',

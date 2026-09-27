@@ -539,6 +539,9 @@
   .admin-inline-controls .admin-search {
     min-width: 0;
   }
+  .xml-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .admin-inline-controls .admin-search input {
     flex: 1;
     width: auto;
@@ -587,6 +590,52 @@
   border-color: #52627d;
   color: #fff;
   background: #52627d;
+}
+.xml-summary {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid #dce4ef;
+  border-radius: 12px;
+  background: #f8fafe;
+}
+.xml-summary-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #253c6d;
+}
+.xml-summary-heading > i {
+  font-size: 22px;
+}
+.xml-summary-heading strong,
+.xml-summary-heading small,
+.xml-summary-grid span,
+.xml-summary-grid strong {
+  display: block;
+}
+.xml-summary-heading strong {
+  font-size: 15px;
+}
+.xml-summary-heading small {
+  margin-top: 3px;
+  color: #52627d;
+  font-size: 12px;
+}
+.xml-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+.xml-summary-grid span {
+  color: #52627d;
+  font-size: 12px;
+}
+.xml-summary-grid strong {
+  margin-top: 5px;
+  color: #253c6d;
+  font-size: 14px;
+  font-weight: 500;
 }
 .sap-provider-summary {
   display: flex;
