@@ -576,7 +576,7 @@ export class App {
         this.registrationResult.set(item);
         this.registrationStep.set(3);
         this.message.set(`Documento ${item.numero} recibido correctamente.`);
-        this.showAlert('success', `El documento ${item.numero} fue recibido correctamente.`);
+        this.showToast(`El documento ${item.numero} fue recibido correctamente.`);
       },
       error: (err) => {
         this.loading.set(false);
@@ -591,6 +591,17 @@ export class App {
       text,
       confirmButtonColor: '#253c6d',
       buttonsStyling: true,
+    });
+  }
+  private showToast(text: string): void {
+    void Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      text,
+      showConfirmButton: false,
+      timer: 4500,
+      timerProgressBar: true,
     });
   }
   resetForm(): void {
