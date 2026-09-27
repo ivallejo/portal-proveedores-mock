@@ -533,12 +533,11 @@ export class App {
     if (type !== 'Documento especial') this.selectedSpecial.set('');
     if (type === 'Con Orden de Compra') this.form.validateSunat = true;
   }
-  isSunatDocument(): boolean {
-    return this.form.numero.trim().toUpperCase().startsWith('E');
-  }
   requiredFilesText(): string {
     if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
-    return this.isSunatDocument() ? 'PDF + XML + sustentos' : 'PDF + XML + CDR + sustentos';
+    return this.form.tipo === 'Con Orden de Compra'
+      ? 'PDF + XML + sustentos'
+      : 'PDF + XML + CDR + sustentos';
   }
   nextRegistrationStep(): void {
     this.error.set('');
@@ -581,8 +580,9 @@ export class App {
     const hasPdf = fileKinds.includes('PDF');
     const hasXml = fileKinds.includes('XML');
     const hasCdr = fileKinds.includes('CDR');
+    const requiresCdr = this.isRole('Proveedor') && this.form.tipo === 'Sin Orden de Compra';
     const missingProviderFiles =
-      this.isRole('Proveedor') && (!hasPdf || !hasXml || (!this.isSunatDocument() && !hasCdr));
+      this.isRole('Proveedor') && (!hasPdf || !hasXml || (requiresCdr && !hasCdr));
     if (
       !this.form.numero ||
       !this.form.importe ||
