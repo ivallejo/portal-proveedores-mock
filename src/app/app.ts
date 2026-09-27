@@ -585,25 +585,43 @@ export class App {
     });
   }
   private showAlert(icon: 'success' | 'error' | 'warning' | 'info', text: string): void {
-    void Swal.fire({
-      icon,
-      text,
-      confirmButtonColor: '#253c6d',
-      buttonsStyling: true,
-    });
+    const titles = {
+      success: 'Operación completada',
+      error: 'No fue posible completar la acción',
+      warning: 'Revisa la información',
+      info: 'Información',
+    };
+    this.showStatusToast(icon, titles[icon], text);
   }
   private showToast(text: string): void {
+    this.showStatusToast('success', 'Documento recibido', text);
+  }
+  private showStatusToast(
+    icon: 'success' | 'error' | 'warning' | 'info',
+    title: string,
+    text: string,
+  ): void {
+    const icons = {
+      success: 'bx-check',
+      error: 'bx-error',
+      warning: 'bx-error',
+      info: 'bx-info-circle',
+    };
     void Swal.fire({
       toast: true,
       position: 'top-end',
-      iconHtml: '<i class="bx bx-check registration-toast-check"></i>',
+      iconHtml: `<i class="bx ${icons[icon]} status-toast-check"></i>`,
+      title,
       text,
       showCloseButton: true,
       showConfirmButton: false,
       timer: 10000,
       timerProgressBar: true,
       customClass: {
-        icon: 'registration-toast-icon',
+        popup: `status-toast status-toast-${icon}`,
+        icon: 'status-toast-icon',
+        title: 'status-toast-title',
+        htmlContainer: 'status-toast-text',
       },
     });
   }

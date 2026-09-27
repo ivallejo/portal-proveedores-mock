@@ -54,12 +54,85 @@ button {
   cursor: pointer;
 }
 
-.swal2-container .registration-toast-icon {
-  border-color: #f59e0b !important;
-  color: #f59e0b !important;
+.swal2-container .status-toast {
+  width: min(750px, calc(100vw - 32px));
+  min-height: 126px;
+  padding: 26px 54px 22px 36px !important;
+  border: 3px solid;
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgb(23 37 61 / 12%);
+  text-align: left;
 }
 
-.swal2-container .registration-toast-check {
-  color: #f59e0b !important;
+.swal2-container .status-toast-success {
+  border-color: #087f52;
+}
+
+.swal2-container .status-toast-error {
+  border-color: #ef2b16;
+}
+
+.swal2-container .status-toast-warning {
+  border-color: #fdb817;
+}
+
+.swal2-container .status-toast-info {
+  border-color: #0d67e8;
+}
+
+.swal2-container .status-toast-icon {
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 14px 0 0 !important;
+  border: 0 !important;
+  border-radius: 50%;
+  color: #fff !important;
+}
+
+.swal2-container .status-toast-success .status-toast-icon {
+  background: #087f52;
+}
+
+.swal2-container .status-toast-error .status-toast-icon {
+  background: #ef2b16;
+}
+
+.swal2-container .status-toast-warning .status-toast-icon {
+  background: #fdb817;
+}
+
+.swal2-container .status-toast-info .status-toast-icon {
+  background: #0d67e8;
+}
+
+.swal2-container .status-toast-check {
+  color: #fff !important;
   font-size: 24px !important;
+}
+
+.swal2-container .status-toast-title {
+  margin: 0 0 8px !important;
+  color: #111 !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+}
+
+.swal2-container .status-toast-text {
+  margin: 0 !important;
+  color: #111 !important;
+  font-size: 18px !important;
+  text-align: left !important;
+}
+
+.swal2-container .status-toast .swal2-close {
+  top: 18px;
+  right: 18px;
+  color: #111;
+  font-size: 30px;
+}
+
+.swal2-container .status-toast .swal2-close:hover {
+  color: #253c6d;
 }
