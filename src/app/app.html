@@ -781,7 +781,7 @@
               >Descripción<strong>{{ xmlSummary()?.descripcion }}</strong></span
             >
           </div>
-          <div class="xml-file-guidance">
+          <div class="xml-file-guidance" [class.warning]="!isSunatDocument()">
             <i class="bx bx-info-circle"></i>
             <span *ngIf="isSunatDocument()"
               >El comprobante tiene prefijo <strong>E</strong>. No es necesario adjuntar el CDR.

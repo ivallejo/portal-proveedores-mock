@@ -819,6 +819,17 @@
   color: #253c6d;
   font-weight: 600;
 }
+.xml-file-guidance.warning {
+  padding: 12px 14px;
+  border: 1px solid #f4b740;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: #805b00;
+}
+.xml-file-guidance.warning i,
+.xml-file-guidance.warning strong {
+  color: #c47700;
+}
 .sap-provider-summary {
   display: flex;
   align-items: flex-start;
