@@ -29,6 +29,7 @@ type Screen =
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
 })
 export class App {
+  readonly Math = Math;
   readonly auth = inject(AuthService);
   readonly documentoService = inject(DocumentoService);
   readonly aprobacionService = inject(AprobacionService);
@@ -52,6 +53,9 @@ export class App {
   readonly password = signal(environment.defaultLoginPassword);
   readonly filterStatus = signal('');
   readonly filterType = signal('');
+  readonly documentQuery = signal('');
+  readonly documentPage = signal(1);
+  readonly documentPageSize = signal(5);
   readonly approvalComment = signal<Record<number, string>>({});
   readonly approvalTarget = signal<Record<number, string>>({});
   readonly accountingRoute = signal<Record<number, 'SAP' | 'Sertica'>>({});
@@ -156,11 +160,25 @@ export class App {
     ),
   );
   readonly filteredDocuments = computed(() =>
-    this.providerDocuments().filter(
-      (item) =>
+    this.providerDocuments().filter((item) => {
+      const term = this.documentQuery().trim().toLowerCase();
+      const content = `${item.numero} ${item.oc || ''} ${item.sociedad} ${item.tipo} ${item.status}`;
+      return (
+        (!term || content.toLowerCase().includes(term)) &&
         (!this.filterStatus() || item.status === this.filterStatus()) &&
-        (!this.filterType() || item.tipo === this.filterType()),
-    ),
+        (!this.filterType() || item.tipo === this.filterType())
+      );
+    }),
+  );
+  readonly documentPageCount = computed(() =>
+    Math.max(1, Math.ceil(this.filteredDocuments().length / this.documentPageSize())),
+  );
+  readonly documentsPage = computed(() => {
+    const start = (this.documentPage() - 1) * this.documentPageSize();
+    return this.filteredDocuments().slice(start, start + this.documentPageSize());
+  });
+  readonly documentPaginationPages = computed(() =>
+    Array.from({ length: this.documentPageCount() }, (_, index) => index + 1),
   );
   readonly pendingCount = computed(
     () =>
@@ -345,6 +363,7 @@ export class App {
     this.error.set('');
     this.message.set('');
     this.screen.set(screen);
+    if (screen === 'documentos') this.documentPage.set(1);
     if (screen === 'registrar') this.registrationStep.set(1);
     this.menuOpen.set(false);
     if (screen === 'aprobaciones') this.loadApprovals();
@@ -483,6 +502,25 @@ export class App {
   }
   toggle(id: number): void {
     this.expandedId.set(this.expandedId() === id ? null : id);
+  }
+  setDocumentQuery(value: string): void {
+    this.documentQuery.set(value);
+    this.documentPage.set(1);
+  }
+  setDocumentType(value: string): void {
+    this.filterType.set(value);
+    this.documentPage.set(1);
+  }
+  setDocumentStatus(value: string): void {
+    this.filterStatus.set(value);
+    this.documentPage.set(1);
+  }
+  setDocumentPageSize(value: string): void {
+    this.documentPageSize.set(Number(value));
+    this.documentPage.set(1);
+  }
+  setDocumentPage(page: number): void {
+    this.documentPage.set(page);
   }
   setType(type: DocumentType): void {
     this.form.tipo = type;

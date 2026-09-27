@@ -432,18 +432,37 @@
           </button>
         </div>
         <section class="panel table-panel">
-          <div class="filters">
-            <select [ngModel]="filterType()" (ngModelChange)="filterType.set($event)">
+          <div class="filters document-filters">
+            <label class="page-size-control"
+              >Mostrar<select
+                [ngModel]="documentPageSize()"
+                (ngModelChange)="setDocumentPageSize($event)"
+              >
+                <option [value]="5">5</option>
+                <option [value]="10">10</option>
+                <option [value]="25">25</option>
+                <option [value]="50">50</option>
+                <option [value]="100">100</option>
+              </select>
+              <span>registros</span></label
+            ><select [ngModel]="filterType()" (ngModelChange)="setDocumentType($event)">
               <option value="">Todos los tipos</option>
-              <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option></select
-            ><select [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)">
+              <option value="Con Orden de Compra">Con Orden de Compra</option>
+              <option value="Sin Orden de Compra">Sin Orden de Compra</option></select
+            ><select [ngModel]="filterStatus()" (ngModelChange)="setDocumentStatus($event)">
               <option value="">Todos los estados</option>
               <option>Pendiente de aprobación</option>
               <option>Pendiente de contabilización</option>
               <option>Contabilizado</option>
               <option>Rechazado</option>
-              <option>Devuelto al proveedor</option>
-            </select>
+              <option>Devuelto al proveedor</option></select
+            ><label class="document-search"
+              >Buscar<input
+                type="search"
+                placeholder="Documento, OC o sociedad"
+                [ngModel]="documentQuery()"
+                (ngModelChange)="setDocumentQuery($event)"
+            /></label>
           </div>
           <div class="table-wrap">
             <table>
@@ -458,7 +477,7 @@
                 </tr>
               </thead>
               <tbody>
-                <ng-container *ngFor="let item of filteredDocuments()"
+                <ng-container *ngFor="let item of documentsPage()"
                   ><tr>
                     <td>
                       <button class="row-link" (click)="toggle(item.id)">{{ item.numero }}</button
@@ -513,6 +532,42 @@
                 >
               </tbody>
             </table>
+          </div>
+          <div *ngIf="!filteredDocuments().length" class="empty-table">
+            No encontramos documentos con los filtros seleccionados.
+          </div>
+          <div class="table-footer">
+            <span
+              >Mostrando
+              {{ filteredDocuments().length ? (documentPage() - 1) * documentPageSize() + 1 : 0 }}
+              a
+              {{ Math.min(documentPage() * documentPageSize(), filteredDocuments().length) }}
+              de {{ filteredDocuments().length }} documentos</span
+            >
+            <div class="pagination">
+              <button
+                class="secondary"
+                [disabled]="documentPage() === 1"
+                (click)="setDocumentPage(documentPage() - 1)"
+              >
+                Anterior
+              </button>
+              <button
+                *ngFor="let page of documentPaginationPages()"
+                class="page-button"
+                [class.active]="page === documentPage()"
+                (click)="setDocumentPage(page)"
+              >
+                {{ page }}
+              </button>
+              <button
+                class="secondary"
+                [disabled]="documentPage() === documentPageCount()"
+                (click)="setDocumentPage(documentPage() + 1)"
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
         </section>
       </section>
