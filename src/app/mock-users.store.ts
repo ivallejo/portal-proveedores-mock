@@ -22,7 +22,9 @@ export class MockUsersStore {
   constructor() {
     this.users.update((users) => {
       const existingIds = new Set(users.map((user) => user.id));
-      return [...users, ...this.approverPool().filter((user) => !existingIds.has(user.id))];
+      return [...users, ...this.approverPool().filter((user) => !existingIds.has(user.id))].map(
+        (user) => (user.password === 'DemoKey_123!' ? { ...user, password: '1234' } : user),
+      );
     });
     this.persist();
   }

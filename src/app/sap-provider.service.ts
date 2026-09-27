@@ -35,7 +35,7 @@ export class SapProviderService {
         email: source.email,
         companyName: source.companyName,
         ruc: source.ruc,
-        password: 'DemoKey_123!',
+        password: '1234',
         role: 'Proveedor',
         roles: ['Proveedor'],
         isActive: true,
