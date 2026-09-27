@@ -43,7 +43,7 @@
         <thead>
           <tr>
             <th>Usuario</th>
-            <th>Identificador</th>
+            <th>Acceso</th>
             <th>Rol</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -53,10 +53,9 @@
           <tr *ngFor="let user of users()">
             <td>
               <b>{{ user.companyName }}</b
-              ><small>Usuario: {{ user.username }}</small
-              ><small>{{ user.email }}</small>
+              ><small>Usuario: {{ user.username }}</small>
             </td>
-            <td>{{ user.ruc }}</td>
+            <td>{{ user.roles.includes('Proveedor') ? user.ruc : user.username }}</td>
             <td>
               <div class="role-badges">
                 <span *ngFor="let role of user.roles" class="role-badge">{{ role }}</span>
