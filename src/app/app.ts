@@ -307,6 +307,7 @@ export class App {
   validateRegistrationRuc(): void {
     this.registrationMessage.set('');
     this.registrationValidated.set(false);
+    this.registration.ruc = this.registration.ruc.replace(/\D/g, '');
     this.registrationSapLoading.set(true);
     this.sapProviderService.lookupByRuc(this.registration.ruc).subscribe({
       next: (provider) => {

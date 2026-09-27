@@ -13,7 +13,7 @@ export class SapProviderService {
   private readonly users = inject(MockUsersStore);
 
   lookupByRuc(ruc: string): Observable<SapProvider> {
-    const normalizedRuc = ruc.trim();
+    const normalizedRuc = ruc.replace(/\D/g, '');
     if (!/^\d{11}$/.test(normalizedRuc)) {
       return throwError(() => new Error('Ingresa un RUC válido de 11 dígitos.')).pipe(delay(500));
     }
