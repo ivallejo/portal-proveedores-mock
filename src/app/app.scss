@@ -611,6 +611,10 @@ td small {
 .register-link:hover {
   color: #253c6d;
 }
+.register-link b {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .back-link {
   display: flex;
   align-items: center;

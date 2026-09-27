@@ -19,25 +19,26 @@
         >RUC *
         <div class="registration-ruc-field">
           <input
-            [(ngModel)]="registration.ruc"
+            [ngModel]="registration.ruc"
+            (ngModelChange)="onRegistrationRucChange($event)"
             name="ruc"
             placeholder="Ingresa tu RUC"
             maxlength="14"
             inputmode="numeric"
-            [disabled]="registrationSapLoading() || registrationValidated()"
+            [disabled]="registrationSapLoading()"
           /><button
             class="secondary registration-validate-button"
             [class.validation-success]="registrationValidated()"
             [class.validation-loading]="registrationSapLoading()"
             type="button"
-            [disabled]="registrationSapLoading() || registrationValidated()"
+            [disabled]="registrationSapLoading()"
             (click)="validateRegistrationRuc()"
           >
             {{
               registrationSapLoading()
                 ? 'Validando...'
                 : registrationValidated()
-                  ? 'Validado'
+                  ? 'Volver a validar'
                   : 'Validar'
             }}
           </button>

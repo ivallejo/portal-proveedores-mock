@@ -327,6 +327,16 @@ export class App {
     this.registrationValidated.set(false);
     this.registrationKeyRequested.set(false);
   }
+  onRegistrationRucChange(value: string): void {
+    this.registration.ruc = value;
+    if (this.registrationValidated()) {
+      this.registrationValidated.set(false);
+      this.registrationTermsAccepted.set(false);
+      this.registration.company = '';
+      this.registration.email = '';
+      this.registrationMessage.set('');
+    }
+  }
   finishRegistration(): void {
     this.username.set(this.registration.ruc);
     this.password.set('');
