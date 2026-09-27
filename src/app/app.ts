@@ -9,7 +9,7 @@ import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
 import { SapProviderService } from './sap-provider.service';
 import { environment } from '../environments/environment';
-import { DocumentType, Role, SpecialSubtype } from './models';
+import { Documento, DocumentType, Role, SpecialSubtype } from './models';
 
 type Screen =
   | 'dashboard'
@@ -73,6 +73,9 @@ export class App {
     importe: number;
     descripcion: string;
   } | null>(null);
+  readonly registrationStep = signal<1 | 2 | 3>(1);
+  readonly ocValidated = signal(false);
+  readonly registrationResult = signal<Documento | null>(null);
   readonly requester = { area: 'Operaciones', email: 'solicitante@naviera.com' };
   readonly query = signal('');
   readonly adminUsers = signal<AdminUser[]>([]);
@@ -334,6 +337,7 @@ export class App {
     this.error.set('');
     this.message.set('');
     this.screen.set(screen);
+    if (screen === 'registrar') this.registrationStep.set(1);
     this.menuOpen.set(false);
     if (screen === 'aprobaciones') this.loadApprovals();
     if (screen === 'contabilizacion') this.loadAccounting();
@@ -474,6 +478,7 @@ export class App {
   }
   setType(type: DocumentType): void {
     this.form.tipo = type;
+    this.ocValidated.set(false);
     if (type !== 'Documento especial') this.selectedSpecial.set('');
     if (type === 'Con Orden de Compra') this.form.validateSunat = true;
   }
@@ -483,6 +488,40 @@ export class App {
   requiredFilesText(): string {
     if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
     return this.isSunatDocument() ? 'PDF + XML + sustentos' : 'PDF + XML + CDR + sustentos';
+  }
+  nextRegistrationStep(): void {
+    this.error.set('');
+    if (!this.form.numero || !this.form.importe) {
+      this.error.set('Completa el número de documento y el importe total.');
+      return;
+    }
+    if (this.form.tipo === 'Documento especial' && !this.selectedSpecial()) {
+      this.error.set('Selecciona el subtipo del documento especial.');
+      return;
+    }
+    if (this.registrationStep() === 1 && this.form.tipo === 'Con Orden de Compra') {
+      if (!this.form.oc) {
+        this.error.set('Ingresa el número de orden de compra.');
+        return;
+      }
+      this.loading.set(true);
+      setTimeout(() => {
+        this.loading.set(false);
+        if (this.form.oc.toUpperCase().includes('FAIL')) {
+          this.error.set('La orden de compra no está aprobada en SAP.');
+          this.ocValidated.set(false);
+          return;
+        }
+        this.ocValidated.set(true);
+        this.registrationStep.set(2);
+      }, 900);
+      return;
+    }
+    this.registrationStep.set(2);
+  }
+  previousRegistrationStep(): void {
+    if (this.registrationStep() === 1) return;
+    this.registrationStep.update((step) => (step === 3 ? 2 : 1) as 1 | 2 | 3);
   }
   submitDocument(): void {
     this.error.set('');
@@ -525,9 +564,9 @@ export class App {
     this.documentoService.registrarDocumento(dto).subscribe({
       next: (item) => {
         this.loading.set(false);
-        this.message.set(`Documento ${item.numero} registrado. Estado: ${item.status}.`);
-        this.resetForm();
-        this.screen.set('documentos');
+        this.registrationResult.set(item);
+        this.registrationStep.set(3);
+        this.message.set(`Documento ${item.numero} recibido correctamente.`);
       },
       error: (err) => {
         this.loading.set(false);
@@ -546,6 +585,9 @@ export class App {
     this.selectedSpecial.set('');
     this.uploadedFiles.set([]);
     this.xmlSummary.set(null);
+    this.registrationStep.set(1);
+    this.ocValidated.set(false);
+    this.registrationResult.set(null);
     this.form.details = {
       vuelo: 'LA2451',
       pasajero: 'Juan Sebastián',

@@ -298,10 +298,11 @@
           </div>
         </div>
         <div class="stepper">
-          <span class="active"><b>1</b> Datos del documento</span><span><b>2</b> Validaciones</span
-          ><span><b>3</b> Resultado</span>
+          <span [class.active]="registrationStep() >= 1"><b>1</b> Datos del documento</span
+          ><span [class.active]="registrationStep() >= 2"><b>2</b> Archivos y validación</span
+          ><span [class.active]="registrationStep() >= 3"><b>3</b> Resultado</span>
         </div>
-        <section class="panel form-panel">
+        <section *ngIf="registrationStep() === 1" class="panel form-panel">
           <h2>Información principal</h2>
           <div class="form-grid">
             <label
@@ -344,7 +345,12 @@
                 >Número de OC *<input [(ngModel)]="form.oc" placeholder="Ej. OC-45000125"
               /></label>
               <div class="info-note">
-                <i class="bx bx-info-circle"></i> SUNAT y Sertica se validan en paralelo.
+                <i class="bx bx-info-circle"></i>
+                {{
+                  ocValidated()
+                    ? 'OC aprobada en SAP. Puedes continuar.'
+                    : 'La OC se validará en SAP antes de adjuntar archivos.'
+                }}
               </div>
             </div>
           </div>
@@ -386,8 +392,23 @@
           </div>
           <div class="form-actions">
             <button class="secondary" (click)="resetForm()">Limpiar</button
-            ><button class="primary" [disabled]="loading()" (click)="submitDocument()">
-              {{ loading() ? 'Procesando validaciones...' : 'Registrar documento' }}
+            ><button class="primary" [disabled]="loading()" (click)="nextRegistrationStep()">
+              {{ loading() ? 'Validando OC en SAP...' : 'Continuar' }}
+            </button>
+          </div>
+        </section>
+        <section *ngIf="registrationStep() === 3" class="panel registration-result-panel">
+          <div class="success-mark"><i class="bx bx-check"></i></div>
+          <h2>Documento recibido correctamente</h2>
+          <p>
+            El documento <strong>{{ registrationResult()?.numero }}</strong> pasó las validaciones
+            mock y quedó en estado <strong>{{ registrationResult()?.status }}</strong
+            >.
+          </p>
+          <div class="form-actions">
+            <button class="secondary" (click)="navigate('documentos')">Ver mis documentos</button>
+            <button class="primary" (click)="resetForm(); registrationStep.set(1)">
+              Registrar otro documento
             </button>
           </div>
         </section>
@@ -615,7 +636,10 @@
           </div>
         </section>
       </section>
-      <section *ngIf="screen() === 'registrar'" class="panel upload-panel">
+      <section
+        *ngIf="screen() === 'registrar' && registrationStep() === 2"
+        class="panel upload-panel"
+      >
         <div class="panel-title">
           <div>
             <h2>Archivos del documento</h2>
@@ -695,6 +719,12 @@
             /></label>
           </div>
           <p>Estos datos son obligatorios para derivar el documento a aprobación.</p>
+        </div>
+        <div class="form-actions wizard-actions">
+          <button class="secondary" (click)="previousRegistrationStep()">Volver</button>
+          <button class="primary" [disabled]="loading()" (click)="submitDocument()">
+            {{ loading() ? 'Procesando validaciones...' : 'Validar y registrar' }}
+          </button>
         </div>
       </section>
       <section *ngIf="screen() === 'usuarios'" class="page admin-page">

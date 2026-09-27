@@ -673,6 +673,23 @@
   border-radius: 12px;
   background: #f8fafe;
 }
+.registration-result-panel {
+  text-align: center;
+}
+.registration-result-panel .success-mark {
+  margin-top: 4px;
+}
+.registration-result-panel p {
+  max-width: 620px;
+  margin: 12px auto 0;
+  color: #52627d;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.registration-result-panel .form-actions {
+  justify-content: center;
+  margin-top: 28px;
+}
 .xml-summary-heading {
   display: flex;
   align-items: flex-start;
