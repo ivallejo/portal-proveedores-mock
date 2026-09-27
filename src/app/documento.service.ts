@@ -83,7 +83,14 @@ export class DocumentoService {
         { status: 'Registrado', date: new Date(now - 8000).toISOString(), user: proveedor },
         { status, date: new Date(now).toISOString(), user: 'Sistema mock' },
       ],
-      details: {},
+      details: {
+        archivos:
+          tipo === 'Documento especial'
+            ? `${numero}.pdf`
+            : tipo === 'Con Orden de Compra'
+              ? `${numero}.pdf, ${numero}.xml, sustento-orden-compra.pdf`
+              : `${numero}.pdf, ${numero}.xml, ${numero}-CDR.xml, sustento-servicio.pdf`,
+      },
     };
   }
   list(): Observable<Documento[]> {

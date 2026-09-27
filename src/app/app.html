@@ -582,13 +582,13 @@
                             </div>
                           </div>
                         </div>
-                        <div
-                          *ngIf="item.details['archivos']"
-                          class="document-detail-section document-files"
-                        >
+                        <div class="document-detail-section document-files">
                           <h4>Archivos adjuntos</h4>
                           <p *ngFor="let file of attachmentNames(item)">
                             <i class="bx bx-paperclip"></i>{{ file }}
+                          </p>
+                          <p *ngIf="!attachmentNames(item).length" class="empty-files">
+                            No hay archivos adjuntos registrados.
                           </p>
                         </div>
                       </div>
