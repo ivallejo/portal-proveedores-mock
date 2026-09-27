@@ -248,6 +248,10 @@
   background: #fff;
   font: inherit;
 }
+.admin-users-table .table-wrap select[multiple] {
+  min-width: 150px;
+  min-height: 76px;
+}
 .admin-users-table th {
   background: #f2f3f5 !important;
   color: #344054 !important;
@@ -279,6 +283,34 @@
   color: #52627d;
   font-size: 13px;
   line-height: 1.4;
+}
+.role-editor {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #edf1f6;
+}
+.role-editor h3 {
+  margin: 0;
+  color: #253c6d;
+  font-size: 15px;
+  font-weight: 500;
+}
+.role-editor p {
+  margin: 5px 0 14px;
+  color: #52627d;
+  font-size: 13px;
+}
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 9px 0;
+  color: #344054;
+  font-size: 14px;
+}
+.role-option input {
+  width: 16px;
+  height: 16px;
 }
 .user-status-control {
   display: flex;

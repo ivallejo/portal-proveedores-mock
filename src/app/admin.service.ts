@@ -54,6 +54,21 @@ export class AdminService {
   assignRole(id: string, role: string): Observable<AdminUser> {
     return this.assignRoles(id, [role as Role]);
   }
+  update(
+    id: string,
+    data: { email: string; companyName: string; ruc: string; roles: Role[] },
+  ): Observable<AdminUser> {
+    const user = this.users.update(id, {
+      email: data.email,
+      companyName: data.companyName,
+      ruc: data.ruc,
+      role: data.roles[0],
+      roles: data.roles,
+    });
+    return user
+      ? of(this.toAdminUser(user)).pipe(delay(350))
+      : throwError(() => ({ error: { message: 'Usuario no encontrado.' } }));
+  }
   setStatus(id: string, isActive: boolean): Observable<AdminUser> {
     const user = this.users.update(id, { isActive });
     return user

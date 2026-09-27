@@ -25,6 +25,9 @@ export class AdminUsersComponent {
   readonly page = signal(1);
   readonly pageSize = signal(5);
   readonly showForm = signal(false);
+  readonly editingUser = signal<AdminUser | null>(null);
+  readonly editRoles = signal<Role[]>([]);
+  readonly editUser = { email: '', companyName: '', ruc: '' };
   readonly selectedRoles = signal<Role[]>(['Área Usuaria']);
   readonly roles: Role[] = [
     'Proveedor',
@@ -95,6 +98,53 @@ export class AdminUsersComponent {
     this.error.set('');
     this.message.set('');
     this.showForm.set(true);
+  }
+  openEdit(user: AdminUser): void {
+    this.error.set('');
+    this.message.set('');
+    this.editingUser.set(user);
+    this.editUser.email = user.email;
+    this.editUser.companyName = user.companyName;
+    this.editUser.ruc = user.ruc;
+    this.editRoles.set([...user.roles]);
+  }
+  closeEdit(): void {
+    this.editingUser.set(null);
+    this.error.set('');
+  }
+  toggleEditRole(role: Role): void {
+    this.editRoles.update((roles) =>
+      roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role],
+    );
+  }
+  saveEdit(): void {
+    const user = this.editingUser();
+    if (!user) return;
+    this.error.set('');
+    if (!this.editUser.email || !this.editUser.companyName || !this.editUser.ruc) {
+      this.error.set('Completa los datos obligatorios del usuario.');
+      return;
+    }
+    if (!this.editRoles().length) {
+      this.error.set('El usuario debe conservar al menos un rol.');
+      return;
+    }
+    this.loading.set(true);
+    this.adminService.update(user.id, { ...this.editUser, roles: this.editRoles() }).subscribe({
+      next: (updated) => {
+        this.allUsers.update((users) =>
+          users.map((item) => (item.id === updated.id ? updated : item)),
+        );
+        this.refreshPage();
+        this.loading.set(false);
+        this.editingUser.set(null);
+        this.message.set('Usuario actualizado correctamente.');
+      },
+      error: (error) => {
+        this.loading.set(false);
+        this.error.set(error.error?.message || 'No fue posible actualizar el usuario.');
+      },
+    });
   }
   closeForm(): void {
     this.showForm.set(false);

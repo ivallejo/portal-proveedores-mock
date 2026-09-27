@@ -46,6 +46,7 @@
             <th>Identificador</th>
             <th>Rol</th>
             <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -56,7 +57,12 @@
             </td>
             <td>{{ user.ruc }}</td>
             <td>
-              <select [ngModel]="user.role" (ngModelChange)="changeRole(user, $event)">
+              <select
+                multiple
+                [ngModel]="user.roles"
+                (ngModelChange)="changeRoles(user, $event)"
+                aria-label="Roles del usuario"
+              >
                 <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
               </select>
             </td>
@@ -75,6 +81,16 @@
                   <span></span>
                 </button>
               </div>
+            </td>
+            <td>
+              <button
+                class="icon-button"
+                type="button"
+                title="Editar usuario"
+                (click)="openEdit(user)"
+              >
+                <i class="bx bx-edit"></i>
+              </button>
             </td>
           </tr>
         </tbody>
@@ -137,7 +153,11 @@
             [(ngModel)]="newUser.password"
             placeholder="Contraseña inicial" /></label
         ><label
-          >Rol *<select [ngModel]="selectedRole()" (ngModelChange)="selectedRole.set($event)">
+          >Roles *<select
+            multiple
+            [ngModel]="selectedRoles()"
+            (ngModelChange)="setSelectedRoles($event)"
+          >
             <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
           </select></label
         >
@@ -146,6 +166,44 @@
         <button class="secondary" type="button" (click)="closeForm()">Cancelar</button
         ><button class="primary" [disabled]="loading()" (click)="createUser()">
           {{ loading() ? 'Creando...' : 'Crear usuario' }}
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div *ngIf="editingUser()" class="modal-backdrop">
+    <section class="user-modal panel">
+      <div class="panel-title">
+        <div>
+          <h2>Editar usuario</h2>
+          <p>Actualiza sus datos y administra los roles asignados.</p>
+        </div>
+        <button class="icon-button" type="button" (click)="closeEdit()">
+          <i class="bx bx-x"></i>
+        </button>
+      </div>
+      <div *ngIf="error()" class="toast error">{{ error() }}</div>
+      <div class="form-grid">
+        <label>Correo electrónico *<input type="email" [(ngModel)]="editUser.email" /></label>
+        <label>Nombre o empresa *<input [(ngModel)]="editUser.companyName" /></label>
+        <label>RUC o identificador *<input [(ngModel)]="editUser.ruc" /></label>
+      </div>
+      <div class="role-editor">
+        <h3>Roles asignados</h3>
+        <p>Selecciona uno o más roles para este usuario.</p>
+        <label *ngFor="let role of roles" class="role-option">
+          <input
+            type="checkbox"
+            [checked]="editRoles().includes(role)"
+            (change)="toggleEditRole(role)"
+          />
+          <span>{{ role }}</span>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button class="secondary" type="button" (click)="closeEdit()">Cancelar</button>
+        <button class="primary" [disabled]="loading()" (click)="saveEdit()">
+          {{ loading() ? 'Guardando...' : 'Guardar cambios' }}
         </button>
       </div>
     </section>
