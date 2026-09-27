@@ -31,6 +31,7 @@ export class SapProviderService {
       const current = this.users.findByIdentifier(provider.ruc);
       this.users.save({
         id: current?.id || `mock-provider-${provider.ruc}`,
+        username: provider.ruc,
         email: source.email,
         companyName: source.companyName,
         ruc: source.ruc,

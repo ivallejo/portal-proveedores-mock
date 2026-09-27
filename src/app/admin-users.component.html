@@ -53,6 +53,7 @@
           <tr *ngFor="let user of users()">
             <td>
               <b>{{ user.companyName }}</b
+              ><small>Usuario: {{ user.username }}</small
               ><small>{{ user.email }}</small>
             </td>
             <td>{{ user.ruc }}</td>
@@ -132,6 +133,8 @@
       <div *ngIf="error()" class="toast error">{{ error() }}</div>
       <div class="form-grid">
         <label
+          >Username *<input [(ngModel)]="newUser.username" placeholder="Ej. jorge.perez" /></label
+        ><label
           >Correo electrónico *<input
             type="email"
             [(ngModel)]="newUser.email"
@@ -179,6 +182,7 @@
       </div>
       <div *ngIf="error()" class="toast error">{{ error() }}</div>
       <div class="form-grid">
+        <label>Username *<input [(ngModel)]="editUser.username" /></label>
         <label>Correo electrónico *<input type="email" [(ngModel)]="editUser.email" /></label>
         <label>Nombre o empresa *<input [(ngModel)]="editUser.companyName" /></label>
         <label>RUC o identificador *<input [(ngModel)]="editUser.ruc" /></label>

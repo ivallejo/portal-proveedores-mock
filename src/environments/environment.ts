@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  defaultLoginEmail: 'admin@naviera.local',
+  defaultLoginUsername: 'admin',
   defaultLoginPassword: 'AdminLocal_12345!',
 };

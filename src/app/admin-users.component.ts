@@ -27,7 +27,7 @@ export class AdminUsersComponent {
   readonly showForm = signal(false);
   readonly editingUser = signal<AdminUser | null>(null);
   readonly editRoles = signal<Role[]>([]);
-  readonly editUser = { email: '', companyName: '', ruc: '' };
+  readonly editUser = { username: '', email: '', companyName: '', ruc: '' };
   readonly selectedRoles = signal<Role[]>(['Área Usuaria']);
   readonly roles: Role[] = [
     'Proveedor',
@@ -36,7 +36,7 @@ export class AdminUsersComponent {
     'CxP',
     'Administrador',
   ];
-  readonly newUser = { email: '', companyName: '', ruc: '', password: '' };
+  readonly newUser = { username: '', email: '', companyName: '', ruc: '', password: '' };
 
   readonly filteredUsers = computed(() => {
     const term = this.search().trim().toLowerCase();
@@ -103,6 +103,7 @@ export class AdminUsersComponent {
     this.error.set('');
     this.message.set('');
     this.editingUser.set(user);
+    this.editUser.username = user.username;
     this.editUser.email = user.email;
     this.editUser.companyName = user.companyName;
     this.editUser.ruc = user.ruc;
@@ -121,7 +122,12 @@ export class AdminUsersComponent {
     const user = this.editingUser();
     if (!user) return;
     this.error.set('');
-    if (!this.editUser.email || !this.editUser.companyName || !this.editUser.ruc) {
+    if (
+      !this.editUser.username ||
+      !this.editUser.email ||
+      !this.editUser.companyName ||
+      !this.editUser.ruc
+    ) {
       this.error.set('Completa los datos obligatorios del usuario.');
       return;
     }
@@ -155,6 +161,7 @@ export class AdminUsersComponent {
     this.message.set('');
     this.error.set('');
     if (
+      !this.newUser.username ||
       !this.newUser.email ||
       !this.newUser.companyName ||
       !this.newUser.ruc ||
@@ -169,6 +176,7 @@ export class AdminUsersComponent {
       next: () => {
         this.loading.set(false);
         this.message.set('Usuario creado correctamente.');
+        this.newUser.username = '';
         this.newUser.email = '';
         this.newUser.companyName = '';
         this.newUser.ruc = '';

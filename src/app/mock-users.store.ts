@@ -3,6 +3,7 @@ import { Role } from './models';
 
 export interface MockUserRecord {
   id: string;
+  username: string;
   email: string;
   companyName: string;
   ruc: string;
@@ -60,6 +61,7 @@ export class MockUsersStore {
         const users = JSON.parse(stored) as MockUserRecord[];
         return users.map((user) => ({
           ...user,
+          username: user.username || user.ruc,
           roles: user.roles?.length ? user.roles : [user.role],
         }));
       } catch {
@@ -69,6 +71,7 @@ export class MockUsersStore {
     return [
       {
         id: 'mock-admin',
+        username: 'admin',
         email: 'admin@naviera.local',
         companyName: 'Administrador del sistema',
         ruc: 'ADMIN-SYSTEM',
@@ -80,6 +83,7 @@ export class MockUsersStore {
       },
       {
         id: 'mock-provider',
+        username: '20123456789',
         email: 'proveedor@naviera.local',
         companyName: 'Proveedor Andino SAC',
         ruc: '20123456789',
@@ -91,6 +95,7 @@ export class MockUsersStore {
       },
       {
         id: 'mock-approver',
+        username: 'maria.torres',
         email: 'aprobador@naviera.local',
         companyName: 'María Torres',
         ruc: 'APPROVER-001',
@@ -102,6 +107,7 @@ export class MockUsersStore {
       },
       {
         id: 'mock-internal',
+        username: 'colaborador',
         email: 'colaborador@naviera.local',
         companyName: 'Colaborador interno',
         ruc: 'INTERNAL-001',
@@ -113,6 +119,7 @@ export class MockUsersStore {
       },
       {
         id: 'mock-cxp',
+        username: 'cxp',
         email: 'cxp@naviera.local',
         companyName: 'Cuentas por pagar',
         ruc: 'CXP-001',

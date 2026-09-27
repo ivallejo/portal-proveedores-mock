@@ -28,15 +28,15 @@ Actualmente el prototipo funciona de forma independiente, sin backend. La autent
 Credenciales locales del administrador:
 
 ```text
-Usuario administrador: `admin@naviera.local`
+Usuario administrador: `admin`
 Contraseña: `AdminLocal_12345!`
 
 Usuarios mock adicionales:
 
-- Proveedor: `proveedor@naviera.local` / `1234`
-- Colaborador interno: `colaborador@naviera.local` / `1234`
-- Área Usuaria: `aprobador@naviera.local` / `1234`
-- CxP: `cxp@naviera.local` / `1234`
+- Proveedor: `20123456789` / `1234`
+- Colaborador interno: `colaborador` / `1234`
+- Área Usuaria: `maria.torres` / `1234`
+- CxP: `cxp` / `1234`
 ```
 
 ## Comandos útiles

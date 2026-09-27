@@ -47,7 +47,7 @@ export class App {
   readonly accountingItems = signal(
     this.documents().filter((item) => item.status === 'Pendiente de contabilización'),
   );
-  readonly username = signal(environment.defaultLoginEmail);
+  readonly username = signal(environment.defaultLoginUsername);
   readonly password = signal(environment.defaultLoginPassword);
   readonly filterStatus = signal('');
   readonly filterType = signal('');
@@ -85,7 +85,7 @@ export class App {
   readonly adminUserPageSize = signal(10);
   readonly showAdminUserForm = signal(false);
   readonly adminRole = signal('Área Usuaria');
-  readonly newAdminUser = { email: '', companyName: '', ruc: '', password: '' };
+  readonly newAdminUser = { username: '', email: '', companyName: '', ruc: '', password: '' };
   readonly adminRoles = ['Proveedor', 'Área Usuaria', 'CxP', 'Administrador'];
   readonly filteredAdminUsers = computed(() => {
     const term = this.adminUserSearch().trim().toLowerCase();
@@ -298,7 +298,7 @@ export class App {
   logout(): void {
     this.auth.logout();
     this.screen.set('dashboard');
-    this.username.set(environment.defaultLoginEmail);
+    this.username.set(environment.defaultLoginUsername);
     this.password.set(environment.defaultLoginPassword);
     this.showPassword.set(false);
     this.userMenuOpen.set(false);
@@ -392,6 +392,7 @@ export class App {
     this.adminUserMessage.set('');
     this.adminUserError.set('');
     if (
+      !this.newAdminUser.username ||
       !this.newAdminUser.email ||
       !this.newAdminUser.companyName ||
       !this.newAdminUser.ruc ||
@@ -407,6 +408,7 @@ export class App {
         next: () => {
           this.adminUserLoading.set(false);
           this.adminUserMessage.set('Usuario creado correctamente.');
+          this.newAdminUser.username = '';
           this.newAdminUser.email = '';
           this.newAdminUser.companyName = '';
           this.newAdminUser.ruc = '';

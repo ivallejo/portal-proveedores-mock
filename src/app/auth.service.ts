@@ -36,6 +36,7 @@ export class AuthService {
   }): Observable<User> {
     const userRecord = {
       id: `mock-user-${Date.now()}`,
+      username: data.ruc,
       email: data.email,
       companyName: data.company,
       ruc: data.ruc,
@@ -60,6 +61,7 @@ export class AuthService {
     localStorage.setItem('portal-proveedores.mock-session', JSON.stringify(updated));
   }
   private toUser(user: {
+    username: string;
     email: string;
     companyName: string;
     ruc: string;
@@ -67,7 +69,7 @@ export class AuthService {
     roles: Role[];
   }): User {
     return {
-      username: user.email,
+      username: user.username,
       name: user.companyName,
       role: user.role,
       roles: user.roles,
