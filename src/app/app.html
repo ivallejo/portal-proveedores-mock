@@ -353,9 +353,13 @@
                   </td>
                   <td>
                     <div class="workflow-approvers">
-                      <span *ngFor="let approver of workflow.approvalLevels; let i = index"
-                        >{{ i + 1 }}. {{ approver }}</span
-                      >
+                      <div *ngFor="let level of workflow.approvalLevels; let i = index">
+                        <strong>Nivel {{ i + 1 }}</strong>
+                        <small>{{
+                          level.rule === 'all' ? 'Todos deben aprobar' : 'Cualquiera puede aprobar'
+                        }}</small>
+                        <span *ngFor="let approver of level.approvers">{{ approver }}</span>
+                      </div>
                     </div>
                   </td>
                   <td>
@@ -458,18 +462,78 @@
             <div class="role-selector-heading">
               <div>
                 <h3>Aprobadores *</h3>
-                <p>Selecciona uno o más y se ejecutarán en el orden elegido.</p>
+                <p>
+                  Los niveles se ejecutan en orden. Puedes definir uno o varios aprobadores por
+                  nivel.
+                </p>
               </div>
             </div>
-            <div class="role-options-grid">
-              <label *ngFor="let approver of workflowApprovers" class="role-option-card"
-                ><input
-                  type="checkbox"
-                  [checked]="workflowForm.approvalLevels.includes(approver)"
-                  (change)="toggleWorkflowApprover(approver)"
-                /><span class="role-check"><i class="bx bx-check"></i></span
-                ><span>{{ approver }}</span></label
+            <div class="workflow-level-list">
+              <article
+                *ngFor="let level of workflowForm.approvalLevels; let i = index"
+                class="workflow-level-card"
               >
+                <div class="workflow-level-header">
+                  <div>
+                    <span class="workflow-level-number">Nivel {{ i + 1 }}</span>
+                    <small>Se notifica después del nivel anterior</small>
+                  </div>
+                  <div class="workflow-level-actions">
+                    <button
+                      type="button"
+                      class="icon-button"
+                      title="Subir nivel"
+                      [disabled]="i === 0"
+                      (click)="moveWorkflowLevel(i, -1)"
+                    >
+                      <i class="bx bx-chevron-up"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-button"
+                      title="Bajar nivel"
+                      [disabled]="i === workflowForm.approvalLevels.length - 1"
+                      (click)="moveWorkflowLevel(i, 1)"
+                    >
+                      <i class="bx bx-chevron-down"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-button"
+                      title="Eliminar nivel"
+                      (click)="removeWorkflowLevel(i)"
+                    >
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <label class="workflow-rule-select"
+                  >Regla del nivel<select
+                    [ngModel]="level.rule"
+                    (ngModelChange)="setWorkflowRule(i, $event)"
+                  >
+                    <option value="any">Cualquiera de los aprobadores</option>
+                    <option value="all">Todos los aprobadores</option>
+                  </select></label
+                >
+                <div class="role-options-grid">
+                  <label *ngFor="let approver of workflowApprovers" class="role-option-card"
+                    ><input
+                      type="checkbox"
+                      [checked]="level.approvers.includes(approver)"
+                      (change)="toggleWorkflowApprover(i, approver)"
+                    /><span class="role-check"><i class="bx bx-check"></i></span
+                    ><span>{{ approver }}</span></label
+                  >
+                </div>
+              </article>
+              <button
+                type="button"
+                class="secondary workflow-add-level"
+                (click)="addWorkflowLevel()"
+              >
+                <i class="bx bx-plus"></i> Agregar nivel
+              </button>
             </div>
           </div>
           <div class="form-actions">

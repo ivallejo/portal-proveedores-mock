@@ -1,12 +1,19 @@
 import { Injectable, signal } from '@angular/core';
 
+export type ApprovalRule = 'any' | 'all';
+
+export interface ApprovalLevel {
+  approvers: string[];
+  rule: ApprovalRule;
+}
+
 export interface ApprovalWorkflow {
   id: number;
   name: string;
   description: string;
   society: string;
   documentType: string;
-  approvalLevels: string[];
+  approvalLevels: ApprovalLevel[];
   isActive: boolean;
 }
 
@@ -19,7 +26,7 @@ export class WorkflowService {
       description: 'Revisión por el área solicitante antes de contabilización.',
       society: 'Todas las sociedades',
       documentType: 'Sin Orden de Compra',
-      approvalLevels: ['Área Usuaria'],
+      approvalLevels: [{ approvers: ['Área Usuaria'], rule: 'any' }],
       isActive: true,
     },
     {
@@ -28,7 +35,10 @@ export class WorkflowService {
       description: 'Flujo interno para documentos registrados por colaboradores.',
       society: 'Todas las sociedades',
       documentType: 'Documento especial',
-      approvalLevels: ['Área Usuaria', 'Jefatura de Área'],
+      approvalLevels: [
+        { approvers: ['Área Usuaria'], rule: 'any' },
+        { approvers: ['Jefatura de Área'], rule: 'any' },
+      ],
       isActive: true,
     },
   ]);

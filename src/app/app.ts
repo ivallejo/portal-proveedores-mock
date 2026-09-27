@@ -9,7 +9,7 @@ import { DocumentoService } from './documento.service';
 import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
 import { SapProviderService } from './sap-provider.service';
-import { ApprovalWorkflow, WorkflowService } from './workflow.service';
+import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
 import { environment } from '../environments/environment';
 import { Documento, DocumentType, Role, SpecialSubtype } from './models';
 
@@ -125,7 +125,7 @@ export class App {
     description: '',
     society: 'Todas las sociedades',
     documentType: 'Sin Orden de Compra',
-    approvalLevels: ['Área Usuaria'] as string[],
+    approvalLevels: [{ approvers: ['Área Usuaria'], rule: 'any' }] as ApprovalLevel[],
   };
   readonly workflowSocieties = [
     'Todas las sociedades',
@@ -861,8 +861,8 @@ export class App {
     this.workflowForm.society = workflow?.society || 'Todas las sociedades';
     this.workflowForm.documentType = workflow?.documentType || 'Sin Orden de Compra';
     this.workflowForm.approvalLevels = workflow?.approvalLevels.length
-      ? [...workflow.approvalLevels]
-      : ['Área Usuaria'];
+      ? workflow.approvalLevels.map((level) => ({ ...level, approvers: [...level.approvers] }))
+      : [{ approvers: ['Área Usuaria'], rule: 'any' }];
     this.showWorkflowForm.set(true);
   }
   setWorkflowSearch(value: string): void {
@@ -881,14 +881,40 @@ export class App {
     this.editingWorkflow.set(null);
     this.workflowError.set('');
   }
-  toggleWorkflowApprover(approver: string): void {
-    this.workflowForm.approvalLevels = this.workflowForm.approvalLevels.includes(approver)
-      ? this.workflowForm.approvalLevels.filter((item) => item !== approver)
-      : [...this.workflowForm.approvalLevels, approver];
+  toggleWorkflowApprover(levelIndex: number, approver: string): void {
+    const level = this.workflowForm.approvalLevels[levelIndex];
+    level.approvers = level.approvers.includes(approver)
+      ? level.approvers.filter((item) => item !== approver)
+      : [...level.approvers, approver];
+  }
+  addWorkflowLevel(): void {
+    this.workflowForm.approvalLevels = [
+      ...this.workflowForm.approvalLevels,
+      { approvers: [], rule: 'any' },
+    ];
+  }
+  removeWorkflowLevel(levelIndex: number): void {
+    this.workflowForm.approvalLevels = this.workflowForm.approvalLevels.filter(
+      (_, index) => index !== levelIndex,
+    );
+  }
+  moveWorkflowLevel(levelIndex: number, direction: -1 | 1): void {
+    const targetIndex = levelIndex + direction;
+    if (targetIndex < 0 || targetIndex >= this.workflowForm.approvalLevels.length) return;
+    const levels = [...this.workflowForm.approvalLevels];
+    [levels[levelIndex], levels[targetIndex]] = [levels[targetIndex], levels[levelIndex]];
+    this.workflowForm.approvalLevels = levels;
+  }
+  setWorkflowRule(levelIndex: number, rule: 'any' | 'all'): void {
+    this.workflowForm.approvalLevels[levelIndex].rule = rule;
   }
   saveWorkflow(): void {
     if (!this.workflowForm.name.trim() || !this.workflowForm.approvalLevels.length) {
-      this.workflowError.set('Completa el nombre y selecciona al menos un aprobador.');
+      this.workflowError.set('Completa el nombre y agrega al menos un nivel de aprobación.');
+      return;
+    }
+    if (this.workflowForm.approvalLevels.some((level) => !level.approvers.length)) {
+      this.workflowError.set('Cada nivel debe tener al menos un aprobador.');
       return;
     }
     this.workflowService.save(
@@ -897,7 +923,10 @@ export class App {
         description: this.workflowForm.description.trim(),
         society: this.workflowForm.society,
         documentType: this.workflowForm.documentType,
-        approvalLevels: [...this.workflowForm.approvalLevels],
+        approvalLevels: this.workflowForm.approvalLevels.map((level) => ({
+          ...level,
+          approvers: [...level.approvers],
+        })),
         isActive: this.editingWorkflow()?.isActive ?? true,
       },
       this.editingWorkflow()?.id,

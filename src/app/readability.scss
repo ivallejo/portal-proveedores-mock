@@ -607,7 +607,30 @@
   color: #52627d;
   font-size: 12px;
 }
-.workflow-approvers span::first-letter {
+.workflow-approvers > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 5px;
+}
+.workflow-approvers > div:last-child {
+  padding-bottom: 0;
+}
+.workflow-approvers strong {
+  color: #253c6d;
+  font-size: 12px;
+  font-weight: 600;
+}
+.workflow-approvers small {
+  color: #7a879d;
+  font-size: 11px;
+}
+.workflow-approvers span {
+  color: #52627d;
+}
+.workflow-approvers span::before {
+  content: '•';
+  margin-right: 5px;
   color: #253c6d;
 }
 .workflow-modal {
@@ -618,6 +641,76 @@
 }
 .workflow-levels {
   margin-bottom: 4px;
+}
+.workflow-level-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.workflow-level-card {
+  padding: 14px;
+  border: 1px solid #e2e8f1;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+.workflow-level-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.workflow-level-header > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.workflow-level-number {
+  color: #253c6d;
+  font-size: 14px;
+  font-weight: 600;
+}
+.workflow-level-header small {
+  color: #7a879d;
+  font-size: 12px;
+}
+.workflow-level-actions {
+  display: flex;
+  gap: 4px;
+}
+.workflow-level-actions .icon-button {
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 16px;
+}
+.workflow-level-actions .icon-button:disabled {
+  opacity: 0.4;
+}
+.workflow-rule-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #52627d;
+  font-size: 12px;
+  font-weight: 600;
+}
+.workflow-rule-select select {
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid #dce4ef;
+  border-radius: 7px;
+  color: #253c6d;
+  background: #fff;
+  font: inherit;
+}
+.workflow-add-level {
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 8px 12px;
+  font-size: 13px;
 }
 .admin-users-table {
   width: 100%;
