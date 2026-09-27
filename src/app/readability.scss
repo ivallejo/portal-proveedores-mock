@@ -941,6 +941,9 @@
 .login-card h1 {
   font-size: 35px;
 }
+.login-card:not(.registration-card) h1 {
+  color: #ed7624;
+}
 .login-card .muted {
   font-size: 15px;
   line-height: 1.5;
