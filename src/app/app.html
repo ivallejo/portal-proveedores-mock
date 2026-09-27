@@ -785,13 +785,36 @@
           </div>
           <i class="bx bx-cloud-upload upload-icon"></i>
         </div>
-        <label *ngIf="isRole('Proveedor')" class="upload-zone"
-          ><input type="file" multiple accept=".pdf,.xml,.cdr" (change)="addFiles($event)" /><i
-            class="bx bx-upload"
-          ></i
-          ><strong>Selecciona tus archivos</strong
-          ><small>PDF, XML y CDR (XML) · máximo 10 MB por archivo</small></label
-        >
+        <div *ngIf="isRole('Proveedor')" class="upload-groups">
+          <label class="upload-zone"
+            ><input type="file" accept=".xml" (change)="addFiles($event, 'XML')" /><i
+              class="bx bx-code-alt"
+            ></i
+            ><strong>XML del comprobante</strong><small>XML principal · máximo 10 MB</small></label
+          >
+          <label class="upload-zone"
+            ><input type="file" accept=".pdf" (change)="addFiles($event, 'PDF')" /><i
+              class="bx bx-file"
+            ></i
+            ><strong>PDF del comprobante</strong><small>PDF principal · máximo 10 MB</small></label
+          >
+          <label *ngIf="!isSunatDocument()" class="upload-zone upload-zone-warning"
+            ><input type="file" accept=".xml" (change)="addFiles($event, 'CDR')" /><i
+              class="bx bx-file-blank"
+            ></i
+            ><strong>CDR del comprobante</strong
+            ><small>XML de constancia de recepción</small></label
+          >
+          <label class="upload-zone"
+            ><input
+              type="file"
+              multiple
+              accept=".pdf,.xlsx,.xls,.doc,.docx"
+              (change)="addFiles($event)"
+            /><i class="bx bx-folder-open"></i><strong>Documentos de sustento</strong
+            ><small>PDF, Excel o Word · puedes agregar varios</small></label
+          >
+        </div>
         <label *ngIf="isRole('Colaborador interno')" class="upload-zone"
           ><input type="file" accept=".pdf" (change)="addFiles($event)" /><i
             class="bx bx-upload"

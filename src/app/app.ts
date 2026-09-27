@@ -323,13 +323,13 @@ export class App {
       },
     });
   }
-  addFiles(event: Event): void {
+  addFiles(event: Event, expectedKind?: 'PDF' | 'XML' | 'CDR'): void {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files || []).map((file) => {
       const fileName = file.name.toLowerCase();
       const extension = file.name.split('.').pop()?.toUpperCase() || 'PDF';
       const isCdr = extension === 'XML' && /cdr|constancia|acuse/.test(fileName);
-      return { name: file.name, kind: isCdr ? 'CDR' : extension };
+      return { name: file.name, kind: expectedKind || (isCdr ? 'CDR' : extension) };
     });
     this.uploadedFiles.update((current) => [...current, ...files]);
     const xmlFile = files.find((file) => file.kind === 'XML');

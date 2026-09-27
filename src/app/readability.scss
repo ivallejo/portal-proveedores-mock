@@ -152,6 +152,29 @@
   border-radius: 8px;
   font-size: 14px;
 }
+.provider-content .upload-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.provider-content .upload-groups .upload-zone {
+  min-height: 116px;
+  padding: 18px;
+  text-align: left;
+  align-items: flex-start;
+}
+.provider-content .upload-groups .upload-zone strong {
+  color: #253c6d;
+  font-size: 14px;
+}
+.provider-content .upload-groups .upload-zone-warning {
+  border-color: #ed7624;
+  background: #fff4eb;
+}
+.provider-content .upload-groups .upload-zone-warning i,
+.provider-content .upload-groups .upload-zone-warning strong {
+  color: #ed7624;
+}
 .provider-content .table-footer {
   display: flex;
   align-items: center;
