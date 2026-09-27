@@ -146,6 +146,7 @@ export class App {
     'María Torres',
     'Carlos Mendoza',
   ];
+  readonly workflowApproverSearches: string[] = [];
   readonly filteredWorkflows = computed(() => {
     const term = this.workflowSearch().trim().toLowerCase();
     return this.workflowService
@@ -863,6 +864,8 @@ export class App {
     this.workflowForm.approvalLevels = workflow?.approvalLevels.length
       ? workflow.approvalLevels.map((level) => ({ ...level, approvers: [...level.approvers] }))
       : [{ approvers: ['Área Usuaria'], rule: 'any' }];
+    this.workflowApproverSearches.length = this.workflowForm.approvalLevels.length;
+    this.workflowApproverSearches.fill('');
     this.showWorkflowForm.set(true);
   }
   setWorkflowSearch(value: string): void {
@@ -887,16 +890,33 @@ export class App {
       ? level.approvers.filter((item) => item !== approver)
       : [...level.approvers, approver];
   }
+  removeWorkflowApprover(levelIndex: number, approver: string): void {
+    this.workflowForm.approvalLevels[levelIndex].approvers = this.workflowForm.approvalLevels[
+      levelIndex
+    ].approvers.filter((item) => item !== approver);
+  }
+  setWorkflowApproverSearch(levelIndex: number, value: string): void {
+    this.workflowApproverSearches[levelIndex] = value;
+  }
+  filteredWorkflowApprovers(levelIndex: number): string[] {
+    const level = this.workflowForm.approvalLevels[levelIndex];
+    const term = (this.workflowApproverSearches[levelIndex] || '').trim().toLowerCase();
+    return this.workflowApprovers.filter(
+      (approver) => !level.approvers.includes(approver) && approver.toLowerCase().includes(term),
+    );
+  }
   addWorkflowLevel(): void {
     this.workflowForm.approvalLevels = [
       ...this.workflowForm.approvalLevels,
       { approvers: [], rule: 'any' },
     ];
+    this.workflowApproverSearches.push('');
   }
   removeWorkflowLevel(levelIndex: number): void {
     this.workflowForm.approvalLevels = this.workflowForm.approvalLevels.filter(
       (_, index) => index !== levelIndex,
     );
+    this.workflowApproverSearches.splice(levelIndex, 1);
   }
   moveWorkflowLevel(levelIndex: number, direction: -1 | 1): void {
     const targetIndex = levelIndex + direction;
@@ -904,6 +924,10 @@ export class App {
     const levels = [...this.workflowForm.approvalLevels];
     [levels[levelIndex], levels[targetIndex]] = [levels[targetIndex], levels[levelIndex]];
     this.workflowForm.approvalLevels = levels;
+    [this.workflowApproverSearches[levelIndex], this.workflowApproverSearches[targetIndex]] = [
+      this.workflowApproverSearches[targetIndex],
+      this.workflowApproverSearches[levelIndex],
+    ];
   }
   setWorkflowRule(levelIndex: number, rule: 'any' | 'all'): void {
     this.workflowForm.approvalLevels[levelIndex].rule = rule;

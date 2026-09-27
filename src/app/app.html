@@ -516,14 +516,38 @@
                     <option value="all">Todos los aprobadores</option>
                   </select></label
                 >
-                <div class="role-options-grid">
-                  <label *ngFor="let approver of workflowApprovers" class="role-option-card"
-                    ><input
-                      type="checkbox"
-                      [checked]="level.approvers.includes(approver)"
-                      (change)="toggleWorkflowApprover(i, approver)"
-                    /><span class="role-check"><i class="bx bx-check"></i></span
+                <div class="workflow-selected-approvers">
+                  <span *ngFor="let approver of level.approvers" class="workflow-selected-chip"
+                    >{{ approver
+                    }}<button
+                      type="button"
+                      (click)="removeWorkflowApprover(i, approver)"
+                      aria-label="Quitar aprobador"
+                    >
+                      <i class="bx bx-x"></i></button
+                  ></span>
+                  <span *ngIf="!level.approvers.length" class="workflow-no-selection"
+                    >Aún no has seleccionado aprobadores.</span
+                  >
+                </div>
+                <label class="workflow-approver-search"
+                  ><i class="bx bx-search"></i
+                  ><input
+                    placeholder="Buscar usuario, rol o área"
+                    [ngModel]="workflowApproverSearches[i]"
+                    (ngModelChange)="setWorkflowApproverSearch(i, $event)"
+                /></label>
+                <div class="workflow-approver-results">
+                  <label
+                    *ngFor="let approver of filteredWorkflowApprovers(i)"
+                    class="role-option-card"
+                    ><input type="checkbox" (change)="toggleWorkflowApprover(i, approver)" /><span
+                      class="role-check"
+                      ><i class="bx bx-check"></i></span
                     ><span>{{ approver }}</span></label
+                  >
+                  <span *ngIf="!filteredWorkflowApprovers(i).length" class="workflow-no-results"
+                    >No hay resultados disponibles.</span
                   >
                 </div>
               </article>
