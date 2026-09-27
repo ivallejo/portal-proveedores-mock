@@ -431,38 +431,49 @@
             <i class="bx bx-plus"></i> Registrar documento
           </button>
         </div>
-        <section class="panel table-panel">
-          <div class="filters document-filters">
-            <label class="page-size-control"
-              >Mostrar<select
-                [ngModel]="documentPageSize()"
-                (ngModelChange)="setDocumentPageSize($event)"
-              >
-                <option [value]="5">5</option>
-                <option [value]="10">10</option>
-                <option [value]="25">25</option>
-                <option [value]="50">50</option>
-                <option [value]="100">100</option>
+        <section class="panel table-panel admin-users-table document-table">
+          <div class="panel-title">
+            <div>
+              <h2>Documentos registrados</h2>
+              <p>{{ providerDocuments().length }} documentos en el sistema</p>
+            </div>
+            <div class="admin-inline-controls document-inline-controls">
+              <label class="page-size-select"
+                >Mostrar
+                <select
+                  [ngModel]="documentPageSize()"
+                  (ngModelChange)="setDocumentPageSize($event)"
+                >
+                  <option [value]="5">5</option>
+                  <option [value]="10">10</option>
+                  <option [value]="25">25</option>
+                  <option [value]="50">50</option>
+                  <option [value]="100">100</option>
+                </select>
+                registros
+              </label>
+              <select [ngModel]="filterType()" (ngModelChange)="setDocumentType($event)">
+                <option value="">Todos los tipos</option>
+                <option value="Con Orden de Compra">Con Orden de Compra</option>
+                <option value="Sin Orden de Compra">Sin Orden de Compra</option>
               </select>
-              <span>registros</span></label
-            ><select [ngModel]="filterType()" (ngModelChange)="setDocumentType($event)">
-              <option value="">Todos los tipos</option>
-              <option value="Con Orden de Compra">Con Orden de Compra</option>
-              <option value="Sin Orden de Compra">Sin Orden de Compra</option></select
-            ><select [ngModel]="filterStatus()" (ngModelChange)="setDocumentStatus($event)">
-              <option value="">Todos los estados</option>
-              <option>Pendiente de aprobación</option>
-              <option>Pendiente de contabilización</option>
-              <option>Contabilizado</option>
-              <option>Rechazado</option>
-              <option>Devuelto al proveedor</option></select
-            ><label class="document-search"
-              >Buscar<input
-                type="search"
-                placeholder="Documento, OC o sociedad"
-                [ngModel]="documentQuery()"
-                (ngModelChange)="setDocumentQuery($event)"
-            /></label>
+              <select [ngModel]="filterStatus()" (ngModelChange)="setDocumentStatus($event)">
+                <option value="">Todos los estados</option>
+                <option>Pendiente de aprobación</option>
+                <option>Pendiente de contabilización</option>
+                <option>Contabilizado</option>
+                <option>Rechazado</option>
+                <option>Devuelto al proveedor</option>
+              </select>
+              <label class="admin-search"
+                ><i class="bx bx-search"></i><span>Buscar:</span
+                ><input
+                  type="search"
+                  placeholder="Documento, OC o sociedad"
+                  [ngModel]="documentQuery()"
+                  (ngModelChange)="setDocumentQuery($event)"
+              /></label>
+            </div>
           </div>
           <div class="table-wrap">
             <table>
@@ -536,7 +547,7 @@
           <div *ngIf="!filteredDocuments().length" class="empty-table">
             No encontramos documentos con los filtros seleccionados.
           </div>
-          <div class="table-footer">
+          <div class="admin-pagination admin-pagination-bottom">
             <span
               >Mostrando
               {{ filteredDocuments().length ? (documentPage() - 1) * documentPageSize() + 1 : 0 }}
@@ -544,13 +555,14 @@
               {{ Math.min(documentPage() * documentPageSize(), filteredDocuments().length) }}
               de {{ filteredDocuments().length }} documentos</span
             >
-            <div class="pagination">
+            <div>
               <button
-                class="secondary"
+                class="icon-button"
                 [disabled]="documentPage() === 1"
                 (click)="setDocumentPage(documentPage() - 1)"
+                aria-label="Página anterior"
               >
-                Anterior
+                <i class="bx bx-chevron-left"></i>
               </button>
               <button
                 *ngFor="let page of documentPaginationPages()"
@@ -561,11 +573,12 @@
                 {{ page }}
               </button>
               <button
-                class="secondary"
+                class="icon-button"
                 [disabled]="documentPage() === documentPageCount()"
                 (click)="setDocumentPage(documentPage() + 1)"
+                aria-label="Página siguiente"
               >
-                Siguiente
+                <i class="bx bx-chevron-right"></i>
               </button>
             </div>
           </div>
