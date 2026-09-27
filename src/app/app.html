@@ -228,9 +228,6 @@
       </button>
     </aside>
     <main class="provider-content">
-      <div *ngIf="message()" class="toast success">
-        <i class="bx bx-check-circle"></i>{{ message() }}
-      </div>
       <div *ngIf="error()" class="toast error"><i class="bx bx-error-circle"></i>{{ error() }}</div>
       <section *ngIf="screen() === 'dashboard'" class="page">
         <div class="page-heading">

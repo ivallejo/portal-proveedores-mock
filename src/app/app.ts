@@ -575,7 +575,6 @@ export class App {
         this.loading.set(false);
         this.registrationResult.set(item);
         this.registrationStep.set(3);
-        this.message.set(`Documento ${item.numero} recibido correctamente.`);
         this.showToast(`El documento ${item.numero} fue recibido correctamente.`);
       },
       error: (err) => {
@@ -599,8 +598,9 @@ export class App {
       position: 'top-end',
       icon: 'success',
       text,
-      showConfirmButton: false,
-      timer: 4500,
+      showConfirmButton: true,
+      confirmButtonText: 'Cerrar',
+      timer: 10000,
       timerProgressBar: true,
     });
   }
