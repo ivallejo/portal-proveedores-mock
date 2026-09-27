@@ -799,6 +799,26 @@
   font-size: 14px;
   font-weight: 500;
 }
+.xml-file-guidance {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #dce4ef;
+  color: #52627d;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.xml-file-guidance i {
+  flex: 0 0 auto;
+  color: #253c6d;
+  font-size: 18px;
+}
+.xml-file-guidance strong {
+  color: #253c6d;
+  font-weight: 600;
+}
 .sap-provider-summary {
   display: flex;
   align-items: flex-start;

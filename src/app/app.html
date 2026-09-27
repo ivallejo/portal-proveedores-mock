@@ -423,7 +423,6 @@
       <section *ngIf="screen() === 'documentos'" class="page">
         <div class="page-heading">
           <div>
-            <span class="eyebrow">PROVEEDOR</span>
             <h1>Mis documentos</h1>
             <p>Consulta el estado y las validaciones de tus documentos.</p>
           </div>
@@ -780,6 +779,17 @@
             >
             <span
               >Descripción<strong>{{ xmlSummary()?.descripcion }}</strong></span
+            >
+          </div>
+          <div class="xml-file-guidance">
+            <i class="bx bx-info-circle"></i>
+            <span *ngIf="isSunatDocument()"
+              >El comprobante tiene prefijo <strong>E</strong>. No es necesario adjuntar el CDR.
+              Continúa con el PDF y los documentos de sustento.</span
+            >
+            <span *ngIf="!isSunatDocument()"
+              >El comprobante no tiene prefijo <strong>E</strong>. Debes adjuntar también el CDR,
+              además del PDF y los documentos de sustento.</span
             >
           </div>
         </div>

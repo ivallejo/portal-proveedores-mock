@@ -311,7 +311,10 @@ export class App {
       return { name: file.name, kind: isCdr ? 'CDR' : extension };
     });
     this.uploadedFiles.update((current) => [...current, ...files]);
-    if (files.some((file) => file.kind === 'XML')) {
+    const xmlFile = files.find((file) => file.kind === 'XML');
+    if (xmlFile) {
+      const documentNumber = xmlFile.name.match(/[A-Z]\d{3}-\d{6}/i)?.[0];
+      if (documentNumber) this.form.numero = documentNumber.toUpperCase();
       this.xmlSummary.set({
         emisor: this.form.proveedor || 'Proveedor Andino SAC',
         numero: this.form.numero,
@@ -325,6 +328,9 @@ export class App {
   }
   removeFile(name: string): void {
     this.uploadedFiles.update((files) => files.filter((file) => file.name !== name));
+  }
+  isSunatDocument(): boolean {
+    return this.form.numero.trim().toUpperCase().startsWith('E');
   }
   toggleUserMenu(): void {
     this.userMenuOpen.update((open) => !open);
@@ -535,9 +541,7 @@ export class App {
   }
   requiredFilesText(): string {
     if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
-    return this.form.tipo === 'Con Orden de Compra'
-      ? 'PDF + XML + sustentos'
-      : 'PDF + XML + CDR + sustentos';
+    return this.isSunatDocument() ? 'PDF + XML + sustentos' : 'PDF + XML + CDR + sustentos';
   }
   nextRegistrationStep(): void {
     this.error.set('');
@@ -580,7 +584,7 @@ export class App {
     const hasPdf = fileKinds.includes('PDF');
     const hasXml = fileKinds.includes('XML');
     const hasCdr = fileKinds.includes('CDR');
-    const requiresCdr = this.isRole('Proveedor') && this.form.tipo === 'Sin Orden de Compra';
+    const requiresCdr = this.isRole('Proveedor') && !this.isSunatDocument();
     const missingProviderFiles =
       this.isRole('Proveedor') && (!hasPdf || !hasXml || (requiresCdr && !hasCdr));
     if (
