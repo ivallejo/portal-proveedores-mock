@@ -72,8 +72,8 @@
 }
 .provider-content .status-badge.pendiente-de-contabilización {
   color: #fff;
-  background: #eab308;
-  border-color: #eab308;
+  background: #d99b00;
+  border-color: #d99b00;
 }
 .provider-content .form-grid {
   gap: 22px;
@@ -221,6 +221,47 @@
   padding: 22px 26px 26px;
   background: #f8fafe;
   border-top: 1px solid #e6edf6;
+}
+.provider-content .document-modal-row > td {
+  padding: 0;
+  border: 0;
+}
+.document-detail-modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(23 37 61 / 48%);
+}
+.document-detail-modal {
+  position: relative;
+  width: min(860px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 20px 50px rgb(23 37 61 / 22%);
+}
+.document-detail-modal .document-detail {
+  border-top: 0;
+}
+.document-detail-close {
+  position: absolute;
+  z-index: 1;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f2f5f9;
+  color: #52627d;
+  font-size: 22px;
+}
+.document-detail-close:hover {
+  background: #e5ebf3;
+  color: #253c6d;
 }
 .provider-content .document-detail-heading {
   display: flex;
