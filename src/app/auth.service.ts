@@ -1,33 +1,32 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
-import { environment } from '../environments/environment';
+import { Observable, delay, of, throwError } from 'rxjs';
 import { Role, User } from './models';
-
-interface AuthResponse {
-  accessToken: string;
-  expiresAtUtc: string;
-  user: ApiUser;
-}
-interface ApiUser {
-  id: string;
-  email: string;
-  companyName: string;
-  ruc: string;
-  role: Role;
-}
+import { MockUsersStore } from './mock-users.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly http = inject(HttpClient);
+  private readonly users = inject(MockUsersStore);
   readonly user = signal<User | null>(null);
-  private readonly apiUrl = `${environment.apiUrl}/auth`;
+
+  constructor() {
+    const session = localStorage.getItem('portal-proveedores.mock-session');
+    if (session) {
+      try {
+        this.user.set(JSON.parse(session) as User);
+      } catch {
+        localStorage.removeItem('portal-proveedores.mock-session');
+      }
+    }
+  }
+
   login(identifier: string, password: string): Observable<User> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { identifier, password }).pipe(
-      tap((response) => localStorage.setItem('web-proveedores.access-token', response.accessToken)),
-      map((response) => this.toUser(response.user)),
-      tap((user) => this.user.set(user)),
-    );
+    const record = this.users.findByIdentifier(identifier);
+    if (!record || !record.isActive || record.password !== password)
+      return throwError(() => new Error('RUC, usuario o contraseña inválidos.')).pipe(delay(450));
+    const user = this.toUser(record);
+    this.user.set(user);
+    localStorage.setItem('portal-proveedores.mock-session', JSON.stringify(user));
+    return of(user).pipe(delay(450));
   }
   register(data: {
     ruc: string;
@@ -35,20 +34,24 @@ export class AuthService {
     company: string;
     password: string;
   }): Observable<User> {
-    return this.http
-      .post<ApiUser>(`${this.apiUrl}/register`, {
-        ruc: data.ruc,
-        email: data.email,
-        companyName: data.company,
-        password: data.password,
-      })
-      .pipe(map((user) => this.toUser(user)));
+    const userRecord = {
+      id: `mock-user-${Date.now()}`,
+      email: data.email,
+      companyName: data.company,
+      ruc: data.ruc,
+      password: data.password,
+      role: 'Proveedor' as Role,
+      isActive: true,
+      createdAtUtc: new Date().toISOString(),
+    };
+    this.users.save(userRecord);
+    return of(this.toUser(userRecord)).pipe(delay(450));
   }
   logout(): void {
-    localStorage.removeItem('web-proveedores.access-token');
+    localStorage.removeItem('portal-proveedores.mock-session');
     this.user.set(null);
   }
-  private toUser(user: ApiUser): User {
+  private toUser(user: { email: string; companyName: string; ruc: string; role: Role }): User {
     return { username: user.email, name: user.companyName, role: user.role, providerId: user.ruc };
   }
 }

@@ -1,6 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
-  defaultLoginEmail: '',
-  defaultLoginPassword: '',
+  defaultLoginEmail: 'admin@naviera.local',
+  defaultLoginPassword: 'AdminLocal_12345!',
 };

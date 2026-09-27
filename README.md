@@ -6,7 +6,6 @@ Frontend Angular del Portal de Proveedores de Naviera Transoceánica S.A. Incluy
 
 - Node.js 20 o superior.
 - npm 10 o superior.
-- Backend ejecutándose en `http://localhost:5080` para autenticación y administración.
 
 ## Instalación y arranque
 
@@ -17,23 +16,28 @@ npm start
 
 Abrir [http://localhost:4200](http://localhost:4200).
 
-El frontend utiliza por defecto `http://localhost:5080/api`. Para cambiarla, editar `src/environments/environment.ts`.
+Actualmente el prototipo funciona de forma independiente, sin backend. La autenticación, el registro online, la administración de usuarios, la validación de RUC y los flujos documentales utilizan mocks locales y `localStorage`.
 
-## Flujo recomendado con backend
+## Flujo del prototipo
 
-1. Levantar SQL Server y la API siguiendo el README del repositorio backend.
-2. Ejecutar `npm install` en este repositorio.
-3. Ejecutar `npm start`.
-4. Ingresar con el administrador inicial o registrar un proveedor nuevo.
+1. Ejecutar `npm install`.
+2. Ejecutar `npm start`.
+3. Abrir `http://localhost:4200`.
+4. Probar los roles y flujos mock desde el login.
 
 Credenciales locales del administrador:
 
 ```text
-Correo: admin@naviera.local
-Contraseña: valor de `BootstrapAdmin__Password` en el `.env` del backend
-```
+Usuario administrador: `admin@naviera.local`
+Contraseña: `AdminLocal_12345!`
 
-La contraseña se define en el `.env` del backend.
+Usuarios mock adicionales:
+
+- Proveedor: `proveedor@naviera.local` / `1234`
+- Colaborador interno: `colaborador@naviera.local` / `1234`
+- Área Usuaria: `aprobador@naviera.local` / `1234`
+- CxP: `cxp@naviera.local` / `1234`
+```
 
 ## Comandos útiles
 
@@ -47,7 +51,7 @@ npm test              # Ejecutar pruebas
 
 ## Configuración de producción
 
-La configuración de producción usa una API relativa (`/api`) desde `src/environments/environment.production.ts`. El servidor web debe enrutar `/api` hacia el backend.
+El prototipo no requiere enrutar `/api` ni levantar servicios adicionales para publicarse.
 
 ## Estructura principal
 
