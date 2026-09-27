@@ -308,6 +308,14 @@ export class App {
     this.registrationMessage.set('');
     this.registrationValidated.set(false);
     this.registration.ruc = this.registration.ruc.replace(/\D/g, '');
+    if (!this.registration.ruc) {
+      this.registrationMessage.set('Ingresa el RUC para continuar.');
+      return;
+    }
+    if (this.registration.ruc.length !== 11) {
+      this.registrationMessage.set('El RUC debe tener 11 dígitos.');
+      return;
+    }
     this.registrationSapLoading.set(true);
     this.sapProviderService.lookupByRuc(this.registration.ruc).subscribe({
       next: (provider) => {
