@@ -605,7 +605,11 @@ td small {
 .register-link {
   display: block;
   margin: 18px auto 4px;
+  color: #ed7624;
   font-size: 12px;
+}
+.register-link:hover {
+  color: #d96519;
 }
 .back-link {
   display: flex;
