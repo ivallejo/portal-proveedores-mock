@@ -596,7 +596,7 @@ export class App {
     void Swal.fire({
       toast: true,
       position: 'top-end',
-      icon: 'success',
+      iconHtml: '<i class="bx bx-check registration-toast-check"></i>',
       text,
       showCloseButton: true,
       showConfirmButton: false,
