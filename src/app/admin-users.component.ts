@@ -122,12 +122,7 @@ export class AdminUsersComponent {
     const user = this.editingUser();
     if (!user) return;
     this.error.set('');
-    if (
-      !this.editUser.username ||
-      !this.editUser.email ||
-      !this.editUser.companyName ||
-      !this.editUser.ruc
-    ) {
+    if (!this.editUser.username || !this.editUser.email || !this.editUser.companyName) {
       this.error.set('Completa los datos obligatorios del usuario.');
       return;
     }
@@ -164,7 +159,6 @@ export class AdminUsersComponent {
       !this.newUser.username ||
       !this.newUser.email ||
       !this.newUser.companyName ||
-      !this.newUser.ruc ||
       !this.newUser.password ||
       !this.selectedRoles().length
     ) {

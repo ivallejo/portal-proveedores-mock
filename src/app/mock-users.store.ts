@@ -34,7 +34,8 @@ export class MockUsersStore {
   findByIdentifier(identifier: string): MockUserRecord | undefined {
     const value = identifier.trim().toLowerCase();
     return this.users().find(
-      (user) => user.username.toLowerCase() === value || user.ruc.toLowerCase() === value,
+      (user) =>
+        user.username.toLowerCase() === value || (!!user.ruc && user.ruc.toLowerCase() === value),
     );
   }
 

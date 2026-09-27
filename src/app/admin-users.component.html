@@ -144,7 +144,9 @@
             [(ngModel)]="newUser.companyName"
             placeholder="Nombre del usuario" /></label
         ><label
-          >RUC *<input [(ngModel)]="newUser.ruc" placeholder="RUC o identificador interno" /></label
+          >RUC (solo proveedores)<input
+            [(ngModel)]="newUser.ruc"
+            placeholder="Opcional para usuarios internos" /></label
         ><label
           >Contraseña temporal *<input
             type="password"
@@ -185,7 +187,7 @@
         <label>Username *<input [(ngModel)]="editUser.username" /></label>
         <label>Correo electrónico *<input type="email" [(ngModel)]="editUser.email" /></label>
         <label>Nombre o empresa *<input [(ngModel)]="editUser.companyName" /></label>
-        <label>RUC o identificador *<input [(ngModel)]="editUser.ruc" /></label>
+        <label>RUC (solo proveedores)<input [(ngModel)]="editUser.ruc" /></label>
       </div>
       <div class="role-editor">
         <h3>Roles asignados</h3>

@@ -31,7 +31,7 @@ export class AdminService {
   }): Observable<AdminUser> {
     const duplicate = this.users
       .users()
-      .some((user) => user.username === data.username || user.ruc === data.ruc);
+      .some((user) => user.username === data.username || (!!data.ruc && user.ruc === data.ruc));
     if (duplicate)
       return throwError(() => ({ error: { message: 'El username o RUC ya está registrado.' } }));
     const roles = data.roles?.length ? data.roles : ['Proveedor' as Role];
