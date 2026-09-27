@@ -20,7 +20,7 @@ export class MockUsersStore {
   readonly users = signal<MockUserRecord[]>(this.load());
 
   constructor() {
-    if (!localStorage.getItem(this.storageKey)) this.persist();
+    this.persist();
   }
 
   save(user: MockUserRecord): void {
@@ -59,11 +59,12 @@ export class MockUsersStore {
     if (stored) {
       try {
         const users = JSON.parse(stored) as MockUserRecord[];
-        return users.map((user) => ({
-          ...user,
-          username: user.username || user.ruc,
-          roles: user.roles?.length ? user.roles : [user.role],
-        }));
+        return users.map((user) => {
+          const roles = user.roles?.length ? user.roles : [user.role];
+          const username =
+            user.username || (roles.includes('Proveedor') ? user.ruc : user.email.split('@')[0]);
+          return { ...user, username, roles };
+        });
       } catch {
         localStorage.removeItem(this.storageKey);
       }
