@@ -523,7 +523,16 @@
                   [ngModel]="approvalComment()[item.id] || ''"
                   (ngModelChange)="setComment(item.id, $event)"
                   placeholder="Comentario obligatorio para rechazar"
-                /><button class="secondary" (click)="reject(item.id)">Rechazar</button
+                /><select
+                  [ngModel]="approvalTarget()[item.id] || ''"
+                  (ngModelChange)="setApprovalTarget(item.id, $event)"
+                >
+                  <option value="">Derivar a...</option>
+                  <option>Jefatura de Área</option>
+                  <option>María Torres</option>
+                  <option>Carlos Mendoza</option></select
+                ><button class="secondary" (click)="derive(item.id)">Derivar</button
+                ><button class="secondary" (click)="reject(item.id)">Rechazar</button
                 ><button class="primary" (click)="approve(item.id)">Aprobar</button>
               </div>
             </article>

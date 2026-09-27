@@ -194,6 +194,29 @@ export class DocumentoService {
     this.changeStatus(id, 'Rechazado', 'Área Usuaria', comment);
     return of(this.get(id)!).pipe(delay(700));
   }
+  derive(id: number, approver: string): Observable<Documento> {
+    this.documents.update((items) =>
+      items.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              aprobador: approver,
+              escalated: false,
+              history: [
+                ...item.history,
+                {
+                  status: item.status,
+                  date: new Date().toISOString(),
+                  user: 'Área Usuaria',
+                  comment: `Documento derivado a ${approver}.`,
+                },
+              ],
+            }
+          : item,
+      ),
+    );
+    return of(this.get(id)!).pipe(delay(700));
+  }
   markEscalated(): void {
     this.documents.update((items) =>
       items.map((item) =>

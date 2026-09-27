@@ -52,6 +52,7 @@ export class App {
   readonly filterStatus = signal('');
   readonly filterType = signal('');
   readonly approvalComment = signal<Record<number, string>>({});
+  readonly approvalTarget = signal<Record<number, string>>({});
   readonly accountingRoute = signal<Record<number, 'SAP' | 'Sertica'>>({});
   readonly showPassword = signal(false);
   readonly showRegistrationPassword = signal(false);
@@ -564,6 +565,19 @@ export class App {
       this.loadApprovals();
     });
   }
+  derive(id: number): void {
+    const target = this.approvalTarget()[id]?.trim();
+    if (!target) {
+      this.error.set('Selecciona el aprobador al que se derivará el documento.');
+      return;
+    }
+    this.loading.set(true);
+    this.aprobacionService.derivar(id, target).subscribe((item) => {
+      this.loading.set(false);
+      this.message.set(`Documento ${item.numero} derivado a ${target}.`);
+      this.loadApprovals();
+    });
+  }
   account(id: number): void {
     const route = this.accountingRoute()[id];
     if (!route) {
@@ -594,6 +608,9 @@ export class App {
   }
   setComment(id: number, value: string): void {
     this.approvalComment.update((values) => ({ ...values, [id]: value }));
+  }
+  setApprovalTarget(id: number, value: string): void {
+    this.approvalTarget.update((values) => ({ ...values, [id]: value }));
   }
   statusClass(status: string): string {
     return status.toLowerCase().replaceAll(' ', '-');

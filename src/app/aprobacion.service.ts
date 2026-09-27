@@ -21,4 +21,8 @@ export class AprobacionService {
     // TODO: reemplazar por llamada HTTP real a /api/aprobaciones/{id}/rechazar
     return this.documentos.reject(id, comentario);
   }
+  derivar(id: number, aprobador: string): Observable<Documento> {
+    // TODO: reemplazar por llamada HTTP real a /api/aprobaciones/{id}/derivar
+    return this.documentos.derive(id, aprobador);
+  }
 }
