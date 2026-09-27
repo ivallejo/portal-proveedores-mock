@@ -627,6 +627,10 @@ td small {
 .back-link:hover {
   color: #253c6d;
 }
+.back-link span {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .registration-card h1 {
   margin-bottom: 8px;
 }
