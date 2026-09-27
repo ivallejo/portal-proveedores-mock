@@ -563,6 +563,37 @@
 .provider-content .workflow-table {
   margin-top: 24px;
 }
+.workflow-table > .panel-title > .admin-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 280px;
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid #dce4ef;
+  border-radius: 7px;
+  background: #fff;
+  color: #52627d;
+  font-size: 13px;
+}
+.workflow-table > .panel-title > .admin-search i {
+  color: #253c6d;
+  font-size: 18px;
+}
+.workflow-table > .panel-title > .admin-search input {
+  width: 190px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: #253c6d;
+  background: transparent;
+  font: inherit;
+}
+.workflow-table > .panel-title > .admin-search:focus-within {
+  border-color: #253c6d;
+  box-shadow: 0 0 0 3px rgb(37 60 109 / 10%);
+}
 .provider-content .workflow-page {
   width: calc(100% - 48px);
   max-width: 100%;
