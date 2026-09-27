@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 import { AprobacionService } from './aprobacion.service';
 import { AuthService } from './auth.service';
 import { ContabilizacionService } from './contabilizacion.service';
@@ -492,23 +493,23 @@ export class App {
   nextRegistrationStep(): void {
     this.error.set('');
     if (!this.form.numero || !this.form.importe) {
-      this.error.set('Completa el número de documento y el importe total.');
+      this.showAlert('warning', 'Completa el número de documento y el importe total.');
       return;
     }
     if (this.form.tipo === 'Documento especial' && !this.selectedSpecial()) {
-      this.error.set('Selecciona el subtipo del documento especial.');
+      this.showAlert('warning', 'Selecciona el subtipo del documento especial.');
       return;
     }
     if (this.registrationStep() === 1 && this.form.tipo === 'Con Orden de Compra') {
       if (!this.form.oc) {
-        this.error.set('Ingresa el número de orden de compra.');
+        this.showAlert('warning', 'Ingresa el número de orden de compra.');
         return;
       }
       this.loading.set(true);
       setTimeout(() => {
         this.loading.set(false);
         if (this.form.oc.toUpperCase().includes('FAIL')) {
-          this.error.set('La orden de compra no está aprobada en SAP.');
+          this.showAlert('error', 'La orden de compra no está aprobada en SAP.');
           this.ocValidated.set(false);
           return;
         }
@@ -546,6 +547,7 @@ export class App {
           ? `Adjunta los archivos requeridos: ${this.requiredFilesText()}.`
           : 'Completa los campos obligatorios y adjunta el PDF para continuar.',
       );
+      this.showAlert('warning', this.error());
       return;
     }
     this.loading.set(true);
@@ -567,11 +569,21 @@ export class App {
         this.registrationResult.set(item);
         this.registrationStep.set(3);
         this.message.set(`Documento ${item.numero} recibido correctamente.`);
+        this.showAlert('success', `El documento ${item.numero} fue recibido correctamente.`);
       },
       error: (err) => {
         this.loading.set(false);
         this.error.set(err.message);
+        this.showAlert('error', err.message);
       },
+    });
+  }
+  private showAlert(icon: 'success' | 'error' | 'warning' | 'info', text: string): void {
+    void Swal.fire({
+      icon,
+      text,
+      confirmButtonColor: '#253c6d',
+      buttonsStyling: true,
     });
   }
   resetForm(): void {
