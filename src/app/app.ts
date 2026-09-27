@@ -281,10 +281,12 @@ export class App {
   }
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const files = Array.from(input.files || []).map((file) => ({
-      name: file.name,
-      kind: file.name.split('.').pop()?.toUpperCase() || 'PDF',
-    }));
+    const files = Array.from(input.files || []).map((file) => {
+      const fileName = file.name.toLowerCase();
+      const extension = file.name.split('.').pop()?.toUpperCase() || 'PDF';
+      const isCdr = extension === 'XML' && /cdr|constancia|acuse/.test(fileName);
+      return { name: file.name, kind: isCdr ? 'CDR' : extension };
+    });
     this.uploadedFiles.update((current) => [...current, ...files]);
     if (files.some((file) => file.kind === 'XML')) {
       this.xmlSummary.set({
