@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 import { AdminService, AdminUser } from './admin.service';
 import { Role } from './models';
 
@@ -139,7 +140,12 @@ export class AdminUsersComponent {
         this.refreshPage();
         this.loading.set(false);
         this.editingUser.set(null);
-        this.message.set('Usuario actualizado correctamente.');
+        void Swal.fire({
+          icon: 'success',
+          title: 'Usuario actualizado',
+          text: 'Los datos y roles del usuario se actualizaron correctamente.',
+          confirmButtonColor: '#253c6d',
+        });
       },
       error: (error) => {
         this.loading.set(false);
