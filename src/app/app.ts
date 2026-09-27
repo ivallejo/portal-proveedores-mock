@@ -905,6 +905,7 @@ export class App {
   filteredWorkflowApprovers(levelIndex: number): string[] {
     const level = this.workflowForm.approvalLevels[levelIndex];
     const term = (this.workflowApproverSearches[levelIndex] || '').trim().toLowerCase();
+    if (!term) return [];
     return this.workflowApprovers().filter(
       (approver) => !level.approvers.includes(approver) && approver.toLowerCase().includes(term),
     );

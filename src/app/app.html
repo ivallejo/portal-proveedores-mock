@@ -546,7 +546,13 @@
                       ><i class="bx bx-check"></i></span
                     ><span>{{ approver }}</span></label
                   >
-                  <span *ngIf="!filteredWorkflowApprovers(i).length" class="workflow-no-results"
+                  <span *ngIf="!workflowApproverSearches[i]?.trim()" class="workflow-no-results"
+                    >Escribe un nombre, rol o área para buscar.</span
+                  ><span
+                    *ngIf="
+                      workflowApproverSearches[i]?.trim() && !filteredWorkflowApprovers(i).length
+                    "
+                    class="workflow-no-results"
                     >No hay resultados disponibles.</span
                   >
                 </div>
