@@ -96,7 +96,7 @@ export class App {
   readonly registrationValidated = signal(false);
   readonly registrationTermsAccepted = signal(false);
   readonly registrationKeyRequested = signal(false);
-  readonly registration = { ruc: '', email: '', company: '' };
+  readonly registration = { ruc: '20523682785', email: '', company: '' };
   readonly uploadedFiles = signal<{ name: string; kind: string; slot?: string }[]>([]);
   readonly xmlSummary = signal<{
     emisor: string;
@@ -315,7 +315,7 @@ export class App {
     this.registrationValidated.set(false);
     this.registrationTermsAccepted.set(false);
     this.registrationKeyRequested.set(false);
-    this.registration.ruc = '';
+    this.registration.ruc = '20523682785';
     this.registration.company = '';
     this.registration.email = '';
     this.showRegistration.set(true);
