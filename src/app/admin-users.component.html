@@ -57,14 +57,9 @@
             </td>
             <td>{{ user.ruc }}</td>
             <td>
-              <select
-                multiple
-                [ngModel]="user.roles"
-                (ngModelChange)="changeRoles(user, $event)"
-                aria-label="Roles del usuario"
-              >
-                <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-              </select>
+              <div class="role-badges">
+                <span *ngFor="let role of user.roles" class="role-badge">{{ role }}</span>
+              </div>
             </td>
             <td>
               <div class="user-status-control">
