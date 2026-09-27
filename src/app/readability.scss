@@ -201,6 +201,18 @@
 .user-modal .icon-button {
   font-size: 24px;
 }
+.user-modal .primary {
+  background: #253c6d;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.user-modal .primary:hover:not(:disabled) {
+  background: #30497d;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(37, 60, 109, 0.2);
+}
 .provider-content .page {
   width: calc(100% - 48px);
   max-width: 100%;
