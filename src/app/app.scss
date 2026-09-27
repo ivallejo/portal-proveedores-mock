@@ -729,3 +729,12 @@ td small {
   color: var(--muted);
   margin: 12px 0 0;
 }
+
+.registration-toast-icon.swal2-success {
+  border-color: #f59e0b !important;
+  color: #f59e0b !important;
+}
+
+.registration-toast-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #f59e0b !important;
+}

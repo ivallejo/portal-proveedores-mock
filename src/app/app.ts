@@ -598,10 +598,13 @@ export class App {
       position: 'top-end',
       icon: 'success',
       text,
-      showConfirmButton: true,
-      confirmButtonText: 'Cerrar',
+      showCloseButton: true,
+      showConfirmButton: false,
       timer: 10000,
       timerProgressBar: true,
+      customClass: {
+        icon: 'registration-toast-icon',
+      },
     });
   }
   resetForm(): void {
