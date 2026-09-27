@@ -564,8 +564,10 @@
   margin-top: 24px;
 }
 .provider-content .workflow-page {
-  width: min(1440px, 100%);
-  margin: 0 auto;
+  width: calc(100% - 48px);
+  max-width: 100%;
+  margin-left: 24px;
+  margin-right: 24px;
 }
 .workflow-approvers {
   display: flex;
