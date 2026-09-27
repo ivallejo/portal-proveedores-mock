@@ -20,6 +20,10 @@ export class MockUsersStore {
   readonly users = signal<MockUserRecord[]>(this.load());
 
   constructor() {
+    this.users.update((users) => {
+      const existingIds = new Set(users.map((user) => user.id));
+      return [...users, ...this.approverPool().filter((user) => !existingIds.has(user.id))];
+    });
     this.persist();
   }
 
@@ -132,5 +136,48 @@ export class MockUsersStore {
         createdAtUtc: new Date().toISOString(),
       },
     ];
+  }
+
+  private approverPool(): MockUserRecord[] {
+    const users = [
+      ['ana.lopez', 'Ana López', 'Área Usuaria'],
+      ['bruno.castro', 'Bruno Castro', 'Área Usuaria'],
+      ['carla.mendoza', 'Carla Mendoza', 'Área Usuaria'],
+      ['diego.ramos', 'Diego Ramos', 'Área Usuaria'],
+      ['elena.salas', 'Elena Salas', 'Área Usuaria'],
+      ['fabian.vargas', 'Fabián Vargas', 'Área Usuaria'],
+      ['gabriela.ruiz', 'Gabriela Ruiz', 'Área Usuaria'],
+      ['hector.navarro', 'Héctor Navarro', 'Área Usuaria'],
+      ['ines.paredes', 'Inés Paredes', 'Área Usuaria'],
+      ['jorge.silva', 'Jorge Silva', 'Área Usuaria'],
+      ['karina.rios', 'Karina Ríos', 'Área Usuaria'],
+      ['lucas.fuentes', 'Lucas Fuentes', 'Área Usuaria'],
+      ['mariana.vega', 'Mariana Vega', 'Área Usuaria'],
+      ['nicolas.pena', 'Nicolás Peña', 'Área Usuaria'],
+      ['olga.cardenas', 'Olga Cárdenas', 'Área Usuaria'],
+      ['pablo.reyes', 'Pablo Reyes', 'Área Usuaria'],
+      ['quena.martinez', 'Quena Martínez', 'Área Usuaria'],
+      ['roberto.leon', 'Roberto León', 'Área Usuaria'],
+      ['sofia.aguilar', 'Sofía Aguilar', 'CxP'],
+      ['tomas.miranda', 'Tomás Miranda', 'CxP'],
+      ['ursula.vera', 'Úrsula Vera', 'CxP'],
+      ['victor.ortiz', 'Víctor Ortiz', 'CxP'],
+      ['wendy.palomino', 'Wendy Palomino', 'CxP'],
+      ['xavier.espinoza', 'Xavier Espinoza', 'Administrador'],
+      ['yolanda.quinteros', 'Yolanda Quinteros', 'Administrador'],
+    ] as const;
+
+    return users.map(([username, companyName, role], index) => ({
+      id: `mock-approver-${String(index + 1).padStart(2, '0')}`,
+      username,
+      email: `${username}@naviera.local`,
+      companyName,
+      ruc: `INTERNAL-${String(index + 1).padStart(3, '0')}`,
+      password: '1234',
+      role,
+      roles: [role],
+      isActive: true,
+      createdAtUtc: new Date().toISOString(),
+    }));
   }
 }

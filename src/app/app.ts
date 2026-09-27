@@ -8,6 +8,7 @@ import { ContabilizacionService } from './contabilizacion.service';
 import { DocumentoService } from './documento.service';
 import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
+import { MockUsersStore } from './mock-users.store';
 import { SapProviderService } from './sap-provider.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
 import { environment } from '../environments/environment';
@@ -37,6 +38,7 @@ export class App {
   readonly aprobacionService = inject(AprobacionService);
   readonly contabilizacionService = inject(ContabilizacionService);
   readonly adminService = inject(AdminService);
+  readonly mockUsersStore = inject(MockUsersStore);
   readonly sapProviderService = inject(SapProviderService);
   readonly workflowService = inject(WorkflowService);
   readonly screen = signal<Screen>('dashboard');
@@ -140,12 +142,14 @@ export class App {
     'Sin Orden de Compra',
     'Documento especial',
   ];
-  readonly workflowApprovers = [
+  readonly workflowApprovers = computed(() => [
     'Área Usuaria',
     'Jefatura de Área',
-    'María Torres',
-    'Carlos Mendoza',
-  ];
+    ...this.mockUsersStore
+      .users()
+      .filter((user) => user.roles.some((role) => role !== 'Proveedor'))
+      .map((user) => user.companyName),
+  ]);
   readonly workflowApproverSearches: string[] = [];
   readonly filteredWorkflows = computed(() => {
     const term = this.workflowSearch().trim().toLowerCase();
@@ -901,7 +905,7 @@ export class App {
   filteredWorkflowApprovers(levelIndex: number): string[] {
     const level = this.workflowForm.approvalLevels[levelIndex];
     const term = (this.workflowApproverSearches[levelIndex] || '').trim().toLowerCase();
-    return this.workflowApprovers.filter(
+    return this.workflowApprovers().filter(
       (approver) => !level.approvers.includes(approver) && approver.toLowerCase().includes(term),
     );
   }
