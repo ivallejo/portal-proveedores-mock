@@ -504,12 +504,14 @@ export class App {
   }
   loadAccounting(): void {
     this.loading.set(true);
-    this.contabilizacionService
-      .pendientes(this.accountingSociety(), this.accountingType())
-      .subscribe((items) => {
-        this.accountingItems.set(items);
-        this.loading.set(false);
-      });
+    this.contabilizacionService.ejecutarJobDiario().subscribe(() =>
+      this.contabilizacionService
+        .contabilizados(this.accountingSociety(), this.accountingType())
+        .subscribe((items) => {
+          this.accountingItems.set(items);
+          this.loading.set(false);
+        }),
+    );
   }
   toggle(id: number): void {
     this.expandedId.set(this.expandedId() === id ? null : id);
@@ -728,33 +730,12 @@ export class App {
       this.loadApprovals();
     });
   }
-  account(id: number): void {
-    const route = this.accountingRoute()[id];
-    if (!route) {
-      this.error.set('Selecciona SAP o Sertica antes de contabilizar.');
-      return;
-    }
+  resendAttachments(id: number): void {
     this.loading.set(true);
-    this.contabilizacionService.contabilizar(id, route).subscribe((item) => {
+    this.contabilizacionService.reenviarAnexos(id).subscribe((item) => {
       this.loading.set(false);
-      if (item.status === 'Contabilizado')
-        this.message.set(`Documento contabilizado correctamente vía ${route}.`);
-      else this.error.set('Se generó una incidencia de contabilización.');
-      this.loadAccounting();
+      this.showToast(`Los anexos de ${item.numero} fueron reenviados a SAP.`);
     });
-  }
-  retry(id: number, route: 'SAP' | 'Sertica'): void {
-    this.loading.set(true);
-    this.contabilizacionService.retry(id, route).subscribe(() => {
-      this.loading.set(false);
-      this.loadAccounting();
-    });
-  }
-  routeFor(id: number): 'SAP' | 'Sertica' {
-    return this.accountingRoute()[id] || 'SAP';
-  }
-  setRoute(id: number, route: 'SAP' | 'Sertica'): void {
-    this.accountingRoute.update((values) => ({ ...values, [id]: route }));
   }
   setComment(id: number, value: string): void {
     this.approvalComment.update((values) => ({ ...values, [id]: value }));

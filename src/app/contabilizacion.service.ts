@@ -16,49 +16,35 @@ export interface Incidencia {
 export class ContabilizacionService {
   private readonly documentos = inject(DocumentoService);
   readonly incidencias = signal<Incidencia[]>([]);
-  pendientes(sociedad = '', tipo = ''): Observable<Documento[]> {
-    // TODO: reemplazar por llamada HTTP real a /api/contabilizacion/pendientes
+  ejecutarJobDiario(): Observable<void> {
+    return of(undefined).pipe(
+      delay(700),
+      tap(() => {
+        this.documentos
+          .documents()
+          .filter((item) => item.status === 'Pendiente de contabilización')
+          .forEach((item) => {
+            const numero = `5100${Math.floor(100000 + Math.random() * 899999)}`;
+            this.documentos.changeStatus(item.id, 'Contabilizado', 'Job automático SAP');
+            this.documentos.mutateForAccounting(item.id, 'SAP', numero);
+          });
+      }),
+    );
+  }
+  contabilizados(sociedad = '', tipo = ''): Observable<Documento[]> {
+    // TODO: reemplazar por consulta real de documentos contabilizados.
     const result = this.documentos
       .documents()
       .filter(
         (item) =>
-          item.status === 'Pendiente de contabilización' &&
+          item.status === 'Contabilizado' &&
           (!sociedad || item.sociedad === sociedad) &&
           (!tipo || item.tipo === tipo),
       );
     return of(result).pipe(delay(700));
   }
-  contabilizar(id: number, ruta: 'SAP' | 'Sertica'): Observable<Documento> {
-    // TODO: reemplazar por llamada HTTP real a /api/contabilizacion/{id}
-    const documento = this.documentos.get(id)!;
-    const fails = documento.numero.includes('FAIL') || documento.id % 5 === 0;
-    return of(documento).pipe(
-      delay(1100),
-      tap(() => {
-        if (fails) {
-          this.incidencias.update((items) => [
-            {
-              id: Date.now(),
-              documento,
-              ruta,
-              fecha: new Date().toISOString(),
-              mensaje: `No fue posible contabilizar en ${ruta}. Error de conexión simulado.`,
-            },
-            ...items,
-          ]);
-          return;
-        }
-        const numero =
-          ruta === 'SAP'
-            ? `5100${Math.floor(100000 + Math.random() * 899999)}`
-            : `SER-${Math.floor(10000 + Math.random() * 89999)}`;
-        this.documentos.changeStatus(id, 'Contabilizado', 'CxP', `Contabilizado vía ${ruta}`);
-        this.documentos.mutateForAccounting(id, ruta, numero);
-      }),
-    );
-  }
-  retry(id: number, ruta: 'SAP' | 'Sertica'): Observable<Documento> {
-    // TODO: reemplazar por llamada HTTP real a /api/contabilizacion/incidencias/{id}/reintentar
-    return this.contabilizar(id, ruta);
+  reenviarAnexos(id: number): Observable<Documento> {
+    // El reenvío es solo de salida y no modifica el estado web.
+    return of(this.documentos.get(id)!).pipe(delay(700));
   }
 }

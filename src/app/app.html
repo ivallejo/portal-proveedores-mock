@@ -212,7 +212,7 @@
           [class.active]="screen() === 'contabilizacion'"
           (click)="navigate('contabilizacion')"
         >
-          <i class="nav-icon bx bx-calculator"></i><span>Contabilización</span></button
+          <i class="nav-icon bx bx-calculator"></i><span>Documentos contabilizados</span></button
         ><button
           *ngIf="isRole('Administrador')"
           [class.active]="screen() === 'usuarios'"
@@ -644,17 +644,17 @@
         <div class="page-heading">
           <div>
             <span class="eyebrow">CUENTAS POR PAGAR</span>
-            <h1>Contabilización</h1>
-            <p>Procesa documentos aprobados y registra la ruta de salida.</p>
+            <h1>Consulta de contabilización</h1>
+            <p>Consulta los documentos procesados automáticamente por SAP.</p>
           </div>
-          <span class="counter">{{ accountingItems().length }} pendientes</span>
+          <span class="counter">{{ accountingItems().length }} contabilizados</span>
         </div>
         <section class="panel table-panel">
           <div *ngIf="loading()" class="skeleton-table"><i></i><i></i><i></i></div>
           <div *ngIf="!loading() && !accountingItems().length" class="empty-state">
             <i class="bx bx-check-double"></i>
-            <h3>No hay documentos pendientes</h3>
-            <p>Todos los documentos fueron procesados.</p>
+            <h3>No hay documentos contabilizados</h3>
+            <p>El job automático todavía no ha recibido documentos contabilizados desde SAP.</p>
           </div>
           <div *ngIf="!loading()" class="accounting-list">
             <article *ngFor="let item of accountingItems()" class="approval-card">
@@ -663,50 +663,28 @@
                   <strong>{{ item.numero }}</strong
                   ><small>{{ item.proveedor }} · {{ item.tipo }}</small>
                 </div>
-                <span class="status-badge pendiente-de-contabilización"
-                  >Pendiente de contabilización</span
-                >
+                <span class="status-badge" [class]="statusClass(item.status)">{{
+                  item.status
+                }}</span>
               </div>
               <div class="approval-data">
                 <span
                   >Importe <b>S/ {{ item.importe | number: '1.2-2' }}</b></span
                 ><span
                   >Sociedad <b>{{ item.sociedad }}</b></span
-                ><label
-                  >Ruta<select
-                    [ngModel]="routeFor(item.id)"
-                    (ngModelChange)="setRoute(item.id, $event)"
-                  >
-                    <option value="SAP">SAP</option>
-                    <option value="Sertica">Sertica</option>
-                  </select></label
+                ><span
+                  >N.° documento SAP
+                  <b>{{ item.contabilizacion?.numero || 'Registrado en SAP' }}</b></span
                 >
               </div>
               <div class="approval-actions">
                 <span class="route-note"
-                  ><i class="bx bx-info-circle"></i> Se generará un número mock</span
-                ><button class="primary" (click)="account(item.id)">
-                  <i class="bx bx-calculator"></i> Contabilizar
+                  ><i class="bx bx-info-circle"></i> Contabilizado por el job automático</span
+                ><button class="secondary" (click)="resendAttachments(item.id)">
+                  <i class="bx bx-send"></i> Reenviar anexos a SAP
                 </button>
               </div>
             </article>
-          </div>
-        </section>
-        <section *ngIf="contabilizacionService.incidencias().length" class="panel incidents">
-          <div class="panel-title">
-            <div>
-              <h2>Incidencias</h2>
-              <p>Reintenta las operaciones fallidas.</p>
-            </div>
-          </div>
-          <div *ngFor="let incident of contabilizacionService.incidencias()" class="incident-row">
-            <div>
-              <strong>{{ incident.documento.numero }}</strong
-              ><small>{{ incident.mensaje }}</small>
-            </div>
-            <button class="secondary" (click)="retry(incident.documento.id, incident.ruta)">
-              Reintentar
-            </button>
           </div>
         </section>
       </section>
