@@ -70,6 +70,8 @@ export class App {
   readonly uploadedFiles = signal<{ name: string; kind: string }[]>([]);
   readonly xmlSummary = signal<{
     emisor: string;
+    numero: string;
+    fecha: string;
     moneda: string;
     importe: number;
     descripcion: string;
@@ -286,6 +288,8 @@ export class App {
     if (files.some((file) => file.kind === 'XML')) {
       this.xmlSummary.set({
         emisor: this.form.proveedor || 'Proveedor Andino SAC',
+        numero: this.form.numero,
+        fecha: this.form.fecha,
         moneda: 'PEN',
         importe: this.form.importe,
         descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
@@ -492,7 +496,7 @@ export class App {
   }
   nextRegistrationStep(): void {
     this.error.set('');
-    if (!this.form.numero || !this.form.importe) {
+    if (isRoleInternal(this.auth.user()?.role) && (!this.form.numero || !this.form.importe)) {
       this.showAlert('warning', 'Completa el número de documento y el importe total.');
       return;
     }
@@ -679,4 +683,8 @@ export class App {
   statusClass(status: string): string {
     return status.toLowerCase().replaceAll(' ', '-');
   }
+}
+
+function isRoleInternal(role: Role | undefined): boolean {
+  return role === 'Colaborador interno';
 }

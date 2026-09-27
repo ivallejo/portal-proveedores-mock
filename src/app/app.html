@@ -304,13 +304,7 @@
         <section *ngIf="registrationStep() === 1" class="panel form-panel">
           <h2>Información principal</h2>
           <div class="form-grid">
-            <label
-              >Número de documento *<input
-                [(ngModel)]="form.numero"
-                placeholder="Ej. F001-000200" /></label
-            ><label *ngIf="isRole('Proveedor')"
-              >Proveedor<input [(ngModel)]="form.proveedor" /></label
-            ><label *ngIf="isRole('Colaborador interno')"
+            <label *ngIf="isRole('Colaborador interno')"
               >RUC del proveedor<input
                 [(ngModel)]="form.proveedor"
                 placeholder="Ingresa el RUC" /></label
@@ -322,20 +316,39 @@
                 <option>Petral S.A.</option>
                 <option>RENADSA S.A.</option>
               </select></label
-            ><label
+            ><label *ngIf="isRole('Colaborador interno')"
+              >Número de documento *<input
+                [(ngModel)]="form.numero"
+                placeholder="Ej. F001-000200" /></label
+            ><label *ngIf="isRole('Colaborador interno')"
               >Importe total *<input
                 type="number"
                 [(ngModel)]="form.importe"
                 min="0"
                 placeholder="0.00" /></label
-            ><label>Fecha de emisión<input type="date" [(ngModel)]="form.fecha" /></label
+            ><label *ngIf="isRole('Colaborador interno')"
+              >Fecha de emisión<input type="date" [(ngModel)]="form.fecha" /></label
             ><label *ngIf="isRole('Proveedor')"
-              >Tipo de documento *<select [ngModel]="form.tipo" (ngModelChange)="setType($event)">
+              >Tipo de ingreso *<select [ngModel]="form.tipo" (ngModelChange)="setType($event)">
                 <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
               </select></label
             ><label *ngIf="isRole('Colaborador interno')"
               >Tipo de documento *<input value="Documento especial" readonly
             /></label>
+          </div>
+          <div
+            *ngIf="form.tipo === 'Sin Orden de Compra' && isRole('Proveedor')"
+            class="conditional-box"
+          >
+            <h3><i class="bx bx-user-voice"></i> Área solicitante</h3>
+            <label
+              >Área responsable<select [(ngModel)]="requester.area">
+                <option>Operaciones</option>
+                <option>Administración</option>
+                <option>Logística</option>
+              </select></label
+            >
+            <p>El área revisará y aprobará el documento recibido.</p>
           </div>
           <div *ngIf="form.tipo === 'Con Orden de Compra'" class="conditional-box">
             <h3><i class="bx bx-purchase-tag"></i> Información de orden de compra</h3>
@@ -355,11 +368,7 @@
           </div>
           <div *ngIf="form.tipo === 'Sin Orden de Compra'" class="conditional-box">
             <h3><i class="bx bx-file"></i> Documento sin OC</h3>
-            <label class="check-field"
-              ><input type="checkbox" [(ngModel)]="form.validateSunat" /> Validar comprobante en
-              SUNAT cuando corresponda</label
-            >
-            <p>Siempre requiere aprobación del Área Usuaria.</p>
+            <p>El comprobante será validado automáticamente contra SUNAT y duplicidad.</p>
           </div>
           <div *ngIf="form.tipo === 'Documento especial'" class="conditional-box">
             <h3><i class="bx bx-detail"></i> Documento especial</h3>
@@ -688,6 +697,12 @@
           </div>
           <div class="xml-summary-grid">
             <span
+              >Número de documento<strong>{{ xmlSummary()?.numero }}</strong></span
+            >
+            <span
+              >Fecha de emisión<strong>{{ xmlSummary()?.fecha }}</strong></span
+            >
+            <span
               >Empresa emisora<strong>{{ xmlSummary()?.emisor }}</strong></span
             >
             <span
@@ -702,22 +717,11 @@
           </div>
         </div>
         <div
-          *ngIf="form.tipo !== 'Con Orden de Compra' && isRole('Proveedor')"
+          *ngIf="form.tipo === 'Sin Orden de Compra' && isRole('Proveedor')"
           class="requester-box"
         >
           <h3><i class="bx bx-user-voice"></i> Área solicitante</h3>
-          <div class="form-grid">
-            <label
-              >Área responsable<select [(ngModel)]="requester.area">
-                <option>Operaciones</option>
-                <option>Administración</option>
-                <option>Logística</option>
-              </select></label
-            ><label
-              >Correo del solicitante<input type="email" [(ngModel)]="requester.email"
-            /></label>
-          </div>
-          <p>Estos datos son obligatorios para derivar el documento a aprobación.</p>
+          <p>{{ requester.area }} · El correo de derivación se gestiona internamente.</p>
         </div>
         <div class="form-actions wizard-actions">
           <button class="secondary" (click)="previousRegistrationStep()">Volver</button>
