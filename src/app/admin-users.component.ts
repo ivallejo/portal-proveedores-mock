@@ -26,6 +26,7 @@ export class AdminUsersComponent {
   readonly page = signal(1);
   readonly pageSize = signal(5);
   readonly showForm = signal(false);
+  readonly showNewPassword = signal(false);
   readonly editingUser = signal<AdminUser | null>(null);
   readonly editRoles = signal<Role[]>([]);
   readonly editUser = { username: '', email: '', companyName: '', ruc: '' };
@@ -98,6 +99,7 @@ export class AdminUsersComponent {
   openForm(): void {
     this.error.set('');
     this.message.set('');
+    this.showNewPassword.set(false);
     this.showForm.set(true);
   }
   openEdit(user: AdminUser): void {

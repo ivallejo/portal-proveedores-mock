@@ -148,11 +148,23 @@
             [(ngModel)]="newUser.ruc"
             placeholder="Opcional para usuarios internos" /></label
         ><label class="temporary-password-field"
-          >Contraseña temporal *<input
-            type="password"
-            [(ngModel)]="newUser.password"
-            placeholder="Contraseña inicial"
-        /></label>
+          >Contraseña temporal *<span class="password-field"
+            ><input
+              [type]="showNewPassword() ? 'text' : 'password'"
+              [(ngModel)]="newUser.password"
+              placeholder="Contraseña inicial" /><button
+              type="button"
+              class="password-toggle"
+              [attr.aria-label]="showNewPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [title]="showNewPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              (click)="showNewPassword.set(!showNewPassword())"
+            >
+              <i
+                class="bx"
+                [class.bx-show]="!showNewPassword()"
+                [class.bx-hide]="showNewPassword()"
+              ></i></button></span
+        ></label>
       </div>
       <div class="role-selector">
         <div class="role-selector-heading">

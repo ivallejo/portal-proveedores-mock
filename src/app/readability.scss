@@ -687,6 +687,35 @@
   min-height: 48px !important;
   width: 100%;
 }
+.password-field {
+  position: relative;
+  display: block;
+}
+.password-field input {
+  padding-right: 48px !important;
+}
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  color: #52627d;
+  background: transparent;
+  transform: translateY(-50%);
+}
+.password-toggle:hover {
+  color: #253c6d;
+  background: #f1f4f8;
+}
+.password-toggle i {
+  font-size: 19px;
+}
 .role-selector {
   margin-top: 22px;
   padding-top: 18px;
