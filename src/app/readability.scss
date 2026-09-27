@@ -568,6 +568,25 @@
   margin-bottom: 0;
   border-bottom: 1px solid #edf1f6;
 }
+.document-table .panel-title {
+  display: block;
+}
+.document-heading-line {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.document-heading-line h2,
+.document-heading-line p {
+  margin: 0;
+}
+.document-heading-line p {
+  color: #52627d;
+}
+.document-table .document-inline-controls {
+  margin-top: 16px;
+  margin-left: 0;
+}
 .admin-users-table .secondary {
   min-height: 36px;
   padding: 8px 12px;

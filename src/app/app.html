@@ -432,47 +432,44 @@
         </div>
         <section class="panel table-panel admin-users-table document-table">
           <div class="panel-title">
-            <div>
+            <div class="document-heading-line">
               <h2>Documentos registrados</h2>
               <p>{{ providerDocuments().length }} documentos en el sistema</p>
             </div>
-            <div class="admin-inline-controls document-inline-controls">
-              <label class="page-size-select"
-                >Mostrar
-                <select
-                  [ngModel]="documentPageSize()"
-                  (ngModelChange)="setDocumentPageSize($event)"
-                >
-                  <option [value]="5">5</option>
-                  <option [value]="10">10</option>
-                  <option [value]="25">25</option>
-                  <option [value]="50">50</option>
-                  <option [value]="100">100</option>
-                </select>
-                registros
-              </label>
-              <select [ngModel]="filterType()" (ngModelChange)="setDocumentType($event)">
-                <option value="">Todos los tipos</option>
-                <option value="Con Orden de Compra">Con Orden de Compra</option>
-                <option value="Sin Orden de Compra">Sin Orden de Compra</option>
+          </div>
+          <div class="admin-inline-controls document-inline-controls">
+            <label class="page-size-select"
+              >Mostrar
+              <select [ngModel]="documentPageSize()" (ngModelChange)="setDocumentPageSize($event)">
+                <option [value]="5">5</option>
+                <option [value]="10">10</option>
+                <option [value]="25">25</option>
+                <option [value]="50">50</option>
+                <option [value]="100">100</option>
               </select>
-              <select [ngModel]="filterStatus()" (ngModelChange)="setDocumentStatus($event)">
-                <option value="">Todos los estados</option>
-                <option>Pendiente de aprobación</option>
-                <option>Pendiente de contabilización</option>
-                <option>Contabilizado</option>
-                <option>Rechazado</option>
-                <option>Devuelto al proveedor</option>
-              </select>
-              <label class="admin-search"
-                ><i class="bx bx-search"></i><span>Buscar:</span
-                ><input
-                  type="search"
-                  placeholder="Documento, OC o sociedad"
-                  [ngModel]="documentQuery()"
-                  (ngModelChange)="setDocumentQuery($event)"
-              /></label>
-            </div>
+              registros
+            </label>
+            <select [ngModel]="filterType()" (ngModelChange)="setDocumentType($event)">
+              <option value="">Todos los tipos</option>
+              <option value="Con Orden de Compra">Con Orden de Compra</option>
+              <option value="Sin Orden de Compra">Sin Orden de Compra</option>
+            </select>
+            <select [ngModel]="filterStatus()" (ngModelChange)="setDocumentStatus($event)">
+              <option value="">Todos los estados</option>
+              <option>Pendiente de aprobación</option>
+              <option>Pendiente de contabilización</option>
+              <option>Contabilizado</option>
+              <option>Rechazado</option>
+              <option>Devuelto al proveedor</option>
+            </select>
+            <label class="admin-search"
+              ><i class="bx bx-search"></i><span>Buscar:</span
+              ><input
+                type="search"
+                placeholder="Documento, OC o sociedad"
+                [ngModel]="documentQuery()"
+                (ngModelChange)="setDocumentQuery($event)"
+            /></label>
           </div>
           <div class="table-wrap">
             <table>
