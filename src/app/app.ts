@@ -9,6 +9,7 @@ import { DocumentoService } from './documento.service';
 import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
 import { SapProviderService } from './sap-provider.service';
+import { ApprovalWorkflow, WorkflowService } from './workflow.service';
 import { environment } from '../environments/environment';
 import { Documento, DocumentType, Role, SpecialSubtype } from './models';
 
@@ -19,6 +20,7 @@ type Screen =
   | 'consultas'
   | 'perfil'
   | 'usuarios'
+  | 'workflows'
   | 'aprobaciones'
   | 'contabilizacion';
 
@@ -36,6 +38,7 @@ export class App {
   readonly contabilizacionService = inject(ContabilizacionService);
   readonly adminService = inject(AdminService);
   readonly sapProviderService = inject(SapProviderService);
+  readonly workflowService = inject(WorkflowService);
   readonly screen = signal<Screen>('dashboard');
   readonly menuOpen = signal(false);
   readonly loading = signal(false);
@@ -111,6 +114,46 @@ export class App {
   readonly adminUserMessage = signal('');
   readonly adminUserError = signal('');
   readonly adminUserLoading = signal(false);
+  readonly workflowSearch = signal('');
+  readonly showWorkflowForm = signal(false);
+  readonly editingWorkflow = signal<ApprovalWorkflow | null>(null);
+  readonly workflowError = signal('');
+  readonly workflowForm = {
+    name: '',
+    description: '',
+    society: 'Todas las sociedades',
+    documentType: 'Sin Orden de Compra',
+    approvalLevels: ['Área Usuaria'] as string[],
+  };
+  readonly workflowSocieties = [
+    'Todas las sociedades',
+    'Naviera Transoceánica S.A.',
+    'Naviera Transoceánica Perú S.A.',
+    'Ultratag S.A.',
+    'Petral S.A.',
+    'RENADSA S.A.',
+  ];
+  readonly workflowDocumentTypes = [
+    'Con Orden de Compra',
+    'Sin Orden de Compra',
+    'Documento especial',
+  ];
+  readonly workflowApprovers = [
+    'Área Usuaria',
+    'Jefatura de Área',
+    'María Torres',
+    'Carlos Mendoza',
+  ];
+  readonly filteredWorkflows = computed(() => {
+    const term = this.workflowSearch().trim().toLowerCase();
+    return this.workflowService
+      .workflows()
+      .filter(
+        (item) =>
+          !term ||
+          `${item.name} ${item.description} ${item.documentType}`.toLowerCase().includes(term),
+      );
+  });
   readonly adminUserSearch = signal('');
   readonly adminUserPage = signal(1);
   readonly adminUserPageSize = signal(10);
@@ -797,6 +840,50 @@ export class App {
   }
   setApprovalTarget(id: number, value: string): void {
     this.approvalTarget.update((values) => ({ ...values, [id]: value }));
+  }
+  openWorkflowForm(workflow?: ApprovalWorkflow): void {
+    this.workflowError.set('');
+    this.editingWorkflow.set(workflow || null);
+    this.workflowForm.name = workflow?.name || '';
+    this.workflowForm.description = workflow?.description || '';
+    this.workflowForm.society = workflow?.society || 'Todas las sociedades';
+    this.workflowForm.documentType = workflow?.documentType || 'Sin Orden de Compra';
+    this.workflowForm.approvalLevels = workflow?.approvalLevels.length
+      ? [...workflow.approvalLevels]
+      : ['Área Usuaria'];
+    this.showWorkflowForm.set(true);
+  }
+  closeWorkflowForm(): void {
+    this.showWorkflowForm.set(false);
+    this.editingWorkflow.set(null);
+    this.workflowError.set('');
+  }
+  toggleWorkflowApprover(approver: string): void {
+    this.workflowForm.approvalLevels = this.workflowForm.approvalLevels.includes(approver)
+      ? this.workflowForm.approvalLevels.filter((item) => item !== approver)
+      : [...this.workflowForm.approvalLevels, approver];
+  }
+  saveWorkflow(): void {
+    if (!this.workflowForm.name.trim() || !this.workflowForm.approvalLevels.length) {
+      this.workflowError.set('Completa el nombre y selecciona al menos un aprobador.');
+      return;
+    }
+    this.workflowService.save(
+      {
+        name: this.workflowForm.name.trim(),
+        description: this.workflowForm.description.trim(),
+        society: this.workflowForm.society,
+        documentType: this.workflowForm.documentType,
+        approvalLevels: [...this.workflowForm.approvalLevels],
+        isActive: this.editingWorkflow()?.isActive ?? true,
+      },
+      this.editingWorkflow()?.id,
+    );
+    this.closeWorkflowForm();
+    this.showToast('El workflow de aprobación se guardó correctamente.');
+  }
+  toggleWorkflow(workflow: ApprovalWorkflow): void {
+    this.workflowService.toggle(workflow.id);
   }
   statusClass(status: string): string {
     return status.toLowerCase().replaceAll(' ', '-');

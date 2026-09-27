@@ -219,6 +219,12 @@
           (click)="navigate('usuarios')"
         >
           <i class="nav-icon bx bx-user-plus"></i><span>Usuarios y roles</span></button
+        ><button
+          *ngIf="isRole('Administrador')"
+          [class.active]="screen() === 'workflows'"
+          (click)="navigate('workflows')"
+        >
+          <i class="nav-icon bx bx-git-branch"></i><span>Workflows de aprobación</span></button
         ><button><i class="nav-icon bx bx-bar-chart-alt-2"></i><span>Reportes</span></button>
       </nav>
       <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">
@@ -286,6 +292,146 @@
           </div>
         </section>
       </section>
+      <section *ngIf="screen() === 'workflows'" class="page admin-page">
+        <div class="page-heading">
+          <div>
+            <h1>Workflows de aprobación</h1>
+            <p>Define las reglas y aprobadores para cada tipo de documento.</p>
+          </div>
+          <button class="primary" (click)="openWorkflowForm()">
+            <i class="bx bx-plus"></i> Nuevo workflow
+          </button>
+        </div>
+        <section class="panel table-panel admin-users-table workflow-table">
+          <div class="panel-title">
+            <div>
+              <h2>Workflows configurados</h2>
+              <p>{{ workflowService.workflows().length }} workflows en el sistema</p>
+            </div>
+            <label class="admin-search"
+              ><i class="bx bx-search"></i><span>Buscar:</span
+              ><input
+                placeholder="Nombre o tipo de documento"
+                [ngModel]="workflowSearch()"
+                (ngModelChange)="workflowSearch.set($event)"
+            /></label>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Workflow</th>
+                  <th>Condición</th>
+                  <th>Aprobadores</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let workflow of filteredWorkflows()">
+                  <td>
+                    <strong>{{ workflow.name }}</strong
+                    ><small>{{ workflow.description }}</small>
+                  </td>
+                  <td>
+                    <strong>{{ workflow.documentType }}</strong
+                    ><small>{{ workflow.society }}</small>
+                  </td>
+                  <td>
+                    <div class="workflow-approvers">
+                      <span *ngFor="let approver of workflow.approvalLevels; let i = index"
+                        >{{ i + 1 }}. {{ approver }}</span
+                      >
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="status-toggle"
+                      [class.active]="workflow.isActive"
+                      role="switch"
+                      [attr.aria-checked]="workflow.isActive"
+                      (click)="toggleWorkflow(workflow)"
+                    >
+                      <span></span>
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      class="icon-button"
+                      title="Editar workflow"
+                      (click)="openWorkflowForm(workflow)"
+                    >
+                      <i class="bx bx-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="!filteredWorkflows().length" class="empty-table">
+            No encontramos workflows con ese criterio.
+          </div>
+        </section>
+      </section>
+      <div *ngIf="showWorkflowForm()" class="modal-backdrop">
+        <section class="user-modal panel workflow-modal">
+          <div class="panel-title">
+            <div>
+              <h2>{{ editingWorkflow() ? 'Editar workflow' : 'Nuevo workflow' }}</h2>
+              <p>Configura la condición y los aprobadores en orden.</p>
+            </div>
+            <button class="icon-button" (click)="closeWorkflowForm()">
+              <i class="bx bx-x"></i>
+            </button>
+          </div>
+          <div *ngIf="workflowError()" class="toast error">{{ workflowError() }}</div>
+          <div class="form-grid">
+            <label
+              >Nombre del workflow *<input
+                [(ngModel)]="workflowForm.name"
+                placeholder="Ej. Aprobación de servicios"
+            /></label>
+            <label
+              >Sociedad<select [(ngModel)]="workflowForm.society">
+                <option *ngFor="let society of workflowSocieties">{{ society }}</option>
+              </select></label
+            >
+            <label
+              >Tipo de documento<select [(ngModel)]="workflowForm.documentType">
+                <option *ngFor="let type of workflowDocumentTypes">{{ type }}</option>
+              </select></label
+            >
+            <label
+              >Descripción<input
+                [(ngModel)]="workflowForm.description"
+                placeholder="Describe cuándo aplica"
+            /></label>
+          </div>
+          <div class="role-selector workflow-levels">
+            <div class="role-selector-heading">
+              <div>
+                <h3>Aprobadores *</h3>
+                <p>Selecciona uno o más y se ejecutarán en el orden elegido.</p>
+              </div>
+            </div>
+            <div class="role-options-grid">
+              <label *ngFor="let approver of workflowApprovers" class="role-option-card"
+                ><input
+                  type="checkbox"
+                  [checked]="workflowForm.approvalLevels.includes(approver)"
+                  (change)="toggleWorkflowApprover(approver)"
+                /><span class="role-check"><i class="bx bx-check"></i></span
+                ><span>{{ approver }}</span></label
+              >
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="secondary" (click)="closeWorkflowForm()">Cancelar</button
+            ><button class="primary" (click)="saveWorkflow()">Guardar workflow</button>
+          </div>
+        </section>
+      </div>
       <section *ngIf="screen() === 'registrar'" class="page">
         <div class="page-heading">
           <div>

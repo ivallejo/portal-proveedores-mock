@@ -560,6 +560,25 @@
   box-shadow: 0 8px 24px rgba(32, 58, 101, 0.06);
   overflow: hidden;
 }
+.provider-content .workflow-table {
+  margin-top: 24px;
+}
+.workflow-approvers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #52627d;
+  font-size: 12px;
+}
+.workflow-approvers span::first-letter {
+  color: #253c6d;
+}
+.workflow-modal {
+  width: min(760px, 100%);
+}
+.workflow-levels {
+  margin-bottom: 4px;
+}
 .admin-users-table {
   width: 100%;
 }
