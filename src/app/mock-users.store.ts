@@ -8,6 +8,7 @@ export interface MockUserRecord {
   ruc: string;
   password: string;
   role: Role;
+  roles: Role[];
   isActive: boolean;
   createdAtUtc: string;
 }
@@ -56,7 +57,11 @@ export class MockUsersStore {
     const stored = localStorage.getItem(this.storageKey);
     if (stored) {
       try {
-        return JSON.parse(stored) as MockUserRecord[];
+        const users = JSON.parse(stored) as MockUserRecord[];
+        return users.map((user) => ({
+          ...user,
+          roles: user.roles?.length ? user.roles : [user.role],
+        }));
       } catch {
         localStorage.removeItem(this.storageKey);
       }
@@ -69,6 +74,7 @@ export class MockUsersStore {
         ruc: 'ADMIN-SYSTEM',
         password: 'AdminLocal_12345!',
         role: 'Administrador',
+        roles: ['Administrador'],
         isActive: true,
         createdAtUtc: new Date().toISOString(),
       },
@@ -79,6 +85,7 @@ export class MockUsersStore {
         ruc: '20123456789',
         password: '1234',
         role: 'Proveedor',
+        roles: ['Proveedor'],
         isActive: true,
         createdAtUtc: new Date().toISOString(),
       },
@@ -89,6 +96,7 @@ export class MockUsersStore {
         ruc: 'APPROVER-001',
         password: '1234',
         role: 'Área Usuaria',
+        roles: ['Área Usuaria'],
         isActive: true,
         createdAtUtc: new Date().toISOString(),
       },
@@ -99,6 +107,7 @@ export class MockUsersStore {
         ruc: 'INTERNAL-001',
         password: '1234',
         role: 'Colaborador interno',
+        roles: ['Colaborador interno'],
         isActive: true,
         createdAtUtc: new Date().toISOString(),
       },
@@ -109,6 +118,7 @@ export class MockUsersStore {
         ruc: 'CXP-001',
         password: '1234',
         role: 'CxP',
+        roles: ['CxP'],
         isActive: true,
         createdAtUtc: new Date().toISOString(),
       },

@@ -9,6 +9,7 @@ export interface AdminUser {
   companyName: string;
   ruc: string;
   role: Role;
+  roles: Role[];
   isActive: boolean;
   createdAtUtc: string;
 }
@@ -24,29 +25,34 @@ export class AdminService {
     companyName: string;
     ruc: string;
     password: string;
-    role: string;
+    roles?: Role[];
   }): Observable<AdminUser> {
     const duplicate = this.users
       .users()
       .some((user) => user.email === data.email || user.ruc === data.ruc);
     if (duplicate)
       return throwError(() => ({ error: { message: 'El correo o RUC ya está registrado.' } }));
+    const roles = data.roles?.length ? data.roles : ['Proveedor' as Role];
     const user = {
       id: `mock-user-${Date.now()}`,
       ...data,
       password: data.password,
-      role: data.role as Role,
+      role: roles[0],
+      roles,
       isActive: true,
       createdAtUtc: new Date().toISOString(),
     };
     this.users.save(user);
     return of(this.toAdminUser(user)).pipe(delay(350));
   }
-  assignRole(id: string, role: string): Observable<AdminUser> {
-    const user = this.users.update(id, { role: role as Role });
+  assignRoles(id: string, roles: Role[]): Observable<AdminUser> {
+    const user = this.users.update(id, { role: roles[0], roles });
     return user
       ? of(this.toAdminUser(user)).pipe(delay(250))
       : throwError(() => ({ error: { message: 'Usuario no encontrado.' } }));
+  }
+  assignRole(id: string, role: string): Observable<AdminUser> {
+    return this.assignRoles(id, [role as Role]);
   }
   setStatus(id: string, isActive: boolean): Observable<AdminUser> {
     const user = this.users.update(id, { isActive });
@@ -61,6 +67,7 @@ export class AdminService {
       companyName: user.companyName,
       ruc: user.ruc,
       role: user.role,
+      roles: user.roles?.length ? user.roles : [user.role],
       isActive: user.isActive,
       createdAtUtc: user.createdAtUtc,
     };

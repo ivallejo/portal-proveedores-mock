@@ -16,6 +16,7 @@ export interface User {
   username: string;
   name: string;
   role: Role;
+  roles: Role[];
   providerId?: string;
 }
 export interface HistoryEntry {

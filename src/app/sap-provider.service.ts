@@ -36,6 +36,7 @@ export class SapProviderService {
         ruc: source.ruc,
         password: 'DemoKey_123!',
         role: 'Proveedor',
+        roles: ['Proveedor'],
         isActive: true,
         createdAtUtc: current?.createdAtUtc || new Date().toISOString(),
       });

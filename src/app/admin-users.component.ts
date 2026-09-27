@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminService, AdminUser } from './admin.service';
+import { Role } from './models';
 
 @Component({
   selector: 'app-admin-users',
@@ -24,8 +25,14 @@ export class AdminUsersComponent {
   readonly page = signal(1);
   readonly pageSize = signal(5);
   readonly showForm = signal(false);
-  readonly selectedRole = signal('Área Usuaria');
-  readonly roles = ['Proveedor', 'Colaborador interno', 'Área Usuaria', 'CxP', 'Administrador'];
+  readonly selectedRoles = signal<Role[]>(['Área Usuaria']);
+  readonly roles: Role[] = [
+    'Proveedor',
+    'Colaborador interno',
+    'Área Usuaria',
+    'CxP',
+    'Administrador',
+  ];
   readonly newUser = { email: '', companyName: '', ruc: '', password: '' };
 
   readonly filteredUsers = computed(() => {
@@ -33,7 +40,9 @@ export class AdminUsersComponent {
     return this.allUsers().filter(
       (user) =>
         !term ||
-        `${user.companyName} ${user.email} ${user.ruc} ${user.role}`.toLowerCase().includes(term),
+        `${user.companyName} ${user.email} ${user.ruc} ${user.roles.join(' ')}`
+          .toLowerCase()
+          .includes(term),
     );
   });
   readonly pageCount = computed(() =>
@@ -99,13 +108,14 @@ export class AdminUsersComponent {
       !this.newUser.email ||
       !this.newUser.companyName ||
       !this.newUser.ruc ||
-      !this.newUser.password
+      !this.newUser.password ||
+      !this.selectedRoles().length
     ) {
       this.error.set('Completa todos los campos para crear el usuario.');
       return;
     }
     this.loading.set(true);
-    this.adminService.create({ ...this.newUser, role: this.selectedRole() }).subscribe({
+    this.adminService.create({ ...this.newUser, roles: this.selectedRoles() }).subscribe({
       next: () => {
         this.loading.set(false);
         this.message.set('Usuario creado correctamente.');
@@ -123,8 +133,8 @@ export class AdminUsersComponent {
     });
   }
 
-  changeRole(user: AdminUser, role: string): void {
-    this.adminService.assignRole(user.id, role).subscribe({
+  changeRoles(user: AdminUser, roles: Role[]): void {
+    this.adminService.assignRoles(user.id, roles).subscribe({
       next: (updated) => {
         this.allUsers.update((users) =>
           users.map((item) => (item.id === updated.id ? updated : item)),
@@ -133,6 +143,14 @@ export class AdminUsersComponent {
       },
       error: (error) => this.error.set(error.error?.message || 'No fue posible actualizar el rol.'),
     });
+  }
+
+  toggleRole(roles: Role[], role: Role): Role[] {
+    return roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role];
+  }
+
+  setSelectedRoles(roles: Role[]): void {
+    this.selectedRoles.set(roles.length ? roles : ['Proveedor']);
   }
 
   toggleStatus(user: AdminUser): void {

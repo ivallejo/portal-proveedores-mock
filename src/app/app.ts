@@ -92,7 +92,9 @@ export class App {
     return this.allAdminUsers().filter(
       (user) =>
         !term ||
-        `${user.companyName} ${user.email} ${user.ruc} ${user.role}`.toLowerCase().includes(term),
+        `${user.companyName} ${user.email} ${user.ruc} ${user.roles.join(' ')}`
+          .toLowerCase()
+          .includes(term),
     );
   });
   readonly adminPageCount = computed(() =>
@@ -399,22 +401,24 @@ export class App {
       return;
     }
     this.adminUserLoading.set(true);
-    this.adminService.create({ ...this.newAdminUser, role: this.adminRole() }).subscribe({
-      next: () => {
-        this.adminUserLoading.set(false);
-        this.adminUserMessage.set('Usuario creado correctamente.');
-        this.newAdminUser.email = '';
-        this.newAdminUser.companyName = '';
-        this.newAdminUser.ruc = '';
-        this.newAdminUser.password = '';
-        this.showAdminUserForm.set(false);
-        this.loadAdminUsers();
-      },
-      error: (err) => {
-        this.adminUserLoading.set(false);
-        this.adminUserError.set(err.error?.message || 'No fue posible crear el usuario.');
-      },
-    });
+    this.adminService
+      .create({ ...this.newAdminUser, roles: [this.adminRole() as Role] })
+      .subscribe({
+        next: () => {
+          this.adminUserLoading.set(false);
+          this.adminUserMessage.set('Usuario creado correctamente.');
+          this.newAdminUser.email = '';
+          this.newAdminUser.companyName = '';
+          this.newAdminUser.ruc = '';
+          this.newAdminUser.password = '';
+          this.showAdminUserForm.set(false);
+          this.loadAdminUsers();
+        },
+        error: (err) => {
+          this.adminUserLoading.set(false);
+          this.adminUserError.set(err.error?.message || 'No fue posible crear el usuario.');
+        },
+      });
   }
   changeAdminRole(user: AdminUser, role: string): void {
     this.adminService.assignRole(user.id, role).subscribe({

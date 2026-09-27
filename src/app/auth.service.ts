@@ -41,6 +41,7 @@ export class AuthService {
       ruc: data.ruc,
       password: data.password,
       role: 'Proveedor' as Role,
+      roles: ['Proveedor'] as Role[],
       isActive: true,
       createdAtUtc: new Date().toISOString(),
     };
@@ -51,7 +52,19 @@ export class AuthService {
     localStorage.removeItem('portal-proveedores.mock-session');
     this.user.set(null);
   }
-  private toUser(user: { email: string; companyName: string; ruc: string; role: Role }): User {
-    return { username: user.email, name: user.companyName, role: user.role, providerId: user.ruc };
+  private toUser(user: {
+    email: string;
+    companyName: string;
+    ruc: string;
+    role: Role;
+    roles: Role[];
+  }): User {
+    return {
+      username: user.email,
+      name: user.companyName,
+      role: user.role,
+      roles: user.roles,
+      providerId: user.ruc,
+    };
   }
 }
