@@ -55,6 +55,7 @@ button {
 }
 
 .swal2-container .status-toast {
+  position: relative !important;
   width: min(750px, calc(100vw - 32px));
   min-height: 96px;
   padding: 18px 54px 16px 28px !important;
@@ -127,10 +128,16 @@ button {
 }
 
 .swal2-container .status-toast .swal2-close {
-  top: 18px;
-  right: 18px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   color: #111;
-  font-size: 30px;
+  font-size: 26px;
+  line-height: 28px;
+  text-align: center;
 }
 
 .swal2-container .status-toast .swal2-close:hover {
