@@ -306,7 +306,7 @@ export class App {
   }
   quickLogin(username: string): void {
     this.username.set(username);
-    this.password.set('1234');
+    this.password.set('123456');
     this.login();
   }
   openRegistration(): void {

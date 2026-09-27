@@ -23,7 +23,10 @@ export class MockUsersStore {
     this.users.update((users) => {
       const existingIds = new Set(users.map((user) => user.id));
       return [...users, ...this.approverPool().filter((user) => !existingIds.has(user.id))].map(
-        (user) => (user.password === 'DemoKey_123!' ? { ...user, password: '1234' } : user),
+        (user) =>
+          ['DemoKey_123!', 'AdminLocal_12345!', '1234'].includes(user.password)
+            ? { ...user, password: '123456' }
+            : user,
       );
     });
     this.persist();
@@ -83,7 +86,7 @@ export class MockUsersStore {
         email: 'admin@naviera.local',
         companyName: 'Administrador del sistema',
         ruc: 'ADMIN-SYSTEM',
-        password: 'AdminLocal_12345!',
+        password: '123456',
         role: 'Administrador',
         roles: ['Administrador'],
         isActive: true,
@@ -95,7 +98,7 @@ export class MockUsersStore {
         email: 'proveedor@naviera.local',
         companyName: 'Proveedor Andino SAC',
         ruc: '20123456789',
-        password: '1234',
+        password: '123456',
         role: 'Proveedor',
         roles: ['Proveedor'],
         isActive: true,
@@ -107,7 +110,7 @@ export class MockUsersStore {
         email: 'aprobador@naviera.local',
         companyName: 'María Torres',
         ruc: 'APPROVER-001',
-        password: '1234',
+        password: '123456',
         role: 'Área Usuaria',
         roles: ['Área Usuaria'],
         isActive: true,
@@ -119,7 +122,7 @@ export class MockUsersStore {
         email: 'colaborador@naviera.local',
         companyName: 'Colaborador interno',
         ruc: 'INTERNAL-001',
-        password: '1234',
+        password: '123456',
         role: 'Colaborador interno',
         roles: ['Colaborador interno'],
         isActive: true,
@@ -131,7 +134,7 @@ export class MockUsersStore {
         email: 'cxp@naviera.local',
         companyName: 'Cuentas por pagar',
         ruc: 'CXP-001',
-        password: '1234',
+        password: '123456',
         role: 'CxP',
         roles: ['CxP'],
         isActive: true,
@@ -175,7 +178,7 @@ export class MockUsersStore {
       email: `${username}@naviera.local`,
       companyName,
       ruc: `INTERNAL-${String(index + 1).padStart(3, '0')}`,
-      password: '1234',
+      password: '123456',
       role,
       roles: [role],
       isActive: true,
