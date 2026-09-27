@@ -42,9 +42,10 @@
       <table>
         <thead>
           <tr>
-            <th>Usuario</th>
-            <th>Acceso</th>
-            <th>Rol</th>
+            <th>Username</th>
+            <th>Correo electrónico</th>
+            <th>Nombre o empresa</th>
+            <th>Roles</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
@@ -52,10 +53,10 @@
         <tbody>
           <tr *ngFor="let user of users()">
             <td>
-              <b>{{ user.companyName }}</b
-              ><small>Usuario: {{ user.username }}</small>
+              {{ user.username }}
             </td>
-            <td>{{ user.roles.includes('Proveedor') ? user.ruc : user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.companyName }}</td>
             <td>
               <div class="role-badges">
                 <span *ngFor="let role of user.roles" class="role-badge">{{ role }}</span>
