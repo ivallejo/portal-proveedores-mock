@@ -516,25 +516,78 @@
                   </tr>
                   <tr *ngIf="expandedId() === item.id" class="expanded-row">
                     <td colspan="6">
-                      <div class="detail-grid">
-                        <div>
-                          <h4>Validaciones</h4>
-                          <p>
-                            SUNAT <b>{{ item.validation.sunat }}</b>
-                          </p>
-                          <p>
-                            Sertica <b>{{ item.validation.sertica }}</b>
-                          </p>
+                      <div class="document-detail">
+                        <div class="document-detail-heading">
+                          <div>
+                            <span>Detalle del documento</span>
+                            <strong>{{ item.numero }}</strong>
+                          </div>
+                          <span class="status-badge" [class]="statusClass(item.status)">
+                            {{ item.status }}
+                          </span>
                         </div>
-                        <div>
-                          <h4>Historial de estados</h4>
-                          <p *ngFor="let history of item.history">
-                            <span>{{ history.status }}</span
-                            ><small
-                              >{{ history.date | date: 'dd/MM/yyyy HH:mm' }} ·
-                              {{ history.user }}</small
+                        <div class="document-data-grid">
+                          <span
+                            >Tipo<strong>{{ item.tipo }}</strong></span
+                          ><span
+                            >Fecha de emisión<strong>{{ item.fecha }}</strong></span
+                          ><span
+                            >Sociedad<strong>{{ item.sociedad }}</strong></span
+                          ><span
+                            >Importe<strong>S/ {{ item.importe | number: '1.2-2' }}</strong></span
+                          ><span *ngIf="item.oc"
+                            >Orden de compra<strong>{{ item.oc }}</strong></span
+                          >
+                        </div>
+                        <div class="document-detail-section">
+                          <h4>Validaciones</h4>
+                          <div class="validation-cards">
+                            <div
+                              class="validation-card"
+                              [class]="statusClass(item.validation.sunat)"
                             >
-                          </p>
+                              <i class="bx bx-check-shield"></i>
+                              <div>
+                                <span>SUNAT</span><strong>{{ item.validation.sunat }}</strong>
+                              </div>
+                            </div>
+                            <div
+                              class="validation-card"
+                              [class]="statusClass(item.validation.sertica)"
+                            >
+                              <i class="bx bx-buildings"></i>
+                              <div>
+                                <span>Sertica</span><strong>{{ item.validation.sertica }}</strong>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="document-detail-section">
+                          <h4>Historial del documento</h4>
+                          <div class="status-timeline">
+                            <div
+                              *ngFor="let history of item.history; let last = last"
+                              class="timeline-item"
+                              [class.current]="last"
+                            >
+                              <span class="timeline-dot"></span>
+                              <div>
+                                <strong>{{ history.status }}</strong>
+                                <small
+                                  >{{ history.date | date: 'dd/MM/yyyy HH:mm' }} ·
+                                  {{ history.user }}</small
+                                >
+                                <p *ngIf="history.comment">{{ history.comment }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          *ngIf="item.details['archivos']"
+                          class="document-detail-section document-files"
+                        >
+                          <h4>Archivos adjuntos</h4>
+                          <p><i class="bx bx-paperclip"></i>{{ item.details['archivos'] }}</p>
                         </div>
                       </div>
                     </td>
