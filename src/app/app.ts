@@ -92,7 +92,7 @@ export class App {
   readonly registrationTermsAccepted = signal(false);
   readonly registrationKeyRequested = signal(false);
   readonly registration = { ruc: '', email: '', company: '' };
-  readonly uploadedFiles = signal<{ name: string; kind: string }[]>([]);
+  readonly uploadedFiles = signal<{ name: string; kind: string; slot?: string }[]>([]);
   readonly xmlSummary = signal<{
     emisor: string;
     numero: string;
@@ -329,9 +329,16 @@ export class App {
       const fileName = file.name.toLowerCase();
       const extension = file.name.split('.').pop()?.toUpperCase() || 'PDF';
       const isCdr = extension === 'XML' && /cdr|constancia|acuse/.test(fileName);
-      return { name: file.name, kind: expectedKind || (isCdr ? 'CDR' : extension) };
+      return {
+        name: file.name,
+        kind: expectedKind || (isCdr ? 'CDR' : extension),
+        slot: expectedKind,
+      };
     });
-    this.uploadedFiles.update((current) => [...current, ...files]);
+    this.uploadedFiles.update((current) => [
+      ...current.filter((file) => !expectedKind || file.slot !== expectedKind),
+      ...files,
+    ]);
     const xmlFile = files.find((file) => file.kind === 'XML');
     if (xmlFile) {
       const documentNumber = xmlFile.name.match(/[A-Z]\d{3}-\d{6}/i)?.[0];
