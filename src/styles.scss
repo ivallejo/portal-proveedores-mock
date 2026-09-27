@@ -57,7 +57,7 @@ button {
 .swal2-container .status-toast {
   position: relative !important;
   display: grid !important;
-  grid-template-columns: 40px minmax(0, 1fr) 24px;
+  grid-template-columns: 32px minmax(0, 1fr) 24px;
   grid-template-areas:
     'icon title close'
     'icon text close';
@@ -91,8 +91,8 @@ button {
 
 .swal2-container .status-toast-icon {
   grid-area: icon;
-  width: 40px !important;
-  height: 40px !important;
+  width: 32px !important;
+  height: 32px !important;
   margin: 0 14px 0 0 !important;
   border: 0 !important;
   border-radius: 50%;
@@ -117,7 +117,7 @@ button {
 
 .swal2-container .status-toast-check {
   color: #fff !important;
-  font-size: 24px !important;
+  font-size: 20px !important;
 }
 
 .swal2-container .status-toast-title {
