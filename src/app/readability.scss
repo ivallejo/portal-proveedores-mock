@@ -834,6 +834,20 @@
   width: 100%;
   box-sizing: border-box;
 }
+.document-filter-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.document-filter-actions .primary,
+.document-filter-actions .secondary {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
 .document-date-filter {
   display: flex;
   align-items: center;
@@ -1417,6 +1431,9 @@
   .document-table .document-inline-controls > select,
   .document-table .document-inline-controls > label {
     width: 100%;
+  }
+  .document-filter-actions {
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
   .document-date-filter {
     justify-content: space-between;

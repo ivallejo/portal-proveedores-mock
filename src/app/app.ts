@@ -82,6 +82,13 @@ export class App {
   readonly documentQuery = signal('');
   readonly documentDateFrom = signal('');
   readonly documentDateTo = signal('');
+  readonly documentFilters = {
+    query: '',
+    type: '',
+    status: '',
+    dateFrom: '',
+    dateTo: '',
+  };
   readonly documentPage = signal(1);
   readonly documentPageSize = signal(5);
   readonly approvalComment = signal<Record<number, string>>({});
@@ -629,24 +636,35 @@ export class App {
     this.expandedId.set(this.expandedId() === id ? null : id);
   }
   setDocumentQuery(value: string): void {
-    this.documentQuery.set(value);
-    this.documentPage.set(1);
+    this.documentFilters.query = value;
   }
   setDocumentType(value: string): void {
-    this.filterType.set(value);
-    this.documentPage.set(1);
+    this.documentFilters.type = value;
   }
   setDocumentStatus(value: string): void {
-    this.filterStatus.set(value);
-    this.documentPage.set(1);
+    this.documentFilters.status = value;
   }
   setDocumentDateFrom(value: string): void {
-    this.documentDateFrom.set(value);
-    this.documentPage.set(1);
+    this.documentFilters.dateFrom = value;
   }
   setDocumentDateTo(value: string): void {
-    this.documentDateTo.set(value);
+    this.documentFilters.dateTo = value;
+  }
+  applyDocumentFilters(): void {
+    this.documentQuery.set(this.documentFilters.query);
+    this.filterType.set(this.documentFilters.type);
+    this.filterStatus.set(this.documentFilters.status);
+    this.documentDateFrom.set(this.documentFilters.dateFrom);
+    this.documentDateTo.set(this.documentFilters.dateTo);
     this.documentPage.set(1);
+  }
+  clearDocumentFilters(): void {
+    this.documentFilters.query = '';
+    this.documentFilters.type = '';
+    this.documentFilters.status = '';
+    this.documentFilters.dateFrom = '';
+    this.documentFilters.dateTo = '';
+    this.applyDocumentFilters();
   }
   setDocumentPageSize(value: string): void {
     this.documentPageSize.set(Number(value));
