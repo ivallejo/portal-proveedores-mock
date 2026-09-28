@@ -826,6 +826,9 @@
 .document-table .document-inline-controls > label {
   min-width: 0;
 }
+.document-table .document-inline-controls .page-size-select {
+  order: -2;
+}
 .document-table .document-inline-controls > select {
   width: 100%;
 }
