@@ -225,8 +225,8 @@
           [class.active]="screen() === 'workflows'"
           (click)="navigate('workflows')"
         >
-          <i class="nav-icon bx bx-git-branch"></i><span>Workflows de aprobación</span></button
-        ><button><i class="nav-icon bx bx-bar-chart-alt-2"></i><span>Reportes</span></button>
+          <i class="nav-icon bx bx-git-branch"></i><span>Workflows de aprobación</span>
+        </button>
       </nav>
       <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">
         <i class="bx bx-chevron-left"></i> Contraer menú</button
@@ -749,6 +749,18 @@
               <option>Rechazado</option>
               <option>Devuelto al proveedor</option>
             </select>
+            <label class="document-date-filter"
+              >Desde<input
+                type="date"
+                [ngModel]="documentDateFrom()"
+                (ngModelChange)="setDocumentDateFrom($event)"
+            /></label>
+            <label class="document-date-filter"
+              >Hasta<input
+                type="date"
+                [ngModel]="documentDateTo()"
+                (ngModelChange)="setDocumentDateTo($event)"
+            /></label>
             <label class="admin-search"
               ><i class="bx bx-search"></i><span>Buscar:</span
               ><input
@@ -882,9 +894,21 @@
                             </div>
                             <div class="document-detail-section document-files">
                               <h4>Archivos adjuntos</h4>
-                              <p *ngFor="let file of attachmentNames(item)">
-                                <i class="bx bx-paperclip"></i>{{ file }}
-                              </p>
+                              <div
+                                *ngFor="let file of attachmentNames(item)"
+                                class="attachment-row"
+                              >
+                                <span><i class="bx bx-paperclip"></i>{{ file }}</span>
+                                <button
+                                  type="button"
+                                  class="icon-button"
+                                  title="Descargar archivo"
+                                  aria-label="Descargar archivo"
+                                  (click)="downloadAttachment(item, file)"
+                                >
+                                  <i class="bx bx-download"></i>
+                                </button>
+                              </div>
                               <p *ngIf="!attachmentNames(item).length" class="empty-files">
                                 No hay archivos adjuntos registrados.
                               </p>

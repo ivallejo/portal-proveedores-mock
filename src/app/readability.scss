@@ -817,10 +817,66 @@
   margin-top: 16px;
   margin-left: 0;
 }
+.document-date-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  color: #52627d;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.document-date-filter input {
+  min-height: 38px;
+  padding: 7px 9px;
+  border: 1px solid #dce4ef;
+  border-radius: 7px;
+  color: #253c6d;
+  background: #fff;
+  font: inherit;
+}
+.document-date-filter input:focus {
+  border-color: #253c6d;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgb(37 60 109 / 10%);
+}
 .admin-users-table .secondary {
   min-height: 36px;
   padding: 8px 12px;
   font-size: 12px;
+}
+.attachment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 38px;
+  padding: 4px 0;
+  border-bottom: 1px solid #edf1f6;
+}
+.attachment-row:last-of-type {
+  border-bottom: 0;
+}
+.attachment-row > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: #52627d;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.attachment-row > span i {
+  flex: 0 0 auto;
+  color: #253c6d;
+  font-size: 17px;
+}
+.attachment-row .icon-button {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  font-size: 17px;
 }
 .admin-users-table .table-wrap select {
   min-height: 38px;

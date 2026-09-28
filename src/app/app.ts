@@ -80,6 +80,8 @@ export class App {
   readonly filterStatus = signal('');
   readonly filterType = signal('');
   readonly documentQuery = signal('');
+  readonly documentDateFrom = signal('');
+  readonly documentDateTo = signal('');
   readonly documentPage = signal(1);
   readonly documentPageSize = signal(5);
   readonly approvalComment = signal<Record<number, string>>({});
@@ -247,7 +249,9 @@ export class App {
       return (
         (!term || content.toLowerCase().includes(term)) &&
         (!this.filterStatus() || item.status === this.filterStatus()) &&
-        (!this.filterType() || item.tipo === this.filterType())
+        (!this.filterType() || item.tipo === this.filterType()) &&
+        (!this.documentDateFrom() || item.fecha >= this.documentDateFrom()) &&
+        (!this.documentDateTo() || item.fecha <= this.documentDateTo())
       );
     }),
   );
@@ -636,6 +640,14 @@ export class App {
     this.filterStatus.set(value);
     this.documentPage.set(1);
   }
+  setDocumentDateFrom(value: string): void {
+    this.documentDateFrom.set(value);
+    this.documentPage.set(1);
+  }
+  setDocumentDateTo(value: string): void {
+    this.documentDateTo.set(value);
+    this.documentPage.set(1);
+  }
   setDocumentPageSize(value: string): void {
     this.documentPageSize.set(Number(value));
     this.documentPage.set(1);
@@ -861,6 +873,20 @@ export class App {
       .split(',')
       .map((file) => file.trim())
       .filter(Boolean);
+  }
+  downloadAttachment(item: Documento, fileName: string): void {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    const mimeType = extension === 'xml' ? 'application/xml' : 'application/pdf';
+    const content =
+      extension === 'xml'
+        ? `<?xml version="1.0" encoding="UTF-8"?>\n<documento numero="${item.numero}" />`
+        : `Archivo mock del documento ${item.numero}\n\nNombre: ${fileName}`;
+    const url = URL.createObjectURL(new Blob([content], { type: mimeType }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
   }
   setComment(id: number, value: string): void {
     this.approvalComment.update((values) => ({ ...values, [id]: value }));
