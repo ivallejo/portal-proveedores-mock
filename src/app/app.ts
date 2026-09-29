@@ -108,6 +108,7 @@ export class App {
   readonly registration = { ruc: '20523682785', email: '', company: '' };
   readonly uploadedFiles = signal<{ name: string; kind: string; slot?: string }[]>([]);
   readonly xmlValidating = signal(false);
+  readonly xmlValidationStage = signal(0);
   readonly xmlSummary = signal<{
     emisor: string;
     numero: string;
@@ -253,6 +254,7 @@ export class App {
     'Liquidación de cobranza',
   ];
   private demoSequence = 205;
+  private xmlValidationRun = 0;
   readonly form = {
     numero: 'F001-000205',
     proveedor: 'Proveedor Andino SAC',
@@ -470,6 +472,7 @@ export class App {
     const xmlFile = this.uploadedFiles().find((file) => file.kind === 'XML');
     if (!xmlFile) {
       this.xmlValidating.set(false);
+      this.xmlValidationStage.set(0);
       this.showAlert('warning', 'Selecciona el XML del comprobante para validarlo.');
       return;
     }
@@ -484,11 +487,22 @@ export class App {
       descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
     });
     this.xmlValidating.set(false);
+    this.xmlValidationStage.set(0);
     this.showAlert('success', 'XML validado correctamente. Ahora adjunta los archivos requeridos.');
   }
   startXmlValidation(): void {
+    const validationRun = ++this.xmlValidationRun;
     this.xmlValidating.set(true);
-    setTimeout(() => this.validateXml(), 1600);
+    this.xmlValidationStage.set(1);
+    setTimeout(() => {
+      if (validationRun === this.xmlValidationRun) this.xmlValidationStage.set(2);
+    }, 800);
+    setTimeout(() => {
+      if (validationRun === this.xmlValidationRun) this.xmlValidationStage.set(3);
+    }, 1600);
+    setTimeout(() => {
+      if (validationRun === this.xmlValidationRun) this.validateXml();
+    }, 2400);
   }
   hasUploadedFile(kind: string): boolean {
     return this.uploadedFiles().some((file) => file.kind === kind);
@@ -512,6 +526,8 @@ export class App {
     if (removedXml) {
       this.xmlSummary.set(null);
       this.xmlValidating.set(false);
+      this.xmlValidationRun += 1;
+      this.xmlValidationStage.set(0);
     }
   }
   isSunatDocument(): boolean {
@@ -949,6 +965,8 @@ export class App {
     this.uploadedFiles.set([]);
     this.xmlSummary.set(null);
     this.xmlValidating.set(false);
+    this.xmlValidationRun += 1;
+    this.xmlValidationStage.set(0);
     this.registrationStep.set(1);
     this.ocValidated.set(false);
     this.registrationResult.set(null);

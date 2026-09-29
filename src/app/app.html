@@ -1224,15 +1224,42 @@
             *ngIf="hasUploadedFile('XML') && !xmlSummary()"
             aria-live="polite"
           >
-            <span
-              ><i class="bx bx-loader-alt bx-spin"></i>
-              {{
-                xmlValidating() ? 'Validando XML del comprobante...' : 'Preparando validación...'
-              }}</span
-            >
-            <small *ngIf="xmlValidating()"
-              >Estamos consultando la información del comprobante</small
-            >
+            <div class="xml-validation-header">
+              <i class="bx bx-loader-alt bx-spin"></i>
+              <div>
+                <strong>Validando XML del comprobante</strong>
+                <small>Estamos verificando la información y los archivos requeridos.</small>
+              </div>
+            </div>
+            <div class="xml-validation-stages">
+              <span [class.done]="xmlValidationStage() > 1"
+                ><i
+                  class="bx"
+                  [class.bx-check]="xmlValidationStage() > 1"
+                  [class.bx-loader-alt]="xmlValidationStage() === 1"
+                  [class.bx-spin]="xmlValidationStage() === 1"
+                ></i
+                >Leyendo archivo</span
+              >
+              <span [class.done]="xmlValidationStage() > 2"
+                ><i
+                  class="bx"
+                  [class.bx-check]="xmlValidationStage() > 2"
+                  [class.bx-loader-alt]="xmlValidationStage() === 2"
+                  [class.bx-spin]="xmlValidationStage() === 2"
+                ></i
+                >Consultando información</span
+              >
+              <span [class.done]="xmlValidationStage() > 3"
+                ><i
+                  class="bx"
+                  [class.bx-check]="xmlValidationStage() > 3"
+                  [class.bx-loader-alt]="xmlValidationStage() === 3"
+                  [class.bx-spin]="xmlValidationStage() === 3"
+                ></i
+                >Determinando archivos</span
+              >
+            </div>
           </div>
           <div class="demo-xml-scenarios">
             <small>Casos demo para visualizar las reglas del CDR:</small>

@@ -779,6 +779,54 @@ td small {
   color: #253c6d;
   font-size: 18px;
 }
+.xml-validation-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+.xml-validation-header > i {
+  color: #253c6d;
+  font-size: 25px;
+}
+.xml-validation-header strong,
+.xml-validation-header small {
+  display: block;
+}
+.xml-validation-header strong {
+  color: #253c6d;
+  font-size: 14px;
+  font-weight: 500;
+}
+.xml-validation-header small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.xml-validation-stages {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+.xml-validation-stages span {
+  display: flex;
+  align-items: center;
+  width: auto;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.xml-validation-stages span i {
+  color: #8798b5;
+  font-size: 16px;
+}
+.xml-validation-stages span.done {
+  color: #253c6d;
+}
+.xml-validation-stages span.done i {
+  color: #253c6d;
+}
 .xml-validation-actions small {
   color: var(--muted);
   font-size: 12px;
