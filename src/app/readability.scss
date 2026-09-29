@@ -1441,6 +1441,9 @@
     gap: 10px;
   }
   .document-filter-actions .admin-search {
+    grid-column: auto;
+  }
+  .document-filter-actions .primary {
     grid-column: 1 / -1;
   }
   .document-date-filter {
