@@ -1,4 +1,5 @@
 <main *ngIf="!auth.user(); else portal" class="login-page">
+  <div class="login-visual" aria-hidden="true"></div>
   <section
     *ngIf="showRegistration() && !registrationKeyRequested(); else loginCard"
     class="login-card registration-card"
