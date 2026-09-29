@@ -115,7 +115,7 @@ export class App {
     importe: number;
     descripcion: string;
   } | null>(null);
-  readonly registrationStep = signal<1 | 2 | 3>(1);
+  readonly registrationStep = signal<1 | 2 | 3 | 4 | 5>(1);
   readonly ocValidated = signal(false);
   readonly registrationResult = signal<Documento | null>(null);
   readonly requester = { area: '', username: '', email: '' };
@@ -792,28 +792,42 @@ export class App {
           return;
         }
         this.ocValidated.set(true);
-        this.registrationStep.set(2);
+        this.registrationStep.set(isRoleInternal(this.auth.user()?.role) ? 3 : 2);
       }, 900);
       return;
     }
-    this.registrationStep.set(2);
+    if (this.registrationStep() === 1) {
+      this.registrationStep.set(isRoleInternal(this.auth.user()?.role) ? 3 : 2);
+      return;
+    }
+    if (this.registrationStep() === 2) {
+      if (this.isRole('Proveedor') && !this.xmlSummary()) {
+        this.showAlert('warning', 'Valida primero el XML del comprobante para continuar.');
+        return;
+      }
+      this.registrationStep.set(3);
+      return;
+    }
+    if (this.registrationStep() === 3) {
+      if (!this.validateUploadedFiles()) return;
+      this.registrationStep.set(4);
+    }
   }
   previousRegistrationStep(): void {
     if (this.registrationStep() === 1) return;
-    this.registrationStep.update((step) => (step === 3 ? 2 : 1) as 1 | 2 | 3);
+    this.registrationStep.update((step) => {
+      if (step === 5) return 4;
+      if (step === 4) return 3;
+      if (step === 3) return this.isRole('Proveedor') ? 2 : 1;
+      return 1;
+    });
   }
-  submitDocument(): void {
-    this.error.set('');
-    this.message.set('');
+  validateUploadedFiles(): boolean {
     const fileKinds = this.uploadedFiles().map((file) => file.kind);
     const hasPdf = fileKinds.includes('PDF');
     const hasXml = fileKinds.includes('XML');
     const hasCdr = fileKinds.includes('CDR');
     const requiresCdr = this.isRole('Proveedor') && !this.isSunatDocument();
-    if (this.isRole('Proveedor') && !this.xmlSummary()) {
-      this.showAlert('warning', 'Valida primero el XML del comprobante para continuar.');
-      return;
-    }
     const missingProviderFiles =
       this.isRole('Proveedor') && (!hasPdf || !hasXml || (requiresCdr && !hasCdr));
     if (
@@ -833,8 +847,18 @@ export class App {
           : 'Completa los campos obligatorios y adjunta el PDF para continuar.',
       );
       this.showAlert('warning', this.error());
+      return false;
+    }
+    return true;
+  }
+  submitDocument(): void {
+    this.error.set('');
+    this.message.set('');
+    if (this.isRole('Proveedor') && !this.xmlSummary()) {
+      this.showAlert('warning', 'Valida primero el XML del comprobante para continuar.');
       return;
     }
+    if (!this.validateUploadedFiles()) return;
     this.loading.set(true);
     const dto = {
       ...this.form,
@@ -853,7 +877,7 @@ export class App {
       next: (item) => {
         this.loading.set(false);
         this.registrationResult.set(item);
-        this.registrationStep.set(3);
+        this.registrationStep.set(5);
         this.showToast(`El documento ${item.numero} fue recibido correctamente.`);
       },
       error: (err) => {
