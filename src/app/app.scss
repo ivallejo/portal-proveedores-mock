@@ -588,13 +588,11 @@ td small {
     min-height: 100svh;
   }
   .login-visual {
-    grid-column: 1;
-    grid-row: 1;
-    min-height: 220px;
+    display: none;
   }
   .login-page > .login-card {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
     align-self: start;
     justify-self: stretch;
     width: 100%;
