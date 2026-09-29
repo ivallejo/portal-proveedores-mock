@@ -1215,11 +1215,13 @@
             ></i
             ><strong>XML del comprobante</strong><small>XML principal · máximo 10 MB</small></label
           >
-          <div class="xml-validation-actions" *ngIf="hasUploadedFile('XML')">
+          <div class="xml-validation-actions" *ngIf="hasUploadedFile('XML') && !xmlSummary()">
             <span
-              ><i class="bx bx-check-circle"></i> XML seleccionado. Valídalo para continuar.</span
+              ><i class="bx bx-loader-alt bx-spin"></i>
+              {{
+                xmlValidating() ? 'Validando XML del comprobante...' : 'Preparando validación...'
+              }}</span
             >
-            <button type="button" class="primary" (click)="validateXml()">Validar XML</button>
           </div>
           <div class="demo-xml-scenarios">
             <small>Casos demo para visualizar las reglas del CDR:</small>

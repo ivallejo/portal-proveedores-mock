@@ -107,6 +107,7 @@ export class App {
   readonly registrationKeyRequested = signal(false);
   readonly registration = { ruc: '20523682785', email: '', company: '' };
   readonly uploadedFiles = signal<{ name: string; kind: string; slot?: string }[]>([]);
+  readonly xmlValidating = signal(false);
   readonly xmlSummary = signal<{
     emisor: string;
     numero: string;
@@ -459,27 +460,16 @@ export class App {
     ]);
     if (expectedKind === 'XML') {
       this.xmlSummary.set(null);
+      this.startXmlValidation();
       input.value = '';
       return;
-    }
-    const xmlFile = files.find((file) => file.kind === 'XML');
-    if (xmlFile) {
-      const documentNumber = xmlFile.name.match(/[A-Z]\d{3}-\d{6}/i)?.[0];
-      if (documentNumber) this.form.numero = documentNumber.toUpperCase();
-      this.xmlSummary.set({
-        emisor: this.form.proveedor || 'Proveedor Andino SAC',
-        numero: this.form.numero,
-        fecha: this.form.fecha,
-        moneda: 'PEN',
-        importe: this.form.importe,
-        descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
-      });
     }
     input.value = '';
   }
   validateXml(): void {
     const xmlFile = this.uploadedFiles().find((file) => file.kind === 'XML');
     if (!xmlFile) {
+      this.xmlValidating.set(false);
       this.showAlert('warning', 'Selecciona el XML del comprobante para validarlo.');
       return;
     }
@@ -493,7 +483,12 @@ export class App {
       importe: this.form.importe,
       descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
     });
+    this.xmlValidating.set(false);
     this.showAlert('success', 'XML validado correctamente. Ahora adjunta los archivos requeridos.');
+  }
+  startXmlValidation(): void {
+    this.xmlValidating.set(true);
+    setTimeout(() => this.validateXml(), 700);
   }
   hasUploadedFile(kind: string): boolean {
     return this.uploadedFiles().some((file) => file.kind === kind);
@@ -507,13 +502,17 @@ export class App {
       { name: documentNumber + '.xml', kind: 'XML', slot: 'XML' },
     ]);
     this.xmlSummary.set(null);
+    this.startXmlValidation();
   }
   removeFile(name: string): void {
     const removedXml = this.uploadedFiles().some(
       (file) => file.name === name && file.kind === 'XML',
     );
     this.uploadedFiles.update((files) => files.filter((file) => file.name !== name));
-    if (removedXml) this.xmlSummary.set(null);
+    if (removedXml) {
+      this.xmlSummary.set(null);
+      this.xmlValidating.set(false);
+    }
   }
   isSunatDocument(): boolean {
     return this.form.numero.trim().toUpperCase().startsWith('E');
@@ -949,6 +948,7 @@ export class App {
     this.selectedSpecial.set('');
     this.uploadedFiles.set([]);
     this.xmlSummary.set(null);
+    this.xmlValidating.set(false);
     this.registrationStep.set(1);
     this.ocValidated.set(false);
     this.registrationResult.set(null);
