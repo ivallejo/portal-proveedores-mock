@@ -45,6 +45,7 @@
             <th>Username</th>
             <th>Correo electrónico</th>
             <th>Nombre o empresa</th>
+            <th>Área</th>
             <th>Roles</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -57,6 +58,7 @@
             </td>
             <td>{{ user.email }}</td>
             <td>{{ user.companyName }}</td>
+            <td>{{ user.area || '—' }}</td>
             <td>
               <div class="role-badges">
                 <span *ngFor="let role of user.roles" class="role-badge">{{ role }}</span>
@@ -147,6 +149,11 @@
           >RUC (solo proveedores)<input
             [(ngModel)]="newUser.ruc"
             placeholder="Opcional para usuarios internos" /></label
+        ><label *ngIf="hasInternalRole(selectedRoles())"
+          >Área *<select [(ngModel)]="newUser.area">
+            <option value="">Selecciona un área</option>
+            <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+          </select></label
         ><label class="temporary-password-field"
           >Contraseña temporal *<span class="password-field"
             ><input
@@ -212,6 +219,12 @@
         <label>Correo electrónico *<input type="email" [(ngModel)]="editUser.email" /></label>
         <label>Nombre o empresa *<input [(ngModel)]="editUser.companyName" /></label>
         <label>RUC (solo proveedores)<input [(ngModel)]="editUser.ruc" /></label>
+        <label *ngIf="hasInternalRole(editRoles())"
+          >Área *<select [(ngModel)]="editUser.area">
+            <option value="">Selecciona un área</option>
+            <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+          </select></label
+        >
       </div>
       <div class="role-editor">
         <h3>Roles asignados</h3>

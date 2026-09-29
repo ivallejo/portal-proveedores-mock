@@ -39,6 +39,7 @@ export class AuthService {
       username: data.ruc,
       email: data.email,
       companyName: data.company,
+      area: '',
       ruc: data.ruc,
       password: data.password,
       role: 'Proveedor' as Role,

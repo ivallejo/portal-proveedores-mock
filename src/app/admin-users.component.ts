@@ -29,7 +29,7 @@ export class AdminUsersComponent {
   readonly showNewPassword = signal(false);
   readonly editingUser = signal<AdminUser | null>(null);
   readonly editRoles = signal<Role[]>([]);
-  readonly editUser = { username: '', email: '', companyName: '', ruc: '' };
+  readonly editUser = { username: '', email: '', companyName: '', area: '', ruc: '' };
   readonly selectedRoles = signal<Role[]>(['Área Usuaria']);
   readonly roles: Role[] = [
     'Proveedor',
@@ -38,14 +38,24 @@ export class AdminUsersComponent {
     'CxP',
     'Administrador',
   ];
-  readonly newUser = { username: '', email: '', companyName: '', ruc: '', password: '' };
+  readonly newUser = { username: '', email: '', companyName: '', area: '', ruc: '', password: '' };
+  readonly areas = [
+    'Administración',
+    'Abastecimiento',
+    'Comercial',
+    'Finanzas',
+    'Mantenimiento',
+    'Operaciones',
+    'Recursos Humanos',
+    'Tecnología',
+  ];
 
   readonly filteredUsers = computed(() => {
     const term = this.search().trim().toLowerCase();
     return this.allUsers().filter(
       (user) =>
         !term ||
-        `${user.companyName} ${user.email} ${user.ruc} ${user.roles.join(' ')}`
+        `${user.companyName} ${user.email} ${user.area} ${user.ruc} ${user.roles.join(' ')}`
           .toLowerCase()
           .includes(term),
     );
@@ -109,6 +119,7 @@ export class AdminUsersComponent {
     this.editUser.username = user.username;
     this.editUser.email = user.email;
     this.editUser.companyName = user.companyName;
+    this.editUser.area = user.area;
     this.editUser.ruc = user.ruc;
     this.editRoles.set([...user.roles]);
   }
@@ -125,7 +136,12 @@ export class AdminUsersComponent {
     const user = this.editingUser();
     if (!user) return;
     this.error.set('');
-    if (!this.editUser.username || !this.editUser.email || !this.editUser.companyName) {
+    if (
+      !this.editUser.username ||
+      !this.editUser.email ||
+      !this.editUser.companyName ||
+      (this.hasInternalRole(this.editRoles()) && !this.editUser.area)
+    ) {
       this.error.set('Completa los datos obligatorios del usuario.');
       return;
     }
@@ -168,7 +184,8 @@ export class AdminUsersComponent {
       !this.newUser.email ||
       !this.newUser.companyName ||
       !this.newUser.password ||
-      !this.selectedRoles().length
+      !this.selectedRoles().length ||
+      (this.hasInternalRole(this.selectedRoles()) && !this.newUser.area)
     ) {
       this.error.set('Completa todos los campos para crear el usuario.');
       return;
@@ -181,6 +198,7 @@ export class AdminUsersComponent {
         this.newUser.username = '';
         this.newUser.email = '';
         this.newUser.companyName = '';
+        this.newUser.area = '';
         this.newUser.ruc = '';
         this.newUser.password = '';
         this.showForm.set(false);
@@ -216,6 +234,9 @@ export class AdminUsersComponent {
     this.selectedRoles.update((roles) =>
       roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role],
     );
+  }
+  hasInternalRole(roles: Role[]): boolean {
+    return roles.some((role) => role !== 'Proveedor');
   }
 
   toggleStatus(user: AdminUser): void {

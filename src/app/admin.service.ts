@@ -8,6 +8,7 @@ export interface AdminUser {
   username: string;
   email: string;
   companyName: string;
+  area: string;
   ruc: string;
   role: Role;
   roles: Role[];
@@ -25,6 +26,7 @@ export class AdminService {
     username: string;
     email: string;
     companyName: string;
+    area?: string;
     ruc: string;
     password: string;
     roles?: Role[];
@@ -38,6 +40,7 @@ export class AdminService {
     const user = {
       id: `mock-user-${Date.now()}`,
       ...data,
+      area: data.area || '',
       password: data.password,
       role: roles[0],
       roles,
@@ -58,12 +61,20 @@ export class AdminService {
   }
   update(
     id: string,
-    data: { username: string; email: string; companyName: string; ruc: string; roles: Role[] },
+    data: {
+      username: string;
+      email: string;
+      companyName: string;
+      area?: string;
+      ruc: string;
+      roles: Role[];
+    },
   ): Observable<AdminUser> {
     const user = this.users.update(id, {
       username: data.username,
       email: data.email,
       companyName: data.companyName,
+      area: data.area || '',
       ruc: data.ruc,
       role: data.roles[0],
       roles: data.roles,
@@ -84,6 +95,7 @@ export class AdminService {
       username: user.username,
       email: user.email,
       companyName: user.companyName,
+      area: user.area,
       ruc: user.ruc,
       role: user.role,
       roles: user.roles?.length ? user.roles : [user.role],

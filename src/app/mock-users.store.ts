@@ -6,6 +6,7 @@ export interface MockUserRecord {
   username: string;
   email: string;
   companyName: string;
+  area: string;
   ruc: string;
   password: string;
   role: Role;
@@ -73,7 +74,7 @@ export class MockUsersStore {
           const roles = user.roles?.length ? user.roles : [user.role];
           const username =
             user.username || (roles.includes('Proveedor') ? user.ruc : user.email.split('@')[0]);
-          return { ...user, username, roles };
+          return { ...user, username, roles, area: user.area || this.defaultArea(user) };
         });
       } catch {
         localStorage.removeItem(this.storageKey);
@@ -85,6 +86,7 @@ export class MockUsersStore {
         username: 'admin',
         email: 'admin@naviera.local',
         companyName: 'Administrador del sistema',
+        area: 'Administración',
         ruc: 'ADMIN-SYSTEM',
         password: '123456',
         role: 'Administrador',
@@ -97,6 +99,7 @@ export class MockUsersStore {
         username: '20123456789',
         email: 'proveedor@naviera.local',
         companyName: 'Proveedor Andino SAC',
+        area: '',
         ruc: '20123456789',
         password: '123456',
         role: 'Proveedor',
@@ -109,6 +112,7 @@ export class MockUsersStore {
         username: 'maria.torres',
         email: 'aprobador@naviera.local',
         companyName: 'María Torres',
+        area: 'Operaciones',
         ruc: 'APPROVER-001',
         password: '123456',
         role: 'Área Usuaria',
@@ -121,6 +125,7 @@ export class MockUsersStore {
         username: 'colaborador',
         email: 'colaborador@naviera.local',
         companyName: 'Colaborador interno',
+        area: 'Operaciones',
         ruc: 'INTERNAL-001',
         password: '123456',
         role: 'Colaborador interno',
@@ -133,6 +138,7 @@ export class MockUsersStore {
         username: 'cxp',
         email: 'cxp@naviera.local',
         companyName: 'Cuentas por pagar',
+        area: 'Finanzas',
         ruc: 'CXP-001',
         password: '123456',
         role: 'CxP',
@@ -183,6 +189,19 @@ export class MockUsersStore {
       roles: [role],
       isActive: true,
       createdAtUtc: new Date().toISOString(),
+      area:
+        role === 'CxP'
+          ? 'Finanzas'
+          : role === 'Administrador'
+            ? 'Administración'
+            : ['Operaciones', 'Mantenimiento', 'Comercial', 'Abastecimiento'][index % 4],
     }));
+  }
+
+  private defaultArea(user: Pick<MockUserRecord, 'roles' | 'role'>): string {
+    if (user.roles.includes('Proveedor')) return '';
+    if (user.roles.includes('Administrador')) return 'Administración';
+    if (user.roles.includes('CxP')) return 'Finanzas';
+    return 'Operaciones';
   }
 }
