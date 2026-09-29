@@ -1209,26 +1209,47 @@
           <i class="bx bx-cloud-upload upload-icon"></i>
         </div>
         <div *ngIf="isRole('Proveedor') && registrationStep() === 2" class="xml-upload-step">
-          <label class="upload-zone"
-            ><input type="file" accept=".xml" (change)="addFiles($event, 'XML')" /><i
-              class="bx bx-code-alt"
-            ></i
-            ><strong>XML del comprobante</strong><small>XML principal · máximo 10 MB</small></label
+          <label class="upload-zone" [class.upload-zone-disabled]="xmlValidating()"
+            ><input
+              type="file"
+              accept=".xml"
+              [disabled]="xmlValidating()"
+              (change)="addFiles($event, 'XML')"
+            /><i class="bx bx-code-alt"></i><strong>XML del comprobante</strong
+            ><small>XML principal · máximo 10 MB</small></label
           >
-          <div class="xml-validation-actions" *ngIf="hasUploadedFile('XML') && !xmlSummary()">
+          <div
+            class="xml-validation-actions"
+            [class.is-loading]="xmlValidating()"
+            *ngIf="hasUploadedFile('XML') && !xmlSummary()"
+            aria-live="polite"
+          >
             <span
               ><i class="bx bx-loader-alt bx-spin"></i>
               {{
                 xmlValidating() ? 'Validando XML del comprobante...' : 'Preparando validación...'
               }}</span
             >
+            <small *ngIf="xmlValidating()"
+              >Estamos consultando la información del comprobante</small
+            >
           </div>
           <div class="demo-xml-scenarios">
             <small>Casos demo para visualizar las reglas del CDR:</small>
-            <button type="button" class="secondary" (click)="loadXmlScenario('E')">
+            <button
+              type="button"
+              class="secondary"
+              [disabled]="xmlValidating()"
+              (click)="loadXmlScenario('E')"
+            >
               XML con prefijo E
             </button>
-            <button type="button" class="secondary" (click)="loadXmlScenario('F')">
+            <button
+              type="button"
+              class="secondary"
+              [disabled]="xmlValidating()"
+              (click)="loadXmlScenario('F')"
+            >
               XML sin prefijo E
             </button>
           </div>

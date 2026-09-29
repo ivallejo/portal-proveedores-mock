@@ -735,6 +735,10 @@ td small {
 .upload-zone input {
   display: none;
 }
+.upload-zone-disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
 .upload-zone i {
   font-size: 28px;
 }
@@ -747,9 +751,12 @@ td small {
   gap: 12px;
 }
 .xml-validation-actions {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 16px;
   padding: 12px 14px;
   border: 1px solid #dce4ef;
@@ -758,14 +765,45 @@ td small {
   color: #52627d;
   font-size: 13px;
 }
+.xml-validation-actions.is-loading {
+  border-color: #9eb3d7;
+  background: #f1f5fc;
+}
 .xml-validation-actions span {
   display: flex;
   align-items: center;
   gap: 7px;
+  width: 100%;
 }
 .xml-validation-actions span i {
   color: #253c6d;
   font-size: 18px;
+}
+.xml-validation-actions small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.xml-validation-actions.is-loading::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #253c6d;
+  content: '';
+  animation: xml-validation-progress 1.6s ease-in-out infinite;
+  transform-origin: left;
+}
+@keyframes xml-validation-progress {
+  0% {
+    transform: scaleX(0.05);
+  }
+  70% {
+    transform: scaleX(0.8);
+  }
+  100% {
+    transform: scaleX(1);
+  }
 }
 .xml-validation-actions .primary {
   min-height: 38px;

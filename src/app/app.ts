@@ -488,7 +488,7 @@ export class App {
   }
   startXmlValidation(): void {
     this.xmlValidating.set(true);
-    setTimeout(() => this.validateXml(), 700);
+    setTimeout(() => this.validateXml(), 1600);
   }
   hasUploadedFile(kind: string): boolean {
     return this.uploadedFiles().some((file) => file.kind === kind);
