@@ -1437,14 +1437,14 @@
     width: 100%;
   }
   .document-filter-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 10px;
   }
-  .document-filter-actions .admin-search {
-    grid-column: auto;
-  }
+  .document-filter-actions .admin-search,
+  .document-filter-actions .secondary,
   .document-filter-actions .primary {
     grid-column: 1 / -1;
+    width: 100%;
   }
   .document-date-filter {
     justify-content: space-between;
