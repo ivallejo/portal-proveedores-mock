@@ -1194,7 +1194,8 @@
           <div>
             <h2>Archivos del documento</h2>
             <p *ngIf="isRole('Proveedor')">
-              Adjunta los archivos requeridos: {{ requiredFilesText() }}.
+              Comienza cargando el XML del comprobante. Luego te mostraremos los archivos
+              requeridos.
             </p>
             <p *ngIf="isRole('Colaborador interno')">
               Adjunta únicamente el PDF del documento especial.
@@ -1202,13 +1203,21 @@
           </div>
           <i class="bx bx-cloud-upload upload-icon"></i>
         </div>
-        <div *ngIf="isRole('Proveedor')" class="upload-groups">
+        <div *ngIf="isRole('Proveedor')" class="xml-upload-step">
           <label class="upload-zone"
             ><input type="file" accept=".xml" (change)="addFiles($event, 'XML')" /><i
               class="bx bx-code-alt"
             ></i
             ><strong>XML del comprobante</strong><small>XML principal · máximo 10 MB</small></label
           >
+          <div class="xml-validation-actions" *ngIf="hasUploadedFile('XML')">
+            <span
+              ><i class="bx bx-check-circle"></i> XML seleccionado. Valídalo para continuar.</span
+            >
+            <button type="button" class="primary" (click)="validateXml()">Validar XML</button>
+          </div>
+        </div>
+        <div *ngIf="isRole('Proveedor') && xmlSummary()" class="upload-groups">
           <label class="upload-zone"
             ><input type="file" accept=".pdf" (change)="addFiles($event, 'PDF')" /><i
               class="bx bx-file"

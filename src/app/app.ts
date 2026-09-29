@@ -457,6 +457,11 @@ export class App {
       ...current.filter((file) => !expectedKind || file.slot !== expectedKind),
       ...files,
     ]);
+    if (expectedKind === 'XML') {
+      this.xmlSummary.set(null);
+      input.value = '';
+      return;
+    }
     const xmlFile = files.find((file) => file.kind === 'XML');
     if (xmlFile) {
       const documentNumber = xmlFile.name.match(/[A-Z]\d{3}-\d{6}/i)?.[0];
@@ -472,8 +477,33 @@ export class App {
     }
     input.value = '';
   }
+  validateXml(): void {
+    const xmlFile = this.uploadedFiles().find((file) => file.kind === 'XML');
+    if (!xmlFile) {
+      this.showAlert('warning', 'Selecciona el XML del comprobante para validarlo.');
+      return;
+    }
+    const documentNumber = xmlFile.name.match(/[A-Z]\d{3}-\d{6}/i)?.[0];
+    if (documentNumber) this.form.numero = documentNumber.toUpperCase();
+    this.xmlSummary.set({
+      emisor: this.form.proveedor || 'Proveedor Andino SAC',
+      numero: this.form.numero,
+      fecha: this.form.fecha,
+      moneda: 'PEN',
+      importe: this.form.importe,
+      descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
+    });
+    this.showAlert('success', 'XML validado correctamente. Ahora adjunta los archivos requeridos.');
+  }
+  hasUploadedFile(kind: string): boolean {
+    return this.uploadedFiles().some((file) => file.kind === kind);
+  }
   removeFile(name: string): void {
+    const removedXml = this.uploadedFiles().some(
+      (file) => file.name === name && file.kind === 'XML',
+    );
     this.uploadedFiles.update((files) => files.filter((file) => file.name !== name));
+    if (removedXml) this.xmlSummary.set(null);
   }
   isSunatDocument(): boolean {
     return this.form.numero.trim().toUpperCase().startsWith('E');
@@ -780,6 +810,10 @@ export class App {
     const hasXml = fileKinds.includes('XML');
     const hasCdr = fileKinds.includes('CDR');
     const requiresCdr = this.isRole('Proveedor') && !this.isSunatDocument();
+    if (this.isRole('Proveedor') && !this.xmlSummary()) {
+      this.showAlert('warning', 'Valida primero el XML del comprobante para continuar.');
+      return;
+    }
     const missingProviderFiles =
       this.isRole('Proveedor') && (!hasPdf || !hasXml || (requiresCdr && !hasCdr));
     if (

@@ -742,6 +742,36 @@ td small {
   color: var(--muted);
   font-size: 11px;
 }
+.xml-upload-step {
+  display: grid;
+  gap: 12px;
+}
+.xml-validation-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid #dce4ef;
+  border-radius: 9px;
+  background: #f8fafe;
+  color: #52627d;
+  font-size: 13px;
+}
+.xml-validation-actions span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.xml-validation-actions span i {
+  color: #253c6d;
+  font-size: 18px;
+}
+.xml-validation-actions .primary {
+  min-height: 38px;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
 .file-list {
   display: grid;
   gap: 8px;
