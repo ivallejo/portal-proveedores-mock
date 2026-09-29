@@ -644,14 +644,18 @@
                   ><input
                     type="text"
                     placeholder="Escribe nombre, usuario o correo"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    [attr.aria-expanded]="requesterApproverFocused()"
                     [ngModel]="requesterApproverSearch()"
-                    (ngModelChange)="setRequesterApproverSearch($event)" /></span
-                ><span
-                  *ngIf="requesterApproverSearch().trim() && !requester.email"
-                  class="approver-search-results"
+                    (ngModelChange)="setRequesterApproverSearch($event)"
+                    (focus)="requesterApproverFocused.set(true)"
+                    (blur)="closeRequesterApproverSearch()" /></span
+                ><span *ngIf="requesterApproverFocused()" class="approver-search-results"
                   ><button
                     *ngFor="let user of filteredRequesterApprovers()"
                     type="button"
+                    (mousedown)="$event.preventDefault()"
                     (click)="selectRequesterApprover(user.username)"
                   >
                     <strong>{{ user.companyName }}</strong

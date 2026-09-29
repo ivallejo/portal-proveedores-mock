@@ -120,6 +120,7 @@ export class App {
   readonly registrationResult = signal<Documento | null>(null);
   readonly requester = { area: '', username: '', email: '' };
   readonly requesterApproverSearch = signal('');
+  readonly requesterApproverFocused = signal(false);
   readonly requesterAreas = computed(() =>
     Array.from(
       new Set(
@@ -711,6 +712,7 @@ export class App {
     this.requester.username = '';
     this.requester.email = '';
     this.requesterApproverSearch.set('');
+    this.requesterApproverFocused.set(false);
   }
   setRequesterApproverSearch(value: string): void {
     this.requesterApproverSearch.set(value);
@@ -727,6 +729,10 @@ export class App {
     const approver = this.requesterApprovers().find((user) => user.username === username);
     this.requester.email = approver?.email || '';
     this.requesterApproverSearch.set(approver?.companyName || '');
+    this.requesterApproverFocused.set(false);
+  }
+  closeRequesterApproverSearch(): void {
+    setTimeout(() => this.requesterApproverFocused.set(false), 120);
   }
   requiredFilesText(): string {
     if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
@@ -882,6 +888,7 @@ export class App {
     this.requester.username = '';
     this.requester.email = '';
     this.requesterApproverSearch.set('');
+    this.requesterApproverFocused.set(false);
     this.form.details = {
       vuelo: 'LA2451',
       pasajero: 'Juan Sebastián',
