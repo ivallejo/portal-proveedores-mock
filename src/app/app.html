@@ -629,13 +629,26 @@
           >
             <h3><i class="bx bx-user-voice"></i> Área solicitante</h3>
             <label
-              >Área responsable<select [(ngModel)]="requester.area">
-                <option>Operaciones</option>
-                <option>Administración</option>
-                <option>Logística</option>
+              >Área responsable *<select
+                [ngModel]="requester.area"
+                (ngModelChange)="setRequesterArea($event)"
+              >
+                <option value="">Selecciona un área</option>
+                <option *ngFor="let area of requesterAreas()" [value]="area">{{ area }}</option>
               </select></label
             >
-            <p>El área revisará y aprobará el documento recibido.</p>
+            <label *ngIf="requester.area"
+              >Solicitar aprobación a *<select
+                [ngModel]="requester.username"
+                (ngModelChange)="setRequesterApprover($event)"
+              >
+                <option value="">Selecciona un usuario</option>
+                <option *ngFor="let user of requesterApprovers()" [value]="user.username">
+                  {{ user.companyName }} · {{ user.email }}
+                </option>
+              </select></label
+            >
+            <p *ngIf="requester.email">La solicitud se enviará a {{ requester.email }}.</p>
           </div>
           <div *ngIf="form.tipo === 'Con Orden de Compra'" class="conditional-box">
             <h3><i class="bx bx-purchase-tag"></i> Información de orden de compra</h3>
@@ -1266,7 +1279,10 @@
           class="requester-box"
         >
           <h3><i class="bx bx-user-voice"></i> Área solicitante</h3>
-          <p>{{ requester.area }} · El correo de derivación se gestiona internamente.</p>
+          <p>
+            {{ requester.area }} · {{ requester.username }} · La solicitud se enviará a
+            {{ requester.email }}.
+          </p>
         </div>
         <div class="form-actions wizard-actions">
           <button class="secondary" (click)="previousRegistrationStep()">Volver</button>

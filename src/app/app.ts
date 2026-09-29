@@ -118,7 +118,26 @@ export class App {
   readonly registrationStep = signal<1 | 2 | 3>(1);
   readonly ocValidated = signal(false);
   readonly registrationResult = signal<Documento | null>(null);
-  readonly requester = { area: 'Operaciones', email: 'solicitante@naviera.com' };
+  readonly requester = { area: '', username: '', email: '' };
+  readonly requesterAreas = computed(() =>
+    Array.from(
+      new Set(
+        this.mockUsersStore
+          .users()
+          .filter((user) => user.area && !user.roles.includes('Proveedor'))
+          .map((user) => user.area),
+      ),
+    ).sort(),
+  );
+  readonly requesterApprovers = computed(() =>
+    this.mockUsersStore
+      .users()
+      .filter(
+        (user) =>
+          user.isActive && user.area === this.requester.area && !user.roles.includes('Proveedor'),
+      )
+      .sort((left, right) => left.companyName.localeCompare(right.companyName)),
+  );
   readonly query = signal('');
   readonly adminUsers = signal<AdminUser[]>([]);
   readonly allAdminUsers = signal<AdminUser[]>([]);
@@ -679,6 +698,16 @@ export class App {
     if (type !== 'Documento especial') this.selectedSpecial.set('');
     if (type === 'Con Orden de Compra') this.form.validateSunat = true;
   }
+  setRequesterArea(area: string): void {
+    this.requester.area = area;
+    this.requester.username = '';
+    this.requester.email = '';
+  }
+  setRequesterApprover(username: string): void {
+    this.requester.username = username;
+    const approver = this.requesterApprovers().find((user) => user.username === username);
+    this.requester.email = approver?.email || '';
+  }
   requiredFilesText(): string {
     if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
     return this.isSunatDocument() ? 'PDF + XML + sustentos' : 'PDF + XML + CDR + sustentos';
@@ -734,7 +763,9 @@ export class App {
       missingProviderFiles ||
       (this.form.tipo === 'Con Orden de Compra' && !this.form.oc) ||
       (this.form.tipo === 'Documento especial' && !this.selectedSpecial()) ||
-      (this.form.tipo !== 'Con Orden de Compra' && (!this.requester.area || !this.requester.email))
+      (this.isRole('Proveedor') &&
+        this.form.tipo === 'Sin Orden de Compra' &&
+        (!this.requester.area || !this.requester.email))
     ) {
       this.error.set(
         this.isRole('Proveedor')
@@ -751,6 +782,7 @@ export class App {
       details: {
         ...this.form.details,
         areaSolicitante: this.requester.area,
+        usuarioAprobador: this.requester.username,
         correoSolicitante: this.requester.email,
         archivos: this.uploadedFiles()
           .map((file) => file.name)
@@ -826,6 +858,9 @@ export class App {
     this.registrationStep.set(1);
     this.ocValidated.set(false);
     this.registrationResult.set(null);
+    this.requester.area = '';
+    this.requester.username = '';
+    this.requester.email = '';
     this.form.details = {
       vuelo: 'LA2451',
       pasajero: 'Juan Sebastián',
