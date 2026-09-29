@@ -119,6 +119,7 @@ export class App {
   readonly ocValidated = signal(false);
   readonly registrationResult = signal<Documento | null>(null);
   readonly requester = { area: '', username: '', email: '' };
+  readonly requesterApproverSearch = signal('');
   readonly requesterAreas = computed(() =>
     Array.from(
       new Set(
@@ -138,6 +139,13 @@ export class App {
       )
       .sort((left, right) => left.companyName.localeCompare(right.companyName)),
   );
+  readonly filteredRequesterApprovers = computed(() => {
+    const term = this.requesterApproverSearch().trim().toLowerCase();
+    return this.requesterApprovers().filter(
+      (user) =>
+        !term || `${user.companyName} ${user.username} ${user.email}`.toLowerCase().includes(term),
+    );
+  });
   readonly query = signal('');
   readonly adminUsers = signal<AdminUser[]>([]);
   readonly allAdminUsers = signal<AdminUser[]>([]);
@@ -702,11 +710,23 @@ export class App {
     this.requester.area = area;
     this.requester.username = '';
     this.requester.email = '';
+    this.requesterApproverSearch.set('');
   }
-  setRequesterApprover(username: string): void {
+  setRequesterApproverSearch(value: string): void {
+    this.requesterApproverSearch.set(value);
+    const selected = this.requesterApprovers().find(
+      (user) => user.companyName === value && user.username === this.requester.username,
+    );
+    if (!selected) {
+      this.requester.username = '';
+      this.requester.email = '';
+    }
+  }
+  selectRequesterApprover(username: string): void {
     this.requester.username = username;
     const approver = this.requesterApprovers().find((user) => user.username === username);
     this.requester.email = approver?.email || '';
+    this.requesterApproverSearch.set(approver?.companyName || '');
   }
   requiredFilesText(): string {
     if (this.isRole('Colaborador interno')) return 'PDF obligatorio';
@@ -861,6 +881,7 @@ export class App {
     this.requester.area = '';
     this.requester.username = '';
     this.requester.email = '';
+    this.requesterApproverSearch.set('');
     this.form.details = {
       vuelo: 'LA2451',
       pasajero: 'Juan Sebastián',

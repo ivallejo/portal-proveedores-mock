@@ -638,15 +638,29 @@
               </select></label
             >
             <label *ngIf="requester.area"
-              >Solicitar aprobación a *<select
-                [ngModel]="requester.username"
-                (ngModelChange)="setRequesterApprover($event)"
-              >
-                <option value="">Selecciona un usuario</option>
-                <option *ngFor="let user of requesterApprovers()" [value]="user.username">
-                  {{ user.companyName }} · {{ user.email }}
-                </option>
-              </select></label
+              >Solicitar aprobación a *<span class="approver-combobox"
+                ><span class="approver-search-field"
+                  ><i class="bx bx-search"></i
+                  ><input
+                    type="text"
+                    placeholder="Escribe nombre, usuario o correo"
+                    [ngModel]="requesterApproverSearch()"
+                    (ngModelChange)="setRequesterApproverSearch($event)" /></span
+                ><span
+                  *ngIf="requesterApproverSearch().trim() && !requester.email"
+                  class="approver-search-results"
+                  ><button
+                    *ngFor="let user of filteredRequesterApprovers()"
+                    type="button"
+                    (click)="selectRequesterApprover(user.username)"
+                  >
+                    <strong>{{ user.companyName }}</strong
+                    ><small>{{ user.username }} · {{ user.email }}</small></button
+                  ><small *ngIf="!filteredRequesterApprovers().length" class="approver-no-results"
+                    >No encontramos usuarios para esa búsqueda.</small
+                  ></span
+                ></span
+              ></label
             >
             <p *ngIf="requester.email">La solicitud se enviará a {{ requester.email }}.</p>
           </div>

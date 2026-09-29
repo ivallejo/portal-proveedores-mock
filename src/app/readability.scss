@@ -877,6 +877,81 @@
   outline: 0;
   box-shadow: 0 0 0 3px rgb(37 60 109 / 10%);
 }
+.approver-combobox {
+  position: relative;
+  display: block;
+}
+.approver-search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid #dce4ef;
+  border-radius: 7px;
+  background: #fff;
+}
+.approver-search-field:focus-within {
+  border-color: #253c6d;
+  box-shadow: 0 0 0 3px rgb(37 60 109 / 10%);
+}
+.approver-search-field i {
+  color: #253c6d;
+  font-size: 18px;
+}
+.approver-search-field input {
+  width: 100%;
+  min-height: 38px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+}
+.approver-search-results {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid #dce4ef;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgb(32 58 101 / 14%);
+}
+.approver-search-results button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 6px;
+  color: #253c6d;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+.approver-search-results button:hover {
+  background: #f2f6fb;
+}
+.approver-search-results button strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.approver-search-results button small,
+.approver-no-results {
+  color: #7a879d;
+  font-size: 11px;
+}
+.approver-no-results {
+  padding: 9px 10px;
+}
 .admin-users-table .secondary {
   min-height: 36px;
   padding: 8px 12px;
