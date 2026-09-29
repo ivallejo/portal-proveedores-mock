@@ -772,6 +772,22 @@ td small {
   padding: 8px 16px;
   white-space: nowrap;
 }
+.demo-xml-scenarios {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.demo-xml-scenarios small {
+  flex-basis: 100%;
+}
+.demo-xml-scenarios .secondary {
+  min-height: 34px;
+  padding: 7px 12px;
+  font-size: 12px;
+}
 .file-list {
   display: grid;
   gap: 8px;

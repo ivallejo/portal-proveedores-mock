@@ -1221,6 +1221,15 @@
             >
             <button type="button" class="primary" (click)="validateXml()">Validar XML</button>
           </div>
+          <div class="demo-xml-scenarios">
+            <small>Casos demo para visualizar las reglas del CDR:</small>
+            <button type="button" class="secondary" (click)="loadXmlScenario('E')">
+              XML con prefijo E
+            </button>
+            <button type="button" class="secondary" (click)="loadXmlScenario('F')">
+              XML sin prefijo E
+            </button>
+          </div>
         </div>
         <div
           *ngIf="isRole('Proveedor') && xmlSummary() && registrationStep() === 3"

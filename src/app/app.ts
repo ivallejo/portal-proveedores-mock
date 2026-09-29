@@ -498,6 +498,16 @@ export class App {
   hasUploadedFile(kind: string): boolean {
     return this.uploadedFiles().some((file) => file.kind === kind);
   }
+  loadXmlScenario(prefix: 'E' | 'F'): void {
+    const sequence = ++this.demoSequence;
+    const documentNumber = prefix + '001-' + String(sequence).padStart(6, '0');
+    this.form.numero = documentNumber;
+    this.uploadedFiles.update((files) => [
+      ...files.filter((file) => file.slot !== 'XML'),
+      { name: documentNumber + '.xml', kind: 'XML', slot: 'XML' },
+    ]);
+    this.xmlSummary.set(null);
+  }
   removeFile(name: string): void {
     const removedXml = this.uploadedFiles().some(
       (file) => file.name === name && file.kind === 'XML',
