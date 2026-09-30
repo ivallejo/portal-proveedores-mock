@@ -38,6 +38,7 @@ export class AuthService {
       id: `mock-user-${Date.now()}`,
       username: data.ruc,
       email: data.email,
+      emails: [data.email],
       companyName: data.company,
       area: '',
       ruc: data.ruc,
@@ -64,6 +65,7 @@ export class AuthService {
   private toUser(user: {
     username: string;
     email: string;
+    emails?: string[];
     companyName: string;
     ruc: string;
     role: Role;
@@ -72,6 +74,8 @@ export class AuthService {
     return {
       username: user.username,
       name: user.companyName,
+      email: user.email,
+      emails: user.emails?.length ? user.emails : [user.email],
       role: user.role,
       roles: user.roles,
       providerId: user.ruc,

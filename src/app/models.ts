@@ -15,6 +15,8 @@ export type SpecialSubtype =
 export interface User {
   username: string;
   name: string;
+  email?: string;
+  emails?: string[];
   role: Role;
   roles: Role[];
   providerId?: string;

@@ -5,6 +5,7 @@ export interface MockUserRecord {
   id: string;
   username: string;
   email: string;
+  emails?: string[];
   companyName: string;
   area: string;
   ruc: string;
@@ -74,7 +75,13 @@ export class MockUsersStore {
           const roles = user.roles?.length ? user.roles : [user.role];
           const username =
             user.username || (roles.includes('Proveedor') ? user.ruc : user.email.split('@')[0]);
-          return { ...user, username, roles, area: user.area || this.defaultArea(user) };
+          return {
+            ...user,
+            username,
+            roles,
+            emails: user.emails?.length ? user.emails : [user.email],
+            area: user.area || this.defaultArea(user),
+          };
         });
       } catch {
         localStorage.removeItem(this.storageKey);
