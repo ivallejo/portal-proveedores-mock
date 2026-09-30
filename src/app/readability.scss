@@ -178,6 +178,7 @@
   font-size: 14px;
 }
 .provider-content .upload-groups .upload-zone-warning {
+  grid-column: 1 / -1;
   border-color: #ed7624;
   background: #fff4eb;
 }
