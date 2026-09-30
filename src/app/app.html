@@ -1208,6 +1208,13 @@
           </div>
           <i class="bx bx-cloud-upload upload-icon"></i>
         </div>
+        <div *ngIf="form.tipo === 'Con Orden de Compra' && ocValidated()" class="validated-context">
+          <i class="bx bx-check-circle"></i>
+          <div>
+            <strong>Orden de compra validada</strong>
+            <span>La OC {{ form.oc }} fue aprobada correctamente en SAP.</span>
+          </div>
+        </div>
         <div *ngIf="isRole('Proveedor') && registrationStep() === 2" class="xml-upload-step">
           <label class="upload-zone" [class.upload-zone-disabled]="xmlValidating()"
             ><input

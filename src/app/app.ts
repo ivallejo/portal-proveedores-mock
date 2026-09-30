@@ -817,6 +817,7 @@ export class App {
           return;
         }
         this.ocValidated.set(true);
+        this.showAlert('success', `OC ${this.form.oc} validada correctamente en SAP.`);
         this.registrationStep.set(isRoleInternal(this.auth.user()?.role) ? 3 : 2);
       }, 900);
       return;

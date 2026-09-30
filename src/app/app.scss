@@ -750,6 +750,34 @@ td small {
   display: grid;
   gap: 12px;
 }
+.validated-context {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid #b9d7c5;
+  border-radius: 9px;
+  background: #f1faf4;
+  color: #16834d;
+}
+.validated-context > i {
+  margin-top: 1px;
+  font-size: 21px;
+}
+.validated-context strong,
+.validated-context span {
+  display: block;
+}
+.validated-context strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.validated-context span {
+  margin-top: 3px;
+  color: #52627d;
+  font-size: 12px;
+}
 .xml-validation-actions {
   position: relative;
   overflow: hidden;
