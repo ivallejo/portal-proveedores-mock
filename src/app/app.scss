@@ -739,6 +739,14 @@ td small {
   cursor: wait;
   opacity: 0.65;
 }
+.upload-zone-selected {
+  border-color: #b9d7c5;
+  background: #f1faf4;
+}
+.upload-zone-selected i,
+.upload-zone-selected strong {
+  color: #16834d;
+}
 .upload-zone i {
   font-size: 28px;
 }

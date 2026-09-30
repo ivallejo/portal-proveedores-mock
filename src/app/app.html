@@ -1225,14 +1225,30 @@
           </div>
         </div>
         <div *ngIf="isRole('Proveedor') && registrationStep() === 2" class="xml-upload-step">
-          <label class="upload-zone" [class.upload-zone-disabled]="xmlValidating()"
+          <label
+            class="upload-zone"
+            [class.upload-zone-disabled]="xmlValidating()"
+            [class.upload-zone-selected]="hasUploadedFile('XML')"
             ><input
               type="file"
               accept=".xml"
               [disabled]="xmlValidating()"
               (change)="addFiles($event, 'XML')"
-            /><i class="bx bx-code-alt"></i><strong>XML del comprobante</strong
-            ><small>XML principal · máximo 10 MB</small></label
+            /><i
+              class="bx"
+              [class.bx-code-alt]="!hasUploadedFile('XML')"
+              [class.bx-check-circle]="hasUploadedFile('XML')"
+            ></i
+            ><strong>{{
+              hasUploadedFile('XML') ? uploadedFileName('XML') : 'XML del comprobante'
+            }}</strong
+            ><small>{{
+              hasUploadedFile('XML')
+                ? xmlSummary()
+                  ? 'XML validado correctamente'
+                  : 'XML seleccionado · esperando validación'
+                : 'XML principal · máximo 10 MB'
+            }}</small></label
           >
           <div
             class="xml-validation-actions"
@@ -1340,8 +1356,8 @@
           ></i
           ><strong>Selecciona el PDF</strong><small>Solo PDF · máximo 10 MB</small></label
         >
-        <div *ngIf="uploadedFiles().length" class="file-list">
-          <div *ngFor="let file of uploadedFiles()">
+        <div *ngIf="additionalUploadedFiles().length" class="file-list">
+          <div *ngFor="let file of additionalUploadedFiles()">
             <i class="bx bx-file"></i
             ><span
               >{{ file.name

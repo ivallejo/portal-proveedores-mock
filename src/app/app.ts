@@ -107,6 +107,9 @@ export class App {
   readonly registrationKeyRequested = signal(false);
   readonly registration = { ruc: '20523682785', email: '', company: '' };
   readonly uploadedFiles = signal<{ name: string; kind: string; slot?: string }[]>([]);
+  readonly additionalUploadedFiles = computed(() =>
+    this.uploadedFiles().filter((file) => file.kind !== 'XML'),
+  );
   readonly xmlValidating = signal(false);
   readonly xmlValidationStage = signal(0);
   readonly xmlSummary = signal<{
@@ -506,6 +509,9 @@ export class App {
   }
   hasUploadedFile(kind: string): boolean {
     return this.uploadedFiles().some((file) => file.kind === kind);
+  }
+  uploadedFileName(kind: string): string {
+    return this.uploadedFiles().find((file) => file.kind === kind)?.name || '';
   }
   loadXmlScenario(prefix: 'E' | 'F'): void {
     const sequence = ++this.demoSequence;
