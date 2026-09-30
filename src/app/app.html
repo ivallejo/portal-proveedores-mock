@@ -1317,18 +1317,18 @@
           *ngIf="isRole('Proveedor') && xmlSummary() && registrationStep() === 3"
           class="upload-groups"
         >
-          <label class="upload-zone"
-            ><input type="file" accept=".pdf" (change)="addFiles($event, 'PDF')" /><i
-              class="bx bx-file"
-            ></i
-            ><strong>PDF del comprobante</strong><small>PDF principal · máximo 10 MB</small></label
-          >
           <label *ngIf="!isSunatDocument()" class="upload-zone upload-zone-warning"
             ><input type="file" accept=".xml" (change)="addFiles($event, 'CDR')" /><i
               class="bx bx-file-blank"
             ></i
             ><strong>CDR del comprobante</strong
             ><small>XML de constancia de recepción</small></label
+          >
+          <label class="upload-zone"
+            ><input type="file" accept=".pdf" (change)="addFiles($event, 'PDF')" /><i
+              class="bx bx-file"
+            ></i
+            ><strong>PDF del comprobante</strong><small>PDF principal · máximo 10 MB</small></label
           >
           <label class="upload-zone"
             ><input
