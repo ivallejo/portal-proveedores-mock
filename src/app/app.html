@@ -1245,7 +1245,7 @@
             ><small>{{
               hasUploadedFile('XML')
                 ? xmlSummary()
-                  ? 'XML validado correctamente'
+                  ? 'Archivo XML listo para continuar'
                   : 'XML seleccionado · esperando validación'
                 : 'XML principal · máximo 10 MB'
             }}</small></label
@@ -1253,8 +1253,7 @@
           <div
             class="xml-validation-actions"
             [class.is-loading]="xmlValidating()"
-            [class.validation-complete]="xmlSummary()"
-            *ngIf="hasUploadedFile('XML')"
+            *ngIf="hasUploadedFile('XML') && xmlValidating()"
             aria-live="polite"
           >
             <div class="xml-validation-header" *ngIf="xmlValidating()">
@@ -1262,15 +1261,6 @@
               <div>
                 <strong>Validando XML del comprobante</strong>
                 <small>Estamos verificando la información y los archivos requeridos.</small>
-              </div>
-            </div>
-            <div class="xml-validation-header" *ngIf="xmlSummary()">
-              <i class="bx bx-check-circle"></i>
-              <div>
-                <strong>XML validado correctamente</strong>
-                <small
-                  >La información fue leída. Puedes continuar con los archivos requeridos.</small
-                >
               </div>
             </div>
             <div class="xml-validation-stages">
