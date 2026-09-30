@@ -769,6 +769,10 @@ td small {
   border-color: #9eb3d7;
   background: #f1f5fc;
 }
+.xml-validation-actions.validation-complete {
+  border-color: #b9d7c5;
+  background: #f1faf4;
+}
 .xml-validation-actions span {
   display: flex;
   align-items: center;
@@ -788,6 +792,14 @@ td small {
 .xml-validation-header > i {
   color: #253c6d;
   font-size: 25px;
+}
+.xml-validation-actions.validation-complete .xml-validation-header > i,
+.xml-validation-actions.validation-complete .xml-validation-stages span.done i {
+  color: #16834d;
+}
+.xml-validation-actions.validation-complete .xml-validation-header strong,
+.xml-validation-actions.validation-complete .xml-validation-stages span.done {
+  color: #16834d;
 }
 .xml-validation-header strong,
 .xml-validation-header small {

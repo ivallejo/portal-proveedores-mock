@@ -487,7 +487,7 @@ export class App {
       descripcion: this.form.details.concepto || 'Servicio registrado en el comprobante XML',
     });
     this.xmlValidating.set(false);
-    this.xmlValidationStage.set(0);
+    this.xmlValidationStage.set(4);
     this.showAlert('success', 'XML validado correctamente. Ahora adjunta los archivos requeridos.');
   }
   startXmlValidation(): void {
