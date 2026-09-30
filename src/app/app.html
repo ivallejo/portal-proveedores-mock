@@ -1317,27 +1317,58 @@
           *ngIf="isRole('Proveedor') && xmlSummary() && registrationStep() === 3"
           class="upload-groups"
         >
-          <label *ngIf="!isSunatDocument()" class="upload-zone upload-zone-warning"
+          <label
+            *ngIf="!isSunatDocument()"
+            class="upload-zone upload-zone-warning"
+            [class.upload-zone-selected]="hasUploadedFile('CDR')"
             ><input type="file" accept=".xml" (change)="addFiles($event, 'CDR')" /><i
-              class="bx bx-file-blank"
+              class="bx"
+              [class.bx-file-blank]="!hasUploadedFile('CDR')"
+              [class.bx-check-circle]="hasUploadedFile('CDR')"
             ></i
-            ><strong>CDR del comprobante</strong
-            ><small>XML de constancia de recepción</small></label
+            ><strong>{{
+              hasUploadedFile('CDR') ? uploadedFileName('CDR') : 'CDR del comprobante'
+            }}</strong
+            ><small>{{
+              hasUploadedFile('CDR')
+                ? 'Archivo cargado correctamente'
+                : 'XML de constancia de recepción'
+            }}</small></label
           >
-          <label class="upload-zone"
+          <label class="upload-zone" [class.upload-zone-selected]="hasUploadedFile('PDF')"
             ><input type="file" accept=".pdf" (change)="addFiles($event, 'PDF')" /><i
-              class="bx bx-file"
+              class="bx"
+              [class.bx-file]="!hasUploadedFile('PDF')"
+              [class.bx-check-circle]="hasUploadedFile('PDF')"
             ></i
-            ><strong>PDF del comprobante</strong><small>PDF principal · máximo 10 MB</small></label
+            ><strong>{{
+              hasUploadedFile('PDF') ? uploadedFileName('PDF') : 'PDF del comprobante'
+            }}</strong
+            ><small>{{
+              hasUploadedFile('PDF')
+                ? 'Archivo cargado correctamente'
+                : 'PDF principal · máximo 10 MB'
+            }}</small></label
           >
-          <label class="upload-zone"
+          <label class="upload-zone" [class.upload-zone-selected]="supportFiles().length > 0"
             ><input
               type="file"
               multiple
               accept=".pdf,.xlsx,.xls,.doc,.docx"
               (change)="addFiles($event)"
-            /><i class="bx bx-folder-open"></i><strong>Documentos de sustento</strong
-            ><small>PDF, Excel o Word · puedes agregar varios</small></label
+            /><i
+              class="bx"
+              [class.bx-folder-open]="supportFiles().length === 0"
+              [class.bx-check-circle]="supportFiles().length > 0"
+            ></i
+            ><strong>{{
+              supportFiles().length ? supportFilesLabel() : 'Documentos de sustento'
+            }}</strong
+            ><small>{{
+              supportFiles().length
+                ? 'Archivos cargados correctamente'
+                : 'PDF, Excel o Word · puedes agregar varios'
+            }}</small></label
           >
         </div>
         <label *ngIf="isRole('Colaborador interno') && registrationStep() === 3" class="upload-zone"
@@ -1346,8 +1377,8 @@
           ></i
           ><strong>Selecciona el PDF</strong><small>Solo PDF · máximo 10 MB</small></label
         >
-        <div *ngIf="additionalUploadedFiles().length" class="file-list">
-          <div *ngFor="let file of additionalUploadedFiles()">
+        <div *ngIf="supportFiles().length" class="file-list">
+          <div *ngFor="let file of supportFiles()">
             <i class="bx bx-file"></i
             ><span
               >{{ file.name
