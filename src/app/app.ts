@@ -571,6 +571,10 @@ export class App {
     };
     this.navigate('registrar');
   }
+  loadOcScenario(valid: boolean): void {
+    this.form.oc = valid ? 'OC-45000128' : 'OC-FAIL-0001';
+    this.ocValidated.set(false);
+  }
   navigate(screen: Screen): void {
     this.error.set('');
     this.message.set('');

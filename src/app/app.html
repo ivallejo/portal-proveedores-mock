@@ -685,6 +685,15 @@
                 }}
               </div>
             </div>
+            <div class="demo-xml-scenarios oc-demo-scenarios">
+              <small>Casos demo para probar la validación de la OC:</small>
+              <button type="button" class="secondary" (click)="loadOcScenario(true)">
+                OC aprobada
+              </button>
+              <button type="button" class="secondary" (click)="loadOcScenario(false)">
+                OC no válida
+              </button>
+            </div>
           </div>
           <div *ngIf="form.tipo === 'Sin Orden de Compra'" class="conditional-box">
             <h3><i class="bx bx-file"></i> Documento sin OC</h3>
