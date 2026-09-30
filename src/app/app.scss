@@ -740,11 +740,14 @@ td small {
   opacity: 0.65;
 }
 .upload-zone-selected {
-  border-color: #f2b184;
-  background: #fff4eb;
+  border-color: #9eb3d7;
+  background: #f1f5fc;
 }
 .upload-zone-selected i,
 .upload-zone-selected strong {
+  color: #253c6d;
+}
+.upload-zone-selected i {
   color: #ed7624;
 }
 .upload-zone i {
@@ -806,8 +809,8 @@ td small {
   background: #f1f5fc;
 }
 .xml-validation-actions.validation-complete {
-  border-color: #f2b184;
-  background: #fff4eb;
+  border-color: #9eb3d7;
+  background: #f1f5fc;
 }
 .xml-validation-actions span {
   display: flex;
@@ -835,7 +838,7 @@ td small {
 }
 .xml-validation-actions.validation-complete .xml-validation-header strong,
 .xml-validation-actions.validation-complete .xml-validation-stages span.done {
-  color: #ed7624;
+  color: #253c6d;
 }
 .xml-validation-header strong,
 .xml-validation-header small {
