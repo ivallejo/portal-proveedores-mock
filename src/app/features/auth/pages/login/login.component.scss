@@ -11,7 +11,7 @@
   min-height: 100vh;
   padding: 5px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
   background: #f4f7fd;
 }
 
@@ -24,6 +24,9 @@
   border-radius: 22px 0 0 22px;
   color: #fff;
   background: #0d47a6;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
 }
 
 .login-visual::before {
@@ -172,9 +175,8 @@
   align-self: center;
   justify-self: center;
   width: min(540px, calc(100% - 72px));
-  max-height: calc(100vh - 110px);
   box-sizing: border-box;
-  overflow: auto;
+  overflow: visible;
   padding: 56px;
   border: 1px solid #f4f6fa;
   border-radius: 22px;
