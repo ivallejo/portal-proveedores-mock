@@ -23,13 +23,21 @@ export class MockUsersStore {
 
   constructor() {
     this.users.update((users) => {
-      const existingIds = new Set(users.map((user) => user.id));
-      return [...users, ...this.approverPool().filter((user) => !existingIds.has(user.id))].map(
+      const hasAdmin = users.some(
         (user) =>
-          ['DemoKey_123!', 'AdminLocal_12345!', '1234'].includes(user.password)
-            ? { ...user, password: '123456' }
-            : user,
+          user.id === 'mock-admin' || user.username === 'admin' || user.ruc === 'ADMIN-SYSTEM',
       );
+      const usersWithAdmin = hasAdmin ? users : [this.defaultAdmin(), ...users];
+      const existingIds = new Set(usersWithAdmin.map((user) => user.id));
+      return [
+        ...usersWithAdmin,
+        ...this.approverPool().filter((user) => !existingIds.has(user.id)),
+      ].map((user) => {
+        if (user.id === 'mock-admin') return { ...user, password: '123456' };
+        return ['DemoKey_123!', 'AdminLocal_12345!', '1234'].includes(user.password)
+          ? { ...user, password: '123456' }
+          : user;
+      });
     });
     this.persist();
   }
@@ -46,7 +54,9 @@ export class MockUsersStore {
     const value = identifier.trim().toLowerCase();
     return this.users().find(
       (user) =>
-        user.username.toLowerCase() === value || (!!user.ruc && user.ruc.toLowerCase() === value),
+        user.username.toLowerCase() === value ||
+        (!!user.ruc && user.ruc.toLowerCase() === value) ||
+        user.email.toLowerCase() === value,
     );
   }
 
@@ -60,6 +70,23 @@ export class MockUsersStore {
     const updated = { ...current, ...changes };
     this.save(updated);
     return updated;
+  }
+
+  private defaultAdmin(): MockUserRecord {
+    return {
+      id: 'mock-admin',
+      username: 'admin',
+      email: 'admin@naviera.local',
+      emails: ['admin@naviera.local'],
+      companyName: 'Administrador del sistema',
+      area: 'Administración',
+      ruc: 'ADMIN-SYSTEM',
+      password: '123456',
+      role: 'Administrador',
+      roles: ['Administrador'],
+      isActive: true,
+      createdAtUtc: new Date().toISOString(),
+    };
   }
 
   private persist(): void {

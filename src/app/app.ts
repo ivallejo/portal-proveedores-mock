@@ -8,6 +8,7 @@ import { ContabilizacionService } from './contabilizacion.service';
 import { DocumentoService } from './documento.service';
 import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
+import { ProfileComponent } from './profile.component';
 import { MockUsersStore } from './mock-users.store';
 import { SapProviderService } from './sap-provider.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
@@ -27,7 +28,7 @@ type Screen =
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, FormsModule, AdminUsersComponent],
+  imports: [CommonModule, FormsModule, AdminUsersComponent, ProfileComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
 })
@@ -240,17 +241,6 @@ export class App {
     Array.from({ length: this.adminPageCount() }, (_, index) => index + 1),
   );
   readonly userMenuOpen = signal(false);
-  readonly profileRecord = computed(() => {
-    const user = this.auth.user();
-    return user ? this.mockUsersStore.findByIdentifier(user.username) : undefined;
-  });
-  readonly profileEmails = computed(() => {
-    const record = this.profileRecord();
-    return record?.emails?.length ? record.emails : record?.email ? [record.email] : [];
-  });
-  readonly profileNewEmail = signal('');
-  readonly profileMessage = signal('');
-  readonly profileError = signal('');
   readonly accountingSociety = signal('');
   readonly accountingType = signal('');
   readonly selectedSpecial = signal<SpecialSubtype | ''>('');
@@ -556,47 +546,6 @@ export class App {
   toggleUserMenu(): void {
     this.userMenuOpen.update((open) => !open);
   }
-  addProfileEmail(): void {
-    const email = this.profileNewEmail().trim().toLowerCase();
-    const record = this.profileRecord();
-    if (!record) return;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      this.profileError.set('Ingresa un correo electrónico válido.');
-      this.profileMessage.set('');
-      return;
-    }
-    if (this.profileEmails().some((item) => item.toLowerCase() === email)) {
-      this.profileError.set('Ese correo ya está registrado en tu perfil.');
-      this.profileMessage.set('');
-      return;
-    }
-    this.mockUsersStore.update(record.id, {
-      emails: [...this.profileEmails(), email],
-    });
-    this.profileNewEmail.set('');
-    this.profileError.set('');
-    this.profileMessage.set('Correo agregado correctamente.');
-  }
-  setPrimaryProfileEmail(email: string): void {
-    const record = this.profileRecord();
-    if (!record || record.email === email) return;
-    this.mockUsersStore.update(record.id, { email });
-    this.profileMessage.set('Correo principal actualizado.');
-    this.profileError.set('');
-  }
-  removeProfileEmail(email: string): void {
-    const record = this.profileRecord();
-    if (!record || record.email === email) {
-      this.profileError.set('El correo principal no se puede eliminar.');
-      this.profileMessage.set('');
-      return;
-    }
-    this.mockUsersStore.update(record.id, {
-      emails: this.profileEmails().filter((item) => item !== email),
-    });
-    this.profileMessage.set('Correo eliminado correctamente.');
-    this.profileError.set('');
-  }
   logout(): void {
     this.auth.logout();
     this.screen.set('dashboard');
@@ -640,11 +589,6 @@ export class App {
     this.error.set('');
     this.message.set('');
     this.screen.set(screen);
-    if (screen === 'perfil') {
-      this.profileMessage.set('');
-      this.profileError.set('');
-      this.profileNewEmail.set('');
-    }
     if (screen === 'documentos') this.documentPage.set(1);
     if (screen === 'registrar') this.registrationStep.set(1);
     this.menuOpen.set(false);
