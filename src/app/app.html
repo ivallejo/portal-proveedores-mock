@@ -223,13 +223,7 @@
           [class.active]="screen() === 'usuarios'"
           (click)="navigate('usuarios')"
         >
-          <i class="nav-icon bx bx-user-plus"></i><span>Usuarios y roles</span></button
-        ><button
-          *ngIf="isRole('Administrador')"
-          [class.active]="screen() === 'workflows'"
-          (click)="navigate('workflows')"
-        >
-          <i class="nav-icon bx bx-git-branch"></i><span>Workflows de aprobación</span>
+          <i class="nav-icon bx bx-user-plus"></i><span>Usuarios y roles</span>
         </button>
       </nav>
       <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">
