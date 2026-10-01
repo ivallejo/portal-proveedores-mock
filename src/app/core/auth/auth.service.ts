@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, delay, of, throwError } from 'rxjs';
-import { Role, User } from './models';
-import { MockUsersStore } from './mock-users.store';
+import { Role, User } from '../../shared/models/models';
+import { MockUsersStore } from '../../shared/state/mock-users.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

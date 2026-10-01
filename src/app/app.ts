@@ -2,20 +2,24 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { AprobacionService } from './aprobacion.service';
-import { AuthService } from './auth.service';
-import { ContabilizacionService } from './contabilizacion.service';
-import { DocumentoService } from './documento.service';
-import { AdminService, AdminUser } from './admin.service';
-import { AdminUsersComponent } from './admin-users.component';
-import { ProfileComponent } from './profile.component';
-import { NavigationService, Screen } from './navigation.service';
-import { DashboardComponent } from './dashboard.component';
-import { MockUsersStore } from './mock-users.store';
-import { SapProviderService } from './sap-provider.service';
-import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
+import { AprobacionService } from './features/approvals/aprobacion.service';
+import { AuthService } from './core/auth/auth.service';
+import { ContabilizacionService } from './features/accounting/contabilizacion.service';
+import { DocumentoService } from './features/documents/documento.service';
+import { AdminService, AdminUser } from './features/administration/users/admin.service';
+import { AdminUsersComponent } from './features/administration/users/admin-users.component';
+import { ProfileComponent } from './features/profile/profile.component';
+import { NavigationService, Screen } from './core/navigation/navigation.service';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { MockUsersStore } from './shared/state/mock-users.store';
+import { SapProviderService } from './features/providers/sap-provider.service';
+import {
+  ApprovalLevel,
+  ApprovalWorkflow,
+  WorkflowService,
+} from './features/workflows/workflow.service';
 import { environment } from '../environments/environment';
-import { Documento, DocumentType, Role, SpecialSubtype, roleLabel } from './models';
+import { Documento, DocumentType, Role, SpecialSubtype, roleLabel } from './shared/models/models';
 
 @Component({
   selector: 'app-root',

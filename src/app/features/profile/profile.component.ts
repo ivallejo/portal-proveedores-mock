@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from './auth.service';
-import { MockUsersStore } from './mock-users.store';
-import { roleLabel } from './models';
+import { AuthService } from '../../core/auth/auth.service';
+import { MockUsersStore } from '../../shared/state/mock-users.store';
+import { roleLabel } from '../../shared/models/models';
 
 @Component({
   selector: 'app-profile',

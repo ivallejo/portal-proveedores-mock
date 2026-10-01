@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, delay, of, throwError } from 'rxjs';
-import { MockUsersStore } from './mock-users.store';
+import { MockUsersStore } from '../../shared/state/mock-users.store';
 
 export interface SapProvider {
   ruc: string;

@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Documento } from './models';
-import { DocumentoService } from './documento.service';
+import { Documento } from '../../shared/models/models';
+import { DocumentoService } from '../documents/documento.service';
 
 @Injectable({ providedIn: 'root' })
 export class AprobacionService {

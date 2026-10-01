@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { Documento } from './models';
-import { Screen } from './navigation.service';
+import { Documento } from '../../shared/models/models';
+import { Screen } from '../../core/navigation/navigation.service';
 
 @Component({
   selector: 'app-dashboard',
