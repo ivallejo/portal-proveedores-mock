@@ -1,0 +1,82 @@
+<div class="provider-shell" [class.menu-collapsed]="menuOpen()">
+  <header class="provider-header">
+    <button class="menu-toggle" (click)="menuOpen.set(!menuOpen())">
+      <i class="bx bx-menu"></i>
+    </button>
+    <div class="provider-brand">
+      <span class="brand-cube"></span>
+      <div><strong>NAVIERA TRANSOCEÁNICA S.A.</strong><b>Portal de Proveedores</b></div>
+    </div>
+    <div class="header-actions">
+      <label *ngIf="(auth.user()?.roles?.length || 0) > 1" class="active-role-selector">
+        <span>Trabajando como</span>
+        <select [ngModel]="auth.user()?.role" (ngModelChange)="setActiveRole($event)">
+          <option *ngFor="let role of auth.user()?.roles" [value]="role">
+            {{ roleLabel(role) }}
+          </option>
+        </select>
+      </label>
+      <div class="user-actions">
+        <button class="user-menu" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen()">
+          <i class="bx bx-user-circle"></i><span>{{ auth.user()?.name }}</span
+          ><i class="bx bx-chevron-down"></i>
+        </button>
+        <div *ngIf="userMenuOpen()" class="user-dropdown">
+          <button (click)="navigate('perfil')"><i class="bx bx-user"></i> Mi perfil</button>
+          <button (click)="logout()"><i class="bx bx-log-out"></i> Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <aside class="provider-sidebar">
+    <nav>
+      <button [class.active]="screen() === 'dashboard'" (click)="navigate('dashboard')">
+        <i class="nav-icon bx bx-home"></i><span>Inicio</span></button
+      ><button
+        *ngIf="isRole('Proveedor')"
+        [class.active]="screen() === 'registrar'"
+        (click)="navigate('registrar')"
+      >
+        <i class="nav-icon bx bx-file-plus"></i><span>Registrar documento</span></button
+      ><button
+        *ngIf="isRole('Proveedor')"
+        [class.active]="screen() === 'documentos'"
+        (click)="navigate('documentos')"
+      >
+        <i class="nav-icon bx bx-receipt"></i><span>Mis documentos</span></button
+      ><button
+        *ngIf="isRole('Colaborador interno')"
+        [class.active]="screen() === 'registrar'"
+        (click)="navigate('registrar')"
+      >
+        <i class="nav-icon bx bx-file-plus"></i><span>Documentos especiales</span></button
+      ><button
+        *ngIf="isRole('Área Usuaria')"
+        [class.active]="screen() === 'aprobaciones'"
+        (click)="navigate('aprobaciones')"
+      >
+        <i class="nav-icon bx bx-check-shield"></i><span>Aprobaciones</span></button
+      ><button
+        *ngIf="isRole('CxP')"
+        [class.active]="screen() === 'contabilizacion'"
+        (click)="navigate('contabilizacion')"
+      >
+        <i class="nav-icon bx bx-calculator"></i><span>Documentos contabilizados</span></button
+      ><button
+        *ngIf="isRole('Administrador')"
+        [class.active]="screen() === 'usuarios'"
+        (click)="navigate('usuarios')"
+      >
+        <i class="nav-icon bx bx-user-plus"></i><span>Usuarios y roles</span>
+      </button>
+    </nav>
+    <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">
+      <i class="bx bx-chevron-left"></i> Contraer menú</button
+    ><button class="logout-menu" (click)="logout()">
+      <i class="bx bx-log-out"></i> Cerrar sesión
+    </button>
+  </aside>
+  <main class="provider-content">
+    <ng-content></ng-content>
+  </main>
+</div>

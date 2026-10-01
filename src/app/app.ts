@@ -6,7 +6,6 @@ import { AprobacionService } from './features/approvals/services/aprobacion.serv
 import { AuthService } from './core/auth/auth.service';
 import { ContabilizacionService } from './features/accounting/services/contabilizacion.service';
 import { DocumentoService } from './features/documents/services/documento.service';
-import { AdminService, AdminUser } from './features/administration/users/services/admin.service';
 import { AdminUsersComponent } from './features/administration/users/pages/admin-users.component';
 import { ProfileComponent } from './features/profile/pages/profile/profile.component';
 import { NavigationService, Screen } from './core/navigation/navigation.service';
@@ -16,6 +15,8 @@ import { DocumentsListComponent } from './features/documents/pages/list/document
 import { WorkflowsPageComponent } from './features/workflows/pages/workflows-page.component';
 import { ApprovalsPageComponent } from './features/approvals/pages/approvals-page.component';
 import { AccountingPageComponent } from './features/accounting/pages/accounting-page.component';
+import { PortalShellComponent } from './core/layout/portal-shell.component';
+import { LoginComponent } from './features/auth/pages/login/login.component';
 import { MockUsersStore } from './shared/state/mock-users.store';
 import { SapProviderService } from './features/providers/services/sap-provider.service';
 import {
@@ -23,7 +24,6 @@ import {
   ApprovalWorkflow,
   WorkflowService,
 } from './features/workflows/services/workflow.service';
-import { environment } from '../environments/environment';
 import { Documento, Role, roleLabel } from './shared/models/models';
 
 @Component({
@@ -39,6 +39,8 @@ import { Documento, Role, roleLabel } from './shared/models/models';
     WorkflowsPageComponent,
     ApprovalsPageComponent,
     AccountingPageComponent,
+    PortalShellComponent,
+    LoginComponent,
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
@@ -50,13 +52,10 @@ export class App {
   readonly documentoService = inject(DocumentoService);
   readonly aprobacionService = inject(AprobacionService);
   readonly contabilizacionService = inject(ContabilizacionService);
-  readonly adminService = inject(AdminService);
   readonly mockUsersStore = inject(MockUsersStore);
-  readonly sapProviderService = inject(SapProviderService);
   readonly workflowService = inject(WorkflowService);
   readonly navigation = inject(NavigationService);
   readonly screen = this.navigation.screen;
-  readonly menuOpen = signal(false);
   readonly loading = signal(false);
   readonly message = signal('');
   readonly error = signal('');
@@ -89,43 +88,17 @@ export class App {
   readonly accountingPaginationPages = computed(() =>
     Array.from({ length: this.accountingPageCount() }, (_, index) => index + 1),
   );
-  readonly username = signal(environment.defaultLoginUsername);
-  readonly password = signal(environment.defaultLoginPassword);
   readonly filterStatus = signal('');
   readonly filterType = signal('');
   readonly documentQuery = signal('');
   readonly documentDateFrom = signal('');
   readonly documentDateTo = signal('');
-  readonly documentFilters = {
-    query: '',
-    type: '',
-    status: '',
-    dateFrom: '',
-    dateTo: '',
-  };
+  readonly documentFilters = { query: '', type: '', status: '', dateFrom: '', dateTo: '' };
   readonly documentPage = signal(1);
   readonly documentPageSize = signal(5);
   readonly approvalComment = signal<Record<number, string>>({});
   readonly approvalTarget = signal<Record<number, string>>({});
-  readonly accountingRoute = signal<Record<number, 'SAP' | 'Sertica'>>({});
-  readonly showPassword = signal(false);
-  readonly showRegistrationPassword = signal(false);
-  readonly showRegistrationConfirmPassword = signal(false);
-  readonly showRegistration = signal(false);
-  readonly registrationLoading = signal(false);
-  readonly registrationSapLoading = signal(false);
-  readonly registrationMessage = signal('');
-  readonly registrationCompleted = signal(false);
-  readonly registrationValidated = signal(false);
-  readonly registrationTermsAccepted = signal(false);
-  readonly registrationKeyRequested = signal(false);
-  readonly registration = { ruc: '20523682785', email: '', company: '' };
   readonly query = signal('');
-  readonly adminUsers = signal<AdminUser[]>([]);
-  readonly allAdminUsers = signal<AdminUser[]>([]);
-  readonly adminUserMessage = signal('');
-  readonly adminUserError = signal('');
-  readonly adminUserLoading = signal(false);
   readonly workflowSearch = signal('');
   readonly workflowPage = signal(1);
   readonly workflowPageSize = signal(5);
@@ -181,34 +154,6 @@ export class App {
   readonly workflowPaginationPages = computed(() =>
     Array.from({ length: this.workflowPageCount() }, (_, index) => index + 1),
   );
-  readonly adminUserSearch = signal('');
-  readonly adminUserPage = signal(1);
-  readonly adminUserPageSize = signal(10);
-  readonly showAdminUserForm = signal(false);
-  readonly adminRole = signal('Área Usuaria');
-  readonly newAdminUser = { username: '', email: '', companyName: '', ruc: '', password: '' };
-  readonly adminRoles = ['Proveedor', 'Área Usuaria', 'CxP', 'Administrador'];
-  readonly filteredAdminUsers = computed(() => {
-    const term = this.adminUserSearch().trim().toLowerCase();
-    return this.allAdminUsers().filter(
-      (user) =>
-        !term ||
-        `${user.companyName} ${user.email} ${user.ruc} ${user.roles.join(' ')}`
-          .toLowerCase()
-          .includes(term),
-    );
-  });
-  readonly adminPageCount = computed(() =>
-    Math.max(1, Math.ceil(this.filteredAdminUsers().length / this.adminUserPageSize())),
-  );
-  readonly adminUsersPage = computed(() => {
-    const start = (this.adminUserPage() - 1) * this.adminUserPageSize();
-    return this.filteredAdminUsers().slice(start, start + this.adminUserPageSize());
-  });
-  readonly adminPaginationPages = computed(() =>
-    Array.from({ length: this.adminPageCount() }, (_, index) => index + 1),
-  );
-  readonly userMenuOpen = signal(false);
   readonly accountingSociety = signal('');
   readonly accountingType = signal('');
   readonly providerDocuments = computed(() =>
@@ -259,252 +204,21 @@ export class App {
       ).length,
   );
 
-  login(): void {
-    this.error.set('');
-    this.loading.set(true);
-    this.auth.login(this.username(), this.password()).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.navigation.goTo(this.landingScreen());
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set(err.message);
-      },
-    });
-  }
-  quickLogin(username: string): void {
-    this.username.set(username);
-    this.password.set('123456');
-    this.login();
-  }
-  openRegistration(): void {
-    this.registrationMessage.set('');
-    this.registrationCompleted.set(false);
-    this.registrationValidated.set(false);
-    this.registrationTermsAccepted.set(false);
-    this.registrationKeyRequested.set(false);
-    this.registration.ruc = '20523682785';
-    this.registration.company = '';
-    this.registration.email = '';
-    this.showRegistration.set(true);
-  }
-  closeRegistration(): void {
-    this.showRegistration.set(false);
-    this.registrationMessage.set('');
-    this.registrationCompleted.set(false);
-    this.registrationValidated.set(false);
-    this.registrationKeyRequested.set(false);
-  }
-  onRegistrationRucChange(value: string): void {
-    this.registration.ruc = value;
-    if (this.registrationValidated()) {
-      this.registrationValidated.set(false);
-      this.registrationTermsAccepted.set(false);
-      this.registration.company = '';
-      this.registration.email = '';
-      this.registrationMessage.set('');
-    }
-  }
-  finishRegistration(): void {
-    this.username.set(this.registration.ruc);
-    this.password.set('');
-    this.showRegistration.set(false);
-    this.registrationCompleted.set(false);
-    this.registrationKeyRequested.set(false);
-  }
-  register(): void {
-    if (!this.registrationValidated()) {
-      this.registrationMessage.set('Primero valida el RUC para continuar.');
-      return;
-    }
-    if (!this.registrationTermsAccepted()) {
-      this.registrationMessage.set('Debes aceptar los términos y condiciones.');
-      return;
-    }
-    this.registrationLoading.set(true);
-    this.registrationMessage.set('');
-    this.sapProviderService
-      .requestAccessKey({
-        ruc: this.registration.ruc,
-        companyName: this.registration.company,
-        email: this.registration.email,
-      })
-      .subscribe({
-        next: () => {
-          this.registrationLoading.set(false);
-          this.registrationKeyRequested.set(true);
-        },
-        error: (err) => {
-          this.registrationLoading.set(false);
-          this.registrationMessage.set(
-            err.error?.message || 'No fue posible completar el registro.',
-          );
-        },
-      });
-  }
-  validateRegistrationRuc(): void {
-    this.registrationMessage.set('');
-    this.registrationValidated.set(false);
-    this.registration.ruc = this.registration.ruc.replace(/\D/g, '');
-    if (!this.registration.ruc) {
-      this.registrationMessage.set('Ingresa el RUC para continuar.');
-      return;
-    }
-    if (this.registration.ruc.length !== 11) {
-      this.registrationMessage.set('El RUC debe tener 11 dígitos.');
-      return;
-    }
-    this.registrationSapLoading.set(true);
-    this.sapProviderService.lookupByRuc(this.registration.ruc).subscribe({
-      next: (provider) => {
-        this.registration.company = provider.companyName;
-        this.registration.email = provider.email;
-        this.registrationValidated.set(true);
-        this.registrationSapLoading.set(false);
-      },
-      error: (error) => {
-        this.registrationSapLoading.set(false);
-        this.registrationMessage.set(
-          error.message || 'No encontramos información para el RUC indicado.',
-        );
-      },
-    });
-  }
-  toggleUserMenu(): void {
-    this.userMenuOpen.update((open) => !open);
-  }
   logout(): void {
     this.auth.logout();
     this.navigation.goTo('dashboard');
-    this.username.set(environment.defaultLoginUsername);
-    this.password.set(environment.defaultLoginPassword);
-    this.showPassword.set(false);
-    this.userMenuOpen.set(false);
+    this.navigation.goTo('dashboard');
   }
   navigate(screen: Screen): void {
     this.error.set('');
     this.message.set('');
     this.navigation.goTo(screen);
     if (screen === 'documentos') this.documentPage.set(1);
-    this.menuOpen.set(false);
     if (screen === 'aprobaciones') this.loadApprovals();
     if (screen === 'contabilizacion') this.loadAccounting();
-    if (screen === 'usuarios') this.loadAdminUsers();
-  }
-  landingScreen(): Screen {
-    const role = this.auth.user()?.role;
-    if (role === 'Colaborador interno') return 'registrar';
-    if (role === 'Área Usuaria') return 'aprobaciones';
-    if (role === 'CxP') return 'contabilizacion';
-    return 'dashboard';
-  }
-  loadAdminUsers(): void {
-    this.adminUserLoading.set(true);
-    this.adminService.list().subscribe({
-      next: (users) => {
-        this.allAdminUsers.set(users);
-        this.adminUserPage.set(1);
-        this.refreshAdminUsersPage();
-        this.adminUserLoading.set(false);
-      },
-      error: (err) => {
-        this.adminUserLoading.set(false);
-        this.adminUserError.set(err.error?.message || 'No fue posible cargar los usuarios.');
-      },
-    });
-  }
-  setAdminUserSearch(value: string): void {
-    this.adminUserSearch.set(value);
-    this.adminUserPage.set(1);
-    this.refreshAdminUsersPage();
-  }
-  setAdminUserPage(page: number): void {
-    this.adminUserPage.set(Math.min(Math.max(page, 1), this.adminPageCount()));
-    this.refreshAdminUsersPage();
-  }
-  setAdminUserPageSize(size: number | string): void {
-    this.adminUserPageSize.set(Number(size));
-    this.adminUserPage.set(1);
-    this.refreshAdminUsersPage();
-  }
-  private refreshAdminUsersPage(): void {
-    const start = (this.adminUserPage() - 1) * this.adminUserPageSize();
-    this.adminUsers.set(this.filteredAdminUsers().slice(start, start + this.adminUserPageSize()));
-  }
-  openAdminUserForm(): void {
-    this.adminUserMessage.set('');
-    this.adminUserError.set('');
-    this.showAdminUserForm.set(true);
-  }
-  closeAdminUserForm(): void {
-    this.showAdminUserForm.set(false);
-    this.adminUserError.set('');
-  }
-  createAdminUser(): void {
-    this.adminUserMessage.set('');
-    this.adminUserError.set('');
-    if (
-      !this.newAdminUser.username ||
-      !this.newAdminUser.email ||
-      !this.newAdminUser.companyName ||
-      !this.newAdminUser.ruc ||
-      !this.newAdminUser.password
-    ) {
-      this.adminUserError.set('Completa todos los campos para crear el usuario.');
-      return;
-    }
-    this.adminUserLoading.set(true);
-    this.adminService
-      .create({ ...this.newAdminUser, roles: [this.adminRole() as Role] })
-      .subscribe({
-        next: () => {
-          this.adminUserLoading.set(false);
-          this.adminUserMessage.set('Usuario creado correctamente.');
-          this.newAdminUser.username = '';
-          this.newAdminUser.email = '';
-          this.newAdminUser.companyName = '';
-          this.newAdminUser.ruc = '';
-          this.newAdminUser.password = '';
-          this.showAdminUserForm.set(false);
-          this.loadAdminUsers();
-        },
-        error: (err) => {
-          this.adminUserLoading.set(false);
-          this.adminUserError.set(err.error?.message || 'No fue posible crear el usuario.');
-        },
-      });
-  }
-  changeAdminRole(user: AdminUser, role: string): void {
-    this.adminService.assignRole(user.id, role).subscribe({
-      next: (updated) => {
-        this.allAdminUsers.update((users) =>
-          users.map((item) => (item.id === updated.id ? updated : item)),
-        );
-        this.refreshAdminUsersPage();
-      },
-      error: (err) =>
-        this.adminUserError.set(err.error?.message || 'No fue posible actualizar el rol.'),
-    });
-  }
-  toggleAdminStatus(user: AdminUser): void {
-    this.adminService.setStatus(user.id, !user.isActive).subscribe({
-      next: (updated) => {
-        this.allAdminUsers.update((users) =>
-          users.map((item) => (item.id === updated.id ? updated : item)),
-        );
-        this.refreshAdminUsersPage();
-      },
-      error: (err) =>
-        this.adminUserError.set(err.error?.message || 'No fue posible actualizar el estado.'),
-    });
   }
   isRole(role: Role): boolean {
     return this.auth.user()?.role === role;
-  }
-  setActiveRole(role: Role): void {
-    this.auth.setActiveRole(role);
-    this.navigation.goTo(this.landingScreen());
   }
   loadApprovals(): void {
     this.loading.set(true);

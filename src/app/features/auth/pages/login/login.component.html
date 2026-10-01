@@ -1,0 +1,151 @@
+<main *ngIf="!auth.user(); else portal" class="login-page">
+  <div class="login-visual" aria-hidden="true"></div>
+  <section
+    *ngIf="showRegistration() && !registrationKeyRequested(); else loginCard"
+    class="login-card registration-card"
+  >
+    <button class="back-link" type="button" (click)="closeRegistration()">
+      <i class="bx bx-arrow-back"></i><span>Volver al inicio de sesión</span>
+    </button>
+    <div class="login-logo">
+      <span></span>
+      <div><b>Portal de Proveedores</b></div>
+    </div>
+    <h1>Registro Online</h1>
+    <p class="muted">
+      Valida tu RUC para consultar tus datos registrados en SAP y solicitar tu clave de acceso.
+    </p>
+    <form (ngSubmit)="register()">
+      <label
+        >RUC *
+        <div class="registration-ruc-field">
+          <input
+            [ngModel]="registration.ruc"
+            (ngModelChange)="onRegistrationRucChange($event)"
+            name="ruc"
+            placeholder="Ingresa tu RUC"
+            maxlength="14"
+            inputmode="numeric"
+            [disabled]="registrationSapLoading()"
+          /><button
+            class="secondary registration-validate-button"
+            [class.validation-success]="registrationValidated()"
+            [class.validation-loading]="registrationSapLoading()"
+            type="button"
+            [disabled]="registrationSapLoading()"
+            (click)="validateRegistrationRuc()"
+          >
+            {{
+              registrationSapLoading()
+                ? 'Validando...'
+                : registrationValidated()
+                  ? 'Volver a validar'
+                  : 'Validar'
+            }}
+          </button>
+        </div></label
+      >
+      <div *ngIf="registrationValidated()" class="sap-provider-summary">
+        <i class="bx bx-check-circle"></i>
+        <div>
+          <small>Nombre / razón social</small>
+          <strong>{{ registration.company }}</strong>
+          <small>Correo</small>
+          <span>{{ registration.email }}</span>
+        </div>
+      </div>
+      <div *ngIf="registrationValidated()" class="terms-box">
+        <label class="terms-check"
+          ><input
+            type="checkbox"
+            [ngModel]="registrationTermsAccepted()"
+            (ngModelChange)="registrationTermsAccepted.set($event)"
+            name="termsAccepted"
+          />
+          <span>Acepto los términos y condiciones</span></label
+        >
+        <p>
+          La empresa se compromete a guardar absoluta reserva y mantener la confidencialidad de la
+          información personal de sus proveedores respetando las disposiciones contenidas en la Ley
+          N°29733 Ley de Protección de datos personales.
+        </p>
+      </div>
+      <p *ngIf="registrationMessage()" class="form-message success-message">
+        {{ registrationMessage() }}
+      </p>
+      <button class="primary full" [disabled]="registrationLoading() || !registrationValidated()">
+        {{ registrationLoading() ? 'Enviando clave...' : 'Solicitar clave' }}
+      </button>
+    </form>
+  </section>
+  <section *ngIf="registrationKeyRequested()" class="login-card registration-success-card">
+    <div class="success-mark"><i class="bx bx-check-double"></i></div>
+    <p class="eyebrow">REGISTRO COMPLETADO</p>
+    <h1>¡Cuenta creada!</h1>
+    <p class="muted">
+      Hemos enviado una clave temporal al correo registrado en SAP. Revisa tu bandeja de entrada
+      para continuar.
+    </p>
+    <div class="registered-email">
+      <small>Clave enviada a</small><strong>{{ registration.email }}</strong>
+    </div>
+    <button class="primary full" type="button" (click)="finishRegistration()">
+      Ir a iniciar sesión
+    </button>
+  </section>
+  <ng-template #loginCard
+    ><section *ngIf="!showRegistration()" class="login-card">
+      <div class="login-logo">
+        <span></span>
+        <div><b>Portal de Proveedores</b></div>
+      </div>
+      <p class="eyebrow">NAVIERA TRANSOCEÁNICA S.A.</p>
+      <h1>Bienvenido</h1>
+      <p class="muted">Ingresa para gestionar tus documentos de cobro.</p>
+      <form (ngSubmit)="login()">
+        <label
+          >RUC o usuario<input
+            [ngModel]="username()"
+            (ngModelChange)="username.set($event)"
+            name="username"
+            autocomplete="username"
+            placeholder="Ingresa tu RUC o usuario" /></label
+        ><label
+          >Contraseña
+          <div class="password-field">
+            <input
+              [ngModel]="password()"
+              (ngModelChange)="password.set($event)"
+              name="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              autocomplete="current-password"
+              placeholder="Ingresa tu contraseña"
+            /><button
+              type="button"
+              class="password-toggle"
+              (click)="showPassword.set(!showPassword())"
+              [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <i class="bx" [class.bx-show]="!showPassword()" [class.bx-hide]="showPassword()"></i>
+            </button></div
+        ></label>
+        <p *ngIf="error()" class="form-message">{{ error() }}</p>
+        <button class="primary full" [disabled]="loading()">
+          {{ loading() ? 'Validando...' : 'Ingresar' }}
+        </button>
+      </form>
+      <button class="text-button register-link" type="button" (click)="openRegistration()">
+        ¿Aún no tienes una cuenta? <b>Crear cuenta</b>
+      </button>
+      <div class="demo-access">
+        <small>Accesos demo</small>
+        <div>
+          <button type="button" (click)="quickLogin('proveedor')">Proveedor externo</button
+          ><button type="button" (click)="quickLogin('area')">Aprobador de área</button
+          ><button type="button" (click)="quickLogin('cxp')">Gestor de cuentas por pagar</button>
+        </div>
+        <span>Contraseña: 123456</span>
+      </div>
+    </section></ng-template
+  >
+</main>
