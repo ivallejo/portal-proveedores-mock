@@ -207,7 +207,6 @@ export class App {
   logout(): void {
     this.auth.logout();
     this.navigation.goTo('dashboard');
-    this.navigation.goTo('dashboard');
   }
   navigate(screen: Screen): void {
     this.error.set('');
