@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { AdminService, AdminUser } from './admin.service';
-import { Role, roleLabel } from '../../../shared/models/models';
+import { AdminService, AdminUser } from '../services/admin.service';
+import { Role, roleLabel } from '../../../../shared/models/models';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-users.component.html',
-  styleUrls: ['../../../app.scss', '../../../theme.scss', '../../../readability.scss'],
+  styleUrls: ['../../../../app.scss', '../../../../theme.scss', '../../../../readability.scss'],
 })
 export class AdminUsersComponent {
   readonly roleLabel = roleLabel;

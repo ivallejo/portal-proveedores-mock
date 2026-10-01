@@ -2,22 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { AprobacionService } from './features/approvals/aprobacion.service';
+import { AprobacionService } from './features/approvals/services/aprobacion.service';
 import { AuthService } from './core/auth/auth.service';
-import { ContabilizacionService } from './features/accounting/contabilizacion.service';
-import { DocumentoService } from './features/documents/documento.service';
-import { AdminService, AdminUser } from './features/administration/users/admin.service';
-import { AdminUsersComponent } from './features/administration/users/admin-users.component';
-import { ProfileComponent } from './features/profile/profile.component';
+import { ContabilizacionService } from './features/accounting/services/contabilizacion.service';
+import { DocumentoService } from './features/documents/services/documento.service';
+import { AdminService, AdminUser } from './features/administration/users/services/admin.service';
+import { AdminUsersComponent } from './features/administration/users/pages/admin-users.component';
+import { ProfileComponent } from './features/profile/pages/profile/profile.component';
 import { NavigationService, Screen } from './core/navigation/navigation.service';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
 import { MockUsersStore } from './shared/state/mock-users.store';
-import { SapProviderService } from './features/providers/sap-provider.service';
+import { SapProviderService } from './features/providers/services/sap-provider.service';
 import {
   ApprovalLevel,
   ApprovalWorkflow,
   WorkflowService,
-} from './features/workflows/workflow.service';
+} from './features/workflows/services/workflow.service';
 import { environment } from '../environments/environment';
 import { Documento, DocumentType, Role, SpecialSubtype, roleLabel } from './shared/models/models';
 

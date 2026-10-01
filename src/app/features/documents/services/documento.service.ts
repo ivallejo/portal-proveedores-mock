@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
-import { Documento, DocumentStatus, RegistroDocumentoDto } from '../../shared/models/models';
+import { Documento, DocumentStatus, RegistroDocumentoDto } from '../../../shared/models/models';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentoService {

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, delay, of, throwError } from 'rxjs';
-import { Role } from '../../../shared/models/models';
-import { MockUsersStore } from '../../../shared/state/mock-users.store';
+import { Role } from '../../../../shared/models/models';
+import { MockUsersStore } from '../../../../shared/state/mock-users.store';
 
 export interface AdminUser {
   id: string;

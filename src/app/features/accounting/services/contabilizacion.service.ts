@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
-import { Documento } from '../../shared/models/models';
-import { DocumentoService } from '../documents/documento.service';
+import { Documento } from '../../../shared/models/models';
+import { DocumentoService } from '../../documents/services/documento.service';
 
 export interface Incidencia {
   id: number;
