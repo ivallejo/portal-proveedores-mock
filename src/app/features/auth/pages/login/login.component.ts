@@ -11,6 +11,7 @@ import { environment } from '../../../../../environments/environment';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   readonly auth = inject(AuthService);
