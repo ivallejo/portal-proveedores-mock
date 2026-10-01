@@ -9,22 +9,12 @@ import { DocumentoService } from './documento.service';
 import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
 import { ProfileComponent } from './profile.component';
+import { NavigationService, Screen } from './navigation.service';
 import { MockUsersStore } from './mock-users.store';
 import { SapProviderService } from './sap-provider.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
 import { environment } from '../environments/environment';
 import { Documento, DocumentType, Role, SpecialSubtype, roleLabel } from './models';
-
-type Screen =
-  | 'dashboard'
-  | 'registrar'
-  | 'documentos'
-  | 'consultas'
-  | 'perfil'
-  | 'usuarios'
-  | 'workflows'
-  | 'aprobaciones'
-  | 'contabilizacion';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +33,8 @@ export class App {
   readonly mockUsersStore = inject(MockUsersStore);
   readonly sapProviderService = inject(SapProviderService);
   readonly workflowService = inject(WorkflowService);
-  readonly screen = signal<Screen>('dashboard');
+  readonly navigation = inject(NavigationService);
+  readonly screen = this.navigation.screen;
   readonly menuOpen = signal(false);
   readonly loading = signal(false);
   readonly message = signal('');
@@ -341,7 +332,7 @@ export class App {
           this.form.oc = '';
           this.selectedSpecial.set('');
         }
-        this.screen.set(this.landingScreen());
+        this.navigation.goTo(this.landingScreen());
       },
       error: (err) => {
         this.loading.set(false);
@@ -548,7 +539,7 @@ export class App {
   }
   logout(): void {
     this.auth.logout();
-    this.screen.set('dashboard');
+    this.navigation.goTo('dashboard');
     this.username.set(environment.defaultLoginUsername);
     this.password.set(environment.defaultLoginPassword);
     this.showPassword.set(false);
@@ -588,7 +579,7 @@ export class App {
   navigate(screen: Screen): void {
     this.error.set('');
     this.message.set('');
-    this.screen.set(screen);
+    this.navigation.goTo(screen);
     if (screen === 'documentos') this.documentPage.set(1);
     if (screen === 'registrar') this.registrationStep.set(1);
     this.menuOpen.set(false);
@@ -708,7 +699,7 @@ export class App {
   }
   setActiveRole(role: Role): void {
     this.auth.setActiveRole(role);
-    this.screen.set(this.landingScreen());
+    this.navigation.goTo(this.landingScreen());
   }
   loadApprovals(): void {
     this.loading.set(true);
