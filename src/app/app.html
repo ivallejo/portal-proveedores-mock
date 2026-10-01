@@ -28,14 +28,8 @@
       (navigateTo)="portal.navigate($event)"
     ></app-registration>
     <app-documents-list *ngIf="portal.screen() === 'documentos'"></app-documents-list>
-    <app-approvals-page
-      *ngIf="portal.screen() === 'aprobaciones'"
-      [controller]="portal"
-    ></app-approvals-page>
-    <app-accounting-page
-      *ngIf="portal.screen() === 'contabilizacion'"
-      [controller]="portal"
-    ></app-accounting-page>
+    <app-approvals-page *ngIf="portal.screen() === 'aprobaciones'"></app-approvals-page>
+    <app-accounting-page *ngIf="portal.screen() === 'contabilizacion'"></app-accounting-page>
     <app-admin-users
       *ngIf="portal.screen() === 'usuarios'"
       (close)="portal.navigate('dashboard')"
