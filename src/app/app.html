@@ -1,38 +1,44 @@
-<app-login *ngIf="!auth.user(); else portal"></app-login>
-<ng-template #portal>
-  <app-portal-shell [error]="error()" (navigateTo)="navigate($event)" (loggedOut)="logout()">
-    <div *ngIf="error()" class="toast error"><i class="bx bx-error-circle"></i>{{ error() }}</div>
+<app-login *ngIf="!portal.auth.user(); else portalView"></app-login>
+<ng-template #portalView>
+  <app-portal-shell
+    [error]="portal.error()"
+    (navigateTo)="portal.navigate($event)"
+    (loggedOut)="portal.logout()"
+  >
+    <div *ngIf="portal.error()" class="toast error">
+      <i class="bx bx-error-circle"></i>{{ portal.error() }}
+    </div>
     <app-dashboard
-      *ngIf="screen() === 'dashboard'"
-      [userName]="auth.user()?.name || ''"
-      [isProvider]="isRole('Proveedor')"
-      [documents]="providerDocuments()"
-      [loading]="loading()"
-      [pendingCount]="pendingCount()"
-      [approvedCount]="approvedCount()"
-      [rejectedCount]="rejectedCount()"
-      (navigate)="navigate($event)"
+      *ngIf="portal.screen() === 'dashboard'"
+      [userName]="portal.auth.user()?.name || ''"
+      [isProvider]="portal.isRole('Proveedor')"
+      [documents]="portal.providerDocuments()"
+      [loading]="portal.loading()"
+      [pendingCount]="portal.pendingCount()"
+      [approvedCount]="portal.approvedCount()"
+      [rejectedCount]="portal.rejectedCount()"
+      (navigate)="portal.navigate($event)"
     ></app-dashboard>
-    <section *ngIf="screen() === 'perfil'" class="page profile-page">
+    <section *ngIf="portal.screen() === 'perfil'" class="page profile-page">
       <app-profile></app-profile>
     </section>
-    <app-workflows-page *ngIf="screen() === 'workflows'" [controller]="this"></app-workflows-page>
+    <app-workflows-page *ngIf="portal.screen() === 'workflows'"></app-workflows-page>
     <app-registration
-      *ngIf="screen() === 'registrar'"
-      (navigateTo)="navigate($event)"
+      *ngIf="portal.screen() === 'registrar'"
+      (navigateTo)="portal.navigate($event)"
     ></app-registration>
-    <app-documents-list *ngIf="screen() === 'documentos'" [controller]="this"></app-documents-list>
+    <app-documents-list *ngIf="portal.screen() === 'documentos'"></app-documents-list>
     <app-approvals-page
-      *ngIf="screen() === 'aprobaciones'"
-      [controller]="this"
+      *ngIf="portal.screen() === 'aprobaciones'"
+      [controller]="portal"
     ></app-approvals-page>
     <app-accounting-page
-      *ngIf="screen() === 'contabilizacion'"
-      [controller]="this"
+      *ngIf="portal.screen() === 'contabilizacion'"
+      [controller]="portal"
     ></app-accounting-page>
     <app-admin-users
-      *ngIf="screen() === 'usuarios'"
-      (close)="navigate('dashboard')"
+      *ngIf="portal.screen() === 'usuarios'"
+      (close)="portal.navigate('dashboard')"
     ></app-admin-users>
   </app-portal-shell>
 </ng-template>

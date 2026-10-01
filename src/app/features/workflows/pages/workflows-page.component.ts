@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PortalFacade } from '../../../core/state/portal.facade';
 
 @Component({
   selector: 'app-workflows-page',
@@ -9,5 +10,5 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './workflows-page.component.html',
 })
 export class WorkflowsPageComponent {
-  @Input({ required: true }) controller!: any;
+  readonly controller = inject(PortalFacade);
 }
