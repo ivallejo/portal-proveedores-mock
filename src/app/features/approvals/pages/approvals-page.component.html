@@ -1,0 +1,57 @@
+<section *ngIf="controller.screen() === 'aprobaciones'" class="page">
+  <div class="page-heading">
+    <div>
+      <span class="eyebrow">ÁREA USUARIA</span>
+      <h1>Bandeja de aprobaciones</h1>
+      <p>Revisa los documentos que requieren tu aprobación.</p>
+    </div>
+    <span class="counter">{{ controller.approvalItems().length }} pendientes</span>
+  </div>
+  <section class="panel table-panel">
+    <div *ngIf="controller.loading()" class="skeleton-table"><i></i><i></i><i></i></div>
+    <div *ngIf="!controller.loading() && !controller.approvalItems().length" class="empty-state">
+      <i class="bx bx-check-circle"></i>
+      <h3>No hay documentos pendientes</h3>
+      <p>La bandeja está al día.</p>
+    </div>
+    <div *ngIf="!controller.loading()" class="approval-list">
+      <article *ngFor="let item of controller.approvalItems()" class="approval-card">
+        <div class="approval-top">
+          <div>
+            <strong>{{ item.numero }}</strong
+            ><small>{{ item.proveedor }} · {{ item.tipo }}</small>
+          </div>
+          <span class="status-badge pendiente-de-aprobación">{{
+            item.escalated ? 'Escalado' : 'Pendiente de aprobación'
+          }}</span>
+        </div>
+        <div class="approval-data">
+          <span
+            >Importe <b>S/ {{ item.importe | number: '1.2-2' }}</b></span
+          ><span
+            >Sociedad <b>{{ item.sociedad }}</b></span
+          ><span
+            >Aprobador <b>{{ item.aprobador }}</b></span
+          >
+        </div>
+        <div class="approval-actions">
+          <input
+            [ngModel]="controller.approvalComment()[item.id] || ''"
+            (ngModelChange)="controller.setComment(item.id, $event)"
+            placeholder="Comentario obligatorio para rechazar"
+          /><select
+            [ngModel]="controller.approvalTarget()[item.id] || ''"
+            (ngModelChange)="controller.setApprovalTarget(item.id, $event)"
+          >
+            <option value="">Derivar a...</option>
+            <option>Jefatura de Área</option>
+            <option>María Torres</option>
+            <option>Carlos Mendoza</option></select
+          ><button class="secondary" (click)="controller.derive(item.id)">Derivar</button
+          ><button class="secondary" (click)="controller.reject(item.id)">Rechazar</button
+          ><button class="primary" (click)="controller.approve(item.id)">Aprobar</button>
+        </div>
+      </article>
+    </div>
+  </section>
+</section>

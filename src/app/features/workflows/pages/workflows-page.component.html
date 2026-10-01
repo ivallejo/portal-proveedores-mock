@@ -1,0 +1,287 @@
+<section *ngIf="controller.screen() === 'workflows'" class="page workflow-page">
+  <div class="page-heading">
+    <div>
+      <h1>Workflows de aprobación</h1>
+      <p>Define las reglas y aprobadores para cada tipo de documento.</p>
+    </div>
+    <button class="primary" (click)="controller.openWorkflowForm()">
+      <i class="bx bx-plus"></i> Nuevo workflow
+    </button>
+  </div>
+  <section class="panel table-panel admin-users-table workflow-table">
+    <div class="panel-title">
+      <div>
+        <h2>Workflows configurados</h2>
+        <p>{{ controller.workflowService.workflows().length }} workflows en el sistema</p>
+      </div>
+      <div class="admin-inline-controls">
+        <label class="page-size-select"
+          >Mostrar<select
+            [ngModel]="controller.workflowPageSize()"
+            (ngModelChange)="controller.setWorkflowPageSize($event)"
+          >
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          registros</label
+        ><label class="admin-search"
+          ><i class="bx bx-search"></i><span>Buscar:</span
+          ><input
+            placeholder="Nombre o tipo de documento"
+            [ngModel]="controller.workflowSearch()"
+            (ngModelChange)="controller.setWorkflowSearch($event)"
+        /></label>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Workflow</th>
+            <th>Condición</th>
+            <th>Aprobadores</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let workflow of controller.workflowsPage()">
+            <td>
+              <strong>{{ workflow.name }}</strong
+              ><small>{{ workflow.description }}</small>
+            </td>
+            <td>
+              <strong>{{ workflow.documentType }}</strong
+              ><small>{{ workflow.society }}</small>
+            </td>
+            <td>
+              <div class="workflow-approvers">
+                <div *ngFor="let level of workflow.approvalLevels; let i = index">
+                  <strong>Nivel {{ i + 1 }}</strong>
+                  <small>{{
+                    level.rule === 'all' ? 'Todos deben aprobar' : 'Cualquiera puede aprobar'
+                  }}</small>
+                  <span *ngFor="let approver of level.approvers">{{
+                    controller.roleLabel(approver)
+                  }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="status-toggle"
+                [class.active]="workflow.isActive"
+                role="switch"
+                [attr.aria-checked]="workflow.isActive"
+                (click)="controller.toggleWorkflow(workflow)"
+              >
+                <span></span>
+              </button>
+            </td>
+            <td>
+              <button
+                class="icon-button"
+                title="Editar workflow"
+                (click)="controller.openWorkflowForm(workflow)"
+              >
+                <i class="bx bx-edit"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="!controller.filteredWorkflows().length" class="empty-table">
+      No encontramos workflows con ese criterio.
+    </div>
+    <div class="admin-pagination admin-pagination-bottom">
+      <span
+        >Página {{ controller.workflowPage() }} de {{ controller.workflowPageCount() }} ·
+        {{ controller.filteredWorkflows().length }} workflows</span
+      >
+      <div>
+        <button
+          class="icon-button"
+          [disabled]="controller.workflowPage() === 1"
+          (click)="controller.setWorkflowPage(controller.workflowPage() - 1)"
+          aria-label="Página anterior"
+        >
+          <i class="bx bx-chevron-left"></i>
+        </button>
+        <button
+          *ngFor="let page of controller.workflowPaginationPages()"
+          class="page-button"
+          [class.active]="page === controller.workflowPage()"
+          (click)="controller.setWorkflowPage(page)"
+        >
+          {{ page }}
+        </button>
+        <button
+          class="icon-button"
+          [disabled]="controller.workflowPage() === controller.workflowPageCount()"
+          (click)="controller.setWorkflowPage(controller.workflowPage() + 1)"
+          aria-label="Página siguiente"
+        >
+          <i class="bx bx-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+</section>
+<div *ngIf="controller.showWorkflowForm()" class="modal-backdrop workflow-modal-backdrop">
+  <section class="user-modal panel workflow-modal">
+    <div class="panel-title">
+      <div>
+        <h2>{{ controller.editingWorkflow() ? 'Editar workflow' : 'Nuevo workflow' }}</h2>
+        <p>Configura la condición y los aprobadores en orden.</p>
+      </div>
+      <button class="icon-button" (click)="controller.closeWorkflowForm()">
+        <i class="bx bx-x"></i>
+      </button>
+    </div>
+    <div *ngIf="controller.workflowError()" class="toast error">
+      {{ controller.workflowError() }}
+    </div>
+    <div class="form-grid">
+      <label
+        >Nombre del workflow *<input
+          [(ngModel)]="controller.workflowForm.name"
+          placeholder="Ej. Aprobación de servicios"
+      /></label>
+      <label
+        >Sociedad<select [(ngModel)]="controller.workflowForm.society">
+          <option *ngFor="let society of controller.workflowSocieties">{{ society }}</option>
+        </select></label
+      >
+      <label
+        >Tipo de documento<select [(ngModel)]="controller.workflowForm.documentType">
+          <option *ngFor="let type of controller.workflowDocumentTypes">{{ type }}</option>
+        </select></label
+      >
+      <label
+        >Descripción<input
+          [(ngModel)]="controller.workflowForm.description"
+          placeholder="Describe cuándo aplica"
+      /></label>
+    </div>
+    <div class="role-selector workflow-levels">
+      <div class="role-selector-heading">
+        <div>
+          <h3>Aprobadores *</h3>
+          <p>
+            Los niveles se ejecutan en orden. Puedes definir uno o varios aprobadores por nivel.
+          </p>
+        </div>
+      </div>
+      <div class="workflow-level-list">
+        <article
+          *ngFor="let level of controller.workflowForm.approvalLevels; let i = index"
+          class="workflow-level-card"
+        >
+          <div class="workflow-level-header">
+            <div>
+              <span class="workflow-level-number">Nivel {{ i + 1 }}</span>
+              <small>Se notifica después del nivel anterior</small>
+            </div>
+            <div class="workflow-level-actions">
+              <button
+                type="button"
+                class="icon-button"
+                title="Subir nivel"
+                [disabled]="i === 0"
+                (click)="controller.moveWorkflowLevel(i, -1)"
+              >
+                <i class="bx bx-chevron-up"></i>
+              </button>
+              <button
+                type="button"
+                class="icon-button"
+                title="Bajar nivel"
+                [disabled]="i === controller.workflowForm.approvalLevels.length - 1"
+                (click)="controller.moveWorkflowLevel(i, 1)"
+              >
+                <i class="bx bx-chevron-down"></i>
+              </button>
+              <button
+                type="button"
+                class="icon-button"
+                title="Eliminar nivel"
+                (click)="controller.removeWorkflowLevel(i)"
+              >
+                <i class="bx bx-trash"></i>
+              </button>
+            </div>
+          </div>
+          <label class="workflow-rule-select"
+            >Regla del nivel<select
+              [ngModel]="level.rule"
+              (ngModelChange)="controller.setWorkflowRule(i, $event)"
+            >
+              <option value="any">Cualquiera de los aprobadores</option>
+              <option value="all">Todos los aprobadores</option>
+            </select></label
+          >
+          <div class="workflow-selected-approvers">
+            <span *ngFor="let approver of level.approvers" class="workflow-selected-chip"
+              >{{ approver
+              }}<button
+                type="button"
+                (click)="controller.removeWorkflowApprover(i, approver)"
+                aria-label="Quitar aprobador"
+              >
+                <i class="bx bx-x"></i></button
+            ></span>
+            <span *ngIf="!level.approvers.length" class="workflow-no-selection"
+              >Aún no has seleccionado aprobadores.</span
+            >
+          </div>
+          <label class="workflow-approver-search"
+            ><i class="bx bx-search"></i
+            ><input
+              placeholder="Buscar usuario, rol o área"
+              [ngModel]="controller.workflowApproverSearches[i]"
+              (ngModelChange)="controller.setWorkflowApproverSearch(i, $event)"
+          /></label>
+          <div class="workflow-approver-results">
+            <label
+              *ngFor="let approver of controller.filteredWorkflowApprovers(i)"
+              class="role-option-card"
+              ><input
+                type="checkbox"
+                (change)="controller.toggleWorkflowApprover(i, approver)"
+              /><span class="role-check"><i class="bx bx-check"></i></span
+              ><span>{{ controller.roleLabel(approver) }}</span></label
+            >
+            <span
+              *ngIf="!controller.workflowApproverSearches[i]?.trim()"
+              class="workflow-no-results"
+              >Escribe un nombre, rol o área para buscar.</span
+            ><span
+              *ngIf="
+                controller.workflowApproverSearches[i]?.trim() &&
+                !controller.filteredWorkflowApprovers(i).length
+              "
+              class="workflow-no-results"
+              >No hay resultados disponibles.</span
+            >
+          </div>
+        </article>
+        <button
+          type="button"
+          class="secondary workflow-add-level"
+          (click)="controller.addWorkflowLevel()"
+        >
+          <i class="bx bx-plus"></i> Agregar nivel
+        </button>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="secondary" (click)="controller.closeWorkflowForm()">Cancelar</button
+      ><button class="primary" (click)="controller.saveWorkflow()">Guardar workflow</button>
+    </div>
+  </section>
+</div>

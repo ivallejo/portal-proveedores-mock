@@ -1,0 +1,136 @@
+<section *ngIf="controller.screen() === 'contabilizacion'" class="page">
+  <div class="page-heading">
+    <div>
+      <h1>Consulta de contabilización</h1>
+      <p>Consulta los documentos procesados automáticamente por SAP.</p>
+    </div>
+    <span class="counter">{{ controller.accountingItems().length }} contabilizados</span>
+  </div>
+  <section class="panel table-panel admin-users-table">
+    <div class="panel-title">
+      <div>
+        <h2>Documentos contabilizados</h2>
+        <p>{{ controller.accountingItems().length }} documentos procesados automáticamente</p>
+      </div>
+      <div class="admin-inline-controls">
+        <label class="page-size-select"
+          >Mostrar
+          <select
+            [ngModel]="controller.accountingPageSize()"
+            (ngModelChange)="controller.setAccountingPageSize($event)"
+          >
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          registros
+        </label>
+        <label class="admin-search"
+          ><i class="bx bx-search"></i><span>Buscar:</span
+          ><input
+            type="search"
+            placeholder="Documento, proveedor o SAP"
+            [ngModel]="controller.accountingQuery()"
+            (ngModelChange)="controller.setAccountingQuery($event)"
+        /></label>
+      </div>
+    </div>
+    <div *ngIf="controller.loading()" class="skeleton-table"><i></i><i></i><i></i></div>
+    <div *ngIf="!controller.loading() && !controller.accountingItems().length" class="empty-state">
+      <i class="bx bx-check-double"></i>
+      <h3>No hay documentos contabilizados</h3>
+      <p>El job automático todavía no ha recibido documentos contabilizados desde SAP.</p>
+    </div>
+    <div *ngIf="!controller.loading() && controller.accountingItems().length" class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Proveedor</th>
+            <th>Sociedad</th>
+            <th>Importe</th>
+            <th>N.° SAP</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of controller.accountingItemsPage()">
+            <td>
+              <strong>{{ item.numero }}</strong
+              ><small>{{ item.fecha }}</small>
+            </td>
+            <td>{{ item.proveedor }}</td>
+            <td>{{ item.sociedad }}</td>
+            <td>S/ {{ item.importe | number: '1.2-2' }}</td>
+            <td>{{ item.contabilizacion?.numero || 'Registrado en SAP' }}</td>
+            <td>
+              <span class="status-badge" [class]="controller.statusClass(item.status)">{{
+                item.status
+              }}</span>
+            </td>
+            <td>
+              <button
+                class="secondary table-action"
+                (click)="controller.resendAttachments(item.id)"
+              >
+                <i class="bx bx-send"></i> Reenviar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      *ngIf="!controller.filteredAccountingItems().length && controller.accountingItems().length"
+      class="empty-table"
+    >
+      No encontramos documentos con ese criterio de búsqueda.
+    </div>
+    <div class="admin-pagination admin-pagination-bottom">
+      <span
+        >Mostrando
+        {{
+          controller.filteredAccountingItems().length
+            ? (controller.accountingPage() - 1) * controller.accountingPageSize() + 1
+            : 0
+        }}
+        a
+        {{
+          controller.Math.min(
+            controller.accountingPage() * controller.accountingPageSize(),
+            controller.filteredAccountingItems().length
+          )
+        }}
+        de {{ controller.filteredAccountingItems().length }} documentos</span
+      >
+      <div>
+        <button
+          class="icon-button"
+          [disabled]="controller.accountingPage() === 1"
+          (click)="controller.setAccountingPage(controller.accountingPage() - 1)"
+        >
+          <i class="bx bx-chevron-left"></i>
+        </button>
+        <button
+          *ngFor="let page of controller.accountingPaginationPages()"
+          class="page-button"
+          [class.active]="page === controller.accountingPage()"
+          (click)="controller.setAccountingPage(page)"
+        >
+          {{ page }}
+        </button>
+        <button
+          class="icon-button"
+          [disabled]="controller.accountingPage() === controller.accountingPageCount()"
+          (click)="controller.setAccountingPage(controller.accountingPage() + 1)"
+        >
+          <i class="bx bx-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+</section>
+<section *ngIf="controller.screen() === 'usuarios'" class="page admin-page"></section>

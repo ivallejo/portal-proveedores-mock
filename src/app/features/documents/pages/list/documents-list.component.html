@@ -1,0 +1,266 @@
+<section class="page">
+  <div class="page-heading">
+    <div>
+      <h1>Mis documentos</h1>
+      <p>Consulta el estado y las validaciones de tus documentos.</p>
+    </div>
+    <button class="primary" (click)="controller.navigate('registrar')">
+      <i class="bx bx-plus"></i> Registrar documento
+    </button>
+  </div>
+  <section class="panel table-panel admin-users-table document-table">
+    <div class="panel-title">
+      <div class="document-heading-line">
+        <h2>Documentos registrados</h2>
+        <p>{{ controller.providerDocuments().length }} documentos en el sistema</p>
+      </div>
+    </div>
+    <div class="admin-inline-controls document-inline-controls">
+      <label class="page-size-select"
+        >Mostrar<select
+          [ngModel]="controller.documentPageSize()"
+          (ngModelChange)="controller.setDocumentPageSize($event)"
+        >
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+        registros</label
+      >
+      <select
+        [ngModel]="controller.documentFilters.type"
+        (ngModelChange)="controller.setDocumentType($event)"
+      >
+        <option value="">Todos los tipos</option>
+        <option>Con Orden de Compra</option>
+        <option>Sin Orden de Compra</option>
+      </select>
+      <select
+        [ngModel]="controller.documentFilters.status"
+        (ngModelChange)="controller.setDocumentStatus($event)"
+      >
+        <option value="">Todos los estados</option>
+        <option>Pendiente de aprobación</option>
+        <option>Pendiente de contabilización</option>
+        <option>Contabilizado</option>
+        <option>Rechazado</option>
+        <option>Devuelto al proveedor</option>
+      </select>
+      <label class="document-date-filter"
+        >Desde<input
+          type="date"
+          [ngModel]="controller.documentFilters.dateFrom"
+          (ngModelChange)="controller.setDocumentDateFrom($event)"
+      /></label>
+      <label class="document-date-filter"
+        >Hasta<input
+          type="date"
+          [ngModel]="controller.documentFilters.dateTo"
+          (ngModelChange)="controller.setDocumentDateTo($event)"
+      /></label>
+      <div class="document-filter-actions">
+        <label class="admin-search"
+          ><i class="bx bx-search"></i
+          ><input
+            type="search"
+            placeholder="Documento, OC o sociedad"
+            [ngModel]="controller.documentFilters.query"
+            (ngModelChange)="controller.setDocumentQuery($event)" /></label
+        ><button type="button" class="secondary" (click)="controller.clearDocumentFilters()">
+          Limpiar</button
+        ><button type="button" class="primary" (click)="controller.applyDocumentFilters()">
+          Buscar
+        </button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Tipo</th>
+            <th>Sociedad</th>
+            <th>Importe</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let item of controller.documentsPage()"
+            ><tr>
+              <td>
+                <button class="row-link" (click)="controller.toggle(item.id)">
+                  {{ item.numero }}</button
+                ><small>{{ item.fecha }}</small>
+              </td>
+              <td>
+                {{ item.tipo
+                }}<small>{{ item.subtipo || (item.oc ? 'OC: ' + item.oc : 'Sin OC') }}</small>
+              </td>
+              <td>{{ item.sociedad }}</td>
+              <td>S/ {{ item.importe | number: '1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [class]="controller.statusClass(item.status)">{{
+                  item.status
+                }}</span>
+              </td>
+              <td>
+                <button
+                  class="icon-button"
+                  title="Ver detalle"
+                  (click)="controller.toggle(item.id)"
+                >
+                  <i class="bx bx-show"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="controller.expandedId() === item.id" class="document-modal-row">
+              <td colspan="6">
+                <div class="document-detail-modal-backdrop" (click)="controller.toggle(item.id)">
+                  <section class="document-detail-modal" (click)="$event.stopPropagation()">
+                    <button
+                      class="document-detail-close icon-button"
+                      (click)="controller.toggle(item.id)"
+                    >
+                      <i class="bx bx-x"></i>
+                    </button>
+                    <div class="document-detail">
+                      <div class="document-detail-heading">
+                        <div>
+                          <span>Detalle del documento</span><strong>{{ item.numero }}</strong>
+                        </div>
+                        <span class="status-badge" [class]="controller.statusClass(item.status)">{{
+                          item.status
+                        }}</span>
+                      </div>
+                      <div class="document-data-grid">
+                        <span
+                          >Tipo<strong>{{ item.tipo }}</strong></span
+                        ><span
+                          >Fecha de emisión<strong>{{ item.fecha }}</strong></span
+                        ><span
+                          >Sociedad<strong>{{ item.sociedad }}</strong></span
+                        ><span
+                          >Importe<strong>S/ {{ item.importe | number: '1.2-2' }}</strong></span
+                        ><span *ngIf="item.oc"
+                          >Orden de compra<strong>{{ item.oc }}</strong></span
+                        >
+                      </div>
+                      <div class="document-detail-section">
+                        <h4>Validaciones</h4>
+                        <div class="validation-cards">
+                          <div
+                            class="validation-card"
+                            [class]="controller.statusClass(item.validation.sunat)"
+                          >
+                            <i class="bx bx-check-shield"></i>
+                            <div>
+                              <span>SUNAT</span><strong>{{ item.validation.sunat }}</strong>
+                            </div>
+                          </div>
+                          <div
+                            class="validation-card"
+                            [class]="controller.statusClass(item.validation.sertica)"
+                          >
+                            <i class="bx bx-buildings"></i>
+                            <div>
+                              <span>Sertica</span><strong>{{ item.validation.sertica }}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="document-detail-section">
+                        <h4>Historial del documento</h4>
+                        <div class="status-timeline">
+                          <div
+                            *ngFor="let history of item.history; let last = last"
+                            class="timeline-item"
+                            [class.current]="last"
+                          >
+                            <span class="timeline-dot"></span>
+                            <div>
+                              <strong>{{ history.status }}</strong
+                              ><small
+                                >{{ history.date | date: 'dd/MM/yyyy HH:mm' }} ·
+                                {{ history.user }}</small
+                              >
+                              <p *ngIf="history.comment">{{ history.comment }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="document-detail-section document-files">
+                        <h4>Archivos adjuntos</h4>
+                        <div
+                          *ngFor="let file of controller.attachmentNames(item)"
+                          class="attachment-row"
+                        >
+                          <span><i class="bx bx-paperclip"></i>{{ file }}</span
+                          ><button
+                            type="button"
+                            class="icon-button"
+                            (click)="controller.downloadAttachment(item, file)"
+                          >
+                            <i class="bx bx-download"></i>
+                          </button>
+                        </div>
+                        <p *ngIf="!controller.attachmentNames(item).length" class="empty-files">
+                          No hay archivos adjuntos registrados.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </td>
+            </tr></ng-container
+          >
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="!controller.filteredDocuments().length" class="empty-table">
+      No encontramos documentos con los filtros seleccionados.
+    </div>
+    <div class="admin-pagination admin-pagination-bottom">
+      <span
+        >Mostrando
+        {{
+          controller.filteredDocuments().length
+            ? (controller.documentPage() - 1) * controller.documentPageSize() + 1
+            : 0
+        }}
+        a
+        {{
+          controller.Math.min(
+            controller.documentPage() * controller.documentPageSize(),
+            controller.filteredDocuments().length
+          )
+        }}
+        de {{ controller.filteredDocuments().length }} documentos</span
+      >
+      <div>
+        <button
+          class="icon-button"
+          [disabled]="controller.documentPage() === 1"
+          (click)="controller.setDocumentPage(controller.documentPage() - 1)"
+        >
+          <i class="bx bx-chevron-left"></i></button
+        ><button
+          *ngFor="let page of controller.documentPaginationPages()"
+          class="page-button"
+          [class.active]="page === controller.documentPage()"
+          (click)="controller.setDocumentPage(page)"
+        >
+          {{ page }}</button
+        ><button
+          class="icon-button"
+          [disabled]="controller.documentPage() === controller.documentPageCount()"
+          (click)="controller.setDocumentPage(controller.documentPage() + 1)"
+        >
+          <i class="bx bx-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+</section>

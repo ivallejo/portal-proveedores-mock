@@ -12,6 +12,10 @@ import { ProfileComponent } from './features/profile/pages/profile/profile.compo
 import { NavigationService, Screen } from './core/navigation/navigation.service';
 import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
 import { RegistrationComponent } from './features/documents/pages/registration/registration.component';
+import { DocumentsListComponent } from './features/documents/pages/list/documents-list.component';
+import { WorkflowsPageComponent } from './features/workflows/pages/workflows-page.component';
+import { ApprovalsPageComponent } from './features/approvals/pages/approvals-page.component';
+import { AccountingPageComponent } from './features/accounting/pages/accounting-page.component';
 import { MockUsersStore } from './shared/state/mock-users.store';
 import { SapProviderService } from './features/providers/services/sap-provider.service';
 import {
@@ -31,6 +35,10 @@ import { Documento, Role, roleLabel } from './shared/models/models';
     ProfileComponent,
     DashboardComponent,
     RegistrationComponent,
+    DocumentsListComponent,
+    WorkflowsPageComponent,
+    ApprovalsPageComponent,
+    AccountingPageComponent,
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
