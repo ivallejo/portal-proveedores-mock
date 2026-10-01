@@ -140,9 +140,9 @@
       <div class="demo-access">
         <small>Accesos demo</small>
         <div>
-          <button type="button" (click)="quickLogin('proveedor')">Proveedor</button
-          ><button type="button" (click)="quickLogin('area')">Área Usuaria</button
-          ><button type="button" (click)="quickLogin('cxp')">CxP</button>
+          <button type="button" (click)="quickLogin('proveedor')">Proveedor externo</button
+          ><button type="button" (click)="quickLogin('area')">Aprobador de área</button
+          ><button type="button" (click)="quickLogin('cxp')">Gestor de cuentas por pagar</button>
         </div>
         <span>Contraseña: 123456</span>
       </div>
@@ -163,7 +163,9 @@
         <label *ngIf="(auth.user()?.roles?.length || 0) > 1" class="active-role-selector">
           <span>Trabajando como</span>
           <select [ngModel]="auth.user()?.role" (ngModelChange)="setActiveRole($event)">
-            <option *ngFor="let role of auth.user()?.roles" [value]="role">{{ role }}</option>
+            <option *ngFor="let role of auth.user()?.roles" [value]="role">
+              {{ roleLabel(role) }}
+            </option>
           </select>
         </label>
         <div class="user-actions">
@@ -308,7 +310,7 @@
             <h2>{{ profileRecord()?.companyName || auth.user()?.name }}</h2>
             <p>{{ profileRecord()?.username || auth.user()?.username }}</p>
             <div class="profile-role-list">
-              <span *ngFor="let role of auth.user()?.roles">{{ role }}</span>
+              <span *ngFor="let role of auth.user()?.roles">{{ roleLabel(role) }}</span>
             </div>
           </section>
           <section class="panel profile-data-card">
@@ -450,7 +452,9 @@
                         <small>{{
                           level.rule === 'all' ? 'Todos deben aprobar' : 'Cualquiera puede aprobar'
                         }}</small>
-                        <span *ngFor="let approver of level.approvers">{{ approver }}</span>
+                        <span *ngFor="let approver of level.approvers">{{
+                          roleLabel(approver)
+                        }}</span>
                       </div>
                     </div>
                   </td>
@@ -636,7 +640,7 @@
                     ><input type="checkbox" (change)="toggleWorkflowApprover(i, approver)" /><span
                       class="role-check"
                       ><i class="bx bx-check"></i></span
-                    ><span>{{ approver }}</span></label
+                    ><span>{{ roleLabel(approver) }}</span></label
                   >
                   <span *ngIf="!workflowApproverSearches[i]?.trim()" class="workflow-no-results"
                     >Escribe un nombre, rol o área para buscar.</span
@@ -815,7 +819,7 @@
               "
               >Concepto<input [(ngModel)]="form.details.concepto"
             /></label>
-            <p>Siempre requiere aprobación del Área Usuaria.</p>
+            <p>Siempre requiere aprobación del aprobador de área.</p>
           </div>
           <div class="form-actions">
             <button class="secondary" (click)="resetForm()">Limpiar</button
@@ -1624,7 +1628,9 @@
                 placeholder="Contraseña inicial" /></label
             ><label
               >Rol *<select [ngModel]="adminRole()" (ngModelChange)="adminRole.set($event)">
-                <option *ngFor="let role of adminRoles" [value]="role">{{ role }}</option>
+                <option *ngFor="let role of adminRoles" [value]="role">
+                  {{ roleLabel(role) }}
+                </option>
               </select></label
             >
           </div>
@@ -1683,7 +1689,9 @@
                   <td>{{ user.ruc }}</td>
                   <td>
                     <select [ngModel]="user.role" (ngModelChange)="changeAdminRole(user, $event)">
-                      <option *ngFor="let role of adminRoles" [value]="role">{{ role }}</option>
+                      <option *ngFor="let role of adminRoles" [value]="role">
+                        {{ roleLabel(role) }}
+                      </option>
                     </select>
                   </td>
                   <td>
@@ -1771,7 +1779,9 @@
                 placeholder="Contraseña inicial" /></label
             ><label
               >Rol *<select [ngModel]="adminRole()" (ngModelChange)="adminRole.set($event)">
-                <option *ngFor="let role of adminRoles" [value]="role">{{ role }}</option>
+                <option *ngFor="let role of adminRoles" [value]="role">
+                  {{ roleLabel(role) }}
+                </option>
               </select></label
             >
           </div>

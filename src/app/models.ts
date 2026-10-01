@@ -1,4 +1,15 @@
 export type Role = 'Proveedor' | 'Colaborador interno' | 'Área Usuaria' | 'CxP' | 'Administrador';
+export function roleLabel(role: Role | string): string {
+  return (
+    {
+      Proveedor: 'Proveedor externo',
+      'Colaborador interno': 'Usuario interno',
+      'Área Usuaria': 'Aprobador de área',
+      CxP: 'Gestor de cuentas por pagar',
+      Administrador: 'Administrador del portal',
+    }[role] || role
+  );
+}
 export type DocumentType = 'Con Orden de Compra' | 'Sin Orden de Compra' | 'Documento especial';
 export type DocumentStatus =
   | 'Registrado'

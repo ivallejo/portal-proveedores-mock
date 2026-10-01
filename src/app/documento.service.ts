@@ -192,13 +192,13 @@ export class DocumentoService {
   private mutate(id: number, fn: (item: Documento) => Documento): void {
     this.documents.update((items) => items.map((item) => (item.id === id ? fn(item) : item)));
   }
-  approve(id: number, comment = 'Aprobado por Área Usuaria'): Observable<Documento> {
-    this.changeStatus(id, 'Aprobado', 'Área Usuaria', comment);
+  approve(id: number, comment = 'Aprobado por el aprobador de área'): Observable<Documento> {
+    this.changeStatus(id, 'Aprobado', 'Aprobador de área', comment);
     this.changeStatus(id, 'Pendiente de contabilización', 'Sistema mock');
     return of(this.get(id)!).pipe(delay(700));
   }
   reject(id: number, comment: string): Observable<Documento> {
-    this.changeStatus(id, 'Rechazado', 'Área Usuaria', comment);
+    this.changeStatus(id, 'Rechazado', 'Aprobador de área', comment);
     return of(this.get(id)!).pipe(delay(700));
   }
   derive(id: number, approver: string): Observable<Documento> {
@@ -214,7 +214,7 @@ export class DocumentoService {
                 {
                   status: item.status,
                   date: new Date().toISOString(),
-                  user: 'Área Usuaria',
+                  user: 'Aprobador de área',
                   comment: `Documento derivado a ${approver}.`,
                 },
               ],

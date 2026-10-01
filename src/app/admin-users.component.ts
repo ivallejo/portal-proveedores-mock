@@ -3,7 +3,7 @@ import { Component, EventEmitter, Output, signal, computed, inject } from '@angu
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { AdminService, AdminUser } from './admin.service';
-import { Role } from './models';
+import { Role, roleLabel } from './models';
 
 @Component({
   selector: 'app-admin-users',
@@ -13,6 +13,7 @@ import { Role } from './models';
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
 })
 export class AdminUsersComponent {
+  readonly roleLabel = roleLabel;
   private readonly adminService = inject(AdminService);
 
   @Output() readonly close = new EventEmitter<void>();

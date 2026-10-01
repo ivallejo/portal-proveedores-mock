@@ -12,7 +12,7 @@ import { MockUsersStore } from './mock-users.store';
 import { SapProviderService } from './sap-provider.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
 import { environment } from '../environments/environment';
-import { Documento, DocumentType, Role, SpecialSubtype } from './models';
+import { Documento, DocumentType, Role, SpecialSubtype, roleLabel } from './models';
 
 type Screen =
   | 'dashboard'
@@ -32,6 +32,7 @@ type Screen =
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
 })
 export class App {
+  readonly roleLabel = roleLabel;
   readonly Math = Math;
   readonly auth = inject(AuthService);
   readonly documentoService = inject(DocumentoService);
