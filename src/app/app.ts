@@ -10,6 +10,7 @@ import { AdminService, AdminUser } from './admin.service';
 import { AdminUsersComponent } from './admin-users.component';
 import { ProfileComponent } from './profile.component';
 import { NavigationService, Screen } from './navigation.service';
+import { DashboardComponent } from './dashboard.component';
 import { MockUsersStore } from './mock-users.store';
 import { SapProviderService } from './sap-provider.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from './workflow.service';
@@ -18,7 +19,7 @@ import { Documento, DocumentType, Role, SpecialSubtype, roleLabel } from './mode
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, FormsModule, AdminUsersComponent, ProfileComponent],
+  imports: [CommonModule, FormsModule, AdminUsersComponent, ProfileComponent, DashboardComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
 })

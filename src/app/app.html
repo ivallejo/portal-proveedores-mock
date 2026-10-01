@@ -234,63 +234,17 @@
     </aside>
     <main class="provider-content">
       <div *ngIf="error()" class="toast error"><i class="bx bx-error-circle"></i>{{ error() }}</div>
-      <section *ngIf="screen() === 'dashboard'" class="page">
-        <div class="page-heading">
-          <div>
-            <h1>Hola, {{ auth.user()?.name }}</h1>
-            <p>Consulta el estado de tu operación documental.</p>
-          </div>
-          <button *ngIf="isRole('Proveedor')" class="primary" (click)="navigate('registrar')">
-            <i class="bx bx-plus"></i> Registrar documento
-          </button>
-        </div>
-        <div class="summary-grid">
-          <article>
-            <span class="summary-icon blue"><i class="bx bx-time-five"></i></span>
-            <div>
-              <small>Pendientes</small><strong>{{ pendingCount() }}</strong>
-              <p>Requieren seguimiento</p>
-            </div>
-          </article>
-          <article>
-            <span class="summary-icon green"><i class="bx bx-check-circle"></i></span>
-            <div>
-              <small>Aprobados</small><strong>{{ approvedCount() }}</strong>
-              <p>Listos o contabilizados</p>
-            </div>
-          </article>
-          <article>
-            <span class="summary-icon red"><i class="bx bx-error-circle"></i></span>
-            <div>
-              <small>Observados</small><strong>{{ rejectedCount() }}</strong>
-              <p>Requieren atención</p>
-            </div>
-          </article>
-        </div>
-        <section class="panel">
-          <div class="panel-title">
-            <div>
-              <h2>Documentos recientes</h2>
-              <p>Últimos movimientos del portal</p>
-            </div>
-          </div>
-          <div *ngIf="loading()" class="skeleton-table"><i></i><i></i><i></i></div>
-          <div *ngIf="!loading()" class="document-list">
-            <div *ngFor="let item of providerDocuments().slice(0, 5)" class="document-row">
-              <div class="doc-type">
-                <i class="bx bx-file"></i>
-                <div>
-                  <strong>{{ item.numero }}</strong
-                  ><small>{{ item.proveedor }} · {{ item.tipo }}</small>
-                </div>
-              </div>
-              <div class="doc-amount">S/ {{ item.importe | number: '1.2-2' }}</div>
-              <span class="status-badge" [class]="statusClass(item.status)">{{ item.status }}</span
-              ><time>{{ item.fecha }}</time>
-            </div>
-          </div>
-        </section>
-      </section>
+      <app-dashboard
+        *ngIf="screen() === 'dashboard'"
+        [userName]="auth.user()?.name || ''"
+        [isProvider]="isRole('Proveedor')"
+        [documents]="providerDocuments()"
+        [loading]="loading()"
+        [pendingCount]="pendingCount()"
+        [approvedCount]="approvedCount()"
+        [rejectedCount]="rejectedCount()"
+        (navigate)="navigate($event)"
+      ></app-dashboard>
       <section *ngIf="screen() === 'perfil'" class="page profile-page">
         <app-profile></app-profile>
       </section>
