@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PortalFacade } from '../../../core/state/portal.facade';
+import { WorkflowFacade } from '../state/workflow.facade';
 
 @Component({
   selector: 'app-workflows-page',
@@ -10,5 +10,5 @@ import { PortalFacade } from '../../../core/state/portal.facade';
   templateUrl: './workflows-page.component.html',
 })
 export class WorkflowsPageComponent {
-  readonly controller = inject(PortalFacade);
+  readonly controller = inject(WorkflowFacade);
 }
