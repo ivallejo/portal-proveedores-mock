@@ -1,63 +1,73 @@
 <section class="home-page">
   <div class="home-heading">
-    <div>
-      <h1>Inicio</h1>
-      <p>Consulta el estado de tu operación documental.</p>
-    </div>
-    <button *ngIf="isProvider()" class="home-action" (click)="navigate.emit('registrar')">
-      <i class="bx bx-plus"></i> Registrar documento
-    </button>
+    <h1>Hola, {{ userName() }}</h1>
+    <p>
+      Elige un módulo para consultar tus documentos. Cada uno muestra la información vinculada a tu
+      RUC.
+    </p>
   </div>
-  <div class="home-summary-grid">
-    <article class="home-summary-card">
-      <span class="home-summary-icon blue"><i class="bx bx-time-five"></i></span>
-      <div>
-        <span>Pendientes</span><strong>{{ pendingCount() }}</strong>
-        <small>Requieren seguimiento</small>
-      </div>
-    </article>
-    <article class="home-summary-card">
-      <span class="home-summary-icon green"><i class="bx bx-check-circle"></i></span>
-      <div>
-        <span>Aprobados</span><strong>{{ approvedCount() }}</strong>
-        <small>Listos o contabilizados</small>
-      </div>
-    </article>
-    <article class="home-summary-card">
-      <span class="home-summary-icon red"><i class="bx bx-error-circle"></i></span>
-      <div>
-        <span>Observados</span><strong>{{ rejectedCount() }}</strong>
-        <small>Requieren atención</small>
-      </div>
-    </article>
-  </div>
-  <section class="home-table-card">
-    <div class="home-table-heading">
-      <div>
-        <h2>Documentos recientes</h2>
-        <p>Últimos movimientos del portal</p>
-      </div>
-      <button class="home-link" (click)="navigate.emit('documentos')">
-        Ver todos <i class="bx bx-chevron-right"></i>
+  <div class="module-grid">
+    <article class="module-card">
+      <span class="module-icon blue"><i class="bx bx-clipboard"></i></span>
+      <h2>Orden de compra</h2>
+      <p>
+        Revisa las órdenes de compra y de servicio emitidas a tu empresa, su vigencia y cuánto se ha
+        atendido.
+      </p>
+      <button (click)="navigate.emit('registrar')">
+        Ir al módulo <i class="bx bx-right-arrow-alt"></i>
       </button>
+    </article>
+    <article class="module-card">
+      <span class="module-icon purple"><i class="bx bx-money"></i></span>
+      <h2>Orden de pago</h2>
+      <p>
+        Consulta los pagos realizados a tu empresa, los comprobantes cancelados, retenciones y
+        detracciones.
+      </p>
+      <button (click)="navigate.emit('documentos')">
+        Ir al módulo <i class="bx bx-right-arrow-alt"></i>
+      </button>
+    </article>
+    <article class="module-card">
+      <span class="module-icon orange"><i class="bx bx-receipt"></i></span>
+      <h2>Estado de factura</h2>
+      <p>
+        Sigue cada factura desde que la recibimos hasta su pago: revisión, conformidad,
+        observaciones y fecha programada.
+      </p>
+      <button (click)="navigate.emit('documentos')">
+        Ir al módulo <i class="bx bx-right-arrow-alt"></i>
+      </button>
+    </article>
+    <article class="module-card">
+      <span class="module-icon turquoise"><i class="bx bx-folder"></i></span>
+      <h2>Documentos</h2>
+      <p>
+        Consulta y descarga comprobantes, notas de crédito y débito, guías y constancias de
+        retención asociadas a tu RUC.
+      </p>
+      <button (click)="navigate.emit('documentos')">
+        Ir al módulo <i class="bx bx-right-arrow-alt"></i>
+      </button>
+    </article>
+    <article class="module-card">
+      <span class="module-icon green"><i class="bx bx-notepad"></i></span>
+      <h2>Contabilización</h2>
+      <p>
+        Verifica en qué periodo y asiento contable se registró cada comprobante, y si tiene
+        observaciones pendientes.
+      </p>
+      <button (click)="navigate.emit('contabilizacion')">
+        Ir al módulo <i class="bx bx-right-arrow-alt"></i>
+      </button>
+    </article>
+  </div>
+  <section class="support-banner">
+    <div>
+      <strong>¿Necesitas ayuda con un documento?</strong>
+      <p>Escríbenos a [correo de soporte] o llama al [teléfono de soporte].</p>
     </div>
-    <div *ngIf="loading()" class="skeleton-table"><i></i><i></i><i></i></div>
-    <div *ngIf="!loading()" class="document-list">
-      <div *ngFor="let item of documents().slice(0, 5)" class="home-document-row">
-        <div class="home-document-main">
-          <span class="home-document-icon"><i class="bx bx-file"></i></span>
-          <div>
-            <strong>{{ item.numero }}</strong>
-            <small>{{ item.proveedor }} · {{ item.tipo }}</small>
-          </div>
-        </div>
-        <div class="home-document-amount">S/ {{ item.importe | number: '1.2-2' }}</div>
-        <span class="home-status" [class]="statusClass(item.status)">{{ item.status }}</span>
-        <time class="home-document-date">{{ item.fecha }}</time>
-      </div>
-      <div *ngIf="!documents().length" class="home-empty">
-        Aún no tienes documentos registrados.
-      </div>
-    </div>
+    <button>Ver guía de uso</button>
   </section>
 </section>

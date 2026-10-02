@@ -44,31 +44,31 @@
       <button [class.active]="screen() === 'dashboard'" (click)="navigate('dashboard')">
         <i class="nav-icon bx bx-home"></i><span>Inicio</span></button
       ><button
-        *ngIf="isRole('Proveedor')"
+        *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
         <i class="nav-icon bx bx-file-plus"></i><span>Registrar documento</span></button
       ><button
-        *ngIf="isRole('Proveedor')"
+        *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'documentos'"
         (click)="navigate('documentos')"
       >
         <i class="nav-icon bx bx-receipt"></i><span>Mis documentos</span></button
       ><button
-        *ngIf="isRole('Colaborador interno')"
+        *ngIf="isRole('Colaborador interno') || isRole('Administrador')"
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
         <i class="nav-icon bx bx-file-plus"></i><span>Documentos especiales</span></button
       ><button
-        *ngIf="isRole('Área Usuaria')"
+        *ngIf="isRole('Área Usuaria') || isRole('Administrador')"
         [class.active]="screen() === 'aprobaciones'"
         (click)="navigate('aprobaciones')"
       >
         <i class="nav-icon bx bx-check-shield"></i><span>Aprobaciones</span></button
       ><button
-        *ngIf="isRole('CxP')"
+        *ngIf="isRole('CxP') || isRole('Administrador')"
         [class.active]="screen() === 'contabilizacion'"
         (click)="navigate('contabilizacion')"
       >
