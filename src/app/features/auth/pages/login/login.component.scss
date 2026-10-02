@@ -137,16 +137,16 @@
   font-size: 25px;
 }
 
-.login-photo {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 51%;
-  background:
-    linear-gradient(180deg, rgb(23 104 222 / 35%), rgb(1 32 91 / 45%)),
-    url('/fondo.jpg') center / cover no-repeat;
-}
+// .login-photo {
+//   position: absolute;
+//   right: 0;
+//   bottom: 0;
+//   left: 0;
+//   height: 51%;
+//   background:
+//     linear-gradient(180deg, rgb(23 104 222 / 35%), rgb(1 32 91 / 45%)),
+//     url('/fondo.jpg') center / cover no-repeat;
+// }
 
 .login-visual-footer {
   position: absolute;
@@ -392,76 +392,71 @@
 .registration-steps {
   display: flex;
   align-items: center;
-  gap: 11px;
+  width: 100%;
+  gap: 10px;
   margin-bottom: 32px;
   color: #697993;
   font-size: 14px;
 }
 
 .registration-steps span {
-  display: flex;
+  display: inline-flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: 8px;
+  min-width: 0;
   white-space: nowrap;
+  color: #697993;
+  font-weight: 500;
 }
 
-.registration-steps span:first-child {
-  color: #173566;
-  font-weight: 650;
-}
-
-.registration-steps span::first-letter {
-  color: #536584;
-}
-
-.registration-steps span.active,
-.registration-steps span.completed {
-  color: #173566;
-  font-weight: 650;
-}
-
-.registration-steps span {
+.registration-steps span > i {
+  display: grid;
   width: 30px;
   height: 30px;
-  justify-content: center;
+  flex: 0 0 30px;
+  place-items: center;
   border: 2px solid #cbd9ef;
   border-radius: 50%;
-}
-
-.registration-steps span b {
-  position: absolute;
-  margin-left: 72px;
+  color: #536584;
+  background: #fff;
+  font-style: normal;
   font-weight: 600;
 }
 
+.registration-steps span b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
 .registration-steps span.active,
 .registration-steps span.completed {
+  color: #173566;
+  font-weight: 750;
+}
+
+.registration-steps span.active > i,
+.registration-steps span.completed > i {
   border-color: #216fe7;
   color: #fff;
   background: #216fe7;
 }
 
-.registration-steps i {
-  flex: 1;
+.registration-steps span.active b,
+.registration-steps span.completed b {
+  font-weight: 750;
+}
+
+.registration-steps > i {
+  flex: 1 1 20px;
+  min-width: 14px;
   height: 3px;
-  min-width: 30px;
   background: #dce4f1;
 }
 
-.registration-steps i:first-of-type {
+.registration-steps > i:first-of-type {
   background: #216fe7;
-}
-
-.registration-icon {
-  display: grid;
-  width: 57px;
-  height: 57px;
-  margin-bottom: 20px;
-  place-items: center;
-  border-radius: 15px;
-  color: #216fe7;
-  background: #eaf2ff;
-  font-size: 29px;
 }
 
 .registration-icon.confirmed {
@@ -704,5 +699,24 @@
 
   .provider-confirmation > div {
     padding: 15px 18px;
+  }
+
+  .registration-steps {
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .registration-steps span {
+    gap: 4px;
+  }
+
+  .registration-steps span > i {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+  }
+
+  .registration-steps > i {
+    min-width: 8px;
   }
 }

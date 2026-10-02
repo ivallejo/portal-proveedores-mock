@@ -96,13 +96,13 @@
       <span
         [class.completed]="registrationValidated() || registrationKeyRequested()"
         [class.active]="!registrationValidated() && !registrationKeyRequested()"
-        >1 <b>RUC</b></span
+        ><i>1</i><b>RUC</b></span
       ><i></i
       ><span
         [class.completed]="registrationKeyRequested()"
         [class.active]="registrationValidated() && !registrationKeyRequested()"
-        >2 <b>Datos</b></span
-      ><i></i><span [class.active]="registrationKeyRequested()">3 <b>Confirmación</b></span>
+        ><i>2</i><b>Datos</b></span
+      ><i></i><span [class.active]="registrationKeyRequested()"><i>3</i><b>Confirmación</b></span>
     </div>
 
     <ng-container *ngIf="!registrationValidated() && !registrationKeyRequested()">
@@ -189,9 +189,9 @@
 
     <ng-container *ngIf="registrationKeyRequested()">
       <div class="registration-steps completed-steps">
-        <span class="completed">✓ <b>RUC</b></span
-        ><i></i><span class="completed">✓ <b>Datos</b></span
-        ><i></i><span class="completed">✓ <b>Confirmación</b></span>
+        <span class="completed"><i>✓</i><b>RUC</b></span
+        ><i></i><span class="completed"><i>✓</i><b>Datos</b></span
+        ><i></i><span class="completed"><i>✓</i><b>Confirmación</b></span>
       </div>
       <div class="registration-success-icon"><i class="bx bx-check"></i></div>
       <h1 class="success-title">¡Registro exitoso!</h1>
