@@ -4,14 +4,14 @@
 .home-page {
   width: min(100%, 1095px);
   margin: 0 auto;
-  color: #102f69;
+  color: var(--portal-navy-dark);
 }
 .home-heading {
   margin-bottom: 24px;
 }
 .home-heading h1 {
   margin: 0 0 8px;
-  color: #102f69;
+  color: var(--portal-navy-dark);
   font-size: clamp(27px, 2.5vw, 33px);
   font-weight: 650;
   letter-spacing: -0.04em;
@@ -50,7 +50,7 @@
   font-size: 24px;
 }
 .module-icon.blue {
-  color: #1469ed;
+  color: var(--portal-primary);
   background: #e5efff;
 }
 .module-icon.purple {
@@ -111,7 +111,7 @@
   padding: 20px 30px;
   border-radius: 16px;
   color: #fff;
-  background: linear-gradient(105deg, #1249a9, #176be4);
+  background: linear-gradient(105deg, var(--portal-primary-dark), var(--portal-primary));
 }
 .support-banner strong {
   display: block;

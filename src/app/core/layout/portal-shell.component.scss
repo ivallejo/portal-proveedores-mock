@@ -8,8 +8,8 @@
   height: 100vh;
   min-height: 100vh;
   overflow: hidden;
-  color: #142f68;
-  background: #edf3fc;
+  color: var(--portal-navy-dark);
+  background: var(--portal-page);
 }
 
 .portal-header {
@@ -22,7 +22,7 @@
   height: 84px;
   align-items: center;
   padding: 0 38px 0 46px;
-  border-bottom: 1px solid #dce5f2;
+  border-bottom: 1px solid var(--portal-border);
   background: #fff;
   transition: left 0.24s ease;
 }
@@ -156,7 +156,7 @@
 .portal-header-control:hover,
 .portal-icon-button:hover,
 .portal-menu-toggle:hover {
-  color: #176be4;
+  color: var(--portal-primary);
 }
 
 .portal-user-dropdown {
@@ -204,7 +204,7 @@
   padding: 34px 24px 28px;
   overflow: hidden;
   color: #fff;
-  background: #102e66;
+  background: var(--portal-navy);
   transition:
     width 0.24s ease,
     padding 0.24s ease;
@@ -318,7 +318,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   padding: 112px 46px 42px;
-  background: #edf3fc;
+  background: var(--portal-page);
   transition: margin-left 0.24s ease;
 }
 
