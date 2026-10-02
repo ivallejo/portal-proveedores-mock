@@ -29,7 +29,6 @@ import { LoginComponent } from './features/auth/pages/login/login.component';
     LoginComponent,
   ],
   templateUrl: './app.html',
-  styleUrls: ['./app.scss', './theme.scss', './readability.scss'],
 })
 export class App {
   readonly auth = inject(AuthService);
