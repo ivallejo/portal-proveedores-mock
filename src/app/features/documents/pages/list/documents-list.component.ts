@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PortalFacade } from '../../../../core/state/portal.facade';
+import { DocumentsFacade } from '../../state/documents.facade';
 
 @Component({
   selector: 'app-documents-list',
@@ -10,5 +10,5 @@ import { PortalFacade } from '../../../../core/state/portal.facade';
   templateUrl: './documents-list.component.html',
 })
 export class DocumentsListComponent {
-  readonly controller = inject(PortalFacade);
+  readonly controller = inject(DocumentsFacade);
 }
