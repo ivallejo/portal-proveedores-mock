@@ -333,6 +333,10 @@
   transition: margin-left 0.24s ease;
 }
 
+.portal-content-inner {
+  min-height: 100%;
+}
+
 @media (min-width: 901px) {
   .portal-shell.menu-collapsed .portal-header {
     left: 82px;

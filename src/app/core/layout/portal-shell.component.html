@@ -119,6 +119,13 @@
     </nav>
   </aside>
   <main class="portal-content">
-    <ng-content></ng-content>
+    <div
+      class="portal-content-inner"
+      [class.legacy-ui]="
+        screen() !== 'dashboard' && screen() !== 'documentos' && screen() !== 'registrar'
+      "
+    >
+      <ng-content></ng-content>
+    </div>
   </main>
 </div>
