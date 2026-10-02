@@ -41,15 +41,6 @@
       <button
         class="portal-header-control"
         type="button"
-        aria-label="Contraer menú"
-        title="Contraer menú"
-        (click)="toggleMenu()"
-      >
-        <i class="bx bx-chevron-left"></i>
-      </button>
-      <button
-        class="portal-header-control"
-        type="button"
         aria-label="Cerrar sesión"
         title="Cerrar sesión"
         (click)="logout()"
@@ -60,7 +51,8 @@
   </header>
   <aside class="portal-sidebar">
     <div class="portal-sidebar-brand">
-      <span class="portal-brand-cube"></span><strong>Portal de<br />Proveedores</strong>
+      <span class="portal-brand-cube"><i class="bx bxs-cube"></i></span
+      ><strong>Portal de<br />Proveedores</strong>
     </div>
     <nav>
       <button [class.active]="screen() === 'dashboard'" (click)="navigate('dashboard')">
