@@ -13,7 +13,7 @@ import { Documento, DocumentType, Role, SpecialSubtype } from '../../../../share
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './registration.component.html',
-  styleUrls: ['../../../../app.scss', './registration.component.scss'],
+  styleUrl: './registration.component.scss',
 })
 export class RegistrationComponent {
   @Output() readonly navigateTo = new EventEmitter<Screen>();

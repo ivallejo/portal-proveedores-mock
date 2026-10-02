@@ -1,7 +1,11 @@
 <app-login *ngIf="!portal.auth.user(); else portalView"></app-login>
 <ng-template #portalView>
   <app-portal-shell
-    [class.legacy-ui]="portal.screen() !== 'dashboard' && portal.screen() !== 'documentos'"
+    [class.legacy-ui]="
+      portal.screen() !== 'dashboard' &&
+      portal.screen() !== 'documentos' &&
+      portal.screen() !== 'registrar'
+    "
     [error]="portal.error()"
     (navigateTo)="portal.navigate($event)"
     (loggedOut)="portal.logout()"
