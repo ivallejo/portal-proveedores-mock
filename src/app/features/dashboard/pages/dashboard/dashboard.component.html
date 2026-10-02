@@ -1,56 +1,62 @@
-<section class="page">
-  <div class="page-heading">
+<section class="home-page">
+  <div class="home-heading">
     <div>
-      <h1>Hola, {{ userName() }}</h1>
+      <h1>Inicio</h1>
       <p>Consulta el estado de tu operación documental.</p>
     </div>
-    <button *ngIf="isProvider()" class="primary" (click)="navigate.emit('registrar')">
+    <button *ngIf="isProvider()" class="home-action" (click)="navigate.emit('registrar')">
       <i class="bx bx-plus"></i> Registrar documento
     </button>
   </div>
-  <div class="summary-grid">
-    <article>
-      <span class="summary-icon blue"><i class="bx bx-time-five"></i></span>
+  <div class="home-summary-grid">
+    <article class="home-summary-card">
+      <span class="home-summary-icon blue"><i class="bx bx-time-five"></i></span>
       <div>
-        <small>Pendientes</small><strong>{{ pendingCount() }}</strong>
-        <p>Requieren seguimiento</p>
+        <span>Pendientes</span><strong>{{ pendingCount() }}</strong>
+        <small>Requieren seguimiento</small>
       </div>
     </article>
-    <article>
-      <span class="summary-icon green"><i class="bx bx-check-circle"></i></span>
+    <article class="home-summary-card">
+      <span class="home-summary-icon green"><i class="bx bx-check-circle"></i></span>
       <div>
-        <small>Aprobados</small><strong>{{ approvedCount() }}</strong>
-        <p>Listos o contabilizados</p>
+        <span>Aprobados</span><strong>{{ approvedCount() }}</strong>
+        <small>Listos o contabilizados</small>
       </div>
     </article>
-    <article>
-      <span class="summary-icon red"><i class="bx bx-error-circle"></i></span>
+    <article class="home-summary-card">
+      <span class="home-summary-icon red"><i class="bx bx-error-circle"></i></span>
       <div>
-        <small>Observados</small><strong>{{ rejectedCount() }}</strong>
-        <p>Requieren atención</p>
+        <span>Observados</span><strong>{{ rejectedCount() }}</strong>
+        <small>Requieren atención</small>
       </div>
     </article>
   </div>
-  <section class="panel">
-    <div class="panel-title">
+  <section class="home-table-card">
+    <div class="home-table-heading">
       <div>
         <h2>Documentos recientes</h2>
         <p>Últimos movimientos del portal</p>
       </div>
+      <button class="home-link" (click)="navigate.emit('documentos')">
+        Ver todos <i class="bx bx-chevron-right"></i>
+      </button>
     </div>
     <div *ngIf="loading()" class="skeleton-table"><i></i><i></i><i></i></div>
     <div *ngIf="!loading()" class="document-list">
-      <div *ngFor="let item of documents().slice(0, 5)" class="document-row">
-        <div class="doc-type">
-          <i class="bx bx-file"></i>
+      <div *ngFor="let item of documents().slice(0, 5)" class="home-document-row">
+        <div class="home-document-main">
+          <span class="home-document-icon"><i class="bx bx-file"></i></span>
           <div>
-            <strong>{{ item.numero }}</strong
-            ><small>{{ item.proveedor }} · {{ item.tipo }}</small>
+            <strong>{{ item.numero }}</strong>
+            <small>{{ item.proveedor }} · {{ item.tipo }}</small>
           </div>
         </div>
-        <div class="doc-amount">S/ {{ item.importe | number: '1.2-2' }}</div>
-        <span class="status-badge" [class]="statusClass(item.status)">{{ item.status }}</span>
-        <time>{{ item.fecha }}</time>
+        <div class="home-document-amount">S/ {{ item.importe | number: '1.2-2' }}</div>
+        <span class="home-status" [class]="statusClass(item.status)">{{ item.status }}</span>
+        <time class="home-document-date">{{ item.fecha }}</time>
+      </div>
+      <div *ngIf="!documents().length" class="home-empty">
+        Aún no tienes documentos registrados.
       </div>
     </div>
   </section>

@@ -8,6 +8,7 @@ import { Screen } from '../../../../core/navigation/navigation.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   readonly userName = input('');
