@@ -8,6 +8,7 @@ import { DocumentsFacade } from '../../state/documents.facade';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './documents-list.component.html',
+  styleUrl: './documents-list.component.scss',
 })
 export class DocumentsListComponent {
   readonly controller = inject(DocumentsFacade);
