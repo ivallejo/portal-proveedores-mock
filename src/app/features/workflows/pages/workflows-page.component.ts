@@ -8,6 +8,7 @@ import { WorkflowFacade } from '../state/workflow.facade';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './workflows-page.component.html',
+  styleUrl: './workflows-page.component.scss',
 })
 export class WorkflowsPageComponent {
   readonly controller = inject(WorkflowFacade);
