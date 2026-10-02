@@ -56,7 +56,9 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.message);
+        this.error.set(
+          err.error?.message || 'No fue posible iniciar sesión. Inténtalo nuevamente.',
+        );
       },
     });
   }
