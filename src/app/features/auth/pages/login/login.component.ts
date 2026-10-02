@@ -169,7 +169,11 @@ export class LoginComponent {
       },
       error: (error) => {
         this.forgotLoading.set(false);
-        this.forgotError.set(error.message || 'No encontramos información para el RUC indicado.');
+        this.forgotError.set(
+          error.error?.message ||
+            error.message ||
+            'No encontramos información para el RUC indicado.',
+        );
       },
     });
   }
@@ -243,7 +247,9 @@ export class LoginComponent {
       error: (error) => {
         this.registrationSapLoading.set(false);
         this.registrationMessage.set(
-          error.message || 'No encontramos información para el RUC indicado.',
+          error.error?.message ||
+            error.message ||
+            'No encontramos información para el RUC indicado.',
         );
       },
     });

@@ -1,6 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, delay, of, throwError } from 'rxjs';
-import { MockUsersStore } from '../../../shared/state/mock-users.store';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 export interface SapProvider {
   ruc: string;
@@ -10,61 +11,43 @@ export interface SapProvider {
 
 @Injectable({ providedIn: 'root' })
 export class SapProviderService {
-  private readonly users = inject(MockUsersStore);
+  private readonly http = inject(HttpClient);
 
   lookupByRuc(ruc: string): Observable<SapProvider> {
     const normalizedRuc = ruc.replace(/\D/g, '');
-    if (!/^\d{11}$/.test(normalizedRuc)) {
-      return throwError(() => new Error('Ingresa un RUC válido de 11 dígitos.')).pipe(delay(500));
-    }
-    const provider = this.providers[normalizedRuc];
-    if (!provider)
-      return throwError(() => new Error('No encontramos información para el RUC indicado.')).pipe(
-        delay(700),
+    return this.http
+      .post<ProviderLookupResponse>(`${environment.apiBaseUrl}/auth/validate-ruc`, {
+        ruc: normalizedRuc,
+      })
+      .pipe(
+        map((provider) => ({
+          ruc: provider.ruc,
+          companyName: provider.companyName,
+          email: provider.maskedEmail,
+        })),
       );
-    return of({ ...provider, email: this.obfuscateEmail(provider.email) }).pipe(delay(700));
   }
 
-  requestAccessKey(provider: SapProvider): Observable<{ sent: boolean; email: string }> {
-    const source = this.providers[provider.ruc];
-    if (source) {
-      const current = this.users.findByIdentifier(provider.ruc);
-      this.users.save({
-        id: current?.id || `mock-provider-${provider.ruc}`,
-        username: provider.ruc,
-        email: source.email,
-        companyName: source.companyName,
-        area: '',
-        ruc: source.ruc,
-        password: '123456',
-        role: 'Proveedor',
-        roles: ['Proveedor'],
-        isActive: true,
-        createdAtUtc: current?.createdAtUtc || new Date().toISOString(),
-      });
-    }
-    return of({ sent: true, email: provider.email }).pipe(delay(900));
+  requestAccessKey(
+    provider: SapProvider,
+    termsAccepted = true,
+  ): Observable<{ sent: boolean; email: string }> {
+    return this.http
+      .post<AccessKeyResponse>(`${environment.apiBaseUrl}/auth/request-access-key`, {
+        ruc: provider.ruc,
+        termsAccepted,
+      })
+      .pipe(map((response) => ({ sent: response.sent, email: response.maskedEmail })));
   }
+}
 
-  private readonly providers: Record<string, SapProvider> = {
-    '20123456789': {
-      ruc: '20123456789',
-      companyName: 'Servicios Integrales del Pacífico S.A.C.',
-      email: 'contacto@serviciospacifico.com',
-    },
-    '20523682785': {
-      ruc: '20523682785',
-      companyName: 'AD COMPUTERS S.A.C.',
-      email: 'administracion@adcomputers.com',
-    },
-  };
+interface ProviderLookupResponse {
+  ruc: string;
+  companyName: string;
+  maskedEmail: string;
+}
 
-  private obfuscateEmail(email: string): string {
-    const [localPart, domain] = email.split('@');
-    if (!localPart || !domain) return email;
-    const domainParts = domain.split('.');
-    const domainName = domainParts.shift() || domain;
-    const domainSuffix = domainParts.length ? `.${domainParts.join('.')}` : '';
-    return `${localPart.slice(0, 3)}*****${domainName.slice(-3)}${domainSuffix}`;
-  }
+interface AccessKeyResponse {
+  sent: boolean;
+  maskedEmail: string;
 }
