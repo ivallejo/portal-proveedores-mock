@@ -48,37 +48,59 @@
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
-        <i class="nav-icon bx bx-file-plus"></i><span>Registrar documento</span></button
+        <i class="nav-icon bx bx-cart"></i><span>Orden de compra</span
+        ><i class="nav-chevron bx bx-chevron-right"></i></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'documentos'"
         (click)="navigate('documentos')"
       >
-        <i class="nav-icon bx bx-receipt"></i><span>Mis documentos</span></button
+        <i class="nav-icon bx bx-money"></i><span>Orden de pago</span></button
       ><button
-        *ngIf="isRole('Colaborador interno') || isRole('Administrador')"
+        *ngIf="isRole('Proveedor') || isRole('Administrador')"
+        [class.active]="screen() === 'documentos'"
+        (click)="navigate('documentos')"
+      >
+        <i class="nav-icon bx bx-file"></i><span>Estado de factura</span></button
+      ><button
+        *ngIf="isRole('Proveedor') || isRole('Administrador')"
+        [class.active]="screen() === 'documentos'"
+        (click)="navigate('documentos')"
+      >
+        <i class="nav-icon bx bx-file-blank"></i><span>Documentos</span></button
+      ><button
+        *ngIf="isRole('Proveedor') || isRole('CxP') || isRole('Administrador')"
+        [class.active]="screen() === 'contabilizacion'"
+        (click)="navigate('contabilizacion')"
+      >
+        <i class="nav-icon bx bx-bar-chart-alt-2"></i><span>Contabilización</span></button
+      ><button
+        *ngIf="isRole('Colaborador interno')"
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
         <i class="nav-icon bx bx-file-plus"></i><span>Documentos especiales</span></button
       ><button
-        *ngIf="isRole('Área Usuaria') || isRole('Administrador')"
+        *ngIf="isRole('Área Usuaria')"
         [class.active]="screen() === 'aprobaciones'"
         (click)="navigate('aprobaciones')"
       >
         <i class="nav-icon bx bx-check-shield"></i><span>Aprobaciones</span></button
       ><button
-        *ngIf="isRole('CxP') || isRole('Administrador')"
-        [class.active]="screen() === 'contabilizacion'"
-        (click)="navigate('contabilizacion')"
-      >
-        <i class="nav-icon bx bx-calculator"></i><span>Documentos contabilizados</span></button
-      ><button
         *ngIf="isRole('Administrador')"
         [class.active]="screen() === 'usuarios'"
         (click)="navigate('usuarios')"
       >
-        <i class="nav-icon bx bx-user-plus"></i><span>Usuarios y roles</span>
+        <i class="nav-icon bx bx-cog"></i><span>Configuración</span
+        ><i class="nav-chevron bx bx-chevron-down"></i>
+      </button>
+      <button
+        *ngIf="isRole('Administrador')"
+        class="configuration-item"
+        [class.active]="screen() === 'usuarios'"
+        (click)="navigate('usuarios')"
+      >
+        <i class="configuration-dot"></i><span>Usuarios y roles</span>
       </button>
     </nav>
     <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">

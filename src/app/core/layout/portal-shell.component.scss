@@ -246,6 +246,31 @@
   width: 100% !important;
 }
 
+.portal-sidebar nav .nav-chevron {
+  width: auto;
+  height: auto;
+  margin-left: auto;
+  font-size: 18px;
+}
+
+.portal-sidebar nav .configuration-item {
+  min-height: 42px;
+  height: 42px !important;
+  padding-left: 68px !important;
+  border-radius: 0;
+  color: #dbe7ff !important;
+  background: transparent !important;
+  font-size: 14px !important;
+}
+
+.portal-sidebar nav .configuration-item .configuration-dot {
+  width: 6px;
+  height: 6px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: #72a1ff;
+}
+
 .portal-content {
   position: relative !important;
   z-index: 1;
