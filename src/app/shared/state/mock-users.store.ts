@@ -33,7 +33,22 @@ export class MockUsersStore {
         ...usersWithAdmin,
         ...this.approverPool().filter((user) => !existingIds.has(user.id)),
       ].map((user) => {
-        if (user.id === 'mock-admin') return { ...user, password: '123456' };
+        if (this.isAdminRecord(user)) {
+          return {
+            ...user,
+            id: 'mock-admin',
+            username: 'admin',
+            password: '123456',
+            email: user.email || 'admin@naviera.local',
+            emails: user.emails?.length ? user.emails : ['admin@naviera.local'],
+            companyName: user.companyName || 'Administrador del sistema',
+            area: 'Administración',
+            ruc: 'ADMIN-SYSTEM',
+            role: 'Administrador',
+            roles: ['Administrador'],
+            isActive: true,
+          };
+        }
         return ['DemoKey_123!', 'AdminLocal_12345!', '1234'].includes(user.password)
           ? { ...user, password: '123456' }
           : user;
@@ -87,6 +102,14 @@ export class MockUsersStore {
       isActive: true,
       createdAtUtc: new Date().toISOString(),
     };
+  }
+
+  private isAdminRecord(user: Partial<MockUserRecord>): boolean {
+    return (
+      user.id === 'mock-admin' ||
+      user.username?.trim().toLowerCase() === 'admin' ||
+      user.ruc?.trim().toLowerCase() === 'admin-system'
+    );
   }
 
   private persist(): void {
