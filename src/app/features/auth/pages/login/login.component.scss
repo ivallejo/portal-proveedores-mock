@@ -175,8 +175,10 @@
   align-self: center;
   justify-self: center;
   width: min(540px, calc(100% - 56px));
+  height: calc(100vh - 110px);
+  min-height: 700px;
   box-sizing: border-box;
-  overflow: visible;
+  overflow: hidden;
   padding: 42px 50px;
   border: 1px solid #f4f6fa;
   border-radius: 22px;
@@ -478,6 +480,7 @@
 
 .registration-card h1 {
   margin-bottom: 10px;
+  font-size: 30px;
 }
 
 .field-helper {
@@ -526,7 +529,7 @@
 }
 
 .provider-confirmation > div {
-  padding: 18px 27px;
+  padding: 15px 24px;
   border-bottom: 1px solid #dce4f1;
 }
 
@@ -538,14 +541,14 @@
   display: block;
   margin-bottom: 7px;
   color: #60718f;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 650;
   letter-spacing: 0.03em;
 }
 
 .provider-confirmation strong {
   color: #102e66;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -570,7 +573,7 @@
 .registration-note {
   margin: 0 0 18px;
   color: #526584;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .terms-check {
@@ -685,11 +688,13 @@
 
   .login-card {
     width: 100%;
+    height: auto;
     min-height: 100svh;
     max-height: none;
     padding: 35px 24px;
     border: 0;
     border-radius: 0;
+    overflow: visible;
     box-shadow: none;
   }
 
