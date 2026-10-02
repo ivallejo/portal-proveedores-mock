@@ -174,7 +174,7 @@
   z-index: 2;
   align-self: center;
   justify-self: center;
-  width: min(540px, calc(100% - 56px));
+  width: min(570px, calc(100% - 56px));
   height: calc(100vh - 110px);
   min-height: 700px;
   box-sizing: border-box;
@@ -541,14 +541,14 @@
   display: block;
   margin-bottom: 7px;
   color: #60718f;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 650;
   letter-spacing: 0.03em;
 }
 
 .provider-confirmation strong {
   color: #102e66;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -566,7 +566,7 @@
   border-radius: 20px;
   color: #176a3f;
   background: #dff4e7;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 650;
 }
 
