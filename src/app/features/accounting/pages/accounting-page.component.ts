@@ -8,6 +8,7 @@ import { AccountingFacade } from '../state/accounting.facade';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './accounting-page.component.html',
+  styleUrl: './accounting-page.component.scss',
 })
 export class AccountingPageComponent implements OnInit {
   readonly controller = inject(AccountingFacade);
