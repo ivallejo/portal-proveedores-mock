@@ -1,12 +1,12 @@
-<div class="provider-shell" [class.menu-collapsed]="menuOpen()">
-  <header class="provider-header">
+<div class="provider-shell portal-shell" [class.menu-collapsed]="menuOpen()">
+  <header class="provider-header portal-header">
     <button class="menu-toggle" (click)="menuOpen.set(!menuOpen())">
       <i class="bx bx-menu"></i>
     </button>
     <div class="portal-breadcrumb">
       <span>Portal</span><i class="bx bx-chevron-right"></i><strong>{{ screenLabel() }}</strong>
     </div>
-    <div class="header-actions">
+    <div class="header-actions portal-header-actions">
       <button class="shell-icon-button" aria-label="Notificaciones">
         <i class="bx bx-bell"></i><em></em>
       </button>
@@ -36,7 +36,7 @@
       </div>
     </div>
   </header>
-  <aside class="provider-sidebar">
+  <aside class="provider-sidebar portal-sidebar">
     <div class="sidebar-brand">
       <span class="brand-cube"></span><strong>Portal de<br />Proveedores</strong>
     </div>
@@ -87,7 +87,7 @@
       <i class="bx bx-log-out"></i> Cerrar sesión
     </button>
   </aside>
-  <main class="provider-content">
+  <main class="provider-content portal-content">
     <ng-content></ng-content>
   </main>
 </div>

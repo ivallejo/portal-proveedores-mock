@@ -192,3 +192,97 @@
     padding: 104px 18px 28px !important;
   }
 }
+
+/* Clases propias del shell para evitar que los estilos legacy del prototipo
+   alteren la navegación principal. */
+.portal-shell {
+  position: relative;
+  display: block;
+  min-height: 100vh !important;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.portal-header {
+  position: fixed !important;
+  z-index: 20 !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: 315px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 84px !important;
+  min-height: 84px !important;
+  box-sizing: border-box !important;
+  padding: 0 38px 0 46px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.portal-sidebar {
+  position: fixed !important;
+  z-index: 21 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  display: flex !important;
+  visibility: visible !important;
+  width: 315px !important;
+  min-width: 315px !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+.portal-sidebar nav {
+  display: grid !important;
+  visibility: visible !important;
+  width: 100% !important;
+}
+
+.portal-sidebar nav button {
+  display: flex !important;
+  visibility: visible !important;
+  width: 100% !important;
+}
+
+.portal-content {
+  position: relative !important;
+  z-index: 1;
+  display: block !important;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  margin-left: 315px !important;
+  box-sizing: border-box !important;
+  padding: 112px 46px 42px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.portal-header-actions {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: auto !important;
+}
+
+@media (max-width: 900px) {
+  .portal-header {
+    left: 0 !important;
+    padding: 0 18px !important;
+  }
+
+  .portal-sidebar {
+    width: 280px !important;
+    min-width: 280px !important;
+    transform: translateX(-100%) !important;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .portal-content {
+    margin-left: 0 !important;
+    padding: 104px 18px 28px !important;
+  }
+}
