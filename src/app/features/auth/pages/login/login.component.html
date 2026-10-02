@@ -5,7 +5,10 @@
         <span class="login-mark"><i class="bx bxs-cube"></i></span
         ><strong>Portal de Proveedores</strong>
       </div>
-      <div class="login-hero-copy" *ngIf="!showRegistration() && !forgotMode()">
+      <div
+        class="login-hero-copy"
+        *ngIf="!showRegistration() && !forgotMode() && !passwordChangeMode()"
+      >
         <h2>Juntos impulsamos<br /><em>grandes proyectos</em></h2>
         <p>
           Accede a tu información, consulta el estado de tus documentos y mantente al día con tus
@@ -18,6 +21,10 @@
           Te ayudamos a cambiar tu contraseña en pocos pasos para que sigas gestionando tus
           documentos.
         </p>
+      </div>
+      <div class="login-hero-copy" *ngIf="passwordChangeMode()">
+        <h2>Actualiza tu<br /><em>contraseña</em></h2>
+        <p>Elige una nueva contraseña segura para seguir ingresando al portal.</p>
       </div>
       <div class="login-hero-copy" *ngIf="showRegistration()">
         <h2>Únete a nuestra<br /><em>red de proveedores</em></h2>
@@ -40,7 +47,7 @@
     </div>
   </section>
 
-  <section class="login-card" *ngIf="!showRegistration() && !forgotMode()">
+  <section class="login-card" *ngIf="!showRegistration() && !forgotMode() && !passwordChangeMode()">
     <div class="login-brand login-brand-dark">
       <span class="login-mark"><i class="bx bxs-cube"></i></span
       ><strong>Portal de Proveedores</strong>
@@ -151,6 +158,143 @@
       </div>
       <button class="login-primary" type="button" (click)="closeForgotPassword()">
         Volver al inicio de sesión
+      </button>
+      <button class="forgot-simulate-link" type="button" (click)="openPasswordChange()">
+        Simular enlace de cambio
+      </button>
+    </ng-container>
+    <div class="login-protection"><i class="bx bx-check-shield"></i> Protegemos tu información</div>
+  </section>
+
+  <section class="login-card password-change-card" *ngIf="passwordChangeMode()">
+    <button class="back-link" type="button" (click)="closePasswordChange()">
+      <i class="bx bx-left-arrow-alt"></i> Volver al inicio de sesión
+    </button>
+
+    <ng-container *ngIf="!passwordChangeCompleted()">
+      <div class="forgot-icon"><i class="bx bx-key"></i></div>
+      <h1>Cambia tu contraseña</h1>
+      <p class="login-description">
+        Ingresa y confirma tu nueva contraseña para
+        <strong>Andes Suministros Industriales S.A.C.</strong>
+      </p>
+      <form (ngSubmit)="changePassword()">
+        <label
+          >Contraseña
+          <div class="login-input-wrap">
+            <i class="bx bx-lock-alt"></i>
+            <input
+              [ngModel]="newPassword()"
+              (ngModelChange)="newPassword.set($event)"
+              name="newPassword"
+              [type]="showNewPassword() ? 'text' : 'password'"
+              placeholder="Ingresa tu contraseña"
+            /><button
+              type="button"
+              class="password-toggle"
+              (click)="showNewPassword.set(!showNewPassword())"
+            >
+              <i
+                class="bx"
+                [class.bx-show]="!showNewPassword()"
+                [class.bx-hide]="showNewPassword()"
+              ></i>
+            </button>
+          </div>
+        </label>
+        <label
+          >Confirmar contraseña
+          <div
+            class="login-input-wrap"
+            [class.invalid-input]="passwordChangeError() === 'Las contraseñas no coinciden'"
+          >
+            <i class="bx bx-lock-alt"></i>
+            <input
+              [ngModel]="confirmPassword()"
+              (ngModelChange)="confirmPassword.set($event)"
+              name="confirmPassword"
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              placeholder="Confirma tu contraseña"
+            /><button
+              type="button"
+              class="password-toggle"
+              (click)="showConfirmPassword.set(!showConfirmPassword())"
+            >
+              <i
+                class="bx"
+                [class.bx-show]="!showConfirmPassword()"
+                [class.bx-hide]="showConfirmPassword()"
+              ></i>
+            </button>
+          </div>
+        </label>
+        <div class="password-rules">
+          <span [class.valid]="hasMinPasswordLength()"
+            ><i
+              class="bx"
+              [class.bx-check]="hasMinPasswordLength()"
+              [class.bx-radio-circle]="!hasMinPasswordLength()"
+            ></i
+            >Mínimo 6 caracteres</span
+          >
+          <span [class.valid]="hasUppercasePassword()"
+            ><i
+              class="bx"
+              [class.bx-check]="hasUppercasePassword()"
+              [class.bx-radio-circle]="!hasUppercasePassword()"
+            ></i
+            >Una letra mayúscula</span
+          >
+          <span [class.valid]="hasLowercasePassword()"
+            ><i
+              class="bx"
+              [class.bx-check]="hasLowercasePassword()"
+              [class.bx-radio-circle]="!hasLowercasePassword()"
+            ></i
+            >Una letra minúscula</span
+          >
+          <span [class.valid]="hasNumberPassword()"
+            ><i
+              class="bx"
+              [class.bx-check]="hasNumberPassword()"
+              [class.bx-radio-circle]="!hasNumberPassword()"
+            ></i
+            >Un número</span
+          >
+        </div>
+        <div
+          *ngIf="passwordChangeError() === 'Las contraseñas no coinciden'"
+          class="password-error"
+        >
+          <i class="bx bx-error-circle"></i>
+          <div>
+            <strong>Las contraseñas no coinciden</strong
+            ><span
+              >Verifica que la contraseña y su confirmación sean iguales e inténtalo
+              nuevamente.</span
+            >
+          </div>
+        </div>
+        <p
+          *ngIf="passwordChangeError() && passwordChangeError() !== 'Las contraseñas no coinciden'"
+          class="form-message"
+        >
+          {{ passwordChangeError() }}
+        </p>
+        <button class="login-primary" type="submit" [disabled]="passwordChangeLoading()">
+          <i class="bx bx-check"></i>{{ passwordChangeLoading() ? 'Cambiando...' : 'Cambiar' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <ng-container *ngIf="passwordChangeCompleted()">
+      <div class="forgot-success-icon"><i class="bx bx-check"></i></div>
+      <h1>¡Contraseña actualizada!</h1>
+      <p class="forgot-success-copy">
+        Tu contraseña se cambió correctamente. Ya puedes ingresar al portal con tu nueva contraseña.
+      </p>
+      <button class="login-primary" type="button" (click)="closePasswordChange()">
+        <i class="bx bx-right-arrow-alt"></i> Iniciar sesión
       </button>
     </ng-container>
     <div class="login-protection"><i class="bx bx-check-shield"></i> Protegemos tu información</div>

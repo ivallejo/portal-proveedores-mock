@@ -55,6 +55,10 @@ export class AuthService {
     localStorage.removeItem('portal-proveedores.mock-session');
     this.user.set(null);
   }
+  updatePassword(identifier: string, password: string): void {
+    const record = this.users.findByIdentifier(identifier);
+    if (record) this.users.update(record.id, { password });
+  }
   setActiveRole(role: Role): void {
     const current = this.user();
     if (!current || !current.roles.includes(role)) return;

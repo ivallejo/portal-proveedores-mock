@@ -29,6 +29,14 @@ export class LoginComponent {
   readonly forgotError = signal('');
   readonly forgotRuc = signal('');
   readonly forgotEmail = signal('');
+  readonly passwordChangeMode = signal(false);
+  readonly passwordChangeCompleted = signal(false);
+  readonly passwordChangeLoading = signal(false);
+  readonly passwordChangeError = signal('');
+  readonly newPassword = signal('');
+  readonly confirmPassword = signal('');
+  readonly showNewPassword = signal(false);
+  readonly showConfirmPassword = signal(false);
   readonly registrationLoading = signal(false);
   readonly registrationSapLoading = signal(false);
   readonly registrationMessage = signal('');
@@ -89,6 +97,58 @@ export class LoginComponent {
     this.forgotMode.set(false);
     this.forgotSent.set(false);
     this.forgotError.set('');
+  }
+  openPasswordChange(): void {
+    this.forgotMode.set(false);
+    this.passwordChangeCompleted.set(false);
+    this.passwordChangeError.set('');
+    this.newPassword.set('');
+    this.confirmPassword.set('');
+    this.passwordChangeMode.set(true);
+  }
+  closePasswordChange(): void {
+    this.passwordChangeMode.set(false);
+    this.passwordChangeCompleted.set(false);
+    this.passwordChangeError.set('');
+  }
+  changePassword(): void {
+    const password = this.newPassword();
+    const confirmation = this.confirmPassword();
+    this.passwordChangeError.set('');
+    if (!this.hasValidPassword(password)) {
+      this.passwordChangeError.set('La contraseña no cumple todos los requisitos.');
+      return;
+    }
+    if (password !== confirmation) {
+      this.passwordChangeError.set('Las contraseñas no coinciden');
+      return;
+    }
+    this.passwordChangeLoading.set(true);
+    window.setTimeout(() => {
+      this.auth.updatePassword(this.forgotRuc(), password);
+      this.passwordChangeLoading.set(false);
+      this.passwordChangeCompleted.set(true);
+    }, 700);
+  }
+  hasMinPasswordLength(): boolean {
+    return this.newPassword().length >= 6;
+  }
+  hasUppercasePassword(): boolean {
+    return /[A-Z]/.test(this.newPassword());
+  }
+  hasLowercasePassword(): boolean {
+    return /[a-z]/.test(this.newPassword());
+  }
+  hasNumberPassword(): boolean {
+    return /\d/.test(this.newPassword());
+  }
+  hasValidPassword(password: string): boolean {
+    return (
+      password.length >= 6 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /\d/.test(password)
+    );
   }
   requestPasswordReset(): void {
     const ruc = this.forgotRuc().replace(/\D/g, '');

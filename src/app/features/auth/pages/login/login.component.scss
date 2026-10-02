@@ -464,6 +464,80 @@
   margin-top: 22px;
 }
 
+.forgot-simulate-link {
+  display: block;
+  margin: 14px auto 0;
+  padding: 0;
+  border: 0;
+  color: #1268e6;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.password-change-card .login-description strong {
+  color: #102e66;
+}
+
+.password-rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-top: 4px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  color: #536584;
+  background: #f0f5fd;
+  font-size: 13px;
+}
+
+.password-rules span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.password-rules i {
+  color: #536584;
+  font-size: 16px;
+}
+
+.password-rules span.valid,
+.password-rules span.valid i {
+  color: #16874c;
+}
+
+.password-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 13px 14px;
+  border: 1px solid #ffb5b5;
+  border-radius: 11px;
+  color: #a92020;
+  background: #fff0f0;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.password-error > i {
+  flex: 0 0 auto;
+  font-size: 19px;
+}
+
+.password-error div {
+  display: grid;
+  gap: 3px;
+}
+
+@media (max-width: 620px) {
+  .password-rules {
+    grid-template-columns: 1fr;
+  }
+}
+
 .registration-steps {
   display: flex;
   align-items: center;
