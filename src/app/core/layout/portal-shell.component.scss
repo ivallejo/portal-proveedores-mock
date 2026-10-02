@@ -283,9 +283,20 @@
 .portal-nav-icon {
   width: 25px;
   flex: 0 0 25px;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
   color: #fff;
+  background: transparent;
   font-size: 23px;
+  font-style: normal;
   text-align: center;
+}
+
+.portal-sidebar nav button.active .portal-nav-icon,
+.portal-sidebar nav button:hover .portal-nav-icon {
+  color: #fff;
+  background: transparent;
 }
 .portal-nav-chevron {
   margin-left: auto;
