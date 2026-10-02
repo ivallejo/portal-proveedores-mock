@@ -10,6 +10,7 @@ import { Role, roleLabel } from '../../shared/models/models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './portal-shell.component.html',
+  styleUrls: ['./portal-shell.component.scss'],
 })
 export class PortalShellComponent {
   readonly auth = inject(AuthService);
@@ -32,6 +33,29 @@ export class PortalShellComponent {
   setActiveRole(role: Role): void {
     this.auth.setActiveRole(role);
     this.navigateTo.emit(this.landingScreen());
+  }
+  initials(): string {
+    return (this.auth.user()?.name || 'US')
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('')
+      .toUpperCase();
+  }
+  screenLabel(): string {
+    const labels: Record<Screen, string> = {
+      dashboard: 'Inicio',
+      registrar: 'Registrar documento',
+      documentos: 'Mis documentos',
+      consultas: 'Consultas',
+      perfil: 'Mi perfil',
+      usuarios: 'Usuarios y roles',
+      workflows: 'Workflows',
+      aprobaciones: 'Aprobaciones',
+      contabilizacion: 'Contabilización',
+    };
+    return labels[this.screen()];
   }
   landingScreen(): Screen {
     const role = this.auth.user()?.role;
