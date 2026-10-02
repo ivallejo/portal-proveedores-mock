@@ -1,16 +1,16 @@
-<div class="provider-shell portal-shell" [class.menu-collapsed]="menuOpen()">
-  <header class="provider-header portal-header">
-    <button class="menu-toggle" (click)="menuOpen.set(!menuOpen())">
+<div class="portal-shell" [class.menu-collapsed]="menuOpen()">
+  <header class="portal-header">
+    <button class="portal-menu-toggle" (click)="menuOpen.set(!menuOpen())">
       <i class="bx bx-menu"></i>
     </button>
     <div class="portal-breadcrumb">
       <span>Portal</span><i class="bx bx-chevron-right"></i><strong>{{ screenLabel() }}</strong>
     </div>
-    <div class="header-actions portal-header-actions">
-      <button class="shell-icon-button" aria-label="Notificaciones">
+    <div class="portal-header-actions">
+      <button class="portal-icon-button" aria-label="Notificaciones">
         <i class="bx bx-bell"></i><em></em>
       </button>
-      <button class="shell-icon-button" aria-label="Ayuda">
+      <button class="portal-icon-button" aria-label="Ayuda">
         <i class="bx bx-help-circle"></i>
       </button>
       <label *ngIf="(auth.user()?.roles?.length || 0) > 1" class="active-role-selector">
@@ -21,78 +21,82 @@
           </option>
         </select>
       </label>
-      <div class="user-actions">
-        <button class="user-menu" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen()">
-          <span class="profile-badge">{{ initials() }}</span
-          ><span class="profile-data"
+      <div class="portal-user-actions">
+        <button
+          class="portal-user-menu"
+          (click)="toggleUserMenu()"
+          [attr.aria-expanded]="userMenuOpen()"
+        >
+          <span class="portal-profile-badge">{{ initials() }}</span
+          ><span class="portal-profile-data"
             ><b>{{ auth.user()?.name }}</b
             ><small>RUC {{ auth.user()?.providerId }}</small></span
           ><i class="bx bx-chevron-down"></i>
         </button>
-        <div *ngIf="userMenuOpen()" class="user-dropdown">
+        <div *ngIf="userMenuOpen()" class="portal-user-dropdown">
           <button (click)="navigate('perfil')"><i class="bx bx-user"></i> Mi perfil</button>
           <button (click)="logout()"><i class="bx bx-log-out"></i> Cerrar sesión</button>
         </div>
       </div>
     </div>
   </header>
-  <aside class="provider-sidebar portal-sidebar">
-    <div class="sidebar-brand">
-      <span class="brand-cube"></span><strong>Portal de<br />Proveedores</strong>
+  <aside class="portal-sidebar">
+    <div class="portal-sidebar-brand">
+      <span class="portal-brand-cube"></span><strong>Portal de<br />Proveedores</strong>
     </div>
     <nav>
       <button [class.active]="screen() === 'dashboard'" (click)="navigate('dashboard')">
-        <i class="nav-icon bx bx-home"></i><span>Inicio</span></button
+        <i class="portal-nav-icon bx bx-home"></i><span>Inicio</span></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
-        <i class="nav-icon bx bx-cart"></i><span>Orden de compra</span
-        ><i class="nav-chevron bx bx-chevron-right"></i></button
+        <i class="portal-nav-icon bx bx-cart"></i><span>Orden de compra</span
+        ><i class="portal-nav-chevron bx bx-chevron-right"></i></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'documentos'"
         (click)="navigate('documentos')"
       >
-        <i class="nav-icon bx bx-money"></i><span>Orden de pago</span></button
+        <i class="portal-nav-icon bx bx-money"></i><span>Orden de pago</span></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'documentos'"
         (click)="navigate('documentos')"
       >
-        <i class="nav-icon bx bx-file"></i><span>Estado de factura</span></button
+        <i class="portal-nav-icon bx bx-file"></i><span>Estado de factura</span></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
         [class.active]="screen() === 'documentos'"
         (click)="navigate('documentos')"
       >
-        <i class="nav-icon bx bx-file-blank"></i><span>Documentos</span></button
+        <i class="portal-nav-icon bx bx-file-blank"></i><span>Documentos</span></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('CxP') || isRole('Administrador')"
         [class.active]="screen() === 'contabilizacion'"
         (click)="navigate('contabilizacion')"
       >
-        <i class="nav-icon bx bx-bar-chart-alt-2"></i><span>Contabilización</span></button
+        <i class="portal-nav-icon bx bx-bar-chart-alt-2"></i><span>Contabilización</span></button
       ><button
         *ngIf="isRole('Colaborador interno')"
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
-        <i class="nav-icon bx bx-file-plus"></i><span>Documentos especiales</span></button
+        <i class="portal-nav-icon bx bx-file-plus"></i><span>Documentos especiales</span></button
       ><button
         *ngIf="isRole('Área Usuaria')"
         [class.active]="screen() === 'aprobaciones'"
         (click)="navigate('aprobaciones')"
       >
-        <i class="nav-icon bx bx-check-shield"></i><span>Aprobaciones</span></button
+        <i class="portal-nav-icon bx bx-check-shield"></i><span>Aprobaciones</span></button
       ><button
         *ngIf="isRole('Administrador')"
         [class.active]="screen() === 'usuarios'"
         (click)="navigate('usuarios')"
       >
-        <i class="nav-icon bx bx-cog"></i><span>Configuración</span
-        ><i class="nav-chevron bx bx-chevron-down"></i>
+        <i class="portal-nav-icon bx bx-cog"></i><span>Configuración</span
+        ><i class="portal-nav-chevron bx bx-chevron-down"></i>
       </button>
       <button
         *ngIf="isRole('Administrador')"
@@ -100,16 +104,16 @@
         [class.active]="screen() === 'usuarios'"
         (click)="navigate('usuarios')"
       >
-        <i class="configuration-dot"></i><span>Usuarios y roles</span>
+        <i class="portal-configuration-dot"></i><span>Usuarios y roles</span>
       </button>
     </nav>
-    <button class="collapse-menu" (click)="menuOpen.set(!menuOpen())">
+    <button class="portal-collapse-menu" (click)="menuOpen.set(!menuOpen())">
       <i class="bx bx-chevron-left"></i> Contraer menú</button
-    ><button class="logout-menu" (click)="logout()">
+    ><button class="portal-logout-menu" (click)="logout()">
       <i class="bx bx-log-out"></i> Cerrar sesión
     </button>
   </aside>
-  <main class="provider-content portal-content">
+  <main class="portal-content">
     <ng-content></ng-content>
   </main>
 </div>
