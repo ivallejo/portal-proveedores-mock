@@ -391,6 +391,79 @@
   font-size: 22px;
 }
 
+.forgot-card {
+  justify-content: flex-start;
+}
+
+.forgot-icon,
+.forgot-success-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  margin: 0 0 20px;
+  place-items: center;
+  border-radius: 14px;
+  color: #176be4;
+  background: #e7f0ff;
+  font-size: 25px;
+}
+
+.forgot-card h1 {
+  margin-top: 0;
+}
+
+.forgot-card form {
+  margin-top: 25px;
+}
+
+.forgot-success-icon {
+  width: 72px;
+  height: 72px;
+  margin: 25px auto 22px;
+  border: 10px solid #e2f5e9;
+  border-radius: 50%;
+  color: #fff;
+  background: #18a259;
+  font-size: 28px;
+}
+
+.forgot-card .forgot-success-icon + h1,
+.forgot-card .forgot-success-copy {
+  text-align: center;
+}
+
+.forgot-success-copy {
+  color: #526584;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.forgot-success-copy strong {
+  color: #102e66;
+}
+
+.forgot-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 24px 0;
+  padding: 12px 14px;
+  border-radius: 11px;
+  color: #284d83;
+  background: #eaf2ff;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.forgot-info i {
+  flex: 0 0 auto;
+  font-size: 18px;
+}
+
+.forgot-card .login-protection {
+  margin-top: 22px;
+}
+
 .registration-steps {
   display: flex;
   align-items: center;

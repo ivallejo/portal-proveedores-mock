@@ -23,6 +23,12 @@ export class LoginComponent {
   readonly error = signal('');
   readonly showPassword = signal(false);
   readonly showRegistration = signal(false);
+  readonly forgotMode = signal(false);
+  readonly forgotSent = signal(false);
+  readonly forgotLoading = signal(false);
+  readonly forgotError = signal('');
+  readonly forgotRuc = signal('');
+  readonly forgotEmail = signal('');
   readonly registrationLoading = signal(false);
   readonly registrationSapLoading = signal(false);
   readonly registrationMessage = signal('');
@@ -52,6 +58,7 @@ export class LoginComponent {
     this.login();
   }
   openRegistration(): void {
+    this.forgotMode.set(false);
     this.registrationMessage.set('');
     this.registrationCompleted.set(false);
     this.registrationValidated.set(false);
@@ -68,6 +75,41 @@ export class LoginComponent {
     this.registrationCompleted.set(false);
     this.registrationValidated.set(false);
     this.registrationKeyRequested.set(false);
+  }
+  openForgotPassword(): void {
+    this.error.set('');
+    this.forgotError.set('');
+    this.forgotSent.set(false);
+    this.forgotRuc.set('');
+    this.forgotEmail.set('');
+    this.showRegistration.set(false);
+    this.forgotMode.set(true);
+  }
+  closeForgotPassword(): void {
+    this.forgotMode.set(false);
+    this.forgotSent.set(false);
+    this.forgotError.set('');
+  }
+  requestPasswordReset(): void {
+    const ruc = this.forgotRuc().replace(/\D/g, '');
+    this.forgotRuc.set(ruc);
+    this.forgotError.set('');
+    if (ruc.length !== 11) {
+      this.forgotError.set('El RUC debe tener 11 dígitos.');
+      return;
+    }
+    this.forgotLoading.set(true);
+    this.sapProviderService.lookupByRuc(ruc).subscribe({
+      next: (provider) => {
+        this.forgotEmail.set(provider.email);
+        this.forgotLoading.set(false);
+        this.forgotSent.set(true);
+      },
+      error: (error) => {
+        this.forgotLoading.set(false);
+        this.forgotError.set(error.message || 'No encontramos información para el RUC indicado.');
+      },
+    });
   }
   onRegistrationRucChange(value: string): void {
     this.registration.ruc = value;

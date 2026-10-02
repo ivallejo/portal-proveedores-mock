@@ -5,11 +5,18 @@
         <span class="login-mark"><i class="bx bxs-cube"></i></span
         ><strong>Portal de Proveedores</strong>
       </div>
-      <div class="login-hero-copy" *ngIf="!showRegistration()">
+      <div class="login-hero-copy" *ngIf="!showRegistration() && !forgotMode()">
         <h2>Juntos impulsamos<br /><em>grandes proyectos</em></h2>
         <p>
           Accede a tu información, consulta el estado de tus documentos y mantente al día con tus
           procesos.
+        </p>
+      </div>
+      <div class="login-hero-copy" *ngIf="forgotMode()">
+        <h2>Recupera el acceso<br /><em>a tu cuenta</em></h2>
+        <p>
+          Te ayudamos a cambiar tu contraseña en pocos pasos para que sigas gestionando tus
+          documentos.
         </p>
       </div>
       <div class="login-hero-copy" *ngIf="showRegistration()">
@@ -33,7 +40,7 @@
     </div>
   </section>
 
-  <section class="login-card" *ngIf="!showRegistration()">
+  <section class="login-card" *ngIf="!showRegistration() && !forgotMode()">
     <div class="login-brand login-brand-dark">
       <span class="login-mark"><i class="bx bxs-cube"></i></span
       ><strong>Portal de Proveedores</strong>
@@ -80,11 +87,72 @@
         <i class="bx bx-right-arrow-alt"></i>{{ loading() ? 'Validando...' : 'Ingresar' }}
       </button>
     </form>
-    <button class="forgot-link" type="button">¿Olvidaste tu contraseña?</button>
+    <button class="forgot-link" type="button" (click)="openForgotPassword()">
+      ¿Olvidaste tu contraseña?
+    </button>
     <div class="login-divider"><span>¿No tienes una cuenta?</span></div>
     <button class="register-outline" type="button" (click)="openRegistration()">
       <i class="bx bx-user-plus"></i>Regístrate aquí
     </button>
+    <div class="login-protection"><i class="bx bx-check-shield"></i> Protegemos tu información</div>
+  </section>
+
+  <section class="login-card forgot-card" *ngIf="forgotMode()">
+    <button class="back-link" type="button" (click)="closeForgotPassword()">
+      <i class="bx bx-left-arrow-alt"></i> Volver al inicio de sesión
+    </button>
+
+    <ng-container *ngIf="!forgotSent()">
+      <div class="forgot-icon"><i class="bx bx-key"></i></div>
+      <h1>¿Olvidaste tu contraseña?</h1>
+      <p class="login-description">
+        Ingresa el RUC de tu empresa y te enviaremos un correo con las instrucciones para cambiarla.
+      </p>
+      <form (ngSubmit)="requestPasswordReset()">
+        <label
+          >RUC
+          <div class="login-input-wrap" [class.invalid-input]="forgotError()">
+            <i class="bx bx-receipt"></i>
+            <input
+              [ngModel]="forgotRuc()"
+              (ngModelChange)="forgotRuc.set($event)"
+              name="forgotRuc"
+              maxlength="11"
+              inputmode="numeric"
+              placeholder="Ingresa los 11 dígitos de tu RUC"
+              [disabled]="forgotLoading()"
+            />
+          </div>
+        </label>
+        <p class="field-helper" [class.error-text]="forgotError()">
+          {{ forgotError() || 'Debe tener 11 dígitos.' }}
+        </p>
+        <button class="login-primary" type="submit" [disabled]="forgotLoading()">
+          <i class="bx bx-envelope"></i>{{ forgotLoading() ? 'Enviando...' : 'Enviar' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <ng-container *ngIf="forgotSent()">
+      <div class="forgot-success-icon"><i class="bx bx-check"></i></div>
+      <h1>Revisa tu correo</h1>
+      <p class="forgot-success-copy">
+        Enviamos las instrucciones para cambiar tu contraseña a<br /><strong>{{
+          forgotEmail()
+        }}</strong
+        >.
+      </p>
+      <div class="forgot-info">
+        <i class="bx bx-info-circle"></i
+        ><span
+          >El enlace vence en 24 horas. Si no ves el correo, revisa tu carpeta de spam o correo no
+          deseado.</span
+        >
+      </div>
+      <button class="login-primary" type="button" (click)="closeForgotPassword()">
+        Volver al inicio de sesión
+      </button>
+    </ng-container>
     <div class="login-protection"><i class="bx bx-check-shield"></i> Protegemos tu información</div>
   </section>
 
