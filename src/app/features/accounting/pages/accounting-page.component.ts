@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PortalFacade } from '../../../core/state/portal.facade';
+import { AccountingFacade } from '../state/accounting.facade';
 
 @Component({
   selector: 'app-accounting-page',
@@ -9,6 +9,10 @@ import { PortalFacade } from '../../../core/state/portal.facade';
   imports: [CommonModule, FormsModule],
   templateUrl: './accounting-page.component.html',
 })
-export class AccountingPageComponent {
-  readonly controller = inject(PortalFacade);
+export class AccountingPageComponent implements OnInit {
+  readonly controller = inject(AccountingFacade);
+
+  ngOnInit(): void {
+    this.controller.load();
+  }
 }

@@ -1,7 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { AprobacionService } from '../../features/approvals/services/aprobacion.service';
 import { AuthService } from '../auth/auth.service';
-import { ContabilizacionService } from '../../features/accounting/services/contabilizacion.service';
 import { DocumentoService } from '../../features/documents/services/documento.service';
 import { NavigationService, Screen } from '../navigation/navigation.service';
 import { Documento, Role } from '../../shared/models/models';
@@ -11,8 +9,6 @@ export class PortalFacade {
   readonly Math = Math;
   readonly auth = inject(AuthService);
   readonly documentoService = inject(DocumentoService);
-  readonly aprobacionService = inject(AprobacionService);
-  readonly contabilizacionService = inject(ContabilizacionService);
   readonly navigation = inject(NavigationService);
   readonly screen = this.navigation.screen;
   readonly loading = signal(false);
@@ -20,33 +16,6 @@ export class PortalFacade {
   readonly error = signal('');
   readonly expandedId = signal<number | null>(null);
   readonly documents = this.documentoService.documents;
-  readonly approvalItems = signal(
-    this.documents().filter((item) => item.status === 'Pendiente de aprobación'),
-  );
-  readonly accountingItems = signal(
-    this.documents().filter((item) => item.status === 'Pendiente de contabilización'),
-  );
-  readonly accountingQuery = signal('');
-  readonly accountingPage = signal(1);
-  readonly accountingPageSize = signal(5);
-  readonly filteredAccountingItems = computed(() => {
-    const term = this.accountingQuery().trim().toLowerCase();
-    return this.accountingItems().filter((item) =>
-      `${item.numero} ${item.proveedor} ${item.sociedad} ${item.contabilizacion?.numero || ''}`
-        .toLowerCase()
-        .includes(term),
-    );
-  });
-  readonly accountingPageCount = computed(() =>
-    Math.max(1, Math.ceil(this.filteredAccountingItems().length / this.accountingPageSize())),
-  );
-  readonly accountingItemsPage = computed(() => {
-    const start = (this.accountingPage() - 1) * this.accountingPageSize();
-    return this.filteredAccountingItems().slice(start, start + this.accountingPageSize());
-  });
-  readonly accountingPaginationPages = computed(() =>
-    Array.from({ length: this.accountingPageCount() }, (_, index) => index + 1),
-  );
   readonly filterStatus = signal('');
   readonly filterType = signal('');
   readonly documentQuery = signal('');
@@ -55,11 +24,7 @@ export class PortalFacade {
   readonly documentFilters = { query: '', type: '', status: '', dateFrom: '', dateTo: '' };
   readonly documentPage = signal(1);
   readonly documentPageSize = signal(5);
-  readonly approvalComment = signal<Record<number, string>>({});
-  readonly approvalTarget = signal<Record<number, string>>({});
   readonly query = signal('');
-  readonly accountingSociety = signal('');
-  readonly accountingType = signal('');
   readonly providerDocuments = computed(() =>
     this.documents().filter(
       (item) =>
@@ -98,30 +63,9 @@ export class PortalFacade {
     this.message.set('');
     this.navigation.goTo(screen);
     if (screen === 'documentos') this.documentPage.set(1);
-    if (screen === 'aprobaciones') this.loadApprovals();
-    if (screen === 'contabilizacion') this.loadAccounting();
   }
   isRole(role: Role): boolean {
     return this.auth.user()?.role === role;
-  }
-  loadApprovals(): void {
-    this.loading.set(true);
-    this.aprobacionService.pendientes().subscribe((items) => {
-      this.approvalItems.set(items);
-      this.loading.set(false);
-    });
-  }
-  loadAccounting(): void {
-    this.loading.set(true);
-    this.contabilizacionService.ejecutarJobDiario().subscribe(() =>
-      this.contabilizacionService
-        .contabilizados(this.accountingSociety(), this.accountingType())
-        .subscribe((items) => {
-          this.accountingItems.set(items);
-          this.accountingPage.set(1);
-          this.loading.set(false);
-        }),
-    );
   }
   toggle(id: number): void {
     this.expandedId.set(this.expandedId() === id ? null : id);
@@ -164,58 +108,6 @@ export class PortalFacade {
   setDocumentPage(page: number): void {
     this.documentPage.set(page);
   }
-  approve(id: number): void {
-    this.loading.set(true);
-    this.aprobacionService.aprobar(id).subscribe((item) => {
-      this.loading.set(false);
-      this.message.set(`Documento ${item.numero} aprobado y enviado a contabilización.`);
-      this.loadApprovals();
-    });
-  }
-  reject(id: number): void {
-    const comment = this.approvalComment()[id]?.trim();
-    if (!comment) {
-      this.error.set('El comentario es obligatorio para rechazar.');
-      return;
-    }
-    this.loading.set(true);
-    this.aprobacionService.rechazar(id, comment).subscribe((item) => {
-      this.loading.set(false);
-      this.message.set(`Documento ${item.numero} rechazado.`);
-      this.loadApprovals();
-    });
-  }
-  derive(id: number): void {
-    const target = this.approvalTarget()[id]?.trim();
-    if (!target) {
-      this.error.set('Selecciona el aprobador al que se derivará el documento.');
-      return;
-    }
-    this.loading.set(true);
-    this.aprobacionService.derivar(id, target).subscribe((item) => {
-      this.loading.set(false);
-      this.message.set(`Documento ${item.numero} derivado a ${target}.`);
-      this.loadApprovals();
-    });
-  }
-  resendAttachments(id: number): void {
-    this.loading.set(true);
-    this.contabilizacionService.reenviarAnexos(id).subscribe((item) => {
-      this.loading.set(false);
-      this.message.set(`Los anexos de ${item.numero} fueron reenviados a SAP.`);
-    });
-  }
-  setAccountingQuery(value: string): void {
-    this.accountingQuery.set(value);
-    this.accountingPage.set(1);
-  }
-  setAccountingPageSize(value: string): void {
-    this.accountingPageSize.set(Number(value));
-    this.accountingPage.set(1);
-  }
-  setAccountingPage(page: number): void {
-    this.accountingPage.set(page);
-  }
   attachmentNames(item: Documento): string[] {
     return (item.details['archivos'] || '')
       .split(',')
@@ -235,12 +127,6 @@ export class PortalFacade {
     link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
-  }
-  setComment(id: number, value: string): void {
-    this.approvalComment.update((values) => ({ ...values, [id]: value }));
-  }
-  setApprovalTarget(id: number, value: string): void {
-    this.approvalTarget.update((values) => ({ ...values, [id]: value }));
   }
   statusClass(status: string): string {
     return status.toLowerCase().replaceAll(' ', '-');

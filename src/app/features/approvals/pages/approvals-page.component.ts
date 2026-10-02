@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PortalFacade } from '../../../core/state/portal.facade';
+import { ApprovalsFacade } from '../state/approvals.facade';
 
 @Component({
   selector: 'app-approvals-page',
@@ -9,6 +9,10 @@ import { PortalFacade } from '../../../core/state/portal.facade';
   imports: [CommonModule, FormsModule],
   templateUrl: './approvals-page.component.html',
 })
-export class ApprovalsPageComponent {
-  readonly controller = inject(PortalFacade);
+export class ApprovalsPageComponent implements OnInit {
+  readonly controller = inject(ApprovalsFacade);
+
+  ngOnInit(): void {
+    this.controller.load();
+  }
 }
