@@ -67,6 +67,9 @@ export class PortalShellComponent {
   toggleUserMenu(): void {
     this.userMenuOpen.update((open) => !open);
   }
+  toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
   logout(): void {
     this.loggedOut.emit();
     this.userMenuOpen.set(false);
