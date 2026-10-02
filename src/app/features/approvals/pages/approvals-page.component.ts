@@ -8,6 +8,7 @@ import { ApprovalsFacade } from '../state/approvals.facade';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './approvals-page.component.html',
+  styleUrl: './approvals-page.component.scss',
 })
 export class ApprovalsPageComponent implements OnInit {
   readonly controller = inject(ApprovalsFacade);
