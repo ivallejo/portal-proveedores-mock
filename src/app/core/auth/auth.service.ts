@@ -1,11 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, delay, of, throwError } from 'rxjs';
+import { Observable, delay, map, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Role, User } from '../../shared/models/models';
 import { MockUsersStore } from '../../shared/state/mock-users.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly users = inject(MockUsersStore);
+  private readonly http = inject(HttpClient);
   readonly user = signal<User | null>(null);
 
   constructor() {
@@ -20,13 +23,9 @@ export class AuthService {
   }
 
   login(identifier: string, password: string): Observable<User> {
-    const record = this.users.findByIdentifier(identifier);
-    if (!record || !record.isActive || record.password !== password)
-      return throwError(() => new Error('RUC, usuario o contraseña inválidos.')).pipe(delay(450));
-    const user = this.toUser(record);
-    this.user.set(user);
-    localStorage.setItem('portal-proveedores.mock-session', JSON.stringify(user));
-    return of(user).pipe(delay(450));
+    return this.http
+      .post<AuthResponse>(`${environment.apiBaseUrl}/auth/login`, { identifier, password })
+      .pipe(map((response) => this.startSession(response)));
   }
   register(data: {
     ruc: string;
@@ -53,6 +52,7 @@ export class AuthService {
   }
   logout(): void {
     localStorage.removeItem('portal-proveedores.mock-session');
+    localStorage.removeItem('web-proveedores.access-token');
     this.user.set(null);
   }
   updatePassword(identifier: string, password: string): void {
@@ -85,4 +85,32 @@ export class AuthService {
       providerId: user.ruc,
     };
   }
+
+  private startSession(response: AuthResponse): User {
+    const user = this.toUser({
+      username: response.user.username,
+      email: response.user.email,
+      companyName: response.user.companyName,
+      ruc: response.user.ruc,
+      role: response.user.role as Role,
+      roles: (response.user.roles?.length ? response.user.roles : [response.user.role]) as Role[],
+    });
+    this.user.set(user);
+    localStorage.setItem('web-proveedores.access-token', response.accessToken);
+    localStorage.setItem('portal-proveedores.mock-session', JSON.stringify(user));
+    return user;
+  }
+}
+
+interface AuthResponse {
+  accessToken: string;
+  expiresAtUtc: string;
+  user: {
+    username: string;
+    email: string;
+    companyName: string;
+    ruc: string;
+    role: string;
+    roles?: string[];
+  };
 }
