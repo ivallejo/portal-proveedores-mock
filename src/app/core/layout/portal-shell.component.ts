@@ -48,7 +48,6 @@ export class PortalShellComponent {
       dashboard: 'Inicio',
       registrar: 'Registrar documento',
       documentos: 'Mis documentos',
-      consultas: 'Consultas',
       perfil: 'Mi perfil',
       usuarios: 'Usuarios y roles',
       workflows: 'Workflows',

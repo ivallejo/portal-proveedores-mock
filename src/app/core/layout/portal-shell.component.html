@@ -66,13 +66,11 @@
         ><i class="portal-nav-chevron bx bx-chevron-right"></i></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
-        [class.active]="screen() === 'consultas'"
         (click)="navigate('documentos')"
       >
         <i class="portal-nav-icon bx bx-money"></i><span>Orden de pago</span></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
-        [class.active]="screen() === 'consultas'"
         (click)="navigate('documentos')"
       >
         <i class="portal-nav-icon bx bx-file"></i><span>Estado de factura</span></button

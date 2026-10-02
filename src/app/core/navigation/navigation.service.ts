@@ -4,7 +4,6 @@ export type Screen =
   | 'dashboard'
   | 'registrar'
   | 'documentos'
-  | 'consultas'
   | 'perfil'
   | 'usuarios'
   | 'workflows'
