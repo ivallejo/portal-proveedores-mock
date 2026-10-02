@@ -236,6 +236,7 @@
 
 .portal-sidebar nav {
   display: grid !important;
+  flex: 0 0 auto !important;
   visibility: visible !important;
   width: 100% !important;
 }
@@ -269,6 +270,108 @@
   margin-right: 4px;
   border-radius: 50%;
   background: #72a1ff;
+}
+
+.portal-sidebar > .sidebar-brand {
+  position: relative;
+  z-index: 1;
+  order: 0;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 48px;
+  margin: 0 0 48px;
+}
+
+.portal-sidebar > nav {
+  order: 1;
+  margin-top: 0 !important;
+}
+
+.portal-sidebar > .collapse-menu,
+.portal-sidebar > .logout-menu {
+  position: relative;
+  z-index: 1;
+  display: inline-flex !important;
+  width: auto !important;
+  min-height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  margin: 0 0 0 12px !important;
+  padding: 8px 8px !important;
+  border: 0 !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.portal-sidebar > .collapse-menu {
+  order: 2;
+  margin-top: auto !important;
+  color: #dbe7ff !important;
+}
+
+.portal-sidebar > .logout-menu {
+  order: 3;
+  color: #dbe7ff !important;
+}
+
+.portal-header .portal-breadcrumb {
+  display: flex !important;
+  visibility: visible !important;
+  min-width: 0;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.portal-header .user-actions {
+  position: relative;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+}
+
+.portal-header .user-menu {
+  display: flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0 4px 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.portal-header .user-menu .profile-badge {
+  display: grid !important;
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff !important;
+  background: #176be4 !important;
+}
+
+.portal-header .user-menu .profile-data {
+  display: flex !important;
+  min-width: 120px;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.portal-header .user-menu > i {
+  display: block !important;
+  color: #405575 !important;
+  font-size: 19px !important;
+}
+
+.portal-header .user-dropdown {
+  z-index: 30;
 }
 
 .portal-content {
