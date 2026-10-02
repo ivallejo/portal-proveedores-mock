@@ -122,7 +122,10 @@
     <div
       class="portal-content-inner"
       [class.legacy-ui]="
-        screen() !== 'dashboard' && screen() !== 'documentos' && screen() !== 'registrar'
+        screen() !== 'dashboard' &&
+        screen() !== 'documentos' &&
+        screen() !== 'registrar' &&
+        screen() !== 'usuarios'
       "
     >
       <ng-content></ng-content>

@@ -10,7 +10,7 @@ import { Role, roleLabel } from '../../../../shared/models/models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-users.component.html',
-  styleUrls: ['../../../../app.scss', '../../../../theme.scss', '../../../../readability.scss'],
+  styleUrl: './admin-users.component.scss',
 })
 export class AdminUsersComponent {
   readonly roleLabel = roleLabel;
