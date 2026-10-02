@@ -50,6 +50,19 @@ export class AuthService {
     this.users.save(userRecord);
     return of(this.toUser(userRecord)).pipe(delay(450));
   }
+  requestPasswordReset(ruc: string): Observable<PasswordResetResponse> {
+    return this.http.post<PasswordResetResponse>(
+      `${environment.apiBaseUrl}/auth/password-reset/request`,
+      { ruc },
+    );
+  }
+  confirmPasswordReset(ruc: string, token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiBaseUrl}/auth/password-reset/confirm`, {
+      ruc,
+      token,
+      newPassword,
+    });
+  }
   logout(): void {
     localStorage.removeItem('portal-proveedores.mock-session');
     localStorage.removeItem('web-proveedores.access-token');
@@ -113,4 +126,10 @@ interface AuthResponse {
     role: string;
     roles?: string[];
   };
+}
+
+export interface PasswordResetResponse {
+  sent: boolean;
+  maskedEmail: string;
+  demoToken: string;
 }

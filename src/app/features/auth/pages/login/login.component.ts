@@ -29,6 +29,7 @@ export class LoginComponent {
   readonly forgotError = signal('');
   readonly forgotRuc = signal('');
   readonly forgotEmail = signal('');
+  readonly forgotToken = signal('');
   readonly passwordChangeMode = signal(false);
   readonly passwordChangeCompleted = signal(false);
   readonly passwordChangeLoading = signal(false);
@@ -92,6 +93,7 @@ export class LoginComponent {
     this.forgotSent.set(false);
     this.forgotRuc.set('');
     this.forgotEmail.set('');
+    this.forgotToken.set('');
     this.showRegistration.set(false);
     this.forgotMode.set(true);
   }
@@ -126,11 +128,18 @@ export class LoginComponent {
       return;
     }
     this.passwordChangeLoading.set(true);
-    window.setTimeout(() => {
-      this.auth.updatePassword(this.forgotRuc(), password);
-      this.passwordChangeLoading.set(false);
-      this.passwordChangeCompleted.set(true);
-    }, 700);
+    this.auth.confirmPasswordReset(this.forgotRuc(), this.forgotToken(), password).subscribe({
+      next: () => {
+        this.passwordChangeLoading.set(false);
+        this.passwordChangeCompleted.set(true);
+      },
+      error: (error) => {
+        this.passwordChangeLoading.set(false);
+        this.passwordChangeError.set(
+          error.error?.message || 'No fue posible actualizar la contraseña.',
+        );
+      },
+    });
   }
   hasMinPasswordLength(): boolean {
     return this.newPassword().length >= 6;
@@ -161,9 +170,10 @@ export class LoginComponent {
       return;
     }
     this.forgotLoading.set(true);
-    this.sapProviderService.lookupByRuc(ruc).subscribe({
-      next: (provider) => {
-        this.forgotEmail.set(provider.email);
+    this.auth.requestPasswordReset(ruc).subscribe({
+      next: (response) => {
+        this.forgotEmail.set(response.maskedEmail);
+        this.forgotToken.set(response.demoToken);
         this.forgotLoading.set(false);
         this.forgotSent.set(true);
       },
