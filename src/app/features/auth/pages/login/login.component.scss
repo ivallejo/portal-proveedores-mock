@@ -459,6 +459,18 @@
   background: #216fe7;
 }
 
+.registration-icon {
+  display: grid;
+  width: 57px;
+  height: 57px;
+  margin-bottom: 20px;
+  place-items: center;
+  border-radius: 15px;
+  color: #216fe7;
+  background: #eaf2ff;
+  font-size: 29px;
+}
+
 .registration-icon.confirmed {
   color: #188a4c;
   background: #ddf4e6;
