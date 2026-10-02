@@ -154,25 +154,6 @@ export class PortalFacade {
   readonly documentPaginationPages = computed(() =>
     Array.from({ length: this.documentPageCount() }, (_, index) => index + 1),
   );
-  readonly pendingCount = computed(
-    () =>
-      this.providerDocuments().filter((item) =>
-        ['Pendiente de aprobación', 'Pendiente de contabilización'].includes(item.status),
-      ).length,
-  );
-  readonly approvedCount = computed(
-    () =>
-      this.providerDocuments().filter((item) =>
-        ['Aprobado', 'Pendiente de contabilización', 'Contabilizado'].includes(item.status),
-      ).length,
-  );
-  readonly rejectedCount = computed(
-    () =>
-      this.providerDocuments().filter((item) =>
-        ['Rechazado', 'Devuelto al proveedor'].includes(item.status),
-      ).length,
-  );
-
   logout(): void {
     this.auth.logout();
     this.navigation.goTo('dashboard');

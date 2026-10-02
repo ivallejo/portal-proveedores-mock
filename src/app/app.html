@@ -11,12 +11,6 @@
     <app-dashboard
       *ngIf="portal.screen() === 'dashboard'"
       [userName]="portal.auth.user()?.name || ''"
-      [isProvider]="portal.isRole('Proveedor')"
-      [documents]="portal.providerDocuments()"
-      [loading]="portal.loading()"
-      [pendingCount]="portal.pendingCount()"
-      [approvedCount]="portal.approvedCount()"
-      [rejectedCount]="portal.rejectedCount()"
       (navigate)="portal.navigate($event)"
     ></app-dashboard>
     <section *ngIf="portal.screen() === 'perfil'" class="page profile-page">
