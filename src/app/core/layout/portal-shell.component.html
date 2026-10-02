@@ -38,6 +38,24 @@
           <button (click)="logout()"><i class="bx bx-log-out"></i> Cerrar sesión</button>
         </div>
       </div>
+      <button
+        class="portal-header-control"
+        type="button"
+        aria-label="Contraer menú"
+        title="Contraer menú"
+        (click)="menuOpen.update((open) => !open)"
+      >
+        <i class="bx bx-chevron-left"></i>
+      </button>
+      <button
+        class="portal-header-control"
+        type="button"
+        aria-label="Cerrar sesión"
+        title="Cerrar sesión"
+        (click)="logout()"
+      >
+        <i class="bx bx-log-out"></i>
+      </button>
     </div>
   </header>
   <aside class="portal-sidebar">
@@ -107,11 +125,6 @@
         <i class="portal-configuration-dot"></i><span>Usuarios y roles</span>
       </button>
     </nav>
-    <button class="portal-collapse-menu" (click)="menuOpen.set(!menuOpen())">
-      <i class="bx bx-chevron-left"></i> Contraer menú</button
-    ><button class="portal-logout-menu" (click)="logout()">
-      <i class="bx bx-log-out"></i> Cerrar sesión
-    </button>
   </aside>
   <main class="portal-content">
     <ng-content></ng-content>

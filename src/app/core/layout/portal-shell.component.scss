@@ -62,7 +62,7 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   margin-left: auto;
 }
 
@@ -76,7 +76,7 @@
   border: 0;
   color: #405575;
   background: transparent;
-  font-size: 23px;
+  font-size: 21px;
 }
 
 .portal-icon-button em {
@@ -140,6 +140,24 @@
   font-size: 19px;
 }
 
+.portal-header-control {
+  display: grid;
+  width: 32px;
+  height: 36px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  color: #405575;
+  background: transparent;
+  font-size: 20px;
+}
+
+.portal-header-control:hover,
+.portal-icon-button:hover,
+.portal-menu-toggle:hover {
+  color: #176be4;
+}
+
 .portal-user-dropdown {
   position: absolute;
   z-index: 30;
@@ -196,7 +214,7 @@
   margin: 0 0 48px;
   padding: 0 7px;
   color: #fff;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 650;
   line-height: 1.06;
 }
@@ -227,7 +245,7 @@
   border-radius: 11px;
   color: #fff;
   background: transparent;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 550;
   text-align: left;
 }
@@ -269,30 +287,6 @@
   background: #72a1ff;
 }
 
-.portal-collapse-menu,
-.portal-logout-menu {
-  display: inline-flex;
-  width: auto;
-  min-height: 36px;
-  align-items: center;
-  margin: 0 0 0 4px;
-  padding: 8px;
-  border: 0;
-  color: #dbe7ff;
-  background: transparent;
-  font-size: 13px;
-  text-align: left;
-}
-
-.portal-collapse-menu {
-  margin-top: auto;
-}
-.portal-collapse-menu i,
-.portal-logout-menu i {
-  margin-right: 7px;
-  font-size: 18px;
-}
-
 .portal-content {
   position: relative;
   height: 100vh;
@@ -302,6 +296,44 @@
   overflow-y: auto;
   padding: 112px 46px 42px;
   background: #edf3fc;
+}
+
+@media (min-width: 901px) {
+  .portal-shell.menu-collapsed .portal-header {
+    left: 82px;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar {
+    width: 82px;
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar-brand {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar-brand strong,
+  .portal-shell.menu-collapsed .portal-sidebar nav button > span,
+  .portal-shell.menu-collapsed .portal-sidebar .portal-nav-chevron,
+  .portal-shell.menu-collapsed .portal-sidebar .configuration-item {
+    display: none;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar nav button {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar .portal-nav-icon {
+    margin: 0;
+  }
+
+  .portal-shell.menu-collapsed .portal-content {
+    margin-left: 82px;
+  }
 }
 
 @media (max-width: 900px) {
