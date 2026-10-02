@@ -256,6 +256,10 @@
 .portal-sidebar nav button.active {
   color: #fff;
   background: #3477df;
+  width: calc(100% + 48px);
+  margin-right: -24px;
+  padding-left: 38px;
+  border-radius: 11px 0 0 11px;
 }
 .portal-nav-icon {
   width: 25px;
@@ -325,6 +329,13 @@
     justify-content: center;
     gap: 0;
     padding: 0;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar nav button.active {
+    width: 100%;
+    margin-right: 0;
+    padding-left: 0;
+    border-radius: 11px;
   }
 
   .portal-shell.menu-collapsed .portal-sidebar .portal-nav-icon {
