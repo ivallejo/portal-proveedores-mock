@@ -92,7 +92,7 @@
     <button class="back-link" type="button" (click)="closeRegistration()">
       <i class="bx bx-left-arrow-alt"></i> Volver al inicio de sesión
     </button>
-    <div class="registration-steps">
+    <div *ngIf="!registrationKeyRequested()" class="registration-steps">
       <span
         [class.completed]="registrationValidated() || registrationKeyRequested()"
         [class.active]="!registrationValidated() && !registrationKeyRequested()"
