@@ -96,11 +96,36 @@
 
 .document-inline-controls {
   display: grid;
-  grid-template-columns: minmax(150px, 0.8fr) repeat(2, minmax(170px, 1fr)) repeat(2, minmax(145px, 0.9fr));
+  grid-template-columns: minmax(150px, 0.8fr) repeat(4, minmax(145px, 1fr));
   gap: 12px;
   align-items: end;
   padding: 16px 24px;
   border-bottom: 1px solid #e8edf4;
+}
+
+.document-inline-controls > .page-size-select {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.document-inline-controls > .document-date-from {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.document-inline-controls > .document-date-to {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.document-inline-controls > .document-type-filter {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.document-inline-controls > .document-status-filter {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .document-inline-controls select,
@@ -137,7 +162,8 @@
 
 .document-filter-actions {
   display: grid;
-  grid-column: 1 / -1;
+  grid-column: 3 / -1;
+  grid-row: 2;
   grid-template-columns: minmax(220px, 1fr) auto auto;
   align-items: center;
   gap: 8px;
@@ -508,8 +534,17 @@ td small {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .document-inline-controls > .page-size-select,
+  .document-inline-controls > .document-date-filter,
+  .document-inline-controls > .document-type-filter,
+  .document-inline-controls > .document-status-filter {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
   .document-filter-actions {
     grid-column: 1 / -1;
+    grid-row: auto;
     grid-template-columns: minmax(0, 1fr) auto auto;
   }
 }

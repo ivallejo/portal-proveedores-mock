@@ -30,6 +30,7 @@
         registros</label
       >
       <select
+        class="document-type-filter"
         [ngModel]="controller.documentFilters.type"
         (ngModelChange)="controller.setDocumentType($event)"
       >
@@ -38,6 +39,7 @@
         <option>Sin Orden de Compra</option>
       </select>
       <select
+        class="document-status-filter"
         [ngModel]="controller.documentFilters.status"
         (ngModelChange)="controller.setDocumentStatus($event)"
       >
@@ -48,13 +50,13 @@
         <option>Rechazado</option>
         <option>Devuelto al proveedor</option>
       </select>
-      <label class="document-date-filter"
+      <label class="document-date-filter document-date-from"
         >Desde<input
           type="date"
           [ngModel]="controller.documentFilters.dateFrom"
           (ngModelChange)="controller.setDocumentDateFrom($event)"
       /></label>
-      <label class="document-date-filter"
+      <label class="document-date-filter document-date-to"
         >Hasta<input
           type="date"
           [ngModel]="controller.documentFilters.dateTo"
