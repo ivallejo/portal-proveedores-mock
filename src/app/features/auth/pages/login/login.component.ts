@@ -31,6 +31,7 @@ export class LoginComponent {
   readonly forgotEmail = signal('');
   readonly forgotToken = signal('');
   readonly passwordChangeMode = signal(false);
+  readonly activationMode = signal(false);
   readonly passwordChangeCompleted = signal(false);
   readonly passwordChangeLoading = signal(false);
   readonly passwordChangeError = signal('');
@@ -46,6 +47,18 @@ export class LoginComponent {
   readonly registrationTermsAccepted = signal(false);
   readonly registrationKeyRequested = signal(false);
   readonly registration = { ruc: '20523682785', email: '', company: '' };
+
+  constructor() {
+    const params = new URLSearchParams(window.location.search);
+    const activationRuc = params.get('ruc');
+    const activationToken = params.get('activationToken');
+    if (activationRuc && activationToken) {
+      this.forgotRuc.set(activationRuc);
+      this.forgotToken.set(activationToken);
+      this.activationMode.set(true);
+      this.passwordChangeMode.set(true);
+    }
+  }
 
   login(): void {
     this.error.set('');
@@ -108,12 +121,14 @@ export class LoginComponent {
     this.passwordChangeError.set('');
     this.newPassword.set('');
     this.confirmPassword.set('');
+    this.activationMode.set(false);
     this.passwordChangeMode.set(true);
   }
   closePasswordChange(): void {
     this.passwordChangeMode.set(false);
     this.passwordChangeCompleted.set(false);
     this.passwordChangeError.set('');
+    this.activationMode.set(false);
   }
   changePassword(): void {
     const password = this.newPassword();
