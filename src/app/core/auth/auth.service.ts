@@ -12,6 +12,12 @@ export class AuthService {
   readonly user = signal<User | null>(null);
 
   constructor() {
+    const activationLink = new URLSearchParams(window.location.search).get('activationToken');
+    if (activationLink) {
+      localStorage.removeItem('portal-proveedores.mock-session');
+      localStorage.removeItem('web-proveedores.access-token');
+      return;
+    }
     const session = localStorage.getItem('portal-proveedores.mock-session');
     if (session) {
       try {
