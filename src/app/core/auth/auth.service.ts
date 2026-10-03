@@ -12,8 +12,10 @@ export class AuthService {
   readonly user = signal<User | null>(null);
 
   constructor() {
-    const activationLink = new URLSearchParams(window.location.search).get('activationToken');
-    if (activationLink) {
+    const params = new URLSearchParams(window.location.search);
+    const activationLink = params.get('activationToken');
+    const resetLink = params.get('resetToken');
+    if (activationLink || resetLink) {
       localStorage.removeItem('portal-proveedores.mock-session');
       localStorage.removeItem('web-proveedores.access-token');
       return;
@@ -83,7 +85,12 @@ export class AuthService {
   }
   clearActivationLink(): void {
     const url = new URL(window.location.href);
-    if (!url.searchParams.has('activationToken') && !url.searchParams.has('ruc')) return;
+    if (
+      !url.searchParams.has('activationToken') &&
+      !url.searchParams.has('resetToken') &&
+      !url.searchParams.has('ruc')
+    )
+      return;
     url.search = '';
     window.history.replaceState({}, document.title, url.pathname + url.hash);
   }

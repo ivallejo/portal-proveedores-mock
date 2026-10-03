@@ -52,11 +52,13 @@ export class LoginComponent {
     const params = new URLSearchParams(window.location.search);
     const activationRuc = params.get('ruc');
     const activationToken = params.get('activationToken');
-    if (activationRuc && activationToken) {
+    const resetToken = params.get('resetToken');
+    if (activationRuc && (activationToken || resetToken)) {
       this.forgotRuc.set(activationRuc);
-      this.forgotToken.set(activationToken);
+      this.forgotToken.set(activationToken || resetToken || '');
       this.activationMode.set(true);
       this.passwordChangeMode.set(true);
+      if (resetToken) this.activationMode.set(false);
     }
   }
 
