@@ -72,7 +72,14 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('portal-proveedores.mock-session');
     localStorage.removeItem('web-proveedores.access-token');
+    this.clearActivationLink();
     this.user.set(null);
+  }
+  clearActivationLink(): void {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('activationToken') && !url.searchParams.has('ruc')) return;
+    url.search = '';
+    window.history.replaceState({}, document.title, url.pathname + url.hash);
   }
   updatePassword(identifier: string, password: string): void {
     const record = this.users.findByIdentifier(identifier);

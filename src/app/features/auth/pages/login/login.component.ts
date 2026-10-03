@@ -129,6 +129,7 @@ export class LoginComponent {
     this.passwordChangeCompleted.set(false);
     this.passwordChangeError.set('');
     this.activationMode.set(false);
+    this.auth.clearActivationLink();
   }
   changePassword(): void {
     const password = this.newPassword();
@@ -147,6 +148,7 @@ export class LoginComponent {
       next: () => {
         this.passwordChangeLoading.set(false);
         this.passwordChangeCompleted.set(true);
+        this.auth.clearActivationLink();
       },
       error: (error) => {
         this.passwordChangeLoading.set(false);
