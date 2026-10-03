@@ -96,7 +96,7 @@
 
 .document-inline-controls {
   display: grid;
-  grid-template-columns: auto 180px 180px 150px 150px minmax(260px, 1fr);
+  grid-template-columns: minmax(150px, 0.8fr) repeat(2, minmax(170px, 1fr)) repeat(2, minmax(145px, 0.9fr));
   gap: 12px;
   align-items: end;
   padding: 16px 24px;
@@ -136,9 +136,10 @@
 }
 
 .document-filter-actions {
-  display: flex;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
   align-items: center;
-  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -146,6 +147,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
   min-width: 0;
   padding: 0 11px;
 }
@@ -508,11 +510,7 @@ td small {
 
   .document-filter-actions {
     grid-column: 1 / -1;
-    justify-content: stretch;
-  }
-
-  .admin-search {
-    flex: 1;
+    grid-template-columns: minmax(0, 1fr) auto auto;
   }
 }
 
@@ -533,11 +531,12 @@ td small {
   }
 
   .document-filter-actions {
-    flex-wrap: wrap;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
   }
 
   .admin-search {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
   }
 
   .admin-pagination {
