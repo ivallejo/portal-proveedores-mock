@@ -31,7 +31,11 @@
           ><span class="portal-profile-data"
             ><b>{{ auth.user()?.name }}</b
             ><small>RUC {{ auth.user()?.providerId }}</small></span
-          ><i class="bx bx-chevron-down"></i>
+          ><i
+            class="bx"
+            [class.bx-chevron-up]="userMenuOpen()"
+            [class.bx-chevron-down]="!userMenuOpen()"
+          ></i>
         </button>
         <div *ngIf="userMenuOpen()" class="portal-user-dropdown">
           <button (click)="navigate('perfil')"><i class="bx bx-user"></i> Mi perfil</button>

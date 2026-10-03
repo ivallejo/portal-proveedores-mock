@@ -270,7 +270,11 @@
 }
 
 .portal-sidebar nav button:hover {
+  width: calc(100% + 48px);
+  margin-right: -24px;
+  padding-left: 38px;
   background: rgb(52 119 223 / 35%);
+  border-radius: 11px 0 0 11px;
 }
 .portal-sidebar nav button.active {
   color: #fff;
@@ -374,6 +378,13 @@
   }
 
   .portal-shell.menu-collapsed .portal-sidebar nav button.active {
+    width: 100%;
+    margin-right: 0;
+    padding-left: 0;
+    border-radius: 11px;
+  }
+
+  .portal-shell.menu-collapsed .portal-sidebar nav button:hover {
     width: 100%;
     margin-right: 0;
     padding-left: 0;
