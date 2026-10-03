@@ -54,8 +54,7 @@
         [class.active]="screen() === 'registrar'"
         (click)="navigate('registrar')"
       >
-        <i class="portal-nav-icon bx bx-cart"></i><span>Orden de compra</span
-        ><i class="portal-nav-chevron bx bx-chevron-right"></i></button
+        <i class="portal-nav-icon bx bx-cart"></i><span>Orden de compra</span></button
       ><button
         *ngIf="isRole('Proveedor') || isRole('Administrador')"
         (click)="navigate('documentos')"
