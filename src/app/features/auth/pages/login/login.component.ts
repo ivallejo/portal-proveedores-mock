@@ -144,7 +144,14 @@ export class LoginComponent {
       return;
     }
     this.passwordChangeLoading.set(true);
-    this.auth.confirmPasswordReset(this.forgotRuc(), this.forgotToken(), password).subscribe({
+    this.auth
+      .confirmPasswordReset(
+        this.forgotRuc(),
+        this.forgotToken(),
+        password,
+        this.activationMode() ? 'activation' : 'password-reset',
+      )
+      .subscribe({
       next: () => {
         this.passwordChangeLoading.set(false);
         this.passwordChangeCompleted.set(true);
@@ -156,7 +163,7 @@ export class LoginComponent {
           error.error?.message || 'No fue posible actualizar la contraseña.',
         );
       },
-    });
+      });
   }
   hasMinPasswordLength(): boolean {
     return this.newPassword().length >= 6;

@@ -62,8 +62,14 @@ export class AuthService {
       { ruc },
     );
   }
-  confirmPasswordReset(ruc: string, token: string, newPassword: string): Observable<void> {
-    return this.http.post<void>(`${environment.apiBaseUrl}/auth/password-reset/confirm`, {
+  confirmPasswordReset(
+    ruc: string,
+    token: string,
+    newPassword: string,
+    purpose: 'activation' | 'password-reset' = 'password-reset',
+  ): Observable<void> {
+    const endpoint = purpose === 'activation' ? 'activation/confirm' : 'password-reset/confirm';
+    return this.http.post<void>(`${environment.apiBaseUrl}/auth/${endpoint}`, {
       ruc,
       token,
       newPassword,
