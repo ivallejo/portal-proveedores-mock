@@ -69,6 +69,78 @@
   box-shadow: 0 5px 14px rgb(28 57 104 / 3%);
 }
 
+.document-filter-panel {
+  margin-bottom: 20px;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+  background: #fff;
+  box-shadow: 0 5px 14px rgb(28 57 104 / 3%);
+}
+
+.document-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.document-summary-card {
+  display: flex;
+  min-height: 98px;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-md);
+  background: #fff;
+  box-shadow: 0 5px 14px rgb(28 57 104 / 3%);
+}
+
+.document-summary-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 12px;
+  color: #ad6500;
+  background: #fff0d8;
+  font-size: 23px;
+}
+
+.document-summary-card div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.document-summary-card span:not(.document-summary-icon) {
+  color: #53627b;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.document-summary-card strong {
+  color: var(--portal-navy-dark);
+  font-size: 23px;
+  font-weight: 650;
+}
+
+.document-summary-card.approved .document-summary-icon {
+  color: #087277;
+  background: #ddf3f2;
+}
+
+.document-summary-card.pending-accounting .document-summary-icon {
+  color: #2451a3;
+  background: #e6edff;
+}
+
+.document-summary-card.rejected .document-summary-icon {
+  color: #bd3030;
+  background: #fde7e7;
+}
+
 .panel-title {
   padding: 20px 24px 16px;
   border-bottom: 1px solid #e8edf4;
@@ -255,6 +327,60 @@ td small {
   font-size: 11px;
   font-weight: 650;
   white-space: nowrap;
+}
+
+.document-type-badge,
+.currency-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.document-type-badge.sin-orden-de-compra {
+  color: #5f3bb5;
+  background: #eee7ff;
+}
+
+.document-type-badge.con-orden-de-compra {
+  color: #2451a3;
+  background: #e7efff;
+}
+
+.document-type-badge.documento-especial {
+  color: #006a70;
+  background: #ddf3f2;
+}
+
+.currency-badge {
+  min-height: 24px;
+  color: #2451a3;
+  background: #e7efff;
+}
+
+.document-detail-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 13px;
+  border: 1px solid #c9daf8;
+  border-radius: 10px;
+  color: #176be4;
+  background: #f7faff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.document-detail-button:hover {
+  color: #fff;
+  background: var(--portal-primary);
 }
 
 .status-badge.pendiente-de-contabilizacion {
@@ -537,6 +663,10 @@ td small {
 }
 
 @media (max-width: 1100px) {
+  .document-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .document-inline-controls {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -565,6 +695,10 @@ td small {
   .document-heading-line {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .document-summary-grid {
+    grid-template-columns: 1fr;
   }
 
   .document-inline-controls {

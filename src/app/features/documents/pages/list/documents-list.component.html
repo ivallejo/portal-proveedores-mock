@@ -8,13 +8,7 @@
       <i class="bx bx-plus"></i> Registrar documento
     </button>
   </div>
-  <section class="panel table-panel admin-users-table document-table">
-    <div class="panel-title">
-      <div class="document-heading-line">
-        <h2>Documentos registrados</h2>
-        <p>{{ controller.providerDocuments().length }} documentos en el sistema</p>
-      </div>
-    </div>
+  <section class="panel document-filter-panel">
     <div class="admin-inline-controls document-inline-controls">
       <label class="page-size-select"
         >Mostrar<select
@@ -77,31 +71,49 @@
         </button>
       </div>
     </div>
+  </section>
+  <section class="document-summary-grid" aria-label="Resumen de documentos">
+    <article class="document-summary-card pending-approval">
+      <span class="document-summary-icon"><i class="bx bx-file"></i></span>
+      <div><span>Pendientes de aprobación</span><strong>{{ controller.documentSummary().pendingApproval }}</strong></div>
+    </article>
+    <article class="document-summary-card approved">
+      <span class="document-summary-icon"><i class="bx bx-file"></i></span>
+      <div><span>Aprobados</span><strong>{{ controller.documentSummary().approved }}</strong></div>
+    </article>
+    <article class="document-summary-card pending-accounting">
+      <span class="document-summary-icon"><i class="bx bx-file"></i></span>
+      <div><span>Pendientes de contabilización</span><strong>{{ controller.documentSummary().pendingAccounting }}</strong></div>
+    </article>
+    <article class="document-summary-card rejected">
+      <span class="document-summary-icon"><i class="bx bx-file"></i></span>
+      <div><span>Rechazados</span><strong>{{ controller.documentSummary().rejected }}</strong></div>
+    </article>
+  </section>
+  <section class="panel table-panel document-table">
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Documento</th>
             <th>Tipo</th>
-            <th>Sociedad</th>
+            <th>N° del documento</th>
+            <th>Moneda</th>
             <th>Importe</th>
             <th>Estado</th>
-            <th></th>
+            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
           <ng-container *ngFor="let item of controller.documentsPage()"
             ><tr>
               <td>
-                <button class="row-link" (click)="controller.toggle(item.id)">
-                  {{ item.numero }}</button
-                ><small>{{ item.fecha }}</small>
+                <span class="document-type-badge" [class]="controller.typeClass(item.tipo)">{{ item.tipo === 'Sin Orden de Compra' ? 'Sin OC' : item.tipo }}</span>
               </td>
               <td>
-                {{ item.tipo
-                }}<small>{{ item.subtipo || (item.oc ? 'OC: ' + item.oc : 'Sin OC') }}</small>
+                <button class="row-link" (click)="controller.toggle(item.id)">{{ item.numero }}</button>
+                <small>{{ item.proveedor }} · RUC {{ item.providerId }}</small>
               </td>
-              <td>{{ item.sociedad }}</td>
+              <td><span class="currency-badge">PEN</span></td>
               <td>S/ {{ item.importe | number: '1.2-2' }}</td>
               <td>
                 <span class="status-badge" [class]="controller.statusClass(item.status)">{{
@@ -110,11 +122,11 @@
               </td>
               <td>
                 <button
-                  class="icon-button"
+                  class="document-detail-button"
                   title="Ver detalle"
                   (click)="controller.toggle(item.id)"
                 >
-                  <i class="bx bx-show"></i>
+                  <i class="bx bx-show"></i> Ver detalle
                 </button>
               </td>
             </tr>

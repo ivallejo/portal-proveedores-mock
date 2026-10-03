@@ -27,6 +27,12 @@ export class DocumentsFacade {
         this.auth.user()?.role !== 'Proveedor' || item.providerId === this.auth.user()?.providerId,
     ),
   );
+  readonly documentSummary = computed(() => ({
+    pendingApproval: this.providerDocuments().filter((item) => item.status === 'Pendiente de aprobación').length,
+    approved: this.providerDocuments().filter((item) => item.status === 'Aprobado').length,
+    pendingAccounting: this.providerDocuments().filter((item) => item.status === 'Pendiente de contabilización').length,
+    rejected: this.providerDocuments().filter((item) => item.status === 'Rechazado').length,
+  }));
   readonly filteredDocuments = computed(() =>
     this.providerDocuments().filter((item) => {
       const term = this.documentQuery().trim().toLowerCase();
@@ -117,5 +123,8 @@ export class DocumentsFacade {
   }
   statusClass(status: string): string {
     return status.toLowerCase().replaceAll(' ', '-');
+  }
+  typeClass(type: Documento['tipo']): string {
+    return type.toLowerCase().replaceAll(' ', '-');
   }
 }
