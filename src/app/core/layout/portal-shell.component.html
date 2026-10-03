@@ -22,25 +22,13 @@
         </select>
       </label>
       <div class="portal-user-actions">
-        <button
-          class="portal-user-menu"
-          (click)="toggleUserMenu()"
-          [attr.aria-expanded]="userMenuOpen()"
-        >
+        <button class="portal-user-menu" (click)="navigate('perfil')" aria-label="Abrir mi perfil">
           <span class="portal-profile-badge">{{ initials() }}</span
           ><span class="portal-profile-data"
             ><b>{{ auth.user()?.name }}</b
             ><small>RUC {{ auth.user()?.providerId }}</small></span
-          ><i
-            class="bx"
-            [class.bx-chevron-up]="userMenuOpen()"
-            [class.bx-chevron-down]="!userMenuOpen()"
-          ></i>
+          >
         </button>
-        <div *ngIf="userMenuOpen()" class="portal-user-dropdown">
-          <button (click)="navigate('perfil')"><i class="bx bx-user"></i> Mi perfil</button>
-          <button (click)="logout()"><i class="bx bx-log-out"></i> Cerrar sesión</button>
-        </div>
       </div>
       <button
         class="portal-header-control"

@@ -18,7 +18,6 @@ export class PortalShellComponent {
   readonly screen = this.navigation.screen;
   readonly roleLabel = roleLabel;
   readonly menuOpen = signal(false);
-  readonly userMenuOpen = signal(false);
   @Input() error = '';
   @Output() readonly navigateTo = new EventEmitter<Screen>();
   @Output() readonly loggedOut = new EventEmitter<void>();
@@ -63,14 +62,10 @@ export class PortalShellComponent {
     if (role === 'CxP') return 'contabilizacion';
     return 'dashboard';
   }
-  toggleUserMenu(): void {
-    this.userMenuOpen.update((open) => !open);
-  }
   toggleMenu(): void {
     this.menuOpen.update((open) => !open);
   }
   logout(): void {
     this.loggedOut.emit();
-    this.userMenuOpen.set(false);
   }
 }
