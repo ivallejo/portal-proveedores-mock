@@ -144,5 +144,4 @@ interface AuthResponse {
 export interface PasswordResetResponse {
   sent: boolean;
   maskedEmail: string;
-  demoToken: string;
 }

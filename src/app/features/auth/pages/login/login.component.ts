@@ -190,7 +190,6 @@ export class LoginComponent {
     this.auth.requestPasswordReset(ruc).subscribe({
       next: (response) => {
         this.forgotEmail.set(response.maskedEmail);
-        this.forgotToken.set(response.demoToken);
         this.forgotLoading.set(false);
         this.forgotSent.set(true);
       },
