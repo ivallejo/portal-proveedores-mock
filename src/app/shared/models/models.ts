@@ -1,4 +1,13 @@
 export type Role = 'Proveedor' | 'Colaborador interno' | 'Área Usuaria' | 'CxP' | 'Administrador';
+
+export const ROLES: Role[] = [
+  'Proveedor',
+  'Colaborador interno',
+  'Área Usuaria',
+  'CxP',
+  'Administrador',
+];
+
 export function roleLabel(role: Role | string): string {
   return (
     {
@@ -10,71 +19,46 @@ export function roleLabel(role: Role | string): string {
     }[role] || role
   );
 }
-export type DocumentType = 'Con Orden de Compra' | 'Sin Orden de Compra' | 'Documento especial';
-export type DocumentStatus =
-  | 'Registrado'
-  | 'En validación'
-  | 'Pendiente de aprobación'
-  | 'Aprobado'
-  | 'Rechazado'
-  | 'Devuelto al proveedor'
-  | 'Pendiente de contabilización'
-  | 'Contabilizado';
-export type SpecialSubtype =
-  'Boleto aéreo' | 'Recibo público' | 'No domiciliado' | 'Liquidación de cobranza';
+
+/**
+ * El backend devuelve el nombre del rol del catálogo de seguridad
+ * («Aprobador de área», «Gestor de cuentas por pagar»…) o su código
+ * («AREA_APPROVER»…). El frontend trabaja con los nombres cortos de `Role`.
+ */
+export function normalizeRole(value: string): Role | null {
+  const key = value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  const map: Record<string, Role> = {
+    proveedor: 'Proveedor',
+    'proveedor externo': 'Proveedor',
+    provider: 'Proveedor',
+    'colaborador interno': 'Colaborador interno',
+    'usuario interno': 'Colaborador interno',
+    internal_user: 'Colaborador interno',
+    'area usuaria': 'Área Usuaria',
+    'aprobador de area': 'Área Usuaria',
+    area_approver: 'Área Usuaria',
+    cxp: 'CxP',
+    'gestor de cuentas por pagar': 'CxP',
+    accounts_payable: 'CxP',
+    administrador: 'Administrador',
+    'administrador del portal': 'Administrador',
+    administrator: 'Administrador',
+  };
+  return map[key] ?? null;
+}
 
 export interface User {
   username: string;
   name: string;
   email?: string;
   emails?: string[];
+  /** Rol principal (el primero de la lista). */
   role: Role;
   roles: Role[];
   providerId?: string;
-}
-export interface HistoryEntry {
-  status: DocumentStatus;
-  date: string;
-  user: string;
-  comment?: string;
-}
-export interface ValidationResult {
-  sunat: 'Pendiente' | 'Aprobado' | 'Observado' | 'No aplica';
-  sertica: 'Pendiente' | 'Aprobado' | 'Observado' | 'No aplica';
-  message?: string;
-}
-export interface Documento {
-  id: number;
-  numero: string;
-  proveedor: string;
-  providerId: string;
-  sociedad: string;
-  tipo: DocumentType;
-  subtipo?: SpecialSubtype;
-  oc?: string;
-  importe: number;
-  fecha: string;
-  aprobador: string;
-  status: DocumentStatus;
-  registeredAt: number;
-  validation: ValidationResult;
-  history: HistoryEntry[];
-  comment?: string;
-  escalated?: boolean;
-  contabilizacion?: { ruta: 'SAP' | 'Sertica'; numero?: string; error?: string };
-  details: Record<string, string>;
-}
-export interface RegistroDocumentoDto {
-  numero: string;
-  proveedor: string;
-  providerId: string;
-  sociedad: string;
-  tipo: DocumentType;
-  subtipo?: SpecialSubtype;
-  oc?: string;
-  importe: number;
-  fecha: string;
-  aprobador: string;
-  validateSunat: boolean;
-  details: Record<string, string>;
+  area?: string;
 }

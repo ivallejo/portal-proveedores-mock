@@ -1,6 +1,6 @@
 # Portal de Proveedores · Frontend
 
-Frontend Angular del Portal de Proveedores de Naviera Transoceánica S.A. Incluye autenticación, registro de proveedores, gestión documental y administración de usuarios.
+Frontend Angular 20 + Tailwind CSS 4 del Portal de Proveedores de Naviera Transoceánica S.A. Implementa la Propuesta 1 del diseño: autenticación, registro de proveedores, consultas, registro de documentos, aprobaciones, contabilización y administración.
 
 ## Requisitos
 
@@ -16,53 +16,36 @@ npm start
 
 Abrir [http://localhost:4200](http://localhost:4200).
 
-El prototipo puede ejecutarse sin backend para explorar la UI, pero los flujos de login, registro online y recuperación de contraseña consumen la API cuando está disponible. Los módulos documentales y operativos mantienen mocks locales.
+> Consulta [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md) antes de continuar el desarrollo: describe rutas, roles, componentes compartidos y qué partes siguen en mock.
 
-> Estado actualizado: login, registro online y recuperación de contraseña ya tienen integración parcial con el backend. Los módulos documentales, aprobaciones, contabilización, workflows y administración todavía utilizan mocks locales. Consulta [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md) antes de continuar el desarrollo.
+## Acceso
 
-## Flujo del prototipo
+Login, registro online y recuperación de contraseña usan el backend (`http://localhost:5080/api`). Levanta la API antes de iniciar sesión; el administrador inicial se configura en el `.env` del backend.
 
-1. Ejecutar `npm install`.
-2. Ejecutar `npm start`.
-3. Abrir `http://localhost:4200`.
-4. Probar los roles y flujos mock desde el login.
-
-Credenciales locales del administrador:
-
-```text
-Usuario administrador: `admin`
-Contraseña: `AdminLocal_12345!`
-
-Usuarios mock adicionales:
-
-- Proveedor: `20123456789` / `1234`
-- Colaborador interno: `colaborador` / `1234`
-- Área Usuaria: `maria.torres` / `1234`
-- CxP: `cxp` / `1234`
-```
+Los módulos de documentos, órdenes, aprobaciones y contabilización usan servicios mock con datos de prueba guardados en `localStorage`.
 
 ## Comandos útiles
 
 ```bash
 npm start             # Servidor de desarrollo
 npm run build         # Compilación de producción
-npm run format        # Formatear TypeScript, HTML y SCSS
+npm run format        # Formatear TypeScript, HTML y CSS
 npm run format:check  # Verificar formato
 npm test              # Ejecutar pruebas
 ```
 
 ## Configuración de producción
 
-El prototipo no requiere enrutar `/api` ni levantar servicios adicionales para publicarse.
+En producción la aplicación llama a `/api` (ver `src/environments/environment.production.ts`); el servidor que la publique debe enrutar esa ruta al backend.
 
 ## Estructura principal
 
 ```text
 src/app/
-├── core/                       # Auth, shell, navegación y estado global
+├── core/                       # Auth, guards, layout y menú por rol
 ├── features/                   # Pantallas y servicios por módulo
-├── shared/                     # Modelos y stores mock
-└── styles/                     # Tokens y estilos globales
+└── shared/                     # Componentes UI, documentos, catálogos y utilidades
+src/styles.css                  # Tailwind y tokens de diseño (@theme)
 ```
 
 ## Documentación para agentes

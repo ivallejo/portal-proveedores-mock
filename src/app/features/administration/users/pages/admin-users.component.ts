@@ -1,22 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, signal, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { AdminService, AdminUser } from '../services/admin.service';
-import { Role, roleLabel } from '../../../../shared/models/models';
+import { ROLES, Role, roleLabel } from '../../../../shared/models/models';
+import { BadgeComponent } from '../../../../shared/ui/badge/badge.component';
+import { DialogComponent } from '../../../../shared/ui/dialog/dialog.component';
+import {
+  CalloutComponent,
+  EmptyStateComponent,
+} from '../../../../shared/ui/feedback/feedback.components';
+import { IconComponent } from '../../../../shared/ui/icon/icon.component';
+import { PageHeaderComponent } from '../../../../shared/ui/page/page.components';
+import { ToastService } from '../../../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PageHeaderComponent,
+    BadgeComponent,
+    DialogComponent,
+    CalloutComponent,
+    EmptyStateComponent,
+    IconComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-users.component.html',
-  styleUrl: './admin-users.component.scss',
 })
 export class AdminUsersComponent {
   readonly roleLabel = roleLabel;
   private readonly adminService = inject(AdminService);
-
-  @Output() readonly close = new EventEmitter<void>();
+  private readonly toast = inject(ToastService);
 
   readonly users = signal<AdminUser[]>([]);
   readonly allUsers = signal<AdminUser[]>([]);
@@ -32,13 +48,7 @@ export class AdminUsersComponent {
   readonly editRoles = signal<Role[]>([]);
   readonly editUser = { username: '', email: '', companyName: '', area: '', ruc: '' };
   readonly selectedRoles = signal<Role[]>(['Área Usuaria']);
-  readonly roles: Role[] = [
-    'Proveedor',
-    'Colaborador interno',
-    'Área Usuaria',
-    'CxP',
-    'Administrador',
-  ];
+  readonly roles: Role[] = ROLES;
   readonly newUser = { username: '', email: '', companyName: '', area: '', ruc: '', password: '' };
   readonly areas = [
     'Administración',
@@ -159,12 +169,7 @@ export class AdminUsersComponent {
         this.refreshPage();
         this.loading.set(false);
         this.editingUser.set(null);
-        void Swal.fire({
-          icon: 'success',
-          title: 'Usuario actualizado',
-          text: 'Los datos y roles del usuario se actualizaron correctamente.',
-          confirmButtonColor: '#253c6d',
-        });
+        this.toast.show('Usuario actualizado correctamente');
       },
       error: (error) => {
         this.loading.set(false);
@@ -195,7 +200,7 @@ export class AdminUsersComponent {
     this.adminService.create({ ...this.newUser, roles: this.selectedRoles() }).subscribe({
       next: () => {
         this.loading.set(false);
-        this.message.set('Usuario creado correctamente.');
+        this.toast.show('Usuario creado correctamente');
         this.newUser.username = '';
         this.newUser.email = '';
         this.newUser.companyName = '';

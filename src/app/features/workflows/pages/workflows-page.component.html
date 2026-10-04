@@ -1,287 +1,376 @@
-<section class="page workflow-page">
-  <div class="page-heading">
-    <div>
-      <h1>Workflows de aprobación</h1>
-      <p>Define las reglas y aprobadores para cada tipo de documento.</p>
+<app-page-header
+  heading="Workflows de aprobación"
+  description="Define las reglas y aprobadores para cada tipo de documento."
+>
+  <button type="button" class="btn btn-primary" (click)="controller.openWorkflowForm()">
+    <app-icon name="plus" [size]="18" [stroke]="2.2" />Nuevo workflow
+  </button>
+</app-page-header>
+
+<section class="card flex grow flex-col overflow-hidden">
+  <div
+    class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft px-6 py-4"
+  >
+    <div class="flex flex-col">
+      <h2 class="m-0 text-base font-bold">Workflows configurados</h2>
+      <span class="text-[13px] text-muted"
+        >{{ controller.workflowService.workflows().length }} workflows en el sistema</span
+      >
     </div>
-    <button class="primary" (click)="controller.openWorkflowForm()">
-      <i class="bx bx-plus"></i> Nuevo workflow
-    </button>
+    <div class="flex flex-wrap items-center gap-3">
+      <label class="flex items-center gap-2 text-[13px] text-muted">
+        Mostrar
+        <select
+          class="field h-10 w-auto pr-8"
+          aria-label="Registros por página"
+          [ngModel]="controller.workflowPageSize()"
+          (ngModelChange)="controller.setWorkflowPageSize($event)"
+        >
+          @for (size of [5, 10, 25, 50]; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[11px] left-3 text-muted"
+        />
+        <input
+          class="field h-10 w-64 pl-[38px]"
+          placeholder="Nombre o tipo de documento"
+          aria-label="Buscar workflow"
+          [ngModel]="controller.workflowSearch()"
+          (ngModelChange)="controller.setWorkflowSearch($event)"
+        />
+      </div>
+    </div>
   </div>
-  <section class="panel table-panel admin-users-table workflow-table">
-    <div class="panel-title">
-      <div>
-        <h2>Workflows configurados</h2>
-        <p>{{ controller.workflowService.workflows().length }} workflows en el sistema</p>
-      </div>
-      <div class="admin-inline-controls">
-        <label class="page-size-select"
-          >Mostrar<select
-            [ngModel]="controller.workflowPageSize()"
-            (ngModelChange)="controller.setWorkflowPageSize($event)"
-          >
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-          </select>
-          registros</label
-        ><label class="admin-search"
-          ><i class="bx bx-search"></i><span>Buscar:</span
-          ><input
-            placeholder="Nombre o tipo de documento"
-            [ngModel]="controller.workflowSearch()"
-            (ngModelChange)="controller.setWorkflowSearch($event)"
-        /></label>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Workflow</th>
-            <th>Condición</th>
-            <th>Aprobadores</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let workflow of controller.workflowsPage()">
-            <td>
-              <strong>{{ workflow.name }}</strong
-              ><small>{{ workflow.description }}</small>
-            </td>
-            <td>
-              <strong>{{ workflow.documentType }}</strong
-              ><small>{{ workflow.society }}</small>
-            </td>
-            <td>
-              <div class="workflow-approvers">
-                <div *ngFor="let level of workflow.approvalLevels; let i = index">
-                  <strong>Nivel {{ i + 1 }}</strong>
-                  <small>{{
-                    level.rule === 'all' ? 'Todos deben aprobar' : 'Cualquiera puede aprobar'
-                  }}</small>
-                  <span *ngFor="let approver of level.approvers">{{
-                    controller.roleLabel(approver)
-                  }}</span>
-                </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[900px] border-collapse text-left text-sm">
+      <thead>
+        <tr
+          class="h-12 border-b border-line bg-surface-muted text-xs font-bold tracking-[0.04em] text-body uppercase"
+        >
+          <th class="px-6 font-bold">Workflow</th>
+          <th class="px-3 font-bold">Condición</th>
+          <th class="px-3 font-bold">Aprobadores</th>
+          <th class="px-3 font-bold">Estado</th>
+          <th class="px-6 text-right font-bold">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (workflow of controller.workflowsPage(); track workflow.id) {
+          <tr class="row-hover border-b border-line-soft align-top">
+            <td class="px-6 py-4">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-bold">{{ workflow.name }}</span>
+                <span class="text-xs text-muted">{{ workflow.description }}</span>
               </div>
             </td>
-            <td>
+            <td class="px-3 py-4">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-bold">{{ workflow.documentType }}</span>
+                <span class="text-xs text-muted">{{ workflow.society }}</span>
+              </div>
+            </td>
+            <td class="px-3 py-4">
+              <div class="flex flex-col gap-2.5">
+                @for (level of workflow.approvalLevels; track $index; let i = $index) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-xs font-bold">
+                      Nivel {{ i + 1 }}
+                      <span class="font-normal text-muted"
+                        >·
+                        {{
+                          level.rule === 'all' ? 'Todos deben aprobar' : 'Cualquiera puede aprobar'
+                        }}</span
+                      >
+                    </span>
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (approver of level.approvers; track approver) {
+                        <app-badge size="sm" tone="primary">{{
+                          controller.roleLabel(approver)
+                        }}</app-badge>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </td>
+            <td class="px-3 py-4">
               <button
                 type="button"
-                class="status-toggle"
-                [class.active]="workflow.isActive"
                 role="switch"
+                class="relative h-6 w-11 rounded-full transition-colors"
+                [class]="workflow.isActive ? 'bg-success' : 'bg-control'"
                 [attr.aria-checked]="workflow.isActive"
+                [attr.aria-label]="(workflow.isActive ? 'Desactivar ' : 'Activar ') + workflow.name"
                 (click)="controller.toggleWorkflow(workflow)"
               >
-                <span></span>
+                <span
+                  class="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform"
+                  [class.translate-x-5]="workflow.isActive"
+                ></span>
               </button>
             </td>
-            <td>
+            <td class="px-6 py-4 text-right">
               <button
-                class="icon-button"
+                type="button"
+                class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
                 title="Editar workflow"
+                [attr.aria-label]="'Editar ' + workflow.name"
                 (click)="controller.openWorkflowForm(workflow)"
               >
-                <i class="bx bx-edit"></i>
+                <app-icon name="edit" [size]="17" />
               </button>
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
-    <div *ngIf="!controller.filteredWorkflows().length" class="empty-table">
-      No encontramos workflows con ese criterio.
-    </div>
-    <div class="admin-pagination admin-pagination-bottom">
-      <span
-        >Página {{ controller.workflowPage() }} de {{ controller.workflowPageCount() }} ·
-        {{ controller.filteredWorkflows().length }} workflows</span
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (!controller.filteredWorkflows().length) {
+    <app-empty-state
+      heading="No encontramos workflows"
+      text="No hay workflows que coincidan con ese criterio."
+      icon="workflow"
+      (action)="controller.setWorkflowSearch('')"
+    />
+  }
+
+  <div
+    class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft px-6 py-3 text-[13px] text-body"
+  >
+    <span
+      >Página {{ controller.workflowPage() }} de {{ controller.workflowPageCount() }} ·
+      {{ controller.filteredWorkflows().length }} workflows</span
+    >
+    <div class="flex items-center gap-1.5">
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        aria-label="Página anterior"
+        [disabled]="controller.workflowPage() === 1"
+        (click)="controller.setWorkflowPage(controller.workflowPage() - 1)"
       >
-      <div>
+        <app-icon name="chevron-left" [size]="16" [stroke]="2" />
+      </button>
+      @for (item of controller.workflowPaginationPages(); track item) {
         <button
-          class="icon-button"
-          [disabled]="controller.workflowPage() === 1"
-          (click)="controller.setWorkflowPage(controller.workflowPage() - 1)"
-          aria-label="Página anterior"
+          type="button"
+          class="size-9 rounded-lg text-[13px] font-bold"
+          [class]="
+            item === controller.workflowPage()
+              ? 'bg-primary text-white'
+              : 'border border-[#DDE1E7] bg-white text-muted'
+          "
+          [attr.aria-current]="item === controller.workflowPage() ? 'page' : null"
+          (click)="controller.setWorkflowPage(item)"
         >
-          <i class="bx bx-chevron-left"></i>
+          {{ item }}
         </button>
-        <button
-          *ngFor="let page of controller.workflowPaginationPages()"
-          class="page-button"
-          [class.active]="page === controller.workflowPage()"
-          (click)="controller.setWorkflowPage(page)"
-        >
-          {{ page }}
-        </button>
-        <button
-          class="icon-button"
-          [disabled]="controller.workflowPage() === controller.workflowPageCount()"
-          (click)="controller.setWorkflowPage(controller.workflowPage() + 1)"
-          aria-label="Página siguiente"
-        >
-          <i class="bx bx-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-  </section>
-</section>
-<div *ngIf="controller.showWorkflowForm()" class="modal-backdrop workflow-modal-backdrop">
-  <section class="user-modal panel workflow-modal">
-    <div class="panel-title">
-      <div>
-        <h2>{{ controller.editingWorkflow() ? 'Editar workflow' : 'Nuevo workflow' }}</h2>
-        <p>Configura la condición y los aprobadores en orden.</p>
-      </div>
-      <button class="icon-button" (click)="controller.closeWorkflowForm()">
-        <i class="bx bx-x"></i>
+      }
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        aria-label="Página siguiente"
+        [disabled]="controller.workflowPage() === controller.workflowPageCount()"
+        (click)="controller.setWorkflowPage(controller.workflowPage() + 1)"
+      >
+        <app-icon name="chevron-right" [size]="16" [stroke]="2" />
       </button>
     </div>
-    <div *ngIf="controller.workflowError()" class="toast error">
-      {{ controller.workflowError() }}
-    </div>
-    <div class="form-grid">
-      <label
-        >Nombre del workflow *<input
-          [(ngModel)]="controller.workflowForm.name"
-          placeholder="Ej. Aprobación de servicios"
-      /></label>
-      <label
-        >Sociedad<select [(ngModel)]="controller.workflowForm.society">
-          <option *ngFor="let society of controller.workflowSocieties">{{ society }}</option>
-        </select></label
-      >
-      <label
-        >Tipo de documento<select [(ngModel)]="controller.workflowForm.documentType">
-          <option *ngFor="let type of controller.workflowDocumentTypes">{{ type }}</option>
-        </select></label
-      >
-      <label
-        >Descripción<input
-          [(ngModel)]="controller.workflowForm.description"
-          placeholder="Describe cuándo aplica"
-      /></label>
-    </div>
-    <div class="role-selector workflow-levels">
-      <div class="role-selector-heading">
-        <div>
-          <h3>Aprobadores *</h3>
-          <p>
+  </div>
+</section>
+
+@if (controller.showWorkflowForm()) {
+  <app-dialog
+    [heading]="controller.editingWorkflow() ? 'Editar workflow' : 'Nuevo workflow'"
+    subtitle="Configura la condición y los aprobadores en orden."
+    [width]="880"
+    closeLabel="Cerrar"
+    (closed)="controller.closeWorkflowForm()"
+  >
+    <div class="flex flex-col gap-5 px-5 py-6 sm:px-8">
+      @if (controller.workflowError()) {
+        <app-callout tone="danger">{{ controller.workflowError() }}</app-callout>
+      }
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Nombre del workflow *</span>
+          <input
+            class="field"
+            [(ngModel)]="controller.workflowForm.name"
+            placeholder="Ej. Aprobación de servicios"
+          />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Sociedad</span>
+          <select class="field" [(ngModel)]="controller.workflowForm.society">
+            @for (society of controller.workflowSocieties; track society) {
+              <option [value]="society">{{ society }}</option>
+            }
+          </select>
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Tipo de documento</span>
+          <select class="field" [(ngModel)]="controller.workflowForm.documentType">
+            @for (type of controller.workflowDocumentTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Descripción</span>
+          <input
+            class="field"
+            [(ngModel)]="controller.workflowForm.description"
+            placeholder="Describe cuándo aplica"
+          />
+        </label>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-0.5">
+          <h3 class="m-0 text-sm font-bold">Aprobadores *</h3>
+          <p class="m-0 text-[13px] text-muted">
             Los niveles se ejecutan en orden. Puedes definir uno o varios aprobadores por nivel.
           </p>
         </div>
-      </div>
-      <div class="workflow-level-list">
-        <article
-          *ngFor="let level of controller.workflowForm.approvalLevels; let i = index"
-          class="workflow-level-card"
-        >
-          <div class="workflow-level-header">
-            <div>
-              <span class="workflow-level-number">Nivel {{ i + 1 }}</span>
-              <small>Se notifica después del nivel anterior</small>
+        @for (
+          level of controller.workflowForm.approvalLevels;
+          track $index;
+          let i = $index;
+          let last = $last
+        ) {
+          <article class="flex flex-col gap-3 rounded-[14px] border border-line bg-surface-alt p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex flex-col">
+                <span class="text-sm font-bold">Nivel {{ i + 1 }}</span>
+                <span class="text-xs text-muted">Se notifica después del nivel anterior</span>
+              </div>
+              <div class="flex gap-1.5">
+                <button
+                  type="button"
+                  class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted disabled:opacity-40"
+                  title="Subir nivel"
+                  aria-label="Subir nivel"
+                  [disabled]="i === 0"
+                  (click)="controller.moveWorkflowLevel(i, -1)"
+                >
+                  <app-icon name="chevron-up" [size]="16" [stroke]="2" />
+                </button>
+                <button
+                  type="button"
+                  class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted disabled:opacity-40"
+                  title="Bajar nivel"
+                  aria-label="Bajar nivel"
+                  [disabled]="last"
+                  (click)="controller.moveWorkflowLevel(i, 1)"
+                >
+                  <app-icon name="chevron-down" [size]="16" [stroke]="2" />
+                </button>
+                <button
+                  type="button"
+                  class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted hover:text-danger-text"
+                  title="Eliminar nivel"
+                  aria-label="Eliminar nivel"
+                  (click)="controller.removeWorkflowLevel(i)"
+                >
+                  <app-icon name="trash" [size]="16" />
+                </button>
+              </div>
             </div>
-            <div class="workflow-level-actions">
-              <button
-                type="button"
-                class="icon-button"
-                title="Subir nivel"
-                [disabled]="i === 0"
-                (click)="controller.moveWorkflowLevel(i, -1)"
+            <label class="flex flex-col gap-2">
+              <span class="field-label">Regla del nivel</span>
+              <select
+                class="field"
+                [ngModel]="level.rule"
+                (ngModelChange)="controller.setWorkflowRule(i, $event)"
               >
-                <i class="bx bx-chevron-up"></i>
-              </button>
-              <button
-                type="button"
-                class="icon-button"
-                title="Bajar nivel"
-                [disabled]="i === controller.workflowForm.approvalLevels.length - 1"
-                (click)="controller.moveWorkflowLevel(i, 1)"
-              >
-                <i class="bx bx-chevron-down"></i>
-              </button>
-              <button
-                type="button"
-                class="icon-button"
-                title="Eliminar nivel"
-                (click)="controller.removeWorkflowLevel(i)"
-              >
-                <i class="bx bx-trash"></i>
-              </button>
+                <option value="any">Cualquiera de los aprobadores</option>
+                <option value="all">Todos los aprobadores</option>
+              </select>
+            </label>
+            <div class="flex flex-wrap gap-1.5">
+              @for (approver of level.approvers; track approver) {
+                <span
+                  class="inline-flex h-7 items-center gap-1 rounded-full bg-primary-soft pr-1 pl-2.5 text-xs font-bold text-[#1E3FA8]"
+                >
+                  {{ approver }}
+                  <button
+                    type="button"
+                    class="flex size-5 items-center justify-center rounded-full hover:bg-white"
+                    [attr.aria-label]="'Quitar ' + approver"
+                    (click)="controller.removeWorkflowApprover(i, approver)"
+                  >
+                    <app-icon name="x" [size]="12" [stroke]="2.4" />
+                  </button>
+                </span>
+              } @empty {
+                <span class="text-[13px] text-muted">Aún no has seleccionado aprobadores.</span>
+              }
             </div>
-          </div>
-          <label class="workflow-rule-select"
-            >Regla del nivel<select
-              [ngModel]="level.rule"
-              (ngModelChange)="controller.setWorkflowRule(i, $event)"
-            >
-              <option value="any">Cualquiera de los aprobadores</option>
-              <option value="all">Todos los aprobadores</option>
-            </select></label
-          >
-          <div class="workflow-selected-approvers">
-            <span *ngFor="let approver of level.approvers" class="workflow-selected-chip"
-              >{{ approver
-              }}<button
-                type="button"
-                (click)="controller.removeWorkflowApprover(i, approver)"
-                aria-label="Quitar aprobador"
-              >
-                <i class="bx bx-x"></i></button
-            ></span>
-            <span *ngIf="!level.approvers.length" class="workflow-no-selection"
-              >Aún no has seleccionado aprobadores.</span
-            >
-          </div>
-          <label class="workflow-approver-search"
-            ><i class="bx bx-search"></i
-            ><input
-              placeholder="Buscar usuario, rol o área"
-              [ngModel]="controller.workflowApproverSearches[i]"
-              (ngModelChange)="controller.setWorkflowApproverSearch(i, $event)"
-          /></label>
-          <div class="workflow-approver-results">
-            <label
-              *ngFor="let approver of controller.filteredWorkflowApprovers(i)"
-              class="role-option-card"
-              ><input
-                type="checkbox"
-                (change)="controller.toggleWorkflowApprover(i, approver)"
-              /><span class="role-check"><i class="bx bx-check"></i></span
-              ><span>{{ controller.roleLabel(approver) }}</span></label
-            >
-            <span
-              *ngIf="!controller.workflowApproverSearches[i]?.trim()"
-              class="workflow-no-results"
-              >Escribe un nombre, rol o área para buscar.</span
-            ><span
-              *ngIf="
-                controller.workflowApproverSearches[i]?.trim() &&
-                !controller.filteredWorkflowApprovers(i).length
-              "
-              class="workflow-no-results"
-              >No hay resultados disponibles.</span
-            >
-          </div>
-        </article>
+            <div class="relative flex">
+              <app-icon
+                name="search"
+                [size]="18"
+                class="pointer-events-none absolute top-[13px] left-3 text-muted"
+              />
+              <input
+                class="field pl-[38px]"
+                placeholder="Buscar usuario, rol o área"
+                [attr.aria-label]="'Buscar aprobadores del nivel ' + (i + 1)"
+                [ngModel]="controller.workflowApproverSearches[i]"
+                (ngModelChange)="controller.setWorkflowApproverSearch(i, $event)"
+              />
+            </div>
+            <div class="flex flex-wrap gap-2">
+              @for (approver of controller.filteredWorkflowApprovers(i); track approver) {
+                <button
+                  type="button"
+                  class="btn btn-tint h-9 px-3 text-[13px]"
+                  (click)="controller.toggleWorkflowApprover(i, approver)"
+                >
+                  <app-icon name="plus" [size]="15" [stroke]="2.2" />{{
+                    controller.roleLabel(approver)
+                  }}
+                </button>
+              } @empty {
+                <span class="text-[13px] text-muted">
+                  {{
+                    controller.workflowApproverSearches[i]?.trim()
+                      ? 'No hay resultados disponibles.'
+                      : 'Escribe un nombre, rol o área para buscar.'
+                  }}
+                </span>
+              }
+            </div>
+          </article>
+        }
         <button
           type="button"
-          class="secondary workflow-add-level"
+          class="btn btn-outline self-start"
           (click)="controller.addWorkflowLevel()"
         >
-          <i class="bx bx-plus"></i> Agregar nivel
+          <app-icon name="plus" [size]="18" [stroke]="2.2" />Agregar nivel
         </button>
       </div>
     </div>
-    <div class="form-actions">
-      <button class="secondary" (click)="controller.closeWorkflowForm()">Cancelar</button
-      ><button class="primary" (click)="controller.saveWorkflow()">Guardar workflow</button>
+    <div
+      dialog-footer
+      class="flex justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
+    >
+      <button type="button" class="btn btn-secondary" (click)="controller.closeWorkflowForm()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary" (click)="controller.saveWorkflow()">
+        Guardar workflow
+      </button>
     </div>
-  </section>
-</div>
+  </app-dialog>
+}

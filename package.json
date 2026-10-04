@@ -9,8 +9,8 @@
     "test": "ng test",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "quality": "npm run format:check && npm run typecheck",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"*.{json,scss}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"*.{json,scss}\""
+    "format": "prettier --write \"src/**/*.{ts,html,css}\" \"*.json\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,css}\" \"*.json\""
   },
   "prettier": {
     "printWidth": 100,
@@ -33,7 +33,6 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "rxjs": "~7.8.0",
-    "sweetalert2": "^11.26.25",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
@@ -41,6 +40,7 @@
     "@angular/build": "^20.3.37",
     "@angular/cli": "^20.3.37",
     "@angular/compiler-cli": "^20.3.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
@@ -48,7 +48,9 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "postcss": "^8.5.28",
     "prettier": "^3.9.9",
+    "tailwindcss": "^4.3.3",
     "typescript": "~5.9.2"
   }
 }

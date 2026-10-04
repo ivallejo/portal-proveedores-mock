@@ -1,251 +1,365 @@
-<section class="page admin-page">
-  <div class="page-heading">
-    <div>
-      <h1>Usuarios y roles</h1>
-      <p>Crea usuarios internos y controla sus permisos de acceso.</p>
+<app-page-header
+  heading="Usuarios y roles"
+  description="Crea usuarios internos y controla sus permisos de acceso."
+>
+  <button type="button" class="btn btn-primary" (click)="openForm()">
+    <app-icon name="plus" [size]="18" [stroke]="2.2" />Nuevo usuario
+  </button>
+</app-page-header>
+
+@if (error() && !showForm() && !editingUser()) {
+  <app-callout tone="danger">{{ error() }}</app-callout>
+}
+
+<section class="card flex grow flex-col overflow-hidden">
+  <div
+    class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft px-6 py-4"
+  >
+    <div class="flex flex-col">
+      <h2 class="m-0 text-base font-bold">Usuarios registrados</h2>
+      <span class="text-[13px] text-muted">{{ allUsers().length }} usuarios en el sistema</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <label class="flex items-center gap-2 text-[13px] text-muted">
+        Mostrar
+        <select
+          class="field h-10 w-auto pr-8"
+          [ngModel]="pageSize()"
+          (ngModelChange)="setPageSize($event)"
+          aria-label="Registros por página"
+        >
+          @for (size of [5, 10, 25, 50]; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[11px] left-3 text-muted"
+        />
+        <input
+          class="field h-10 w-64 pl-[38px]"
+          placeholder="Buscar usuario"
+          aria-label="Buscar usuario"
+          [ngModel]="search()"
+          (ngModelChange)="setSearch($event)"
+        />
+      </div>
     </div>
   </div>
 
-  <div *ngIf="message()" class="toast success">{{ message() }}</div>
-  <div *ngIf="error()" class="toast error">{{ error() }}</div>
-
-  <section class="panel table-panel admin-users-table">
-    <div class="panel-title">
-      <div>
-        <h2>Usuarios registrados</h2>
-        <p>{{ allUsers().length }} usuarios en el sistema</p>
-      </div>
-      <div class="admin-inline-controls">
-        <label class="page-size-select"
-          >Mostrar
-          <select [ngModel]="pageSize()" (ngModelChange)="setPageSize($event)">
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-          </select>
-          registros
-        </label>
-        <label class="admin-search"
-          ><i class="bx bx-search"></i><span>Buscar:</span
-          ><input
-            [ngModel]="search()"
-            (ngModelChange)="setSearch($event)"
-            placeholder="Buscar usuario"
-        /></label>
-      </div>
-    </div>
-
-    <div *ngIf="loading()" class="skeleton-table"><i></i><i></i><i></i></div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Correo electrónico</th>
-            <th>Nombre o empresa</th>
-            <th>Área</th>
-            <th>Roles</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users()">
-            <td>
-              {{ user.username }}
-            </td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.companyName }}</td>
-            <td>{{ user.area || '—' }}</td>
-            <td>
-              <div class="role-badges">
-                <span *ngFor="let role of user.roles" class="role-badge">{{
-                  roleLabel(role)
-                }}</span>
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[960px] border-collapse text-left text-sm">
+      <thead>
+        <tr
+          class="h-12 border-b border-line bg-surface-muted text-xs font-bold tracking-[0.04em] text-body uppercase"
+        >
+          <th class="px-6 font-bold">Usuario</th>
+          <th class="px-3 font-bold">Correo electrónico</th>
+          <th class="px-3 font-bold">Nombre o empresa</th>
+          <th class="px-3 font-bold">Área</th>
+          <th class="px-3 font-bold">Roles</th>
+          <th class="px-3 font-bold">Estado</th>
+          <th class="px-6 text-right font-bold">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading() && !allUsers().length) {
+          @for (row of [1, 2, 3, 4, 5]; track row) {
+            <tr class="h-14 border-b border-line-soft" aria-hidden="true">
+              <td class="px-6"><span class="skeleton h-3 w-24"></span></td>
+              <td class="px-3"><span class="skeleton h-3 w-40"></span></td>
+              <td class="px-3"><span class="skeleton h-3 w-32"></span></td>
+              <td class="px-3"><span class="skeleton h-3 w-20"></span></td>
+              <td class="px-3"><span class="skeleton h-6 w-28 rounded-full"></span></td>
+              <td class="px-3"><span class="skeleton h-6 w-11 rounded-full"></span></td>
+              <td class="px-6"><span class="skeleton ml-auto size-9 rounded-lg"></span></td>
+            </tr>
+          }
+        }
+        @for (user of users(); track user.id) {
+          <tr class="row-hover h-14 border-b border-line-soft">
+            <td class="px-6 font-bold tabular-nums">{{ user.username }}</td>
+            <td class="px-3 text-label">{{ user.email }}</td>
+            <td class="px-3">{{ user.companyName }}</td>
+            <td class="px-3 text-label">{{ user.area || '—' }}</td>
+            <td class="px-3">
+              <div class="flex flex-wrap gap-1.5 py-2">
+                @for (role of user.roles; track role) {
+                  <app-badge size="sm" tone="primary">{{ roleLabel(role) }}</app-badge>
+                }
               </div>
             </td>
-            <td>
-              <div class="user-status-control">
-                <button
-                  type="button"
-                  class="status-toggle"
-                  [class.active]="user.isActive"
-                  role="switch"
-                  [attr.aria-checked]="user.isActive"
-                  [attr.aria-label]="user.isActive ? 'Desactivar usuario' : 'Activar usuario'"
-                  [title]="user.isActive ? 'Desactivar usuario' : 'Activar usuario'"
-                  (click)="toggleStatus(user)"
-                >
-                  <span></span>
-                </button>
-              </div>
-            </td>
-            <td>
+            <td class="px-3">
               <button
-                class="icon-button"
                 type="button"
+                role="switch"
+                class="relative h-6 w-11 rounded-full transition-colors"
+                [class]="user.isActive ? 'bg-success' : 'bg-control'"
+                [attr.aria-checked]="user.isActive"
+                [attr.aria-label]="
+                  user.isActive ? 'Desactivar a ' + user.username : 'Activar a ' + user.username
+                "
+                [title]="user.isActive ? 'Activo' : 'Inactivo'"
+                (click)="toggleStatus(user)"
+              >
+                <span
+                  class="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform"
+                  [class.translate-x-5]="user.isActive"
+                ></span>
+              </button>
+            </td>
+            <td class="px-6 text-right">
+              <button
+                type="button"
+                class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
                 title="Editar usuario"
+                [attr.aria-label]="'Editar a ' + user.username"
                 (click)="openEdit(user)"
               >
-                <i class="bx bx-edit"></i>
+                <app-icon name="edit" [size]="17" />
               </button>
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="admin-pagination admin-pagination-bottom">
-      <span>Página {{ page() }} de {{ pageCount() }}</span>
-      <div>
-        <button class="icon-button" [disabled]="page() === 1" (click)="setPage(page() - 1)">
-          <i class="bx bx-chevron-left"></i></button
-        ><button
-          *ngFor="let item of paginationPages()"
-          class="page-button"
-          [class.active]="item === page()"
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (!loading() && !filteredUsers().length) {
+    <app-empty-state
+      heading="No encontramos usuarios"
+      text="Prueba con otro nombre, correo, área o rol."
+      icon="users"
+      (action)="setSearch('')"
+    />
+  }
+
+  <div
+    class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft px-6 py-3 text-[13px] text-body"
+  >
+    <span>Página {{ page() }} de {{ pageCount() }} · {{ filteredUsers().length }} usuarios</span>
+    <div class="flex items-center gap-1.5">
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        aria-label="Página anterior"
+        [disabled]="page() === 1"
+        (click)="setPage(page() - 1)"
+      >
+        <app-icon name="chevron-left" [size]="16" [stroke]="2" />
+      </button>
+      @for (item of paginationPages(); track item) {
+        <button
+          type="button"
+          class="size-9 rounded-lg text-[13px] font-bold"
+          [class]="
+            item === page()
+              ? 'bg-primary text-white'
+              : 'border border-[#DDE1E7] bg-white text-muted'
+          "
+          [attr.aria-current]="item === page() ? 'page' : null"
           (click)="setPage(item)"
         >
-          {{ item }}</button
-        ><button
-          class="icon-button"
-          [disabled]="page() === pageCount()"
-          (click)="setPage(page() + 1)"
-        >
-          <i class="bx bx-chevron-right"></i>
+          {{ item }}
         </button>
-      </div>
+      }
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        aria-label="Página siguiente"
+        [disabled]="page() === pageCount()"
+        (click)="setPage(page() + 1)"
+      >
+        <app-icon name="chevron-right" [size]="16" [stroke]="2" />
+      </button>
     </div>
-  </section>
-
-  <button *ngIf="!showForm()" class="new-user-button primary" (click)="openForm()">
-    <i class="bx bx-plus"></i> Nuevo usuario
-  </button>
-
-  <div *ngIf="showForm()" class="modal-backdrop">
-    <section class="user-modal panel">
-      <div class="panel-title">
-        <div>
-          <h2>Nuevo usuario</h2>
-          <p>Completa los datos y asigna el rol inicial.</p>
-        </div>
-        <button class="icon-button" type="button" (click)="closeForm()">
-          <i class="bx bx-x"></i>
-        </button>
-      </div>
-      <div *ngIf="error()" class="toast error">{{ error() }}</div>
-      <div class="form-grid">
-        <label
-          >Username *<input [(ngModel)]="newUser.username" placeholder="Ej. jorge.perez" /></label
-        ><label
-          >Correo electrónico *<input
-            type="email"
-            [(ngModel)]="newUser.email"
-            placeholder="usuario@naviera.com" /></label
-        ><label
-          >Nombre o empresa *<input
-            [(ngModel)]="newUser.companyName"
-            placeholder="Nombre del usuario" /></label
-        ><label
-          >RUC (solo proveedores)<input
-            [(ngModel)]="newUser.ruc"
-            placeholder="Opcional para usuarios internos" /></label
-        ><label *ngIf="hasInternalRole(selectedRoles())"
-          >Área *<select [(ngModel)]="newUser.area">
-            <option value="">Selecciona un área</option>
-            <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
-          </select></label
-        ><label class="temporary-password-field"
-          >Contraseña temporal *<span class="password-field"
-            ><input
-              [type]="showNewPassword() ? 'text' : 'password'"
-              [(ngModel)]="newUser.password"
-              placeholder="Contraseña inicial" /><button
-              type="button"
-              class="password-toggle"
-              [attr.aria-label]="showNewPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-              [title]="showNewPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-              (click)="showNewPassword.set(!showNewPassword())"
-            >
-              <i
-                class="bx"
-                [class.bx-show]="!showNewPassword()"
-                [class.bx-hide]="showNewPassword()"
-              ></i></button></span
-        ></label>
-      </div>
-      <div class="role-selector">
-        <div class="role-selector-heading">
-          <div>
-            <h3>Roles *</h3>
-            <p>Selecciona uno o más roles para este usuario.</p>
-          </div>
-          <span>{{ selectedRoles().length }} seleccionados</span>
-        </div>
-        <div class="role-options-grid">
-          <label *ngFor="let role of roles" class="role-option-card">
-            <input
-              type="checkbox"
-              [checked]="selectedRoles().includes(role)"
-              (change)="toggleSelectedRole(role)"
-            />
-            <span class="role-check"><i class="bx bx-check"></i></span>
-            <span>{{ roleLabel(role) }}</span>
-          </label>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="secondary" type="button" (click)="closeForm()">Cancelar</button
-        ><button class="primary" [disabled]="loading()" (click)="createUser()">
-          {{ loading() ? 'Creando...' : 'Crear usuario' }}
-        </button>
-      </div>
-    </section>
-  </div>
-
-  <div *ngIf="editingUser()" class="modal-backdrop">
-    <section class="user-modal panel">
-      <div class="panel-title">
-        <div>
-          <h2>Editar usuario</h2>
-          <p>Actualiza sus datos y administra los roles asignados.</p>
-        </div>
-        <button class="icon-button" type="button" (click)="closeEdit()">
-          <i class="bx bx-x"></i>
-        </button>
-      </div>
-      <div *ngIf="error()" class="toast error">{{ error() }}</div>
-      <div class="form-grid">
-        <label>Username *<input [(ngModel)]="editUser.username" /></label>
-        <label>Correo electrónico *<input type="email" [(ngModel)]="editUser.email" /></label>
-        <label>Nombre o empresa *<input [(ngModel)]="editUser.companyName" /></label>
-        <label>RUC (solo proveedores)<input [(ngModel)]="editUser.ruc" /></label>
-        <label *ngIf="hasInternalRole(editRoles())"
-          >Área *<select [(ngModel)]="editUser.area">
-            <option value="">Selecciona un área</option>
-            <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
-          </select></label
-        >
-      </div>
-      <div class="role-editor">
-        <h3>Roles asignados</h3>
-        <p>Selecciona uno o más roles para este usuario.</p>
-        <label *ngFor="let role of roles" class="role-option">
-          <input
-            type="checkbox"
-            [checked]="editRoles().includes(role)"
-            (change)="toggleEditRole(role)"
-          />
-          <span>{{ roleLabel(role) }}</span>
-        </label>
-      </div>
-      <div class="form-actions">
-        <button class="secondary" type="button" (click)="closeEdit()">Cancelar</button>
-        <button class="primary" [disabled]="loading()" (click)="saveEdit()">
-          {{ loading() ? 'Guardando...' : 'Guardar cambios' }}
-        </button>
-      </div>
-    </section>
   </div>
 </section>
+
+@if (showForm()) {
+  <app-dialog
+    heading="Nuevo usuario"
+    subtitle="Completa los datos y asigna los roles iniciales."
+    [width]="760"
+    closeLabel="Cerrar"
+    (closed)="closeForm()"
+  >
+    <div class="flex flex-col gap-5 px-5 py-6 sm:px-8">
+      @if (error()) {
+        <app-callout tone="danger">{{ error() }}</app-callout>
+      }
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Usuario *</span>
+          <input class="field" [(ngModel)]="newUser.username" placeholder="Ej. jorge.perez" />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Correo electrónico *</span>
+          <input
+            class="field"
+            type="email"
+            [(ngModel)]="newUser.email"
+            placeholder="usuario@naviera.com"
+          />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Nombre o empresa *</span>
+          <input class="field" [(ngModel)]="newUser.companyName" placeholder="Nombre del usuario" />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">RUC (solo proveedores)</span>
+          <input
+            class="field"
+            [(ngModel)]="newUser.ruc"
+            placeholder="Opcional para usuarios internos"
+          />
+        </label>
+        @if (hasInternalRole(selectedRoles())) {
+          <label class="flex flex-col gap-2">
+            <span class="field-label">Área *</span>
+            <select class="field" [(ngModel)]="newUser.area">
+              <option value="">Selecciona un área</option>
+              @for (area of areas; track area) {
+                <option [value]="area">{{ area }}</option>
+              }
+            </select>
+          </label>
+        }
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Contraseña temporal *</span>
+          <span class="relative flex">
+            <input
+              class="field pr-11"
+              [type]="showNewPassword() ? 'text' : 'password'"
+              [(ngModel)]="newUser.password"
+              placeholder="Contraseña inicial"
+            />
+            <button
+              type="button"
+              class="absolute top-0.5 right-0.5 flex size-10 items-center justify-center rounded-lg text-muted hover:bg-page"
+              [attr.aria-label]="showNewPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              (click)="showNewPassword.set(!showNewPassword())"
+            >
+              <app-icon [name]="showNewPassword() ? 'eye-off' : 'eye'" [size]="18" />
+            </button>
+          </span>
+        </label>
+      </div>
+      <fieldset class="m-0 flex flex-col gap-3 rounded-[14px] border border-line p-4">
+        <legend class="px-1 text-sm font-bold">
+          Roles *
+          <span class="font-normal text-muted">· {{ selectedRoles().length }} seleccionados</span>
+        </legend>
+        <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          @for (role of roles; track role) {
+            <label
+              class="flex cursor-pointer items-center gap-3 rounded-xl border-2 px-3.5 py-3 text-sm font-bold"
+              [class]="
+                selectedRoles().includes(role)
+                  ? 'border-primary bg-primary-tint'
+                  : 'border-line bg-white'
+              "
+            >
+              <input
+                type="checkbox"
+                class="size-4 accent-primary"
+                [checked]="selectedRoles().includes(role)"
+                (change)="toggleSelectedRole(role)"
+              />
+              {{ roleLabel(role) }}
+            </label>
+          }
+        </div>
+      </fieldset>
+    </div>
+    <div
+      dialog-footer
+      class="flex justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
+    >
+      <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="loading()" (click)="createUser()">
+        {{ loading() ? 'Creando…' : 'Crear usuario' }}
+      </button>
+    </div>
+  </app-dialog>
+}
+
+@if (editingUser(); as user) {
+  <app-dialog
+    heading="Editar usuario"
+    [subtitle]="user.username"
+    [width]="760"
+    closeLabel="Cerrar"
+    (closed)="closeEdit()"
+  >
+    <div class="flex flex-col gap-5 px-5 py-6 sm:px-8">
+      @if (error()) {
+        <app-callout tone="danger">{{ error() }}</app-callout>
+      }
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Usuario *</span>
+          <input class="field" [(ngModel)]="editUser.username" />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Correo electrónico *</span>
+          <input class="field" type="email" [(ngModel)]="editUser.email" />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Nombre o empresa *</span>
+          <input class="field" [(ngModel)]="editUser.companyName" />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">RUC (solo proveedores)</span>
+          <input class="field" [(ngModel)]="editUser.ruc" />
+        </label>
+        @if (hasInternalRole(editRoles())) {
+          <label class="flex flex-col gap-2">
+            <span class="field-label">Área *</span>
+            <select class="field" [(ngModel)]="editUser.area">
+              <option value="">Selecciona un área</option>
+              @for (area of areas; track area) {
+                <option [value]="area">{{ area }}</option>
+              }
+            </select>
+          </label>
+        }
+      </div>
+      <fieldset class="m-0 flex flex-col gap-3 rounded-[14px] border border-line p-4">
+        <legend class="px-1 text-sm font-bold">Roles asignados</legend>
+        <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          @for (role of roles; track role) {
+            <label
+              class="flex cursor-pointer items-center gap-3 rounded-xl border-2 px-3.5 py-3 text-sm font-bold"
+              [class]="
+                editRoles().includes(role)
+                  ? 'border-primary bg-primary-tint'
+                  : 'border-line bg-white'
+              "
+            >
+              <input
+                type="checkbox"
+                class="size-4 accent-primary"
+                [checked]="editRoles().includes(role)"
+                (change)="toggleEditRole(role)"
+              />
+              {{ roleLabel(role) }}
+            </label>
+          }
+        </div>
+      </fieldset>
+    </div>
+    <div
+      dialog-footer
+      class="flex justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
+    >
+      <button type="button" class="btn btn-secondary" (click)="closeEdit()">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="loading()" (click)="saveEdit()">
+        {{ loading() ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </app-dialog>
+}

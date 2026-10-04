@@ -1,0 +1,763 @@
+<app-page-header
+  heading="Registrar documentos"
+  description="Elige cómo vas a registrar el documento. Validamos la información con SAP y SUNAT antes de registrarlo."
+/>
+
+<div
+  role="radiogroup"
+  aria-label="Tipo de ingreso"
+  class="grid grid-cols-1 gap-4"
+  [class.md:grid-cols-3]="entryCards().length === 3"
+  [class.md:grid-cols-2]="entryCards().length === 2"
+>
+  @for (card of entryCards(); track card.value) {
+    @let on = entry() === card.value;
+    <button
+      type="button"
+      role="radio"
+      class="option-card relative flex items-start gap-3.5 rounded-2xl border-2 px-5 py-[18px] text-left text-ink transition-[border-color,box-shadow]"
+      [class]="on ? 'border-primary bg-primary-tint shadow-option' : 'border-line bg-white'"
+      [class.opacity-55]="locked() && !on"
+      [class.cursor-default]="locked()"
+      [attr.aria-checked]="on"
+      [attr.aria-disabled]="locked() && !on"
+      (click)="pickEntry(card.value)"
+    >
+      <span
+        class="flex size-[46px] shrink-0 items-center justify-center rounded-xl"
+        [class]="on ? 'bg-primary text-white' : 'bg-page text-primary'"
+      >
+        <app-icon [name]="card.icon" [size]="22" />
+      </span>
+      <span class="flex flex-col gap-1 pr-[26px]">
+        <span class="text-base font-bold">{{ card.label }}</span>
+        <span class="text-[13px] leading-normal text-muted">{{ card.description }}</span>
+      </span>
+      <span
+        class="absolute top-4 right-4 flex size-[22px] items-center justify-center rounded-full border-2 text-white"
+        [class]="on ? 'border-primary bg-primary' : 'border-control bg-white'"
+      >
+        @if (on) {
+          <app-icon name="check" [size]="12" [stroke]="3" />
+        }
+      </span>
+    </button>
+  }
+</div>
+
+<section aria-label="Registro" class="card flex flex-col rounded-[18px] shadow-card">
+  <ol
+    aria-label="Pasos"
+    class="m-0 flex list-none items-center gap-3 overflow-x-auto border-b border-line-soft px-5 py-4 sm:px-7"
+  >
+    @for (step of steps(); track step.label; let last = $last; let i = $index) {
+      <li
+        class="flex items-center gap-2.5"
+        [class.flex-1]="!last"
+        [attr.aria-current]="step.current ? 'step' : null"
+      >
+        <span
+          class="flex size-[30px] shrink-0 items-center justify-center rounded-full border-2 text-[13px] font-bold"
+          [class]="
+            step.failed
+              ? 'border-danger bg-danger text-white'
+              : step.done
+                ? 'border-primary bg-primary text-white'
+                : step.current
+                  ? 'border-primary bg-white text-primary'
+                  : 'border-control bg-white text-subtle'
+          "
+          >{{ step.failed ? '!' : step.done ? '✓' : i + 1 }}</span
+        >
+        <span
+          class="text-sm whitespace-nowrap"
+          [class]="step.current || step.done ? 'text-ink' : 'text-subtle'"
+          [class.font-bold]="step.current"
+          >{{ step.label }}</span
+        >
+        @if (!last) {
+          <span
+            class="h-0.5 min-w-6 grow rounded-sm"
+            [class]="step.done && !step.current ? 'bg-primary' : 'bg-[#DCE3EE]'"
+          ></span>
+        }
+      </li>
+    }
+  </ol>
+
+  <!-- Resultado final -->
+  @if (result(); as res) {
+    <app-result-state [kind]="res.ok ? 'ok' : 'bad'" [heading]="res.title" [text]="res.text">
+      <div class="mt-1 flex flex-wrap justify-center gap-3">
+        @for (chip of res.chips; track chip.label) {
+          <div
+            class="flex min-w-[170px] flex-col items-start gap-[3px] rounded-xl border border-line bg-surface-alt px-4 py-3 text-left"
+          >
+            <span class="text-xs text-muted">{{ chip.label }}</span>
+            <span
+              class="text-[14.5px] font-bold tabular-nums"
+              [class]="
+                chip.tone === 'danger'
+                  ? 'text-[#A51E1E]'
+                  : chip.tone === 'warn'
+                    ? 'text-warning-text'
+                    : chip.tone === 'info'
+                      ? 'text-[#1E3FA8]'
+                      : 'text-ink'
+              "
+              >{{ chip.value }}</span
+            >
+          </div>
+        }
+      </div>
+      @if (res.mail) {
+        <div
+          class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
+        >
+          <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
+        </div>
+      }
+      <div class="mt-2 flex flex-wrap justify-center gap-3">
+        <button type="button" class="btn btn-outline btn-lg" (click)="reset()">
+          <app-icon name="plus" [size]="18" [stroke]="2.2" />Registrar otro documento
+        </button>
+        @if (isInternal()) {
+          <a routerLink="/inicio" class="btn btn-primary btn-lg"
+            >Ir al inicio<app-icon name="arrow-right" [size]="18" [stroke]="2.2"
+          /></a>
+        } @else {
+          <a routerLink="/estado-factura" class="btn btn-primary btn-lg"
+            >Ver estado de mis facturas<app-icon name="arrow-right" [size]="18" [stroke]="2.2"
+          /></a>
+        }
+      </div>
+    </app-result-state>
+  } @else if (step() === 2) {
+    <!-- Paso 2: revisión del documento leído del XML -->
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+      <div class="flex flex-col gap-[18px] border-line-soft px-5 py-6 sm:px-7 lg:border-r">
+        @if (reviewLoading()) {
+          <div aria-hidden="true" class="flex flex-col gap-4">
+            <span class="skeleton h-[26px] w-[46%]"></span>
+            <div class="grid grid-cols-3 gap-4">
+              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                <span class="skeleton h-11"></span>
+              }
+            </div>
+            <span class="skeleton h-[150px] rounded-xl"></span>
+            <span class="skeleton h-[60px] w-1/2 self-end rounded-xl"></span>
+          </div>
+        } @else if (xmlDocument(); as doc) {
+          <div class="animate-fade flex flex-col gap-[18px]">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-bold tracking-[0.08em] text-muted-auth uppercase"
+                >Detalle del documento electrónico · leído del XML</span
+              >
+              <span class="flex flex-wrap items-center gap-3">
+                <span class="text-2xl font-bold tabular-nums">{{ doc.number }}</span>
+                <app-badge tone="primary">{{ doc.documentType }}</app-badge>
+              </span>
+            </div>
+            @if (!doc.fromXml) {
+              <app-callout tone="warn">
+                No pudimos leer el contenido del XML; mostramos datos de ejemplo para continuar con
+                la prueba.
+              </app-callout>
+            }
+            <div class="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-3">
+              <div class="flex min-w-0 flex-col gap-[3px]">
+                <span class="text-xs text-muted">Emisor</span>
+                <span class="text-sm font-bold">{{ doc.issuerName || '—' }}</span>
+                <span class="text-xs text-muted tabular-nums">RUC {{ doc.issuerRuc || '—' }}</span>
+              </div>
+              <div class="flex min-w-0 flex-col gap-[3px]">
+                <span class="text-xs text-muted">Receptor</span>
+                <span class="text-sm font-bold">{{ doc.receiverName || '—' }}</span>
+                <span class="text-xs text-muted tabular-nums"
+                  >RUC {{ doc.receiverRuc || '—' }}</span
+                >
+              </div>
+              <div class="flex flex-col gap-[3px]">
+                <span class="text-xs text-muted">Fecha de emisión</span>
+                <span class="text-sm font-bold tabular-nums">{{ formatDate(doc.issuedAt) }}</span>
+                <span class="text-xs text-muted"
+                  >{{ currencyName(doc.currency) }} · {{ doc.paymentTerms }}</span
+                >
+              </div>
+            </div>
+            <div class="overflow-x-auto rounded-[14px] border border-line">
+              <div class="min-w-[520px]">
+                <div
+                  class="grid grid-cols-[minmax(0,3fr)_0.6fr_1fr_1fr] gap-3 border-b border-line bg-surface-muted px-4 py-2.5 text-[11.5px] font-bold tracking-[0.04em] text-body uppercase"
+                >
+                  <div>Descripción</div>
+                  <div class="text-right">Cant.</div>
+                  <div class="text-right">P. unitario</div>
+                  <div class="text-right">Importe</div>
+                </div>
+                @for (item of doc.items; track $index) {
+                  <div
+                    class="grid grid-cols-[minmax(0,3fr)_0.6fr_1fr_1fr] gap-3 border-b border-line-soft px-4 py-3 text-[13.5px] tabular-nums"
+                  >
+                    <div>{{ item.description }}</div>
+                    <div class="text-right">{{ item.quantity }}</div>
+                    <div class="text-right">{{ money(doc.currency, item.unitPrice) }}</div>
+                    <div class="text-right font-bold">
+                      {{ money(doc.currency, item.quantity * item.unitPrice) }}
+                    </div>
+                  </div>
+                }
+                <div
+                  class="flex justify-end gap-7 bg-surface-alt px-4 py-3 text-[13.5px] tabular-nums"
+                >
+                  <span class="flex flex-col items-end gap-0.5"
+                    ><span class="text-xs text-muted">Subtotal</span
+                    ><span class="font-bold">{{ money(doc.currency, doc.subtotal) }}</span></span
+                  >
+                  <span class="flex flex-col items-end gap-0.5">
+                    <span class="text-xs text-muted">{{
+                      doc.igv === null ? 'IGV' : 'IGV (18%)'
+                    }}</span>
+                    <span class="font-bold">{{
+                      doc.igv === null ? 'No aplica' : money(doc.currency, doc.igv)
+                    }}</span>
+                  </span>
+                  <span class="flex flex-col items-end gap-0.5"
+                    ><span class="text-xs text-muted">Total</span
+                    ><span class="text-lg font-bold text-primary">{{
+                      money(doc.currency, doc.total)
+                    }}</span></span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="flex flex-col gap-[18px] rounded-br-[18px] bg-surface-alt px-5 py-6 sm:px-7">
+        <span class="text-xs font-bold tracking-[0.08em] text-muted-auth uppercase"
+          >Archivos adjuntos</span
+        >
+        <div class="flex flex-col gap-2">
+          @for (file of reviewAttachments(); track file.tag + file.name) {
+            <div
+              class="grid grid-cols-[38px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-line bg-white px-3 py-2.5"
+            >
+              <span
+                class="flex size-[38px] items-center justify-center rounded-[9px] text-[11px] font-bold"
+                [class]="file.extra ? 'bg-[#EDE7FB] text-[#5B3AA8]' : attachmentTone[file.tag]"
+                >{{ file.tag }}</span
+              >
+              <span class="flex min-w-0 flex-col gap-0.5">
+                <span class="truncate text-[13.5px] font-bold">{{ file.name }}</span>
+                <span class="text-xs text-muted">{{ file.detail }}</span>
+              </span>
+              <span
+                class="text-xs font-bold"
+                [class]="file.na ? 'text-subtle' : 'text-success-text'"
+                >{{ file.status }}</span
+              >
+            </div>
+          }
+        </div>
+        <span class="text-xs font-bold tracking-[0.08em] text-muted-auth uppercase"
+          >Datos del registro</span
+        >
+        <div
+          class="flex flex-col gap-2.5 rounded-xl border border-line bg-white px-4 py-3.5 text-[13.5px]"
+        >
+          @for (row of registrationRows(); track row.label) {
+            <div class="flex justify-between gap-3">
+              <span class="text-muted">{{ row.label }}</span
+              ><span class="text-right font-bold">{{ row.value }}</span>
+            </div>
+          }
+          <div
+            class="flex items-center justify-between gap-3 border-t border-dashed border-[#DCE3EE] pt-2.5"
+          >
+            <span class="text-muted">Estado al registrar</span>
+            <app-badge size="lg" [dot]="true" [tone]="statusTone()">{{
+              statusOnRegister()
+            }}</app-badge>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else if (entry() === 'esp') {
+    <!-- Documentos especiales: un solo paso -->
+    <div class="animate-fade grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <div class="flex flex-col gap-[18px] border-line-soft px-5 py-6 sm:px-7 lg:border-r">
+        <ng-container
+          *ngTemplateOutlet="
+            sectionTitle;
+            context: { n: 1, title: 'Tipo de documento', sub: 'Elige la sociedad y el tipo' }
+          "
+        />
+        <app-select
+          label="Sociedad"
+          placeholder="Selecciona la sociedad"
+          [options]="companyOptions"
+          [invalid]="!!formError() && !company()"
+          [value]="company()"
+          (valueChange)="setCompany($event)"
+        />
+        <div class="flex flex-col gap-2">
+          <span class="field-label">Tipo de documento</span>
+          <div
+            role="radiogroup"
+            aria-label="Tipo de documento"
+            class="grid grid-cols-1 gap-2.5 sm:grid-cols-2"
+          >
+            @for (type of specialTypes; track type) {
+              @let on = special().type === type;
+              <button
+                type="button"
+                role="radio"
+                class="option-card flex min-h-14 items-center justify-between gap-2 rounded-xl border-2 px-3.5 py-2.5 text-left text-sm font-bold text-ink"
+                [class]="on ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
+                [attr.aria-checked]="on"
+                (click)="setSpecial('type', type)"
+              >
+                {{ type }}
+                <span
+                  class="size-[18px] shrink-0 rounded-full border-2"
+                  [class]="
+                    on
+                      ? 'border-primary bg-primary shadow-[inset_0_0_0_3px_#fff]'
+                      : 'border-control bg-white'
+                  "
+                ></span>
+              </button>
+            }
+          </div>
+        </div>
+        <app-callout [tone]="isSettlement() ? 'warn' : 'info'">
+          {{
+            isSettlement()
+              ? 'Las liquidaciones de cobranza se validan en SAP y en SUNAT (validez del documento y duplicidad).'
+              : 'Validaremos en SAP que el documento no esté registrado previamente (duplicidad).'
+          }}
+        </app-callout>
+      </div>
+      <div class="flex flex-col gap-[18px] px-5 py-6 sm:px-7">
+        <ng-container
+          *ngTemplateOutlet="
+            sectionTitle;
+            context: {
+              n: 2,
+              title: 'Datos del documento',
+              sub: 'Completa los datos y adjunta el PDF',
+            }
+          "
+        />
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-2">
+            <label for="es-ruc" class="field-label">RUC del proveedor</label>
+            <input
+              id="es-ruc"
+              type="text"
+              inputmode="numeric"
+              placeholder="11 dígitos"
+              class="field tracking-[0.02em] tabular-nums"
+              [attr.aria-invalid]="!!formError() && special().ruc.length !== 11"
+              [value]="special().ruc"
+              (input)="onSpecialRuc($event)"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="es-fecha" class="field-label">Fecha de emisión</label>
+            <input
+              id="es-fecha"
+              type="date"
+              class="field"
+              [attr.aria-invalid]="!!formError() && !special().date"
+              [value]="special().date"
+              (change)="setSpecial('date', $any($event.target).value)"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="es-nro" class="field-label">N° de documento</label>
+            <input
+              id="es-nro"
+              type="text"
+              placeholder="Ej. 075-2310045678"
+              class="field uppercase tabular-nums"
+              [attr.aria-invalid]="!!formError() && !special().number"
+              [value]="special().number"
+              (input)="onSpecialNumber($event)"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="es-imp" class="field-label">Importe</label>
+            <div class="flex gap-2">
+              <div
+                role="radiogroup"
+                aria-label="Moneda"
+                class="flex shrink-0 gap-[3px] rounded-[10px] bg-[#EEF2F8] p-[3px]"
+              >
+                @for (
+                  option of [
+                    { value: 'PEN', label: 'S/' },
+                    { value: 'USD', label: 'US$' },
+                  ];
+                  track option.value
+                ) {
+                  <button
+                    type="button"
+                    role="radio"
+                    class="h-[38px] rounded-lg px-2.5 text-[13px] font-bold"
+                    [class]="
+                      special().currency === option.value
+                        ? 'bg-white text-primary shadow-segment'
+                        : 'bg-transparent text-body'
+                    "
+                    [attr.aria-checked]="special().currency === option.value"
+                    (click)="setSpecial('currency', $any(option.value))"
+                  >
+                    {{ option.label }}
+                  </button>
+                }
+              </div>
+              <input
+                id="es-imp"
+                type="text"
+                inputmode="decimal"
+                placeholder="0.00"
+                class="field text-right tabular-nums"
+                [attr.aria-invalid]="!!formError() && !special().amount"
+                [value]="special().amount"
+                (input)="onSpecialAmount($event)"
+              />
+            </div>
+          </div>
+        </div>
+        <app-file-drop
+          tag="PDF"
+          title="Documento en PDF"
+          description="Escaneado o descargado del emisor"
+          [accept]="accept.pdf"
+          [state]="slots().pdf.state"
+          [fileName]="slots().pdf.name"
+          [fileSize]="slots().pdf.size"
+          [error]="slots().pdf.error"
+          [highlightMissing]="!!formError()"
+          (files)="addFile('pdf', $event)"
+          (removed)="removeFile('pdf')"
+        />
+      </div>
+    </div>
+  } @else {
+    <!-- Paso 1 (Con OC / Sin OC): datos y archivos -->
+    <div class="animate-fade grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <div class="flex flex-col gap-[18px] border-line-soft px-5 py-6 sm:px-7 lg:border-r">
+        @if (entry() === 'oc') {
+          <ng-container
+            *ngTemplateOutlet="
+              sectionTitle;
+              context: { n: 1, title: 'Datos de la orden', sub: 'Validaremos la orden en SAP' }
+            "
+          />
+          <app-select
+            label="Sociedad"
+            placeholder="Selecciona la sociedad"
+            [options]="companyOptions"
+            [disabled]="orderState() === 'busy'"
+            [invalid]="!!formError() && !company()"
+            [value]="company()"
+            (valueChange)="setCompany($event)"
+          />
+          <div class="flex flex-col gap-2">
+            <span class="field-label">Tipo de orden</span>
+            <div
+              role="radiogroup"
+              aria-label="Tipo de orden"
+              class="grid grid-cols-2 gap-1 rounded-xl bg-[#EEF2F8] p-1"
+            >
+              @for (type of ['Bien', 'Servicio']; track type) {
+                <button
+                  type="button"
+                  role="radio"
+                  class="flex h-[38px] items-center justify-center rounded-[9px] text-sm font-bold"
+                  [class]="
+                    orderType() === type
+                      ? 'bg-white text-primary shadow-segment'
+                      : 'bg-transparent text-body'
+                  "
+                  [attr.aria-checked]="orderType() === type"
+                  (click)="setOrderType($any(type))"
+                >
+                  {{ type }}
+                </button>
+              }
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="rg-nro" class="field-label">{{
+              orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra'
+            }}</label>
+            <input
+              id="rg-nro"
+              type="text"
+              class="field uppercase tracking-[0.02em] tabular-nums"
+              [placeholder]="orderType() === 'Bien' ? 'Ej. CR-2026-00418' : 'Ej. 4500012873'"
+              [attr.aria-invalid]="orderState() === 'bad' || (!!formError() && !orderNumber())"
+              [value]="orderNumber()"
+              (input)="onOrderNumber($event)"
+              (keyup.enter)="validateOrder()"
+            />
+            <span class="text-[12.5px] text-muted">
+              {{
+                orderType() === 'Bien'
+                  ? 'Para órdenes de bienes se valida el carrier de la entrega.'
+                  : 'Número de 10 dígitos de la orden de servicio.'
+              }}
+            </span>
+          </div>
+          <button
+            type="button"
+            class="btn btn-lg text-white"
+            [class]="orderState() === 'busy' ? 'bg-primary-busy' : 'btn-primary'"
+            [attr.aria-busy]="orderState() === 'busy'"
+            (click)="validateOrder()"
+          >
+            @if (orderState() === 'busy') {
+              <app-spinner [size]="18" />Validando en SAP…
+            } @else {
+              <app-icon name="shield-check" [size]="18" />{{
+                orderState() === 'ok' ? 'Validar nuevamente' : 'Validar orden'
+              }}
+            }
+          </button>
+          @if (orderState() === 'bad') {
+            <app-callout tone="danger" heading="Orden no válida" class="animate-in">
+              SAP no encontró la
+              {{ orderType() === 'Bien' ? 'entrega con carrier' : 'orden de compra' }}
+              <strong>{{ orderNumber() }}</strong> para la sociedad seleccionada, o ya no tiene
+              saldo por facturar. Verifica el número e inténtalo nuevamente.
+            </app-callout>
+          }
+          @if (order(); as validOrder) {
+            <div
+              class="animate-in flex flex-col gap-2.5 rounded-[14px] border border-[#CDEBD8] bg-success-tint px-4 py-3.5"
+            >
+              <span class="flex items-center gap-2 text-sm font-bold text-success-text">
+                <app-icon name="circle-check" [size]="18" />Orden válida en SAP
+              </span>
+              <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[13px]">
+                <span class="flex flex-col gap-0.5">
+                  <span class="text-muted">{{
+                    validOrder.type === 'Bien' ? 'N° de carrier' : 'N° de orden'
+                  }}</span>
+                  <span class="font-bold tabular-nums">{{ validOrder.number }}</span>
+                </span>
+                <span class="flex flex-col gap-0.5">
+                  <span class="text-muted">Saldo por facturar</span>
+                  <span class="font-bold tabular-nums">{{ money('PEN', validOrder.balance) }}</span>
+                </span>
+                <span class="col-span-2 flex flex-col gap-0.5">
+                  <span class="text-muted">Descripción</span
+                  ><span class="font-medium">{{ validOrder.description }}</span>
+                </span>
+              </div>
+            </div>
+          }
+        } @else {
+          <ng-container
+            *ngTemplateOutlet="
+              sectionTitle;
+              context: {
+                n: 1,
+                title: 'Datos del registro',
+                sub: isInternal()
+                  ? 'Registro como usuario interno'
+                  : 'Elige quién aprobará el documento',
+              }
+            "
+          />
+          <app-select
+            label="Sociedad"
+            placeholder="Selecciona la sociedad"
+            [options]="companyOptions"
+            [invalid]="!!formError() && !company()"
+            [value]="company()"
+            (valueChange)="setCompany($event)"
+          />
+          @if (isInternal()) {
+            <app-callout tone="info">
+              Como usuario interno no necesitas elegir área ni aprobador: el documento se registrará
+              directamente como
+              <strong>Pendiente de contabilización</strong>.
+            </app-callout>
+          } @else {
+            <app-select
+              label="Área"
+              placeholder="Selecciona el área"
+              [options]="areaOptions"
+              [invalid]="!!formError() && !area()"
+              [value]="area()"
+              (valueChange)="setArea($event)"
+            />
+            <app-select
+              label="Aprobador"
+              [placeholder]="area() ? 'Selecciona el aprobador' : 'Primero elige un área'"
+              [disabled]="!area()"
+              [options]="approverOptions()"
+              [invalid]="!!formError() && !!area() && !approver()"
+              [value]="approver()"
+              (valueChange)="setApprover($event)"
+            />
+          }
+        }
+      </div>
+
+      <div class="flex flex-col gap-[18px] px-5 py-6 sm:px-7">
+        <ng-container
+          *ngTemplateOutlet="
+            sectionTitle;
+            context: {
+              n: 2,
+              title: 'Archivos del documento',
+              sub:
+                entry() === 'sin'
+                  ? 'XML, PDF, CDR y extras (se consolidan)'
+                  : 'XML, PDF, CDR y archivos extras',
+            }
+          "
+        />
+        @if (filesLocked()) {
+          <app-callout tone="neutral"
+            >Valida la orden para habilitar la carga de archivos.</app-callout
+          >
+        }
+        <div
+          class="flex flex-col gap-2.5"
+          [class.pointer-events-none]="filesLocked()"
+          [class.opacity-50]="filesLocked()"
+          [attr.inert]="filesLocked() ? '' : null"
+        >
+          <app-file-drop
+            tag="XML"
+            title="Documento electrónico (XML)"
+            description="Archivo XML emitido a SUNAT"
+            [accept]="accept.xml"
+            [state]="slots().xml.state"
+            [fileName]="slots().xml.name"
+            [fileSize]="slots().xml.size"
+            [error]="slots().xml.error"
+            [highlightMissing]="!!formError()"
+            (files)="addFile('xml', $event)"
+            (removed)="removeFile('xml')"
+          />
+          <app-file-drop
+            tag="PDF"
+            title="Representación impresa (PDF)"
+            description="PDF del comprobante"
+            [accept]="accept.pdf"
+            [state]="slots().pdf.state"
+            [fileName]="slots().pdf.name"
+            [fileSize]="slots().pdf.size"
+            [error]="slots().pdf.error"
+            [highlightMissing]="!!formError()"
+            (files)="addFile('pdf', $event)"
+            (removed)="removeFile('pdf')"
+          />
+          <app-file-drop
+            tag="CDR"
+            title="Constancia de recepción (CDR)"
+            description="ZIP o XML de respuesta de SUNAT"
+            [accept]="accept.cdr"
+            [requirement]="cdrRequired() ? 'Requerido' : 'No requerido'"
+            [notApplicable]="
+              cdrRequired()
+                ? ''
+                : 'No se requiere CDR porque la serie ' + series() + ' comienza con E.'
+            "
+            [state]="slots().cdr.state"
+            [fileName]="slots().cdr.name"
+            [fileSize]="slots().cdr.size"
+            [error]="slots().cdr.error"
+            [highlightMissing]="!!formError()"
+            (files)="addFile('cdr', $event)"
+            (removed)="removeFile('cdr')"
+          />
+          <app-file-drop
+            tag="EXTRA"
+            title="Archivos extras"
+            [description]="
+              entry() === 'sin'
+                ? 'Varios PDFs · se consolidan en un solo archivo'
+                : 'Varios PDFs de sustento'
+            "
+            requirement="Opcional"
+            [accept]="accept.extra"
+            [multiple]="true"
+            [extras]="extras()"
+            [error]="extrasError()"
+            (files)="addExtras($event)"
+            (removed)="clearExtras()"
+          />
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!result()) {
+    <div
+      class="flex flex-wrap items-center justify-between gap-4 rounded-b-[18px] border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
+    >
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          class="btn btn-secondary btn-lg"
+          [disabled]="registering()"
+          (click)="back()"
+        >
+          <app-icon name="arrow-left" [size]="18" [stroke]="2" />
+          {{ entry() === 'esp' ? 'Limpiar' : step() === 1 ? 'Cancelar' : 'Atrás' }}
+        </button>
+        @if (formError()) {
+          <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+            <app-icon name="alert-circle" [size]="16" [stroke]="2" />{{ formError() }}
+          </span>
+        }
+      </div>
+      @if (entry() === 'esp' || step() === 2) {
+        <button
+          type="button"
+          class="btn btn-lg min-w-[168px] text-white"
+          [class]="registering() ? 'bg-success-busy' : 'btn-success'"
+          [attr.aria-busy]="registering()"
+          [disabled]="reviewLoading()"
+          (click)="next()"
+        >
+          @if (registering()) {
+            <app-spinner [size]="18" />{{
+              entry() === 'esp' && isSettlement()
+                ? 'Validando en SAP y SUNAT…'
+                : 'Validando en SAP…'
+            }}
+          } @else {
+            Registrar<app-icon name="arrow-right" [size]="18" [stroke]="2.2" />
+          }
+        </button>
+      } @else {
+        <button type="button" class="btn btn-primary btn-lg min-w-[168px]" (click)="next()">
+          Siguiente<app-icon name="arrow-right" [size]="18" [stroke]="2.2" />
+        </button>
+      }
+    </div>
+  }
+</section>
+
+<ng-template #sectionTitle let-n="n" let-title="title" let-sub="sub">
+  <div class="flex items-center gap-3">
+    <span
+      class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[13px] font-bold text-primary"
+      >{{ n }}</span
+    >
+    <span class="flex flex-col">
+      <span class="text-base font-bold">{{ title }}</span>
+      <span class="text-[13px] text-muted">{{ sub }}</span>
+    </span>
+  </div>
+</ng-template>

@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import Swal from 'sweetalert2';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from '../services/workflow.service';
 import { MockUsersStore } from '../../../shared/state/mock-users.store';
 import { roleLabel } from '../../../shared/models/models';
@@ -9,6 +9,7 @@ export class WorkflowFacade {
   readonly roleLabel = roleLabel;
   readonly workflowService = inject(WorkflowService);
   readonly mockUsersStore = inject(MockUsersStore);
+  private readonly toast = inject(ToastService);
   readonly workflowSearch = signal('');
   readonly workflowPage = signal(1);
   readonly workflowPageSize = signal(5);
@@ -168,17 +169,7 @@ export class WorkflowFacade {
       this.editingWorkflow()?.id,
     );
     this.closeWorkflowForm();
-    void Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Operación completada',
-      text: 'El workflow de aprobación se guardó correctamente.',
-      showCloseButton: true,
-      showConfirmButton: false,
-      timer: 10000,
-      timerProgressBar: true,
-    });
+    this.toast.show('El workflow de aprobación se guardó correctamente');
   }
   toggleWorkflow(workflow: ApprovalWorkflow): void {
     this.workflowService.toggle(workflow.id);
