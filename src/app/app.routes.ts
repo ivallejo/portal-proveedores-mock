@@ -72,16 +72,6 @@ export const routes: Routes = [
           import('./features/home/home-page.component').then((m) => m.HomePageComponent),
       },
       {
-        path: 'orden-compra',
-        title: 'Orden de compra · Portal de Proveedores',
-        data: { title: 'Orden de compra', roles: ['Proveedor'] },
-        canActivate: [roleGuard],
-        loadComponent: () =>
-          import('./features/purchase-orders/purchase-orders-page.component').then(
-            (m) => m.PurchaseOrdersPageComponent,
-          ),
-      },
-      {
         path: 'orden-pago',
         title: 'Orden de pago · Portal de Proveedores',
         data: { title: 'Orden de pago', roles: ['Proveedor'] },

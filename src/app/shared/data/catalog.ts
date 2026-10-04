@@ -65,10 +65,3 @@ export function approverOptions(area: string, exclude = ''): SelectOption[] {
     .filter((approver) => approver.name !== exclude)
     .map((approver) => ({ value: approver.name, label: approver.name, sub: approver.email }));
 }
-
-/** Razón social de los proveedores de prueba. */
-export const PROVIDERS: Record<string, string> = {
-  '20512345678': 'Andes Suministros Industriales S.A.C.',
-  '20601122334': 'Logística Pacífico S.R.L.',
-  '10456789012': 'Mendoza Ríos, Carla',
-};

@@ -22,16 +22,6 @@ export interface SettingsLink {
 /** Módulos del portal, en el orden del menú lateral. */
 export const MODULES: ModuleLink[] = [
   {
-    label: 'Orden de compra',
-    path: '/orden-compra',
-    icon: 'cart',
-    cardIcon: 'clipboard',
-    cardTone: 'primary',
-    description:
-      'Revisa las órdenes de compra y de servicio emitidas a tu empresa, su vigencia y cuánto se ha atendido.',
-    roles: ['Proveedor'],
-  },
-  {
     label: 'Orden de pago',
     path: '/orden-pago',
     icon: 'cash',

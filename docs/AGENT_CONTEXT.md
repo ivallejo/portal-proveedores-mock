@@ -7,7 +7,7 @@ Guía del estado real del frontend del Portal de Proveedores. Leer antes de modi
 Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
 
 - **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace.
-- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de compra, Orden de pago, Estado de factura, Documentos (aprobaciones), Registrar documentos, Contabilización, Usuarios y roles, Workflows y correos del perfil.
+- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Documentos (aprobaciones), Registrar documentos, Contabilización, Usuarios y roles, Workflows y correos del perfil.
 - No asumir que una pantalla completa tiene persistencia en SQL Server.
 
 ## Stack y comandos
@@ -51,7 +51,6 @@ src/app/
 └── features/
     ├── auth/                  # login, registro, recuperar contraseña, crear/cambiar contraseña
     ├── home/                  # Inicio con tarjetas por rol
-    ├── purchase-orders/       # Orden de compra
     ├── payment-orders/        # Orden de pago
     ├── invoice-status/        # Estado de factura
     ├── approvals/             # Documentos (aprobar, rechazar, reasignar)
@@ -72,7 +71,7 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 | `/login`, `/registro`, `/recuperar-contrasena` | Sin sesión | Acceso |
 | `/crear-contrasena?ruc&token`, `/cambiar-contrasena?ruc&token` | Todos | Contraseña por enlace |
 | `/inicio`, `/perfil` | Con sesión | Inicio y perfil |
-| `/orden-compra`, `/orden-pago`, `/estado-factura` | Proveedor | Consultas |
+| `/orden-pago`, `/estado-factura` | Proveedor | Consultas |
 | `/documentos` | Área Usuaria | Aprobaciones |
 | `/registrar-documento` | Proveedor, Colaborador interno | Registro |
 | `/contabilizacion` | CxP | Contabilización |
