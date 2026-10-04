@@ -163,6 +163,7 @@ export class AccountingPageComponent {
   rowCaption(doc: PortalDocument): string {
     if (doc.entryType === 'Con OC') return `${doc.providerName} · OC ${doc.orderNumber}`;
     if (doc.entryType === 'Documento especial') return `${doc.documentType} · ${doc.providerName}`;
+    if (doc.isPettyCash) return `${doc.providerName} · Caja Chica`;
     return `${doc.providerName} · Aprobó ${doc.approver ?? '—'}`;
   }
 

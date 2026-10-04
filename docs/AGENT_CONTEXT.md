@@ -86,13 +86,16 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 ## Reglas de negocio implementadas en el front
 
 - **Con OC**: valida la orden (Servicio 01 simulado: `4500012873`, `4500012851` servicio; `CR-2026-00418` bien) antes de habilitar archivos. Registra como *Pendiente de contabilización*.
-- **Sin OC**: el proveedor elige área y aprobador → *Pendiente de aprobación*. El usuario interno no elige aprobador → *Pendiente de contabilización*.
+- **Sin OC**: proveedor y usuario interno eligen área y aprobador → *Pendiente de aprobación*. Solo el usuario interno (o admin) puede marcar **Caja Chica**: sin aprobador → *Pendiente de contabilización*.
+- **Extras PDF**: en Con OC y Sin OC se consolidan en un solo adjunto `Anexos_{número}.pdf`.
+- **Reasignar** exige motivo (queda en el historial).
 - **Documentos especiales**: solo usuarios internos y administradores. PDF + datos manuales; la liquidación de cobranzas se valida en SUNAT y SAP, el resto solo duplicidad. Registra como *Pendiente de contabilización*.
 - **CDR**: requerido salvo que la serie del XML empiece con «E».
 - **XML**: `xml-reader.ts` lee UBL 2.1 (factura, boleta, notas). Si el archivo no es UBL se usan datos de ejemplo y se avisa en la revisión. Si el usuario es proveedor, el RUC emisor debe ser el suyo.
 - Archivos: extensión permitida y máximo 5 MB; los extras PDF se consolidan en Sin OC.
 - Duplicidad: `DocumentsService.register` rechaza el mismo número para el mismo RUC.
 - Aprobar exige N° de pedido o de viaje; rechazar exige motivo; reasignar exige área y aprobador.
+- Estado *Contabilizado*: sin uso en los flujos actuales (Servicio 03 queda para una fase posterior).
 - Contabilización: rechazar exige motivo; observar exige motivo y correo válido (estado *Observado*).
 
 ## Cómo conectar un módulo al backend

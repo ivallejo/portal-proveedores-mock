@@ -223,7 +223,9 @@
           <div class="grid grid-cols-2 gap-x-5 gap-y-4 xl:grid-cols-4">
             <div class="flex min-w-0 flex-col gap-[3px]">
               <span class="text-xs text-muted">Tipo de ingreso</span>
-              <span class="text-[14.5px] font-bold">{{ entryLabel[doc.entryType] }}</span>
+              <span class="text-[14.5px] font-bold"
+                >{{ entryLabel[doc.entryType] }}{{ doc.isPettyCash ? ' · Caja Chica' : '' }}</span
+              >
             </div>
             <div class="flex min-w-0 flex-col gap-[3px]">
               <span class="text-xs text-muted">Sociedad</span>

@@ -91,6 +91,7 @@ export class ApprovalsPageComponent {
   readonly reassignArea = signal('');
   readonly reassignApprover = signal('');
   readonly reassignError = signal(false);
+  readonly reassignReason = signal('');
   readonly reason = signal('');
   readonly reasonError = signal(false);
 
@@ -226,18 +227,22 @@ export class ApprovalsPageComponent {
   reassign(): void {
     const doc = this.detail();
     if (!doc) return;
-    if (!this.reassignArea() || !this.reassignApprover()) {
+    if (!this.reassignArea() || !this.reassignApprover() || !this.reassignReason().trim()) {
       this.reassignError.set(true);
       return;
     }
     const area = this.reassignArea();
     const approver = this.reassignApprover();
-    this.run(this.documents.reassign(doc.number, area, approver, this.actor()), (updated) => ({
-      kind: 'swap',
-      title: 'Documento reasignado',
-      text: `El documento ${updated.number} fue reasignado a ${approver} (${area}).`,
-      mail: `Enviamos un correo a ${approver} indicando que tiene un documento por aprobar.`,
-    }));
+    const reason = this.reassignReason().trim();
+    this.run(
+      this.documents.reassign(doc.number, area, approver, reason, this.actor()),
+      (updated) => ({
+        kind: 'swap',
+        title: 'Documento reasignado',
+        text: `El documento ${updated.number} fue reasignado a ${approver} (${area}).`,
+        mail: `Enviamos un correo a ${approver} indicando que tiene un documento por aprobar.`,
+      }),
+    );
   }
 
   reject(): void {
@@ -302,6 +307,7 @@ export class ApprovalsPageComponent {
     this.reassignArea.set('');
     this.reassignApprover.set('');
     this.reassignError.set(false);
+    this.reassignReason.set('');
     this.reason.set('');
     this.reasonError.set(false);
   }

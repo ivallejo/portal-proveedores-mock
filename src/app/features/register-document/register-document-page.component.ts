@@ -171,6 +171,7 @@ export class RegisterDocumentPageComponent {
   readonly formatDate = formatDate;
   readonly currencyName = currencyName;
 
+  readonly pettyCash = signal(false);
   readonly isInternal = computed(() => {
     const roles = this.auth.user()?.roles ?? [];
     return roles.includes('Colaborador interno') && !roles.includes('Proveedor');
@@ -210,7 +211,13 @@ export class RegisterDocumentPageComponent {
       Object.values(this.slots()).some((slot) => slot.state === 'uploading') ||
       this.extras().some((extra) => extra.uploading),
   );
-  readonly pendingApproval = computed(() => this.entry() === 'sin' && !this.isInternal());
+  /** Solo el personal interno (o el administrador) puede registrar Caja Chica. */
+  readonly canPettyCash = computed(() => {
+    const roles = this.auth.user()?.roles ?? [];
+    return roles.includes('Colaborador interno') || roles.includes('Administrador');
+  });
+  /** Sin OC pasa por aprobación, salvo que sea de Caja Chica. */
+  readonly pendingApproval = computed(() => this.entry() === 'sin' && !this.pettyCash());
   readonly statusOnRegister = computed(() =>
     this.pendingApproval() ? 'Pendiente de aprobación' : 'Pendiente de contabilización',
   );
@@ -258,23 +265,13 @@ export class RegisterDocumentPageComponent {
     ];
     const extras = this.extras();
     if (extras.length) {
-      list.push(
-        this.entry() === 'sin'
-          ? {
-              tag: 'PDF',
-              name: `Anexos_${number}.pdf`,
-              detail: `Consolidado de ${extras.length} ${extras.length === 1 ? 'archivo' : 'archivos'} · ${extras.map((extra) => extra.name).join(', ')}`,
-              status: 'Adjunto',
-              extra: true,
-            }
-          : {
-              tag: 'PDF',
-              name: extras.map((extra) => extra.name).join(', '),
-              detail: `${extras.length} archivo(s) de sustento`,
-              status: 'Adjunto',
-              extra: true,
-            },
-      );
+      list.push({
+        tag: 'PDF',
+        name: `Anexos_${number}.pdf`,
+        detail: `Consolidado de ${extras.length} ${extras.length === 1 ? 'archivo' : 'archivos'} · ${extras.map((extra) => extra.name).join(', ')}`,
+        status: 'Adjunto',
+        extra: true,
+      });
     }
     return list;
   });
@@ -292,6 +289,9 @@ export class RegisterDocumentPageComponent {
         label: this.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra',
         value: this.order()?.number ?? '',
       });
+    }
+    if (this.entry() === 'sin' && this.pettyCash()) {
+      rows.push({ label: 'Caja Chica', value: 'Sí · sin aprobación' });
     }
     if (this.pendingApproval()) {
       rows.push({ label: 'Área', value: this.area() || '—' });
@@ -532,11 +532,7 @@ export class RegisterDocumentPageComponent {
       { tag: 'PDF', name: slots.pdf.name },
     ];
     if (this.cdrRequired()) attachments.push({ tag: 'CDR', name: slots.cdr.name });
-    if (this.extras().length) {
-      if (entryType === 'Sin OC')
-        attachments.push({ tag: 'PDF', name: `Anexos_${xml.number}.pdf` });
-      else this.extras().forEach((extra) => attachments.push({ tag: 'PDF', name: extra.name }));
-    }
+    if (this.extras().length) attachments.push({ tag: 'PDF', name: `Anexos_${xml.number}.pdf` });
     const doc: PortalDocument = {
       number: xml.number,
       entryType,
@@ -555,6 +551,7 @@ export class RegisterDocumentPageComponent {
       registeredBy: `${user.name} (${this.isInternal() ? 'interno' : 'proveedor'})`,
       companyCode: this.company(),
       status: this.statusOnRegister(),
+      isPettyCash: entryType === 'Sin OC' && this.pettyCash(),
       attachments,
       history: [],
     };
@@ -755,6 +752,7 @@ export class RegisterDocumentPageComponent {
     this.special.update((form) => ({ ...EMPTY_SPECIAL, type: form.type }));
     this.formError.set('');
     this.reviewLoading.set(false);
+    this.pettyCash.set(false);
     this.result.set(null);
   }
 }

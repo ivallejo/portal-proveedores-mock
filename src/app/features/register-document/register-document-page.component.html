@@ -568,9 +568,7 @@
               context: {
                 n: 1,
                 title: 'Datos del registro',
-                sub: isInternal()
-                  ? 'Registro como usuario interno'
-                  : 'Elige quién aprobará el documento',
+                sub: pettyCash() ? 'Documento de Caja Chica' : 'Elige quién aprobará el documento',
               }
             "
           />
@@ -582,11 +580,30 @@
             [value]="company()"
             (valueChange)="setCompany($event)"
           />
-          @if (isInternal()) {
+          @if (canPettyCash()) {
+            <label
+              class="flex cursor-pointer items-start gap-3 rounded-xl border-2 px-4 py-3.5 transition-colors"
+              [class]="pettyCash() ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
+            >
+              <input
+                type="checkbox"
+                class="mt-0.5 size-[18px] shrink-0 accent-primary"
+                [checked]="pettyCash()"
+                (change)="pettyCash.set($any($event.target).checked); formError.set('')"
+              />
+              <span class="flex flex-col gap-0.5">
+                <span class="text-sm font-bold">Documento de Caja Chica</span>
+                <span class="text-[12.5px] leading-normal text-muted"
+                  >No requiere aprobación: se registra directamente como Pendiente de
+                  contabilización.</span
+                >
+              </span>
+            </label>
+          }
+          @if (pettyCash()) {
             <app-callout tone="info">
-              Como usuario interno no necesitas elegir área ni aprobador: el documento se registrará
-              directamente como
-              <strong>Pendiente de contabilización</strong>.
+              Al ser de Caja Chica no necesitas elegir área ni aprobador: el documento se registrará
+              directamente como <strong>Pendiente de contabilización</strong>.
             </app-callout>
           } @else {
             <app-select
@@ -620,7 +637,7 @@
               sub:
                 entry() === 'sin'
                   ? 'XML, PDF, CDR y extras (se consolidan)'
-                  : 'XML, PDF, CDR y archivos extras',
+                  : 'XML, PDF, CDR y extras (se consolidan)',
             }
           "
         />

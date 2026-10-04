@@ -109,6 +109,7 @@ export class DocumentsService {
     number: string,
     area: string,
     approver: string,
+    reason: string,
     actor: Actor,
   ): Observable<PortalDocument> {
     const now = nowStamp();
@@ -124,6 +125,7 @@ export class DocumentsService {
           who: `Por ${actorLabel(actor)}`,
           when: now,
           kind: 'done',
+          note: reason,
         },
         {
           title: 'Pendiente de aprobación',
