@@ -296,7 +296,7 @@
         <app-select
           label="Sociedad"
           placeholder="Selecciona la sociedad"
-          [options]="companyOptions"
+          [options]="companyOptions()"
           [invalid]="!!formError() && !company()"
           [value]="company()"
           (valueChange)="setCompany($event)"
@@ -460,7 +460,7 @@
           <app-select
             label="Sociedad"
             placeholder="Selecciona la sociedad"
-            [options]="companyOptions"
+            [options]="companyOptions()"
             [disabled]="orderState() === 'busy'"
             [invalid]="!!formError() && !company()"
             [value]="company()"
@@ -575,7 +575,7 @@
           <app-select
             label="Sociedad"
             placeholder="Selecciona la sociedad"
-            [options]="companyOptions"
+            [options]="companyOptions()"
             [invalid]="!!formError() && !company()"
             [value]="company()"
             (valueChange)="setCompany($event)"
@@ -609,7 +609,7 @@
             <app-select
               label="Área"
               placeholder="Selecciona el área"
-              [options]="areaOptions"
+              [options]="areaOptions()"
               [invalid]="!!formError() && !area()"
               [value]="area()"
               (valueChange)="setArea($event)"

@@ -6,27 +6,21 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import {
-  approverEmail,
-  approverOptions,
-  areaOptions,
-  companyByCode,
-  companyOptions,
-} from '../../shared/data/catalog';
+import { CatalogService } from '../../shared/data/catalog.service';
 import {
   ATTACHMENT_TONE,
   Attachment,
-  EntryType,
   PortalDocument,
   SPECIAL_DOCUMENT_TYPES,
   STATUS_TONE,
   SpecialDocumentType,
 } from '../../shared/documents/document.model';
-import { DocumentsService } from '../../shared/documents/documents.service';
+import { DocumentsService, apiErrorMessage } from '../../shared/documents/documents.service';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import {
   CalloutComponent,
@@ -44,7 +38,6 @@ import {
   formatDate,
   money,
   onlyDigits,
-  todayIso,
 } from '../../shared/utils/format';
 import { ExtraFile, FileDropComponent, FileState } from './file-drop.component';
 import { OrderInfo, OrderType, RegisterDocumentService } from './register-document.service';
@@ -84,6 +77,12 @@ const ACCEPT: Record<Slot | 'extra', string[]> = {
   pdf: ['.pdf'],
   cdr: ['.zip', '.xml'],
   extra: ['.pdf'],
+};
+const SPECIAL_TYPE_CODES: Record<SpecialDocumentType, string> = {
+  'Boleto aéreo': 'AirTicket',
+  'Recibo público': 'PublicReceipt',
+  'No domiciliado': 'NonDomiciled',
+  'Liquidación de cobranzas': 'CollectionSettlement',
 };
 const EMPTY_SLOT: SlotState = { state: 'none', file: null, name: '', size: '', error: '' };
 const EMPTY_SPECIAL: SpecialForm = {
@@ -136,6 +135,7 @@ export class RegisterDocumentPageComponent {
   private readonly auth = inject(AuthService);
   private readonly api = inject(RegisterDocumentService);
   private readonly documents = inject(DocumentsService);
+  private readonly catalog = inject(CatalogService);
   private readonly timers = new Set<ReturnType<typeof setTimeout>>();
 
   readonly entry = signal<Entry>('oc');
@@ -162,9 +162,9 @@ export class RegisterDocumentPageComponent {
   readonly result = signal<RegisterResult | null>(null);
 
   readonly specialTypes = SPECIAL_DOCUMENT_TYPES;
-  readonly companyOptions = companyOptions();
-  readonly areaOptions = areaOptions();
-  readonly approverOptions = computed(() => approverOptions(this.area()));
+  readonly companyOptions = this.catalog.companyOptions;
+  readonly areaOptions = this.catalog.areaOptions;
+  readonly approverOptions = computed(() => this.catalog.approverOptions(this.area()));
   readonly accept = ACCEPT;
   readonly attachmentTone = ATTACHMENT_TONE;
   readonly money = money;
@@ -282,7 +282,7 @@ export class RegisterDocumentPageComponent {
         label: 'Tipo de ingreso',
         value: this.entry() === 'oc' ? 'Con orden de compra' : 'Sin orden de compra',
       },
-      { label: 'Sociedad', value: companyByCode(this.company())?.name ?? '—' },
+      { label: 'Sociedad', value: this.catalog.company(this.company())?.name ?? '—' },
     ];
     if (this.entry() === 'oc') {
       rows.push({
@@ -295,11 +295,12 @@ export class RegisterDocumentPageComponent {
     }
     if (this.pendingApproval()) {
       rows.push({ label: 'Área', value: this.area() || '—' });
+      const approver = this.catalog
+        .approvers(this.area())
+        .find((item) => item.id === this.approver());
       rows.push({
         label: 'Aprobador',
-        value: this.approver()
-          ? `${this.approver()} · ${approverEmail(this.area(), this.approver())}`
-          : '—',
+        value: approver ? `${approver.name} · ${approver.email}` : '—',
       });
     }
     return rows;
@@ -313,6 +314,7 @@ export class RegisterDocumentPageComponent {
   });
 
   constructor() {
+    this.catalog.load();
     const loading = inject(PageLoadingService);
     loading.bind(
       computed(() => !!this.progressLabel()),
@@ -360,12 +362,16 @@ export class RegisterDocumentPageComponent {
     }
     this.formError.set('');
     this.orderState.set('busy');
-    this.api
-      .validateOrder(this.company(), this.orderType(), this.orderNumber())
-      .subscribe((order) => {
+    this.api.validateOrder(this.company(), this.orderType(), this.orderNumber()).subscribe({
+      next: (order) => {
         this.order.set(order);
         this.orderState.set(order ? 'ok' : 'bad');
-      });
+      },
+      error: (error) => {
+        this.orderState.set('idle');
+        this.formError.set(apiErrorMessage(error, 'No fue posible validar la orden en SAP.'));
+      },
+    });
   }
 
   setArea(area: string): void {
@@ -374,8 +380,8 @@ export class RegisterDocumentPageComponent {
     this.formError.set('');
   }
 
-  setApprover(name: string): void {
-    this.approver.set(name);
+  setApprover(id: string): void {
+    this.approver.set(id);
     this.formError.set('');
   }
 
@@ -412,7 +418,7 @@ export class RegisterDocumentPageComponent {
       return;
     }
     this.extrasError.set('');
-    const added = files.map((file) => ({ name: file.name, uploading: true }));
+    const added = files.map((file) => ({ name: file.name, uploading: true, file }));
     this.extras.update((list) => [...list, ...added]);
     this.later(1150, () =>
       this.extras.update((list) => list.map((extra) => ({ ...extra, uploading: false }))),
@@ -500,135 +506,96 @@ export class RegisterDocumentPageComponent {
 
   private register(): void {
     if (this.registering()) return;
-    const doc = this.entry() === 'esp' ? this.buildSpecial() : this.buildElectronic();
-    if (!doc) return;
+    const isSpecial = this.entry() === 'esp';
+    const form = isSpecial ? this.buildSpecialForm() : this.buildElectronicForm();
+    if (!form) return;
     this.formError.set('');
     this.registering.set(true);
-    this.documents.register(doc).subscribe({
+    const call = isSpecial ? this.documents.registerSpecial(form) : this.documents.register(form);
+    call.subscribe({
       next: (saved) => {
         this.registering.set(false);
         this.result.set(this.successResult(saved));
-        if (this.entry() !== 'esp') this.step.set(3);
+        if (!isSpecial) this.step.set(3);
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.registering.set(false);
-        this.result.set(this.failureResult(doc));
-        if (this.entry() !== 'esp') this.step.set(3);
+        const message = apiErrorMessage(error, 'No fue posible registrar el documento.');
+        // 422: el documento no superó la validación de SAP, SUNAT o duplicidad.
+        if (error.status === 422) {
+          this.result.set(this.failureResult(message));
+          if (!isSpecial) this.step.set(3);
+        } else {
+          this.formError.set(message);
+        }
       },
     });
   }
 
-  private buildElectronic(): PortalDocument | null {
-    const xml = this.xmlDocument();
-    const user = this.auth.user();
-    if (!xml || !user) {
+  private buildElectronicForm(): FormData | null {
+    const slots = this.slots();
+    const order = this.order();
+    if (!this.xmlDocument() || !slots.xml.file || !slots.pdf.file) {
       this.formError.set('No pudimos leer el documento electrónico. Vuelve a adjuntar el XML.');
       return null;
     }
-    const entryType: EntryType = this.entry() === 'oc' ? 'Con OC' : 'Sin OC';
-    const slots = this.slots();
-    const attachments: Attachment[] = [
-      { tag: 'XML', name: slots.xml.name },
-      { tag: 'PDF', name: slots.pdf.name },
-    ];
-    if (this.cdrRequired()) attachments.push({ tag: 'CDR', name: slots.cdr.name });
-    if (this.extras().length) attachments.push({ tag: 'PDF', name: `Anexos_${xml.number}.pdf` });
-    const doc: PortalDocument = {
-      number: xml.number,
-      entryType,
-      documentType: xml.documentType,
-      providerName: xml.issuerName || user.name,
-      providerRuc: xml.issuerRuc || user.providerId || '',
-      providerEmail: user.email ?? '',
-      currency: xml.currency,
-      subtotal: xml.subtotal,
-      igv: xml.igv,
-      amount: xml.total,
-      items: xml.items,
-      concept: xml.items.map((item) => item.description).join('; '),
-      issuedAt: xml.issuedAt || todayIso(),
-      registeredAt: todayIso(),
-      registeredBy: `${user.name} (${this.isInternal() ? 'interno' : 'proveedor'})`,
-      companyCode: this.company(),
-      status: this.statusOnRegister(),
-      isPettyCash: entryType === 'Sin OC' && this.pettyCash(),
-      attachments,
-      history: [],
-    };
-    if (entryType === 'Con OC') {
-      const order = this.order()!;
-      Object.assign(doc, {
-        orderType: order.type,
-        orderNumber: order.number,
-        orderBalance: order.balance,
-        orderDescription: order.description,
-      });
+    if (this.entry() === 'oc' && !order) {
+      this.formError.set('Valida la orden antes de registrar el documento.');
+      return null;
     }
-    if (this.pendingApproval()) {
-      Object.assign(doc, {
-        area: this.area(),
-        approver: this.approver(),
-        approverEmail: approverEmail(this.area(), this.approver()),
-      });
+    const form = new FormData();
+    form.append('EntryType', this.entry() === 'oc' ? 'WithPurchaseOrder' : 'WithoutPurchaseOrder');
+    form.append('CompanyCode', this.company());
+    if (this.entry() === 'sin' && this.pettyCash()) form.append('IsPettyCash', 'true');
+    if (this.entry() === 'oc' && order) {
+      form.append('OrderType', order.type === 'Bien' ? 'Goods' : 'Service');
+      form.append('OrderNumber', order.number);
     }
-    doc.history = this.documents.registrationHistory(doc, 'Documento validado en SAP y SUNAT');
-    return doc;
+    if (this.pendingApproval()) form.append('ApproverId', this.approver());
+    form.append('Xml', slots.xml.file, slots.xml.name);
+    form.append('Pdf', slots.pdf.file, slots.pdf.name);
+    if (this.cdrRequired() && slots.cdr.file) form.append('Cdr', slots.cdr.file, slots.cdr.name);
+    for (const extra of this.extras()) {
+      if (extra.file) form.append('Extras', extra.file, extra.name);
+    }
+    return form;
   }
 
-  private buildSpecial(): PortalDocument | null {
+  private buildSpecialForm(): FormData | null {
     const form = this.special();
     const amount = Number(form.amount.replace(/,/g, ''));
+    const pdf = this.slots().pdf;
     if (
       !this.company() ||
       form.ruc.length !== 11 ||
       !form.date ||
       !form.number.trim() ||
       !(amount > 0) ||
-      this.slots().pdf.state !== 'ok'
+      pdf.state !== 'ok' ||
+      !pdf.file
     ) {
       this.formError.set('Completa la sociedad, los datos del documento y adjunta el PDF.');
       return null;
     }
-    const user = this.auth.user();
-    const validation = this.isSettlement()
-      ? 'Válido en SUNAT y sin duplicidad en SAP (Servicio 02)'
-      : 'Sin duplicidad en SAP (Servicio 02)';
-    const doc: PortalDocument = {
-      number: form.number.trim(),
-      entryType: 'Documento especial',
-      documentType: form.type,
-      providerName: `Proveedor RUC ${form.ruc}`,
-      providerRuc: form.ruc,
-      providerEmail: '',
-      currency: form.currency,
-      subtotal: amount,
-      igv: null,
-      amount,
-      items: [],
-      concept: `${form.type} ${form.number.trim()}`,
-      issuedAt: form.date,
-      registeredAt: todayIso(),
-      registeredBy: `${user?.name ?? 'Usuario'} (interno)`,
-      companyCode: this.company(),
-      status: 'Pendiente de contabilización',
-      validation,
-      attachments: [{ tag: 'PDF', name: this.slots().pdf.name }],
-      history: [],
-    };
-    doc.history = this.documents.registrationHistory(
-      doc,
-      this.isSettlement() ? 'Validado en SUNAT y SAP' : 'Duplicidad validada en SAP',
-    );
-    return doc;
+    const data = new FormData();
+    data.append('CompanyCode', this.company());
+    data.append('DocumentType', SPECIAL_TYPE_CODES[form.type]);
+    data.append('ProviderRuc', form.ruc);
+    data.append('IssuedAt', form.date);
+    data.append('Number', form.number.trim());
+    data.append('Amount', String(amount));
+    data.append('Currency', form.currency);
+    data.append('Pdf', pdf.file, pdf.name);
+    return data;
   }
 
   private successResult(doc: PortalDocument): RegisterResult {
-    const company = companyByCode(doc.companyCode)?.name ?? '';
+    const company = doc.companyName;
     if (doc.entryType === 'Documento especial') {
       return {
         ok: true,
         title: 'Documento registrado',
-        text: `El ${doc.documentType.toLowerCase()} ${doc.number} se registró correctamente con estado Pendiente de contabilización.`,
+        text: `El ${doc.documentType.toLowerCase()} ${doc.number} se registró correctamente con estado ${doc.status}.`,
         chips: [
           { label: 'N° de documento', value: doc.number },
           { label: 'Sociedad', value: company },
@@ -659,17 +626,14 @@ export class RegisterDocumentPageComponent {
     };
   }
 
-  private failureResult(doc: PortalDocument): RegisterResult {
-    const company = companyByCode(doc.companyCode)?.name ?? '';
-    if (doc.entryType === 'Documento especial') {
+  private failureResult(message: string): RegisterResult {
+    if (this.entry() === 'esp') {
       return {
         ok: false,
         title: 'Documento no válido',
-        text: this.isSettlement()
-          ? `SUNAT no reconoce la liquidación de cobranza ${doc.number} para el RUC ${doc.providerRuc}, o ya fue registrada en SAP. Verifica los datos del documento.`
-          : `Ya existe un documento ${doc.number} registrado para el RUC ${doc.providerRuc}. Verifica el número del documento.`,
+        text: message,
         chips: [
-          { label: 'N° de documento', value: doc.number },
+          { label: 'N° de documento', value: this.special().number.trim().toUpperCase() },
           {
             label: 'Validación',
             value: this.isSettlement() ? 'SAP + SUNAT' : 'Duplicidad en SAP',
@@ -682,11 +646,11 @@ export class RegisterDocumentPageComponent {
     return {
       ok: false,
       title: 'Documento electrónico no válido o ya registrado',
-      text: `SAP rechazó el documento ${doc.number}: ya fue registrado anteriormente para ${company} o su contenido no coincide con la validación de SUNAT.${doc.entryType === 'Sin OC' ? ' No se registró el documento ni se envió a aprobación.' : ' No se registró el documento.'}`,
+      text: `${message} No se registró el documento${this.pendingApproval() ? ' ni se envió a aprobación' : ''}.`,
       chips: [
-        { label: 'N° de documento', value: doc.number },
-        { label: 'Sociedad', value: company },
-        { label: 'Respuesta SAP', value: 'Documento duplicado', tone: 'danger' },
+        { label: 'N° de documento', value: this.xmlDocument()?.number ?? '' },
+        { label: 'Sociedad', value: this.catalog.company(this.company())?.name ?? '' },
+        { label: 'Respuesta SAP', value: 'Documento no válido o duplicado', tone: 'danger' },
       ],
       mail: '',
     };
@@ -697,7 +661,7 @@ export class RegisterDocumentPageComponent {
   private async readXml(file: File): Promise<void> {
     this.xmlDocument.set(null);
     const user = this.auth.user();
-    const company = companyByCode(this.company());
+    const company = this.catalog.company(this.company());
     const doc = await this.api.readXml(file, {
       entry: this.entry() === 'oc' ? 'Con OC' : 'Sin OC',
       issuerName: user?.name ?? '',

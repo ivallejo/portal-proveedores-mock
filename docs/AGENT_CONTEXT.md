@@ -6,8 +6,8 @@ Guía del estado real del frontend del Portal de Proveedores. Leer antes de modi
 
 Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
 
-- **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace.
-- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Documentos (aprobaciones), Registrar documentos, Contabilización, Usuarios y roles, Workflows y correos del perfil.
+- **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace, y **todo el flujo documental**: Registrar documentos, Documentos (aprobaciones) y Contabilización (`api/documents`, `api/catalog`).
+- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Usuarios y roles, Workflows y correos del perfil.
 - No asumir que una pantalla completa tiene persistencia en SQL Server.
 
 ## Stack y comandos
@@ -43,8 +43,9 @@ src/app/
 │   └── layout/                # ShellComponent (menú lateral + encabezado), MODULES/SETTINGS_LINKS, PageLoadingService
 ├── shared/
 │   ├── ui/                    # icon, badge, select, dialog, toast, feedback (callout, empty, result, loading, progress), page (header, kpi, pagination), spinner, tone
-│   ├── documents/             # Modelo PortalDocument, DocumentsService (mock persistido en localStorage), historial
-│   ├── data/catalog.ts        # Sociedades, áreas y aprobadores de prueba
+│   ├── documents/             # Modelo PortalDocument, DocumentsService (HTTP), mapper backend→UI, historial
+│   ├── data/catalog.service.ts # Sociedades, áreas y aprobadores desde api/catalog
+│   ├── data/catalog.ts        # Catálogos de prueba, solo para los módulos aún en mock
 │   ├── models/models.ts       # Role, roleLabel, normalizeRole, User
 │   ├── state/mock-users.store # Usuarios mock (Usuarios y roles, Perfil, Workflows)
 │   └── utils/format.ts        # money, formatDate, maskEmail, initials…
@@ -92,7 +93,7 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 - **CDR**: requerido salvo que la serie del XML empiece con «E».
 - **XML**: `xml-reader.ts` lee UBL 2.1 (factura, boleta, notas). Si el archivo no es UBL se usan datos de ejemplo y se avisa en la revisión. Si el usuario es proveedor, el RUC emisor debe ser el suyo.
 - Archivos: extensión permitida y máximo 5 MB; los extras PDF se consolidan en Sin OC.
-- Duplicidad: `DocumentsService.register` rechaza el mismo número para el mismo RUC.
+- Duplicidad, validación SAP/SUNAT y permisos los decide el backend; el front muestra su `message` (422 = documento no válido, otros códigos = aviso en el formulario).
 - Aprobar exige N° de pedido o de viaje; rechazar exige motivo; reasignar exige área y aprobador.
 - Estado *Contabilizado*: sin uso en los flujos actuales (Servicio 03 queda para una fase posterior).
 - Contabilización: rechazar exige motivo; observar exige motivo y correo válido (estado *Observado*).
@@ -107,8 +108,8 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 
 ## Pendientes
 
-- Endpoints de documentos, archivos, aprobaciones, contabilización, órdenes y facturas en el backend.
+- Endpoints de órdenes de pago y estado de factura en el backend.
 - Endpoints de administración multirol y perfil (hoy en `MockUsersStore`).
-- Catálogos reales de sociedades, áreas y aprobadores (hoy `shared/data/catalog.ts`).
+- Quitar `shared/data/catalog.ts` cuando Orden de pago y Estado de factura tengan backend.
 - Pantallas de Configuración: Sociedad, Área, Centro de costo, Parámetros generales.
-- Exportar a Excel y descargas reales (hoy muestran un aviso).
+- Los listados traen hasta 100 documentos y paginan en el navegador; pasar a paginación del servidor si crece el volumen.

@@ -8,6 +8,8 @@ export type FileState = 'none' | 'uploading' | 'ok';
 export interface ExtraFile {
   name: string;
   uploading: boolean;
+  /** Archivo original, necesario para enviarlo al backend. */
+  file?: File;
 }
 
 const TAGS: Record<FileTag, { label: string; classes: string }> = {

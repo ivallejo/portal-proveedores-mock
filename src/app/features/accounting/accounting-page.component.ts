@@ -1,19 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { companyByCode } from '../../shared/data/catalog';
 import { DocumentHistoryComponent } from '../../shared/documents/document-history.component';
 import {
   ATTACHMENT_TONE,
-  Actor,
   ENTRY_LABEL,
   ENTRY_TONE,
   PortalDocument,
   STATUS_TONE,
+  Attachment,
 } from '../../shared/documents/document.model';
 import {
   ACCOUNTING_STATUSES,
+  apiErrorMessage,
   DocumentFilters,
   DocumentsService,
 } from '../../shared/documents/documents.service';
@@ -73,7 +72,6 @@ interface ActionResult {
 })
 export class AccountingPageComponent {
   private readonly documents = inject(DocumentsService);
-  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
 
   readonly draft = signal<DocumentFilters>({ ...DEFAULT_FILTERS });
@@ -126,7 +124,6 @@ export class AccountingPageComponent {
     };
   });
   readonly isPending = computed(() => this.detail()?.status === 'Pendiente de contabilización');
-  readonly company = computed(() => companyByCode(this.detail()?.companyCode ?? ''));
   readonly footNote = computed(() => {
     if (this.result()) return 'El listado ya refleja el nuevo estado del documento.';
     if (!this.isPending()) return 'Documento sin acciones pendientes.';
@@ -172,10 +169,17 @@ export class AccountingPageComponent {
     this.result.set(null);
     this.detail.set(doc);
     this.detailLoading.set(true);
-    this.documents.get(doc.number).subscribe((fresh) => {
-      if (this.detail()?.number !== doc.number) return;
-      this.detail.set(fresh);
-      this.detailLoading.set(false);
+    this.documents.get(doc.id).subscribe({
+      next: (fresh) => {
+        if (this.detail()?.id !== doc.id) return;
+        this.detail.set(fresh);
+        this.detailLoading.set(false);
+      },
+      error: (error) => {
+        this.detail.set(null);
+        this.detailLoading.set(false);
+        this.toast.show(apiErrorMessage(error, 'No fue posible cargar el documento.'));
+      },
     });
   }
 
@@ -204,16 +208,13 @@ export class AccountingPageComponent {
       this.panelError.set('Ingresa el motivo del rechazo.');
       return;
     }
-    this.run(
-      this.documents.reject(doc.number, reason, this.actor(), 'contabilidad'),
-      (updated) => ({
-        kind: 'bad',
-        title: 'Documento rechazado',
-        text: `El documento ${updated.number} de ${updated.providerName} pasó a estado Rechazado.`,
-        reason,
-        mail: `Notificamos el rechazo por correo al proveedor${updated.providerEmail ? ` (${updated.providerEmail})` : ''}.`,
-      }),
-    );
+    this.run(this.documents.reject(doc.id, reason, 'contabilidad'), (updated) => ({
+      kind: 'bad',
+      title: 'Documento rechazado',
+      text: `El documento ${updated.number} de ${updated.providerName} pasó a estado Rechazado.`,
+      reason,
+      mail: `Notificamos el rechazo por correo al proveedor${updated.providerEmail ? ` (${updated.providerEmail})` : ''}.`,
+    }));
   }
 
   observe(): void {
@@ -231,7 +232,7 @@ export class AccountingPageComponent {
       );
       return;
     }
-    this.run(this.documents.observe(doc.number, reason, email, this.actor()), (updated) => ({
+    this.run(this.documents.observe(doc.id, reason, email), (updated) => ({
       kind: 'warn',
       title: 'Documento observado',
       text: `El documento ${updated.number} de ${updated.providerName} pasó a estado Observado.`,
@@ -240,8 +241,11 @@ export class AccountingPageComponent {
     }));
   }
 
-  download(name: string): void {
-    this.toast.download(name);
+  download(doc: PortalDocument, file: Attachment): void {
+    this.documents.download(doc, file).subscribe({
+      error: (error) =>
+        this.toast.show(apiErrorMessage(error, 'No fue posible descargar el archivo.')),
+    });
   }
 
   private run(
@@ -258,19 +262,26 @@ export class AccountingPageComponent {
         this.resetPanel();
         this.reload(false);
       },
-      error: () => {
+      error: (error) => {
         this.busy.set(false);
-        this.toast.show('No fue posible completar la acción. Inténtalo nuevamente.');
+        this.toast.show(apiErrorMessage(error, 'No fue posible completar la acción.'));
       },
     });
   }
 
   private reload(showLoading = true): void {
     if (showLoading) this.loading.set(true);
-    this.documents.accounting(this.applied()).subscribe((rows) => {
-      this.rows.set(rows);
-      if (showLoading) this.page.set(1);
-      this.loading.set(false);
+    this.documents.accounting(this.applied()).subscribe({
+      next: (rows) => {
+        this.rows.set(rows);
+        if (showLoading) this.page.set(1);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.rows.set([]);
+        this.loading.set(false);
+        this.toast.show(apiErrorMessage(error, 'No fue posible cargar los documentos.'));
+      },
     });
   }
 
@@ -281,10 +292,5 @@ export class AccountingPageComponent {
     this.panelError.set('');
     this.reasonInvalid.set(false);
     this.emailInvalid.set(false);
-  }
-
-  private actor(): Actor {
-    const user = this.auth.user();
-    return { name: user?.name ?? 'Usuario', area: user?.area ?? 'Contabilidad' };
   }
 }

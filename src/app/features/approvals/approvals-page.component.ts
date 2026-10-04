@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { approverOptions, areaOptions, companyByCode } from '../../shared/data/catalog';
+import { CatalogService } from '../../shared/data/catalog.service';
 import { DocumentHistoryComponent } from '../../shared/documents/document-history.component';
 import {
-  Actor,
   ENTRY_TONE,
   PortalDocument,
   STATUS_TONE,
+  Attachment,
 } from '../../shared/documents/document.model';
 import {
   APPROVAL_STATUSES,
+  apiErrorMessage,
   DocumentFilters,
   DocumentsService,
 } from '../../shared/documents/documents.service';
@@ -70,7 +70,7 @@ interface ActionResult {
 })
 export class ApprovalsPageComponent {
   private readonly documents = inject(DocumentsService);
-  private readonly auth = inject(AuthService);
+  private readonly catalog = inject(CatalogService);
   private readonly toast = inject(ToastService);
 
   readonly draft = signal<DocumentFilters>({ ...DEFAULT_FILTERS });
@@ -111,9 +111,9 @@ export class ApprovalsPageComponent {
       tone: STATUS_TONE[status],
     })),
   ];
-  readonly areaOptions = areaOptions();
+  readonly areaOptions = this.catalog.areaOptions;
   readonly approverOptions = computed(() =>
-    approverOptions(this.reassignArea(), this.detail()?.approver ?? ''),
+    this.catalog.approverOptions(this.reassignArea(), this.detail()?.approver ?? ''),
   );
 
   readonly pageRows = computed(() =>
@@ -143,6 +143,7 @@ export class ApprovalsPageComponent {
   });
 
   constructor() {
+    this.catalog.load();
     inject(PageLoadingService).bind(this.loading, 'Cargando documentos');
     this.search();
   }
@@ -172,10 +173,17 @@ export class ApprovalsPageComponent {
     this.result.set(null);
     this.detail.set(doc);
     this.detailLoading.set(true);
-    this.documents.get(doc.number).subscribe((fresh) => {
-      if (this.detail()?.number !== doc.number) return;
-      this.detail.set(fresh);
-      this.detailLoading.set(false);
+    this.documents.get(doc.id).subscribe({
+      next: (fresh) => {
+        if (this.detail()?.id !== doc.id) return;
+        this.detail.set(fresh);
+        this.detailLoading.set(false);
+      },
+      error: (error) => {
+        this.detail.set(null);
+        this.detailLoading.set(false);
+        this.toast.show(apiErrorMessage(error, 'No fue posible cargar el documento.'));
+      },
     });
   }
 
@@ -216,7 +224,7 @@ export class ApprovalsPageComponent {
       return;
     }
     const label = this.referenceLabel();
-    this.run(this.documents.approve(doc.number, label, reference, this.actor()), (updated) => ({
+    this.run(this.documents.approve(doc.id, this.referenceType(), reference), (updated) => ({
       kind: 'ok',
       title: 'Documento aprobado',
       text: `El documento ${updated.number} fue aprobado con ${label} ${reference} y se envió a contabilización. Su estado ahora es Pendiente de contabilización.`,
@@ -232,17 +240,16 @@ export class ApprovalsPageComponent {
       return;
     }
     const area = this.reassignArea();
-    const approver = this.reassignApprover();
+    const approverId = this.reassignApprover();
+    const approver =
+      this.catalog.approvers(area).find((item) => item.id === approverId)?.name ?? '';
     const reason = this.reassignReason().trim();
-    this.run(
-      this.documents.reassign(doc.number, area, approver, reason, this.actor()),
-      (updated) => ({
-        kind: 'swap',
-        title: 'Documento reasignado',
-        text: `El documento ${updated.number} fue reasignado a ${approver} (${area}).`,
-        mail: `Enviamos un correo a ${approver} indicando que tiene un documento por aprobar.`,
-      }),
-    );
+    this.run(this.documents.reassign(doc.id, approverId, reason), (updated) => ({
+      kind: 'swap',
+      title: 'Documento reasignado',
+      text: `El documento ${updated.number} fue reasignado a ${approver} (${area}).`,
+      mail: `Enviamos un correo a ${approver} indicando que tiene un documento por aprobar.`,
+    }));
   }
 
   reject(): void {
@@ -253,7 +260,7 @@ export class ApprovalsPageComponent {
       this.reasonError.set(true);
       return;
     }
-    this.run(this.documents.reject(doc.number, reason, this.actor(), 'aprobador'), (updated) => ({
+    this.run(this.documents.reject(doc.id, reason, 'aprobador'), (updated) => ({
       kind: 'bad',
       title: 'Documento rechazado',
       text: `El documento ${updated.number} de ${updated.providerName} fue rechazado.`,
@@ -261,12 +268,11 @@ export class ApprovalsPageComponent {
     }));
   }
 
-  download(name: string): void {
-    this.toast.download(name);
-  }
-
-  companyName(code: string): string {
-    return companyByCode(code)?.name ?? code;
+  download(doc: PortalDocument, file: Attachment): void {
+    this.documents.download(doc, file).subscribe({
+      error: (error) =>
+        this.toast.show(apiErrorMessage(error, 'No fue posible descargar el archivo.')),
+    });
   }
 
   private run(
@@ -283,19 +289,26 @@ export class ApprovalsPageComponent {
         this.resetPanels();
         this.reload(false);
       },
-      error: () => {
+      error: (error) => {
         this.busy.set(false);
-        this.toast.show('No fue posible completar la acción. Inténtalo nuevamente.');
+        this.toast.show(apiErrorMessage(error, 'No fue posible completar la acción.'));
       },
     });
   }
 
   private reload(showLoading = true): void {
     if (showLoading) this.loading.set(true);
-    this.documents.approvals(this.applied()).subscribe((rows) => {
-      this.rows.set(rows);
-      if (showLoading) this.page.set(1);
-      this.loading.set(false);
+    this.documents.approvals(this.applied()).subscribe({
+      next: (rows) => {
+        this.rows.set(rows);
+        if (showLoading) this.page.set(1);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.rows.set([]);
+        this.loading.set(false);
+        this.toast.show(apiErrorMessage(error, 'No fue posible cargar los documentos.'));
+      },
     });
   }
 
@@ -310,10 +323,5 @@ export class ApprovalsPageComponent {
     this.reassignReason.set('');
     this.reason.set('');
     this.reasonError.set(false);
-  }
-
-  private actor(): Actor {
-    const user = this.auth.user();
-    return { name: user?.name ?? 'Usuario', area: user?.area };
   }
 }

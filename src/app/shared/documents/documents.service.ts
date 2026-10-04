@@ -1,11 +1,15 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, delay, of, throwError } from 'rxjs';
-import { approverEmail } from '../data/catalog';
-import { formatDate, nowStamp } from '../utils/format';
-import { Actor, DocumentStatus, HistoryEvent, PortalDocument, actorLabel } from './document.model';
-import { seedDocuments } from './document.seed';
-
-const STORAGE_KEY = 'portal-proveedores.documents.v2';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import {
+  ApiDocumentDetail,
+  ApiPage,
+  fromDetail,
+  fromSummary,
+  toApiStatus,
+} from './document.mapper';
+import { Attachment, DocumentStatus, PortalDocument } from './document.model';
 
 export interface DocumentFilters {
   ruc: string;
@@ -26,261 +30,110 @@ export const ACCOUNTING_STATUSES: DocumentStatus[] = [
   'Rechazado',
 ];
 
-/**
- * Documentos registrados en el portal (versión de prueba en el navegador).
- * Expone la misma forma que tendrá la API: consultas y acciones asíncronas
- * que devuelven el documento actualizado.
- */
+/** Mensaje legible de un error HTTP del backend (campo `message`). */
+export function apiErrorMessage(
+  error: unknown,
+  fallback = 'Inténtalo nuevamente en unos minutos.',
+): string {
+  if (error instanceof HttpErrorResponse) {
+    if (error.status === 0)
+      return 'No fue posible conectar con el servidor. Inténtalo en unos minutos.';
+    const message = error.error?.message ?? error.error?.detail;
+    if (typeof message === 'string' && message) return message;
+    const first = error.error?.errors && Object.values<string[]>(error.error.errors)[0]?.[0];
+    if (first) return first;
+  }
+  return fallback;
+}
+
+/** Documentos del portal contra `api/documents`. */
 @Injectable({ providedIn: 'root' })
 export class DocumentsService {
-  private readonly documents = signal<PortalDocument[]>(this.load());
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiBaseUrl}/documents`;
 
-  /** Documentos que pasaron por aprobación (Sin OC y especiales asignados a un aprobador). */
+  /** Bandeja del aprobador (el administrador ve todas). */
   approvals(filters: DocumentFilters): Observable<PortalDocument[]> {
-    const list = this.documents().filter(
-      (doc) =>
-        !!doc.approver &&
-        APPROVAL_STATUSES.includes(doc.status) &&
-        !(doc.status === 'Rechazado' && doc.rejectedBy === 'contabilidad'),
-    );
-    return of(this.applyFilters(list, filters)).pipe(delay(900));
+    return this.search('Approvals', filters);
   }
 
-  /** Documentos que llegaron a Cuentas por pagar. */
+  /** Bandeja de Cuentas por pagar. */
   accounting(filters: DocumentFilters): Observable<PortalDocument[]> {
-    const list = this.documents().filter(
-      (doc) =>
-        ACCOUNTING_STATUSES.includes(doc.status) &&
-        !(doc.status === 'Rechazado' && doc.rejectedBy !== 'contabilidad'),
-    );
-    return of(this.applyFilters(list, filters)).pipe(delay(900));
+    return this.search('Accounting', filters);
   }
 
-  get(number: string): Observable<PortalDocument> {
-    const doc = this.find(number);
-    return doc ? of(doc).pipe(delay(750)) : throwError(() => new Error('Documento no encontrado.'));
-  }
-
-  /** ¿Ya existe un documento con ese número para el mismo RUC? (validación de duplicidad). */
-  isDuplicate(number: string, ruc: string): boolean {
-    return this.documents().some(
-      (doc) => doc.number.toUpperCase() === number.toUpperCase() && doc.providerRuc === ruc,
-    );
-  }
-
-  register(doc: PortalDocument): Observable<PortalDocument> {
-    if (this.isDuplicate(doc.number, doc.providerRuc)) {
-      return throwError(() => new Error('Documento duplicado')).pipe(delay(1500));
-    }
-    this.save([doc, ...this.documents()]);
-    return of(doc).pipe(delay(1500));
+  get(id: string): Observable<PortalDocument> {
+    return this.http.get<ApiDocumentDetail>(`${this.base}/${id}`).pipe(map(fromDetail));
   }
 
   approve(
-    number: string,
-    referenceLabel: string,
+    id: string,
+    referenceType: 'pedido' | 'viaje',
     reference: string,
-    actor: Actor,
   ): Observable<PortalDocument> {
-    const now = nowStamp();
-    return this.update(number, (doc) => ({
-      ...doc,
-      status: 'Pendiente de contabilización',
-      approvedAt: now,
-      history: [
-        ...this.closeCurrent(doc.history),
-        {
-          title: 'Documento aprobado',
-          who: `Por ${actorLabel(actor)} · ${referenceLabel} ${reference}`,
-          when: now,
-          kind: 'done',
-        },
-        {
-          title: 'Enviado a contabilización',
-          who: 'Pendiente de contabilización · Contabilidad',
-          when: now,
-          kind: 'current',
-        },
-      ],
-    }));
+    return this.post(id, 'approve', {
+      referenceType: referenceType === 'viaje' ? 'Trip' : 'Order',
+      reference,
+    });
   }
 
-  reassign(
-    number: string,
-    area: string,
-    approver: string,
-    reason: string,
-    actor: Actor,
-  ): Observable<PortalDocument> {
-    const now = nowStamp();
-    return this.update(number, (doc) => ({
-      ...doc,
-      area,
-      approver,
-      approverEmail: approverEmail(area, approver),
-      history: [
-        ...this.closeCurrent(doc.history),
-        {
-          title: `Reasignado a ${approver}`,
-          who: `Por ${actorLabel(actor)}`,
-          when: now,
-          kind: 'done',
-          note: reason,
-        },
-        {
-          title: 'Pendiente de aprobación',
-          who: `En revisión de ${approver} · ${area}`,
-          when: `Desde ${now}`,
-          kind: 'current',
-        },
-      ],
-    }));
+  reassign(id: string, approverId: string, reason: string): Observable<PortalDocument> {
+    return this.post(id, 'reassign', { approverId, reason });
   }
 
   reject(
-    number: string,
+    id: string,
     reason: string,
-    actor: Actor,
     stage: 'aprobador' | 'contabilidad',
   ): Observable<PortalDocument> {
-    const now = nowStamp();
-    return this.update(number, (doc) => ({
-      ...doc,
-      status: 'Rechazado',
-      rejectedBy: stage,
-      history: [
-        ...this.closeCurrent(doc.history),
-        {
-          title: 'Documento rechazado',
-          who: `Por ${actorLabel(actor)}`,
-          when: now,
-          kind: 'bad',
-          note: reason,
-        },
-        {
-          title: 'Proveedor notificado por correo',
-          who: doc.providerEmail ? `A ${doc.providerEmail}` : 'Sistema',
-          when: now,
-          kind: 'done',
-        },
-      ],
-    }));
+    return this.post(id, stage === 'contabilidad' ? 'accounting/reject' : 'reject', { reason });
   }
 
-  observe(number: string, reason: string, email: string, actor: Actor): Observable<PortalDocument> {
-    const now = nowStamp();
-    return this.update(number, (doc) => ({
-      ...doc,
-      status: 'Observado',
-      history: [
-        ...this.closeCurrent(doc.history),
-        {
-          title: 'Documento observado',
-          who: `Por ${actorLabel(actor)}`,
-          when: now,
-          kind: 'warn',
-          note: reason,
-        },
-        { title: 'Observación enviada por correo', who: `A ${email}`, when: now, kind: 'done' },
-      ],
-    }));
+  observe(id: string, reason: string, email: string): Observable<PortalDocument> {
+    return this.post(id, 'accounting/observe', { reason, email });
   }
 
-  /** Eventos iniciales de un documento recién registrado. */
-  registrationHistory(doc: PortalDocument, validation: string): HistoryEvent[] {
-    const now = nowStamp();
-    const events: HistoryEvent[] = [];
-    if (doc.orderNumber) {
-      events.push({
-        title: 'Orden validada en SAP',
-        who: `Servicio 01 SAP · ${doc.orderNumber}`,
-        when: now,
-        kind: 'done',
-      });
-    }
-    events.push(
-      {
-        title: 'Documento registrado',
-        who: `${doc.registeredBy} · ${doc.entryType === 'Con OC' ? 'Con orden de compra' : doc.entryType === 'Sin OC' ? 'Sin orden de compra' : 'Documento especial'}`,
-        when: now,
-        kind: 'done',
-      },
-      { title: validation, who: 'Servicio 02 SAP', when: now, kind: 'done' },
-    );
-    if (doc.status === 'Pendiente de aprobación') {
-      events.push(
-        {
-          title: 'Asignado para aprobación',
-          who: `${doc.approver} · ${doc.area}`,
-          when: now,
-          kind: 'done',
-        },
-        {
-          title: 'Pendiente de aprobación',
-          who: `En revisión de ${doc.approver}`,
-          when: `Desde ${formatDate(doc.registeredAt)}`,
-          kind: 'current',
-        },
+  /** Registro Con OC / Sin OC (multipart con XML, PDF, CDR y extras). */
+  register(form: FormData): Observable<PortalDocument> {
+    return this.http.post<ApiDocumentDetail>(this.base, form).pipe(map(fromDetail));
+  }
+
+  registerSpecial(form: FormData): Observable<PortalDocument> {
+    return this.http.post<ApiDocumentDetail>(`${this.base}/special`, form).pipe(map(fromDetail));
+  }
+
+  /** Descarga un adjunto con el token de la sesión y lo entrega al navegador. */
+  download(document: PortalDocument, attachment: Attachment): Observable<void> {
+    return this.http
+      .get(`${this.base}/${document.id}/attachments/${attachment.id}`, { responseType: 'blob' })
+      .pipe(
+        map((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = window.document.createElement('a');
+          link.href = url;
+          link.download = attachment.name;
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 10_000);
+        }),
       );
-    } else {
-      events.push({
-        title: 'Pendiente de contabilización',
-        who: 'Cuentas por pagar · Contabilidad',
-        when: `Desde ${formatDate(doc.registeredAt)}`,
-        kind: 'current',
-      });
-    }
-    return events;
   }
 
-  private update(
-    number: string,
-    change: (doc: PortalDocument) => PortalDocument,
-  ): Observable<PortalDocument> {
-    const doc = this.find(number);
-    if (!doc) return throwError(() => new Error('Documento no encontrado.'));
-    const updated = change(doc);
-    this.save(this.documents().map((item) => (item.number === number ? updated : item)));
-    return of(updated).pipe(delay(1000));
+  private search(
+    inbox: 'Approvals' | 'Accounting',
+    filters: DocumentFilters,
+  ): Observable<PortalDocument[]> {
+    let params = new HttpParams().set('inbox', inbox).set('page', 1).set('pageSize', 100);
+    if (filters.ruc) params = params.set('ruc', filters.ruc);
+    const status = filters.status ? toApiStatus(filters.status) : '';
+    if (status) params = params.set('status', status);
+    return this.http
+      .get<ApiPage>(this.base, { params })
+      .pipe(map((page) => page.items.map(fromSummary)));
   }
 
-  private closeCurrent(history: HistoryEvent[]): HistoryEvent[] {
-    return history.map((event) => (event.kind === 'current' ? { ...event, kind: 'done' } : event));
-  }
-
-  private applyFilters(list: PortalDocument[], filters: DocumentFilters): PortalDocument[] {
-    return list
-      .filter(
-        (doc) =>
-          (!filters.ruc || doc.providerRuc.includes(filters.ruc)) &&
-          (!filters.status || doc.status === filters.status),
-      )
-      .sort((a, b) => b.registeredAt.localeCompare(a.registeredAt));
-  }
-
-  private find(number: string): PortalDocument | undefined {
-    return this.documents().find((doc) => doc.number === number);
-  }
-
-  private save(documents: PortalDocument[]): void {
-    this.documents.set(documents);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
-    } catch {
-      // Sin almacenamiento disponible: los cambios quedan solo en memoria.
-    }
-  }
-
-  private load(): PortalDocument[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as PortalDocument[];
-        if (Array.isArray(parsed) && parsed.length) return parsed;
-      }
-    } catch {
-      // Datos corruptos: se vuelve a la semilla.
-    }
-    return seedDocuments();
+  private post(id: string, action: string, body: object): Observable<PortalDocument> {
+    return this.http
+      .post<ApiDocumentDetail>(`${this.base}/${id}/${action}`, body)
+      .pipe(map(fromDetail));
   }
 }

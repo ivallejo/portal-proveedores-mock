@@ -38,9 +38,13 @@ export interface HistoryEvent {
 export interface Attachment {
   tag: 'XML' | 'PDF' | 'CDR' | 'ZIP';
   name: string;
+  /** Identificador en el backend, necesario para descargar el archivo. */
+  id?: string;
 }
 
 export interface PortalDocument {
+  /** Identificador del documento en el backend. */
+  id: string;
   number: string;
   entryType: EntryType;
   documentType: string;
@@ -57,12 +61,15 @@ export interface PortalDocument {
   registeredAt: string;
   registeredBy: string;
   companyCode: string;
+  companyName: string;
+  companyRuc: string;
   status: DocumentStatus;
   /** Documento de Caja Chica: se registra sin pasar por aprobación. */
   isPettyCash?: boolean;
   /** Quién rechazó el documento: el aprobador o Cuentas por pagar. */
   rejectedBy?: 'aprobador' | 'contabilidad';
   area?: string;
+  approverId?: string;
   approver?: string;
   approverEmail?: string;
   approvedAt?: string;

@@ -272,7 +272,7 @@
                   type="button"
                   class="btn btn-tint h-10 border-line-auth text-[13px]"
                   [attr.aria-label]="'Descargar ' + file.name"
-                  (click)="download(file.name)"
+                  (click)="download(doc, file)"
                 >
                   <app-icon
                     [name]="file.tag === 'XML' ? 'code' : 'file'"
@@ -411,7 +411,7 @@
                 label="Área"
                 placeholder="Selecciona un área"
                 [dropUp]="true"
-                [options]="areaOptions"
+                [options]="areaOptions()"
                 [invalid]="reassignError() && !reassignArea()"
                 [value]="reassignArea()"
                 (valueChange)="setReassignArea($event)"

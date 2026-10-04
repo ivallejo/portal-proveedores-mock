@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Observable, delay, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { DocumentItem } from '../../shared/documents/document.model';
 import { todayIso } from '../../shared/utils/format';
 import { ElectronicDocument, parseUblDocument, seriesFromFileName } from './xml-reader';
@@ -13,38 +15,42 @@ export interface OrderInfo {
   balance: number;
 }
 
-/** Órdenes de prueba que responde el Servicio 01 de SAP. */
-const ORDERS: Record<OrderType, Record<string, Omit<OrderInfo, 'number' | 'type'>>> = {
-  Servicio: {
-    '4500012873': {
-      description: 'Mantenimiento correctivo de compresores – Planta Lurín',
-      balance: 18450,
-    },
-    '4500012851': {
-      description: 'Servicio de calibración de equipos de medición',
-      balance: 7230.5,
-    },
-  },
-  Bien: {
-    'CR-2026-00418': {
-      description: 'Repuestos para fajas transportadoras · 3 entregas recibidas',
-      balance: 18450,
-    },
-  },
-};
-
-/** Integraciones del registro de documentos (simuladas hasta tener el backend). */
+/** Integraciones del registro de documentos. */
 @Injectable({ providedIn: 'root' })
 export class RegisterDocumentService {
-  /** Servicio 01 SAP: valida que la orden exista, esté aprobada y tenga saldo. */
+  private readonly http = inject(HttpClient);
+
+  /**
+   * Servicio 01 SAP (vía backend): valida que la orden exista, esté aprobada y tenga saldo.
+   * Devuelve `null` si SAP no la reconoce; otros errores se propagan.
+   */
   validateOrder(
     companyCode: string,
     type: OrderType,
     number: string,
   ): Observable<OrderInfo | null> {
-    const key = number.trim().toUpperCase();
-    const found = companyCode ? ORDERS[type][key] : undefined;
-    return of(found ? { number: key, type, ...found } : null).pipe(delay(1400));
+    return this.http
+      .post<{
+        number: string;
+        orderType: 'Goods' | 'Service';
+        description: string;
+        balance: number;
+      }>(`${environment.apiBaseUrl}/documents/orders/validate`, {
+        companyCode,
+        orderType: type === 'Bien' ? 'Goods' : 'Service',
+        number: number.trim().toUpperCase(),
+      })
+      .pipe(
+        map((order) => ({
+          number: order.number,
+          type: order.orderType === 'Goods' ? ('Bien' as const) : ('Servicio' as const),
+          description: order.description,
+          balance: order.balance,
+        })),
+        catchError((error: HttpErrorResponse) =>
+          error.status === 422 ? of(null) : throwError(() => error),
+        ),
+      );
   }
 
   /**
