@@ -336,15 +336,10 @@
               [disabled]="registrationSapLoading()"
             /></div
         ></label>
-        <p *ngIf="registrationMessage()" class="field-helper error-text">Debe tener 11 dígitos.</p>
         <div *ngIf="registrationMessage()" class="registration-alert">
           <i class="bx bx-error-circle"></i>
           <div>
-            <strong>RUC no válido</strong
-            ><span
-              >No encontramos este RUC en nuestro registro de proveedores. Verifica el número o
-              comunícate con el área de Compras.</span
-            >
+            <strong>{{ registrationErrorTitle() }}</strong><span>{{ registrationMessage() }}</span>
           </div>
         </div>
         <button class="login-primary" type="submit" [disabled]="registrationSapLoading()">

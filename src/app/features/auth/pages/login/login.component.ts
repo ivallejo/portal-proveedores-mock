@@ -289,6 +289,11 @@ export class LoginComponent {
       },
     });
   }
+  registrationErrorTitle(): string {
+    return this.registrationMessage().toLowerCase().includes('registrado')
+      ? 'Usuario ya registrado'
+      : 'RUC no válido';
+  }
   private landingScreen(): Screen {
     const role = this.auth.user()?.role;
     if (role === 'Colaborador interno') return 'registrar';
