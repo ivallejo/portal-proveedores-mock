@@ -16,7 +16,9 @@ npm start
 
 Abrir [http://localhost:4200](http://localhost:4200).
 
-Actualmente el prototipo funciona de forma independiente, sin backend. La autenticación, el registro online, la administración de usuarios, la validación de RUC y los flujos documentales utilizan mocks locales y `localStorage`.
+El prototipo puede ejecutarse sin backend para explorar la UI, pero los flujos de login, registro online y recuperación de contraseña consumen la API cuando está disponible. Los módulos documentales y operativos mantienen mocks locales.
+
+> Estado actualizado: login, registro online y recuperación de contraseña ya tienen integración parcial con el backend. Los módulos documentales, aprobaciones, contabilización, workflows y administración todavía utilizan mocks locales. Consulta [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md) antes de continuar el desarrollo.
 
 ## Flujo del prototipo
 
@@ -57,11 +59,12 @@ El prototipo no requiere enrutar `/api` ni levantar servicios adicionales para p
 
 ```text
 src/app/
-├── auth.service.ts             # Autenticación y sesión
-├── auth.interceptor.ts         # Token Bearer
-├── admin-users.component.*     # Usuarios, roles y paginación
-├── admin.service.ts            # Cliente HTTP de administración
-├── documento.service.ts        # Flujo documental
-├── aprobacion.service.ts       # Aprobaciones
-└── contabilizacion.service.ts  # Contabilización
+├── core/                       # Auth, shell, navegación y estado global
+├── features/                   # Pantallas y servicios por módulo
+├── shared/                     # Modelos y stores mock
+└── styles/                     # Tokens y estilos globales
 ```
+
+## Documentación para agentes
+
+La guía completa de arquitectura, límites entre mock/backend, credenciales, flujos y próximos pasos está en [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md).
