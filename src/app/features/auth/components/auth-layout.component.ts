@@ -16,7 +16,7 @@ const HIGHLIGHTS: { icon: IconName; label: string }[] = [
   imports: [IconComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="relative flex min-h-screen overflow-hidden bg-page text-ink lg:p-10">
+    <div class="relative flex h-dvh overflow-hidden bg-page text-ink">
       <div
         class="absolute -top-[220px] -right-[180px] size-[560px] rounded-full bg-[#E1ECFC]"
       ></div>
@@ -25,7 +25,7 @@ const HIGHLIGHTS: { icon: IconName; label: string }[] = [
       ></div>
 
       <div
-        class="relative mx-auto flex w-full max-w-[1360px] overflow-hidden bg-surface-auth lg:min-h-[820px] lg:rounded-[22px] lg:shadow-auth"
+        class="relative flex h-full w-full overflow-hidden bg-surface-auth"
       >
         <aside
           class="bg-brand-gradient relative hidden w-[46%] max-w-[640px] shrink-0 overflow-hidden text-white lg:block"
@@ -87,7 +87,7 @@ const HIGHLIGHTS: { icon: IconName; label: string }[] = [
           </div>
         </aside>
 
-        <div class="flex grow items-center justify-center px-4 py-8 sm:px-8">
+        <div class="flex grow items-center justify-center overflow-y-auto px-4 py-4 sm:px-8">
           <div
             class="flex w-full max-w-[500px] flex-col gap-5 rounded-[20px] bg-white px-6 pt-9 pb-[30px] shadow-auth-card sm:px-[52px]"
           >
