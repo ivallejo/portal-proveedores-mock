@@ -63,7 +63,27 @@ export class AuthService {
     return roles.some((role) => user.roles.includes(role));
   }
 
+  /** Cambia la contraseña de quien tiene sesión (obligatorio con clave temporal) y renueva la sesión. */
+  changePassword(currentPassword: string, newPassword: string): Observable<User> {
+    return this.http
+      .post<AuthResponse>(`${environment.apiBaseUrl}/auth/change-password`, {
+        currentPassword,
+        newPassword,
+      })
+      .pipe(map((response) => this.startSession(response)));
+  }
+
+  /** El backend exigió cambiar la contraseña (403 PASSWORD_CHANGE_REQUIRED): se actualiza la sesión local. */
+  markPasswordChangeRequired(): void {
+    const current = this.user();
+    if (!current || current.mustChangePassword) return;
+    const updated = { ...current, mustChangePassword: true };
+    this.user.set(updated);
+    localStorage.setItem(SESSION_KEY, JSON.stringify(updated));
+  }
+
   landingPath(): string {
+    if (this.user()?.mustChangePassword) return '/contrasena-temporal';
     const roles = this.user()?.roles ?? [];
     return LANDING.find(([role]) => roles.includes(role))?.[1] ?? '/inicio';
   }
@@ -83,6 +103,7 @@ export class AuthService {
       roles,
       providerId: response.user.ruc || undefined,
       area: response.user.area || undefined,
+      mustChangePassword: response.user.mustChangePassword || undefined,
     };
     this.user.set(user);
     localStorage.setItem(TOKEN_KEY, response.accessToken);
@@ -111,6 +132,7 @@ interface AuthResponse {
     companyName: string;
     ruc: string;
     area?: string | null;
+    mustChangePassword?: boolean;
     role: string;
     roles?: string[];
   };

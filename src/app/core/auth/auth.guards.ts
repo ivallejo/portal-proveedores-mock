@@ -6,10 +6,20 @@ import { AuthService } from './auth.service';
 /** Solo usuarios autenticados. */
 export const authGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
+  // Con contraseña temporal solo se puede entrar a la pantalla para cambiarla.
+  if (auth.user()?.mustChangePassword) return inject(Router).parseUrl('/contrasena-temporal');
   if (auth.user()) return true;
   return inject(Router).createUrlTree(['/login'], {
     queryParams: state.url && state.url !== '/' ? { returnUrl: state.url } : {},
   });
+};
+
+/** Pantalla de cambio obligatorio: solo para quien tiene sesión con contraseña temporal. */
+export const temporaryPasswordGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (!auth.user()) return router.parseUrl('/login');
+  return auth.user()?.mustChangePassword ? true : router.parseUrl(auth.landingPath());
 };
 
 /** Pantallas de acceso: si ya hay sesión, se envía a la pantalla inicial del rol. */

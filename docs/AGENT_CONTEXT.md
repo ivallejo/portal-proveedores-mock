@@ -95,6 +95,7 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 - Archivos: extensión permitida y máximo 5 MB; los extras PDF se consolidan en Sin OC.
 - Duplicidad, validación SAP/SUNAT y permisos los decide el backend; el front muestra su `message` (422 = documento no válido, otros códigos = aviso en el formulario).
 - Aprobar exige N° de pedido o de viaje; rechazar exige motivo; reasignar exige área y aprobador.
+- **Contraseña temporal:** los usuarios sembrados o creados por el administrador entran con una clave temporal. El login devuelve `mustChangePassword`; la sesión queda limitada a `/contrasena-temporal` (guards e interceptor ante 403 `PASSWORD_CHANGE_REQUIRED`) hasta cambiarla con `POST /auth/change-password`. La política es mínimo 8 caracteres con mayúscula, minúscula y número.
 - Estado *Contabilizado*: sin uso en los flujos actuales (Servicio 03 queda para una fase posterior).
 - Contabilización: rechazar exige motivo; observar exige motivo y correo válido (estado *Observado*).
 

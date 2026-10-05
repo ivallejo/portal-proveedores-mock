@@ -128,8 +128,11 @@ export class LoginPageComponent {
       next: () => {
         this.loading.set(false);
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        // Con contraseña temporal el único destino posible es el cambio de contraseña.
         void this.router.navigateByUrl(
-          returnUrl?.startsWith('/') ? returnUrl : this.auth.landingPath(),
+          returnUrl?.startsWith('/') && !this.auth.user()?.mustChangePassword
+            ? returnUrl
+            : this.auth.landingPath(),
         );
       },
       error: (err) => {

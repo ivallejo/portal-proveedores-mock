@@ -1,5 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard, roleGuard, rootRedirectGuard } from './core/auth/auth.guards';
+import {
+  authGuard,
+  guestGuard,
+  roleGuard,
+  rootRedirectGuard,
+  temporaryPasswordGuard,
+} from './core/auth/auth.guards';
 import { ShellComponent } from './core/layout/shell.component';
 
 const settings = (path: string, title: string, description: string) => ({
@@ -48,6 +54,15 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/pages/set-password-page.component').then(
         (m) => m.SetPasswordPageComponent,
+      ),
+  },
+  {
+    path: 'contrasena-temporal',
+    title: 'Cambiar contraseña temporal · Portal de Proveedores',
+    canActivate: [temporaryPasswordGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/temporary-password-page.component').then(
+        (m) => m.TemporaryPasswordPageComponent,
       ),
   },
   {

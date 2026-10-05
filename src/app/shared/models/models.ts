@@ -61,4 +61,6 @@ export interface User {
   roles: Role[];
   providerId?: string;
   area?: string;
+  /** La contraseña actual es temporal: debe cambiarla antes de usar el portal. */
+  mustChangePassword?: boolean;
 }

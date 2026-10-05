@@ -19,6 +19,15 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
         auth.logout();
         void router.navigate(['/login']);
       }
+      // Contraseña temporal sin cambiar (por ejemplo, sesión guardada de antes): se lleva a la pantalla de cambio.
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === 403 &&
+        error.error?.code === 'PASSWORD_CHANGE_REQUIRED'
+      ) {
+        auth.markPasswordChangeRequired();
+        void router.navigateByUrl('/contrasena-temporal');
+      }
       return throwError(() => error);
     }),
   );
