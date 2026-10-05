@@ -24,9 +24,7 @@ const HIGHLIGHTS: { icon: IconName; label: string }[] = [
         class="absolute -right-[120px] -bottom-[260px] size-[480px] rounded-full bg-[#E4EEFD]"
       ></div>
 
-      <div
-        class="relative flex h-full w-full overflow-hidden bg-surface-auth"
-      >
+      <div class="relative flex h-full w-full overflow-hidden bg-surface-auth">
         <aside
           class="bg-brand-gradient relative hidden w-[46%] max-w-[640px] shrink-0 overflow-hidden text-white lg:block"
         >

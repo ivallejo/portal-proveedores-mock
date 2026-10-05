@@ -1,6 +1,7 @@
 import { IconName } from '../../shared/ui/icon/icons';
 import { Tone } from '../../shared/ui/tone';
 import { Role } from '../../shared/models/models';
+import { FeatureFlag, isFeatureEnabled } from '../config/features';
 
 export interface ModuleLink {
   label: string;
@@ -12,11 +13,14 @@ export interface ModuleLink {
   cardTone: Tone;
   description: string;
   roles: Role[];
+  /** Funcionalidad que habilita el módulo; apagada, el menú lo marca «Pronto». */
+  feature: FeatureFlag;
 }
 
 export interface SettingsLink {
   label: string;
   path: string;
+  feature?: FeatureFlag;
 }
 
 /** Módulos del portal, en el orden del menú lateral. */
@@ -30,6 +34,7 @@ export const MODULES: ModuleLink[] = [
     description:
       'Consulta los pagos realizados a tu empresa, los comprobantes cancelados, retenciones y detracciones.',
     roles: ['Proveedor'],
+    feature: 'ordenPago',
   },
   {
     label: 'Estado de factura',
@@ -40,6 +45,7 @@ export const MODULES: ModuleLink[] = [
     description:
       'Sigue cada factura desde que la recibimos hasta su pago: revisión, conformidad, observaciones y fecha programada.',
     roles: ['Proveedor'],
+    feature: 'estadoFactura',
   },
   {
     label: 'Documentos',
@@ -50,6 +56,7 @@ export const MODULES: ModuleLink[] = [
     description:
       'Revisa los documentos sin orden de compra y los documentos especiales asignados para aprobarlos, rechazarlos o reasignarlos.',
     roles: ['Área Usuaria'],
+    feature: 'documentos',
   },
   {
     label: 'Registrar documentos',
@@ -60,6 +67,7 @@ export const MODULES: ModuleLink[] = [
     description:
       'Registra tus facturas con o sin orden de compra y documentos especiales, adjuntando XML, PDF y CDR.',
     roles: ['Proveedor', 'Colaborador interno'],
+    feature: 'registrarDocumento',
   },
   {
     label: 'Contabilización',
@@ -70,6 +78,7 @@ export const MODULES: ModuleLink[] = [
     description:
       'Revisa los documentos pendientes de contabilización y recházalos u obsérvalos si algo no está conforme.',
     roles: ['CxP'],
+    feature: 'contabilizacion',
   },
 ];
 
@@ -78,7 +87,12 @@ export const SETTINGS_LINKS: SettingsLink[] = [
   { label: 'Sociedad', path: '/configuracion/sociedades' },
   { label: 'Área', path: '/configuracion/areas' },
   { label: 'Centro de costo', path: '/configuracion/centros-costo' },
-  { label: 'Usuarios y roles', path: '/configuracion/usuarios' },
-  { label: 'Workflows de aprobación', path: '/configuracion/workflows' },
+  { label: 'Usuarios y roles', path: '/configuracion/usuarios', feature: 'usuarios' },
+  { label: 'Workflows de aprobación', path: '/configuracion/workflows', feature: 'workflows' },
   { label: 'Parámetros generales', path: '/configuracion/parametros' },
 ];
+
+/** Si la funcionalidad del enlace está habilitada; sin `feature` (opciones de Configuración sin pantalla) nunca lo está. */
+export function isLinkLive(link: { feature?: FeatureFlag }): boolean {
+  return link.feature ? isFeatureEnabled(link.feature) : false;
+}

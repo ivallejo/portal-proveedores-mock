@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
-import { MODULES } from '../../core/layout/navigation';
+import { MODULES, isLinkLive } from '../../core/layout/navigation';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { TONE_CLASSES } from '../../shared/ui/tone';
 import { ToastService } from '../../shared/ui/toast/toast.service';
@@ -34,7 +34,14 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
             >
               <app-icon [name]="module.cardIcon" [size]="24" />
             </span>
-            <span class="text-xl font-bold">{{ module.label }}</span>
+            <span class="flex items-center gap-2 text-xl font-bold">
+              {{ module.label }}
+              @if (!isLive(module)) {
+                <span class="rounded-full bg-page px-2.5 py-0.5 text-xs font-semibold text-muted"
+                  >En construcción</span
+                >
+              }
+            </span>
             <span class="text-[15px] leading-relaxed text-body">{{ module.description }}</span>
             <span class="mt-auto flex items-center gap-1.5 text-sm font-bold text-primary">
               Ir al módulo
@@ -72,6 +79,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 export class HomePageComponent {
   readonly auth = inject(AuthService);
   readonly toast = inject(ToastService);
+  readonly isLive = isLinkLive;
   readonly modules = computed(() => MODULES.filter((module) => this.auth.hasAnyRole(module.roles)));
   readonly isProvider = computed(() => this.auth.user()?.roles.includes('Proveedor') ?? false);
 

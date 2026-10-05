@@ -15,7 +15,7 @@ import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ProgressBarComponent } from '../../shared/ui/feedback/feedback.components';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { initials } from '../../shared/utils/format';
-import { MODULES, SETTINGS_LINKS } from './navigation';
+import { MODULES, SETTINGS_LINKS, isLinkLive } from './navigation';
 import { PageLoadingService } from './page-loading.service';
 
 @Component({
@@ -38,6 +38,7 @@ export class ShellComponent {
 
   readonly modules = computed(() => MODULES.filter((module) => this.auth.hasAnyRole(module.roles)));
   readonly settings = SETTINGS_LINKS;
+  readonly isLive = isLinkLive;
 
   readonly pageTitle = toSignal(
     this.router.events.pipe(

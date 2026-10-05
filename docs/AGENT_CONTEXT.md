@@ -10,6 +10,10 @@ Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del l
 - **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Usuarios y roles, Workflows y correos del perfil.
 - No asumir que una pantalla completa tiene persistencia en SQL Server.
 
+## Feature flags
+
+`environment.features` (`src/environments/`) enciende o apaga cada pantalla. Apagada, la ruta sigue existiendo pero muestra «Esta sección está en construcción» y el menú / Inicio la marcan («Pronto» / «En construcción»). En `environment.production.ts` todo está en `false` salvo Inicio; en desarrollo todo está en `true`. Para publicar una pantalla, ponerla en `true` en producción. Las rutas se protegen con `gated(flag, loader)` en `app.routes.ts`; un flag nuevo se agrega a ambos environment y a `navigation.ts`.
+
 ## Stack y comandos
 
 - Angular 20 standalone, signals, `ChangeDetectionStrategy.OnPush`, control flow `@if/@for/@switch`.

@@ -163,6 +163,13 @@
 }
 
 @layer base {
+  /* La página enrutada es el elemento que sigue a <router-outlet>: apila sus secciones con separación. */
+  main > router-outlet + * {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 1.25rem;
+  }
   html,
   body {
     min-height: 100%;
