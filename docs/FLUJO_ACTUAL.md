@@ -27,7 +27,7 @@ Cada usuario trabaja con una o varias sociedades (1001 Naviera Transoceánica, 1
 - Registrar documentos solo ofrece las sociedades del usuario, y el aprobador elegido debe trabajar con la sociedad del documento.
 - Las bandejas de Documentos y Contabilización solo muestran documentos de sus sociedades. Lo propio (registrado por él, emitido con su RUC o asignado a él como aprobador) siempre es visible.
 - Los proveedores que se registran reciben todas las sociedades; el administrador puede restringirlas.
-- Se asignan con el seed (`"companies"`; si se omite, todas) o con `PUT /api/admin/users/{id}/companies`.
+- Se asignan con el seed (`"companies"`; si se omite, todas) o desde Usuarios y roles.
 
 ## 2. Registro de documentos
 
@@ -100,7 +100,7 @@ Cada acción queda en el **historial** del documento (quién, cuándo y la nota)
 | Pantalla | Estado |
 |---|---|
 | Registrar documentos, Documentos, Contabilización | Conectadas al backend |
-| Usuarios y roles (administración) | Datos simulados; el backend ya tiene la API (usuarios, rol y sociedades) pero la pantalla aún no la usa |
+| Usuarios y roles (administración) | Conectada al backend: crear, editar (roles, área, sociedades), activar/desactivar y desbloquear |
 | Orden de pago, Estado de factura | Datos simulados (**pendiente** backend) |
 | Workflows, Configuración | Simulados / en preparación |
 

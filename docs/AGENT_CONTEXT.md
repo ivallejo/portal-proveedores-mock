@@ -6,8 +6,8 @@ Guía del estado real del frontend del Portal de Proveedores. Leer antes de modi
 
 Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
 
-- **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace, y **todo el flujo documental**: Registrar documentos, Documentos (aprobaciones) y Contabilización (`api/documents`, `api/catalog`).
-- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Usuarios y roles, Workflows y correos del perfil.
+- **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace, y **todo el flujo documental**: Registrar documentos, Documentos (aprobaciones) y Contabilización (`api/documents`, `api/catalog`), y **Usuarios y roles** (`api/admin/users`).
+- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Workflows y correos del perfil.
 - No asumir que una pantalla completa tiene persistencia en SQL Server.
 
 ## Feature flags
@@ -51,7 +51,7 @@ src/app/
 │   ├── data/catalog.service.ts # Sociedades, áreas y aprobadores desde api/catalog
 │   ├── data/catalog.ts        # Catálogos de prueba, solo para los módulos aún en mock
 │   ├── models/models.ts       # Role, roleLabel, normalizeRole, User
-│   ├── state/mock-users.store # Usuarios mock (Usuarios y roles, Perfil, Workflows)
+│   ├── state/mock-users.store # Usuarios mock (Perfil, Workflows)
 │   └── utils/format.ts        # money, formatDate, maskEmail, initials…
 └── features/
     ├── auth/                  # login, registro, recuperar contraseña, crear/cambiar contraseña
@@ -61,7 +61,7 @@ src/app/
     ├── approvals/             # Documentos (aprobar, rechazar, reasignar)
     ├── register-document/     # Registro Con OC, Sin OC y Documentos especiales; lector de XML UBL
     ├── accounting/            # Contabilización (rechazar, observar)
-    ├── administration/users/  # Usuarios y roles
+    ├── administration/users/  # Usuarios y roles (api/admin/users: multirol, área, sociedades, desbloqueo)
     ├── workflows/             # Workflows de aprobación
     ├── profile/               # Mi perfil
     └── settings/              # Pantallas «Próximamente» de Configuración

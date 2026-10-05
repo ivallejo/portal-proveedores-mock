@@ -1,126 +1,151 @@
 <app-page-header
   heading="Usuarios y roles"
-  description="Crea usuarios internos y controla sus permisos de acceso."
+  description="Crea usuarios, asigna sus roles, área y sociedades, y controla su acceso al portal."
 >
-  <button type="button" class="btn btn-primary" (click)="openForm()">
+  <button type="button" class="btn btn-primary" (click)="openNew()">
     <app-icon name="plus" [size]="18" [stroke]="2.2" />Nuevo usuario
   </button>
 </app-page-header>
 
-@if (error() && !showForm() && !editingUser()) {
-  <app-callout tone="danger">{{ error() }}</app-callout>
+@if (loadError()) {
+  <app-callout tone="danger">{{ loadError() }}</app-callout>
 }
 
-<section class="card flex grow flex-col overflow-hidden">
+<section class="card flex grow flex-col overflow-hidden" [attr.aria-busy]="loading()">
   <div
     class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft px-6 py-4"
   >
     <div class="flex flex-col">
       <h2 class="m-0 text-base font-bold">Usuarios registrados</h2>
-      <span class="text-[13px] text-muted">{{ allUsers().length }} usuarios en el sistema</span>
+      <span class="text-[13px] text-muted">{{ total() }} usuarios</span>
     </div>
-    <div class="flex flex-wrap items-center gap-3">
-      <label class="flex items-center gap-2 text-[13px] text-muted">
-        Mostrar
-        <select
-          class="field h-10 w-auto pr-8"
-          [ngModel]="pageSize()"
-          (ngModelChange)="setPageSize($event)"
-          aria-label="Registros por página"
-        >
-          @for (size of [5, 10, 25, 50]; track size) {
-            <option [value]="size">{{ size }}</option>
-          }
-        </select>
-      </label>
-      <div class="relative flex">
-        <app-icon
-          name="search"
-          [size]="18"
-          class="pointer-events-none absolute top-[11px] left-3 text-muted"
-        />
-        <input
-          class="field h-10 w-64 pl-[38px]"
-          placeholder="Buscar usuario"
-          aria-label="Buscar usuario"
-          [ngModel]="search()"
-          (ngModelChange)="setSearch($event)"
-        />
-      </div>
+    <div class="relative flex">
+      <app-icon
+        name="search"
+        [size]="18"
+        class="pointer-events-none absolute top-[11px] left-3 text-muted"
+      />
+      <input
+        class="field h-10 w-72 pl-[38px]"
+        placeholder="Buscar por usuario, nombre, RUC o correo"
+        aria-label="Buscar usuario"
+        [ngModel]="search()"
+        (ngModelChange)="setSearch($event)"
+      />
     </div>
   </div>
 
   <div class="overflow-x-auto">
-    <table class="w-full min-w-[960px] border-collapse text-left text-sm">
+    <table class="w-full min-w-[1080px] border-collapse text-left text-sm">
       <thead>
         <tr
           class="h-12 border-b border-line bg-surface-muted text-xs font-bold tracking-[0.04em] text-body uppercase"
         >
           <th class="px-6 font-bold">Usuario</th>
-          <th class="px-3 font-bold">Correo electrónico</th>
           <th class="px-3 font-bold">Nombre o empresa</th>
           <th class="px-3 font-bold">Área</th>
           <th class="px-3 font-bold">Roles</th>
+          <th class="px-3 font-bold">Sociedades</th>
           <th class="px-3 font-bold">Estado</th>
           <th class="px-6 text-right font-bold">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @if (loading() && !allUsers().length) {
+        @if (loading() && !users().length) {
           @for (row of [1, 2, 3, 4, 5]; track row) {
-            <tr class="h-14 border-b border-line-soft" aria-hidden="true">
-              <td class="px-6"><span class="skeleton h-3 w-24"></span></td>
-              <td class="px-3"><span class="skeleton h-3 w-40"></span></td>
+            <tr class="h-16 border-b border-line-soft" aria-hidden="true">
+              <td class="px-6"><span class="skeleton h-3 w-32"></span></td>
               <td class="px-3"><span class="skeleton h-3 w-32"></span></td>
               <td class="px-3"><span class="skeleton h-3 w-20"></span></td>
               <td class="px-3"><span class="skeleton h-6 w-28 rounded-full"></span></td>
+              <td class="px-3"><span class="skeleton h-3 w-24"></span></td>
               <td class="px-3"><span class="skeleton h-6 w-11 rounded-full"></span></td>
               <td class="px-6"><span class="skeleton ml-auto size-9 rounded-lg"></span></td>
             </tr>
           }
         }
         @for (user of users(); track user.id) {
-          <tr class="row-hover h-14 border-b border-line-soft">
-            <td class="px-6 font-bold tabular-nums">{{ user.username }}</td>
-            <td class="px-3 text-label">{{ user.email }}</td>
-            <td class="px-3">{{ user.companyName }}</td>
-            <td class="px-3 text-label">{{ user.area || '—' }}</td>
-            <td class="px-3">
-              <div class="flex flex-wrap gap-1.5 py-2">
-                @for (role of user.roles; track role) {
-                  <app-badge size="sm" tone="primary">{{ roleLabel(role) }}</app-badge>
-                }
+          <tr class="row-hover border-b border-line-soft">
+            <td class="px-6 py-3">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-bold">{{ user.username }}</span>
+                <span class="text-[13px] text-muted">{{ user.email }}</span>
               </div>
             </td>
             <td class="px-3">
-              <button
-                type="button"
-                role="switch"
-                class="relative h-6 w-11 rounded-full transition-colors"
-                [class]="user.isActive ? 'bg-success' : 'bg-control'"
-                [attr.aria-checked]="user.isActive"
-                [attr.aria-label]="
-                  user.isActive ? 'Desactivar a ' + user.username : 'Activar a ' + user.username
-                "
-                [title]="user.isActive ? 'Activo' : 'Inactivo'"
-                (click)="toggleStatus(user)"
-              >
-                <span
-                  class="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform"
-                  [class.translate-x-5]="user.isActive"
-                ></span>
-              </button>
+              <div class="flex flex-col gap-0.5">
+                <span>{{ user.name }}</span>
+                @if (user.ruc) {
+                  <span class="text-[13px] text-muted tabular-nums">RUC {{ user.ruc }}</span>
+                }
+              </div>
+            </td>
+            <td class="px-3 text-label">{{ user.areaName || '—' }}</td>
+            <td class="px-3">
+              <div class="flex flex-wrap gap-1.5 py-2">
+                @for (role of user.roles; track role) {
+                  <app-badge size="sm" tone="primary">{{ roleName(role) }}</app-badge>
+                }
+              </div>
+            </td>
+            <td class="max-w-[220px] px-3 text-[13px] text-label">{{ companiesLabel(user) }}</td>
+            <td class="px-3">
+              <div class="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  role="switch"
+                  class="relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50"
+                  [class]="user.isActive ? 'bg-success' : 'bg-control'"
+                  [attr.aria-checked]="user.isActive"
+                  [attr.aria-label]="
+                    user.isActive ? 'Desactivar a ' + user.username : 'Activar a ' + user.username
+                  "
+                  [title]="
+                    isSelf(user)
+                      ? 'No puedes desactivar tu propia cuenta'
+                      : user.isActive
+                        ? 'Activo'
+                        : 'Inactivo'
+                  "
+                  [disabled]="busyId() === user.id || isSelf(user)"
+                  (click)="toggleStatus(user)"
+                >
+                  <span
+                    class="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform"
+                    [class.translate-x-5]="user.isActive"
+                  ></span>
+                </button>
+                @if (user.isLocked) {
+                  <app-badge size="sm" tone="danger">Bloqueado</app-badge>
+                } @else if (user.mustChangePassword) {
+                  <app-badge size="sm" tone="warn">Clave temporal</app-badge>
+                }
+              </div>
             </td>
             <td class="px-6 text-right">
-              <button
-                type="button"
-                class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
-                title="Editar usuario"
-                [attr.aria-label]="'Editar a ' + user.username"
-                (click)="openEdit(user)"
-              >
-                <app-icon name="edit" [size]="17" />
-              </button>
+              <div class="flex justify-end gap-2">
+                @if (user.isLocked) {
+                  <button
+                    type="button"
+                    class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint disabled:opacity-50"
+                    title="Desbloquear cuenta"
+                    [attr.aria-label]="'Desbloquear a ' + user.username"
+                    [disabled]="busyId() === user.id"
+                    (click)="unlock(user)"
+                  >
+                    <app-icon name="key" [size]="17" />
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
+                  title="Editar usuario"
+                  [attr.aria-label]="'Editar a ' + user.username"
+                  (click)="openEdit(user)"
+                >
+                  <app-icon name="edit" [size]="17" />
+                </button>
+              </div>
             </td>
           </tr>
         }
@@ -128,137 +153,139 @@
     </table>
   </div>
 
-  @if (!loading() && !filteredUsers().length) {
+  @if (!loading() && !users().length && !loadError()) {
     <app-empty-state
       heading="No encontramos usuarios"
-      text="Prueba con otro nombre, correo, área o rol."
+      text="Prueba con otro usuario, nombre, RUC o correo."
       icon="users"
-      (action)="setSearch('')"
+      (action)="clearSearch()"
     />
   }
 
-  <div
-    class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft px-6 py-3 text-[13px] text-body"
-  >
-    <span>Página {{ page() }} de {{ pageCount() }} · {{ filteredUsers().length }} usuarios</span>
-    <div class="flex items-center gap-1.5">
-      <button
-        type="button"
-        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
-        aria-label="Página anterior"
-        [disabled]="page() === 1"
-        (click)="setPage(page() - 1)"
-      >
-        <app-icon name="chevron-left" [size]="16" [stroke]="2" />
-      </button>
-      @for (item of paginationPages(); track item) {
-        <button
-          type="button"
-          class="size-9 rounded-lg text-[13px] font-bold"
-          [class]="
-            item === page()
-              ? 'bg-primary text-white'
-              : 'border border-[#DDE1E7] bg-white text-muted'
-          "
-          [attr.aria-current]="item === page() ? 'page' : null"
-          (click)="setPage(item)"
-        >
-          {{ item }}
-        </button>
-      }
-      <button
-        type="button"
-        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
-        aria-label="Página siguiente"
-        [disabled]="page() === pageCount()"
-        (click)="setPage(page() + 1)"
-      >
-        <app-icon name="chevron-right" [size]="16" [stroke]="2" />
-      </button>
-    </div>
-  </div>
+  <app-pagination
+    [loading]="loading()"
+    loadingText="Buscando usuarios…"
+    [total]="total()"
+    [page]="page()"
+    [pageSize]="pageSize"
+    noun="usuarios"
+    (pageChange)="goTo($event)"
+  />
 </section>
 
-@if (showForm()) {
+@if (editing(); as target) {
   <app-dialog
-    heading="Nuevo usuario"
-    subtitle="Completa los datos y asigna los roles iniciales."
-    [width]="760"
+    [heading]="isNew() ? 'Nuevo usuario' : 'Editar usuario'"
+    [subtitle]="
+      isNew() ? 'Recibirá una contraseña temporal que deberá cambiar al ingresar.' : form().username
+    "
+    [width]="780"
     closeLabel="Cerrar"
-    (closed)="closeForm()"
+    (closed)="closeDialog()"
   >
-    <div class="flex flex-col gap-5 px-5 py-6 sm:px-8">
-      @if (error()) {
-        <app-callout tone="danger">{{ error() }}</app-callout>
+    <form class="flex flex-col gap-5 px-5 py-6 sm:px-8" (submit)="$event.preventDefault(); save()">
+      @if (formError()) {
+        <app-callout tone="danger">{{ formError() }}</app-callout>
       }
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label class="flex flex-col gap-2">
           <span class="field-label">Usuario *</span>
-          <input class="field" [(ngModel)]="newUser.username" placeholder="Ej. jorge.perez" />
+          <input
+            class="field disabled:bg-surface-muted disabled:text-muted"
+            name="username"
+            placeholder="Ej. jorge.perez o el RUC"
+            [disabled]="!isNew()"
+            [ngModel]="form().username"
+            (ngModelChange)="patch({ username: $event })"
+          />
         </label>
         <label class="flex flex-col gap-2">
           <span class="field-label">Correo electrónico *</span>
           <input
             class="field"
             type="email"
-            [(ngModel)]="newUser.email"
+            name="email"
             placeholder="usuario@naviera.com"
+            [ngModel]="form().email"
+            (ngModelChange)="patch({ email: $event })"
           />
         </label>
         <label class="flex flex-col gap-2">
-          <span class="field-label">Nombre o empresa *</span>
-          <input class="field" [(ngModel)]="newUser.companyName" placeholder="Nombre del usuario" />
-        </label>
-        <label class="flex flex-col gap-2">
-          <span class="field-label">RUC (solo proveedores)</span>
+          <span class="field-label">Nombre o razón social *</span>
           <input
             class="field"
-            [(ngModel)]="newUser.ruc"
-            placeholder="Opcional para usuarios internos"
+            name="name"
+            placeholder="Nombre del usuario o de la empresa"
+            [ngModel]="form().name"
+            (ngModelChange)="patch({ name: $event })"
           />
         </label>
-        @if (hasInternalRole(selectedRoles())) {
+        <label class="flex flex-col gap-2">
+          <span class="field-label"
+            >RUC {{ form().roles.includes('PROVIDER') ? '*' : '(proveedores)' }}</span
+          >
+          <input
+            class="field tabular-nums disabled:bg-surface-muted disabled:text-muted"
+            name="ruc"
+            inputmode="numeric"
+            maxlength="11"
+            placeholder="11 dígitos"
+            [disabled]="!isNew()"
+            [ngModel]="form().ruc"
+            (ngModelChange)="patch({ ruc: $event })"
+          />
+        </label>
+        <label class="flex flex-col gap-2">
+          <span class="field-label">Área {{ needsArea() ? '*' : '(opcional)' }}</span>
+          <select
+            class="field"
+            name="area"
+            [ngModel]="form().areaId"
+            (ngModelChange)="patch({ areaId: $event })"
+          >
+            <option value="">Sin área</option>
+            @for (area of catalog().areas; track area.id) {
+              <option [value]="area.id">{{ area.name }}</option>
+            }
+          </select>
+        </label>
+        @if (isNew()) {
           <label class="flex flex-col gap-2">
-            <span class="field-label">Área *</span>
-            <select class="field" [(ngModel)]="newUser.area">
-              <option value="">Selecciona un área</option>
-              @for (area of areas; track area) {
-                <option [value]="area">{{ area }}</option>
-              }
-            </select>
+            <span class="field-label">Contraseña temporal *</span>
+            <span class="relative flex">
+              <input
+                class="field pr-11"
+                name="password"
+                autocomplete="new-password"
+                placeholder="Mín. 8, mayúscula, minúscula y número"
+                [type]="showPassword() ? 'text' : 'password'"
+                [ngModel]="form().password"
+                (ngModelChange)="patch({ password: $event })"
+              />
+              <button
+                type="button"
+                class="absolute top-0.5 right-0.5 flex size-10 items-center justify-center rounded-lg text-muted hover:bg-page"
+                [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="18" />
+              </button>
+            </span>
           </label>
         }
-        <label class="flex flex-col gap-2">
-          <span class="field-label">Contraseña temporal *</span>
-          <span class="relative flex">
-            <input
-              class="field pr-11"
-              [type]="showNewPassword() ? 'text' : 'password'"
-              [(ngModel)]="newUser.password"
-              placeholder="Contraseña inicial"
-            />
-            <button
-              type="button"
-              class="absolute top-0.5 right-0.5 flex size-10 items-center justify-center rounded-lg text-muted hover:bg-page"
-              [attr.aria-label]="showNewPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-              (click)="showNewPassword.set(!showNewPassword())"
-            >
-              <app-icon [name]="showNewPassword() ? 'eye-off' : 'eye'" [size]="18" />
-            </button>
-          </span>
-        </label>
       </div>
+
       <fieldset class="m-0 flex flex-col gap-3 rounded-[14px] border border-line p-4">
         <legend class="px-1 text-sm font-bold">
           Roles *
-          <span class="font-normal text-muted">· {{ selectedRoles().length }} seleccionados</span>
+          <span class="font-normal text-muted">· {{ form().roles.length }} seleccionados</span>
         </legend>
         <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-          @for (role of roles; track role) {
+          @for (role of catalog().roles; track role.code) {
             <label
               class="flex cursor-pointer items-center gap-3 rounded-xl border-2 px-3.5 py-3 text-sm font-bold"
               [class]="
-                selectedRoles().includes(role)
+                form().roles.includes(role.code)
                   ? 'border-primary bg-primary-tint'
                   : 'border-line bg-white'
               "
@@ -266,76 +293,33 @@
               <input
                 type="checkbox"
                 class="size-4 accent-primary"
-                [checked]="selectedRoles().includes(role)"
-                (change)="toggleSelectedRole(role)"
+                [checked]="form().roles.includes(role.code)"
+                (change)="toggleRole(role.code)"
               />
-              {{ roleLabel(role) }}
+              {{ role.name }}
             </label>
           }
         </div>
       </fieldset>
-    </div>
-    <div
-      dialog-footer
-      class="flex justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
-    >
-      <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancelar</button>
-      <button type="button" class="btn btn-primary" [disabled]="loading()" (click)="createUser()">
-        {{ loading() ? 'Creando…' : 'Crear usuario' }}
-      </button>
-    </div>
-  </app-dialog>
-}
 
-@if (editingUser(); as user) {
-  <app-dialog
-    heading="Editar usuario"
-    [subtitle]="user.username"
-    [width]="760"
-    closeLabel="Cerrar"
-    (closed)="closeEdit()"
-  >
-    <div class="flex flex-col gap-5 px-5 py-6 sm:px-8">
-      @if (error()) {
-        <app-callout tone="danger">{{ error() }}</app-callout>
-      }
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label class="flex flex-col gap-2">
-          <span class="field-label">Usuario *</span>
-          <input class="field" [(ngModel)]="editUser.username" />
-        </label>
-        <label class="flex flex-col gap-2">
-          <span class="field-label">Correo electrónico *</span>
-          <input class="field" type="email" [(ngModel)]="editUser.email" />
-        </label>
-        <label class="flex flex-col gap-2">
-          <span class="field-label">Nombre o empresa *</span>
-          <input class="field" [(ngModel)]="editUser.companyName" />
-        </label>
-        <label class="flex flex-col gap-2">
-          <span class="field-label">RUC (solo proveedores)</span>
-          <input class="field" [(ngModel)]="editUser.ruc" />
-        </label>
-        @if (hasInternalRole(editRoles())) {
-          <label class="flex flex-col gap-2">
-            <span class="field-label">Área *</span>
-            <select class="field" [(ngModel)]="editUser.area">
-              <option value="">Selecciona un área</option>
-              @for (area of areas; track area) {
-                <option [value]="area">{{ area }}</option>
-              }
-            </select>
-          </label>
-        }
-      </div>
       <fieldset class="m-0 flex flex-col gap-3 rounded-[14px] border border-line p-4">
-        <legend class="px-1 text-sm font-bold">Roles asignados</legend>
+        <legend class="px-1 text-sm font-bold">
+          Sociedades {{ isAdminForm() ? '' : '*' }}
+          <span class="font-normal text-muted">
+            ·
+            @if (isAdminForm()) {
+              el administrador trabaja con todas
+            } @else {
+              {{ form().companyCodes.length }} seleccionadas
+            }
+          </span>
+        </legend>
         <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-          @for (role of roles; track role) {
+          @for (company of catalog().companies; track company.code) {
             <label
               class="flex cursor-pointer items-center gap-3 rounded-xl border-2 px-3.5 py-3 text-sm font-bold"
               [class]="
-                editRoles().includes(role)
+                form().companyCodes.includes(company.code)
                   ? 'border-primary bg-primary-tint'
                   : 'border-line bg-white'
               "
@@ -343,22 +327,26 @@
               <input
                 type="checkbox"
                 class="size-4 accent-primary"
-                [checked]="editRoles().includes(role)"
-                (change)="toggleEditRole(role)"
+                [checked]="form().companyCodes.includes(company.code)"
+                (change)="toggleCompany(company.code)"
               />
-              {{ roleLabel(role) }}
+              <span class="flex flex-col">
+                {{ company.name }}
+                <span class="text-xs font-medium text-muted">Código {{ company.code }}</span>
+              </span>
             </label>
           }
         </div>
       </fieldset>
-    </div>
+      <button type="submit" class="hidden" aria-hidden="true" tabindex="-1"></button>
+    </form>
     <div
       dialog-footer
       class="flex justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
     >
-      <button type="button" class="btn btn-secondary" (click)="closeEdit()">Cancelar</button>
-      <button type="button" class="btn btn-primary" [disabled]="loading()" (click)="saveEdit()">
-        {{ loading() ? 'Guardando…' : 'Guardar cambios' }}
+      <button type="button" class="btn btn-secondary" (click)="closeDialog()">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="save()">
+        {{ saving() ? 'Guardando…' : isNew() ? 'Crear usuario' : 'Guardar cambios' }}
       </button>
     </div>
   </app-dialog>

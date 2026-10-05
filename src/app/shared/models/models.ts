@@ -1,13 +1,5 @@
 export type Role = 'Proveedor' | 'Colaborador interno' | 'Área Usuaria' | 'CxP' | 'Administrador';
 
-export const ROLES: Role[] = [
-  'Proveedor',
-  'Colaborador interno',
-  'Área Usuaria',
-  'CxP',
-  'Administrador',
-];
-
 export function roleLabel(role: Role | string): string {
   return (
     {

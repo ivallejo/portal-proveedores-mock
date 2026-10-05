@@ -1,8 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AdminService, AdminUser } from '../services/admin.service';
-import { ROLES, Role, roleLabel } from '../../../../shared/models/models';
+import { apiErrorMessage } from '../../../../shared/documents/documents.service';
 import { BadgeComponent } from '../../../../shared/ui/badge/badge.component';
 import { DialogComponent } from '../../../../shared/ui/dialog/dialog.component';
 import {
@@ -10,16 +15,44 @@ import {
   EmptyStateComponent,
 } from '../../../../shared/ui/feedback/feedback.components';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
-import { PageHeaderComponent } from '../../../../shared/ui/page/page.components';
+import {
+  PageHeaderComponent,
+  PaginationComponent,
+} from '../../../../shared/ui/page/page.components';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { AdminCatalog, AdminService, AdminUser, RoleCode } from '../services/admin.service';
+
+interface UserForm {
+  username: string;
+  email: string;
+  name: string;
+  ruc: string;
+  password: string;
+  roles: RoleCode[];
+  areaId: string;
+  companyCodes: string[];
+}
+
+const EMPTY_FORM: UserForm = {
+  username: '',
+  email: '',
+  name: '',
+  ruc: '',
+  password: '',
+  roles: ['INTERNAL_USER'],
+  areaId: '',
+  companyCodes: [],
+};
+
+const PASSWORD_RULE = /^(?=.*[a-záéíóúñ])(?=.*[A-ZÁÉÍÓÚÑ])(?=.*\d).{8,}$/;
 
 @Component({
   selector: 'app-admin-users',
-  standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     PageHeaderComponent,
+    PaginationComponent,
     BadgeComponent,
     DialogComponent,
     CalloutComponent,
@@ -30,231 +63,235 @@ import { ToastService } from '../../../../shared/ui/toast/toast.service';
   templateUrl: './admin-users.component.html',
 })
 export class AdminUsersComponent {
-  readonly roleLabel = roleLabel;
-  private readonly adminService = inject(AdminService);
+  private readonly admin = inject(AdminService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
 
+  readonly pageSize = 10;
   readonly users = signal<AdminUser[]>([]);
-  readonly allUsers = signal<AdminUser[]>([]);
-  readonly loading = signal(false);
-  readonly message = signal('');
-  readonly error = signal('');
-  readonly search = signal('');
+  readonly total = signal(0);
   readonly page = signal(1);
-  readonly pageSize = signal(5);
-  readonly showForm = signal(false);
-  readonly showNewPassword = signal(false);
-  readonly editingUser = signal<AdminUser | null>(null);
-  readonly editRoles = signal<Role[]>([]);
-  readonly editUser = { username: '', email: '', companyName: '', area: '', ruc: '' };
-  readonly selectedRoles = signal<Role[]>(['Área Usuaria']);
-  readonly roles: Role[] = ROLES;
-  readonly newUser = { username: '', email: '', companyName: '', area: '', ruc: '', password: '' };
-  readonly areas = [
-    'Administración',
-    'Abastecimiento',
-    'Comercial',
-    'Finanzas',
-    'Mantenimiento',
-    'Operaciones',
-    'Recursos Humanos',
-    'Tecnología',
-  ];
+  readonly search = signal('');
+  readonly loading = signal(false);
+  readonly loadError = signal('');
+  readonly catalog = signal<AdminCatalog>({ roles: [], areas: [], companies: [] });
 
-  readonly filteredUsers = computed(() => {
-    const term = this.search().trim().toLowerCase();
-    return this.allUsers().filter(
-      (user) =>
-        !term ||
-        `${user.companyName} ${user.email} ${user.area} ${user.ruc} ${user.roles.join(' ')}`
-          .toLowerCase()
-          .includes(term),
-    );
-  });
-  readonly pageCount = computed(() =>
-    Math.max(1, Math.ceil(this.filteredUsers().length / this.pageSize())),
-  );
-  readonly paginationPages = computed(() =>
-    Array.from({ length: this.pageCount() }, (_, index) => index + 1),
-  );
+  /** `null`: sin diálogo; `'new'`: crear; un usuario: editarlo. */
+  readonly editing = signal<AdminUser | 'new' | null>(null);
+  readonly form = signal<UserForm>({ ...EMPTY_FORM });
+  readonly formError = signal('');
+  readonly saving = signal(false);
+  readonly showPassword = signal(false);
+  /** Usuario con una acción en curso (estado o desbloqueo). */
+  readonly busyId = signal('');
+
+  readonly isNew = computed(() => this.editing() === 'new');
+  readonly needsArea = computed(() => this.form().roles.includes('AREA_APPROVER'));
+  readonly isAdminForm = computed(() => this.form().roles.includes('ADMINISTRATOR'));
+
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
-    this.loadUsers();
+    this.load();
+    this.admin.catalog().subscribe({
+      next: (catalog) => this.catalog.set(catalog),
+      error: (error) => this.loadError.set(apiErrorMessage(error)),
+    });
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.searchTimer));
   }
 
-  loadUsers(): void {
+  load(): void {
     this.loading.set(true);
-    this.adminService.list().subscribe({
-      next: (users) => {
-        this.allUsers.set(users);
-        this.page.set(1);
-        this.refreshPage();
+    this.admin.search(this.search(), this.page(), this.pageSize).subscribe({
+      next: (result) => {
+        this.users.set(result.items);
+        this.total.set(result.total);
+        this.loadError.set('');
         this.loading.set(false);
       },
       error: (error) => {
         this.loading.set(false);
-        this.error.set(error.error?.message || 'No fue posible cargar los usuarios.');
+        this.loadError.set(apiErrorMessage(error, 'No fue posible cargar los usuarios.'));
       },
     });
   }
 
   setSearch(value: string): void {
     this.search.set(value);
-    this.page.set(1);
-    this.refreshPage();
-  }
-  setPage(value: number): void {
-    this.page.set(Math.min(Math.max(value, 1), this.pageCount()));
-    this.refreshPage();
-  }
-  setPageSize(value: number | string): void {
-    this.pageSize.set(Number(value));
-    this.page.set(1);
-    this.refreshPage();
-  }
-  private refreshPage(): void {
-    const start = (this.page() - 1) * this.pageSize();
-    this.users.set(this.filteredUsers().slice(start, start + this.pageSize()));
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.goTo(1), 300);
   }
 
-  openForm(): void {
-    this.error.set('');
-    this.message.set('');
-    this.showNewPassword.set(false);
-    this.showForm.set(true);
+  clearSearch(): void {
+    this.search.set('');
+    this.goTo(1);
   }
+
+  goTo(page: number): void {
+    this.page.set(page);
+    this.load();
+  }
+
+  roleName(code: string): string {
+    return this.catalog().roles.find((role) => role.code === code)?.name ?? code;
+  }
+
+  companyName(code: string): string {
+    return this.catalog().companies.find((company) => company.code === code)?.name ?? code;
+  }
+
+  /** «Todas» si tiene todas las sociedades; si no, sus nombres. */
+  companiesLabel(user: AdminUser): string {
+    const all = this.catalog().companies;
+    if (user.roles.includes('ADMINISTRATOR')) return 'Todas';
+    if (all.length && user.companyCodes.length === all.length) return 'Todas';
+    return user.companyCodes.map((code) => this.companyName(code)).join(', ') || '—';
+  }
+
+  // ——— Formulario ———
+
+  openNew(): void {
+    this.form.set({
+      ...EMPTY_FORM,
+      companyCodes: this.catalog().companies.map((company) => company.code),
+    });
+    this.openDialog('new');
+  }
+
   openEdit(user: AdminUser): void {
-    this.error.set('');
-    this.message.set('');
-    this.editingUser.set(user);
-    this.editUser.username = user.username;
-    this.editUser.email = user.email;
-    this.editUser.companyName = user.companyName;
-    this.editUser.area = user.area;
-    this.editUser.ruc = user.ruc;
-    this.editRoles.set([...user.roles]);
-  }
-  closeEdit(): void {
-    this.editingUser.set(null);
-    this.error.set('');
-  }
-  toggleEditRole(role: Role): void {
-    this.editRoles.update((roles) =>
-      roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role],
-    );
-  }
-  saveEdit(): void {
-    const user = this.editingUser();
-    if (!user) return;
-    this.error.set('');
-    if (
-      !this.editUser.username ||
-      !this.editUser.email ||
-      !this.editUser.companyName ||
-      (this.hasInternalRole(this.editRoles()) && !this.editUser.area)
-    ) {
-      this.error.set('Completa los datos obligatorios del usuario.');
-      return;
-    }
-    if (!this.editRoles().length) {
-      this.error.set('El usuario debe conservar al menos un rol.');
-      return;
-    }
-    this.loading.set(true);
-    this.adminService.update(user.id, { ...this.editUser, roles: this.editRoles() }).subscribe({
-      next: (updated) => {
-        this.allUsers.update((users) =>
-          users.map((item) => (item.id === updated.id ? updated : item)),
-        );
-        this.refreshPage();
-        this.loading.set(false);
-        this.editingUser.set(null);
-        this.toast.show('Usuario actualizado correctamente');
-      },
-      error: (error) => {
-        this.loading.set(false);
-        this.error.set(error.error?.message || 'No fue posible actualizar el usuario.');
-      },
+    this.form.set({
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      ruc: user.ruc ?? '',
+      password: '',
+      roles: [...user.roles],
+      areaId: user.areaId ?? '',
+      companyCodes: [...user.companyCodes],
     });
-  }
-  closeForm(): void {
-    this.showForm.set(false);
-    this.error.set('');
+    this.openDialog(user);
   }
 
-  createUser(): void {
-    this.message.set('');
-    this.error.set('');
-    if (
-      !this.newUser.username ||
-      !this.newUser.email ||
-      !this.newUser.companyName ||
-      !this.newUser.password ||
-      !this.selectedRoles().length ||
-      (this.hasInternalRole(this.selectedRoles()) && !this.newUser.area)
-    ) {
-      this.error.set('Completa todos los campos para crear el usuario.');
-      return;
-    }
-    this.loading.set(true);
-    this.adminService.create({ ...this.newUser, roles: this.selectedRoles() }).subscribe({
+  closeDialog(): void {
+    this.editing.set(null);
+  }
+
+  patch(changes: Partial<UserForm>): void {
+    this.form.update((form) => ({ ...form, ...changes }));
+  }
+
+  toggleRole(code: RoleCode): void {
+    const roles = this.form().roles;
+    this.patch({
+      roles: roles.includes(code) ? roles.filter((item) => item !== code) : [...roles, code],
+    });
+  }
+
+  toggleCompany(code: string): void {
+    const codes = this.form().companyCodes;
+    this.patch({
+      companyCodes: codes.includes(code) ? codes.filter((item) => item !== code) : [...codes, code],
+    });
+  }
+
+  save(): void {
+    const form = this.form();
+    const problem = this.validate(form);
+    if (problem) return this.formError.set(problem);
+    this.formError.set('');
+    this.saving.set(true);
+
+    const access = {
+      email: form.email.trim(),
+      name: form.name.trim(),
+      roles: form.roles,
+      areaId: form.areaId || null,
+      companyCodes: form.companyCodes,
+    };
+    const editing = this.editing();
+    const request =
+      editing === 'new'
+        ? this.admin.create({
+            ...access,
+            username: form.username.trim(),
+            ruc: form.ruc.trim() || null,
+            password: form.password,
+          })
+        : this.admin.update((editing as AdminUser).id, access);
+
+    request.subscribe({
       next: () => {
-        this.loading.set(false);
-        this.toast.show('Usuario creado correctamente');
-        this.newUser.username = '';
-        this.newUser.email = '';
-        this.newUser.companyName = '';
-        this.newUser.area = '';
-        this.newUser.ruc = '';
-        this.newUser.password = '';
-        this.showForm.set(false);
-        this.loadUsers();
+        this.saving.set(false);
+        this.editing.set(null);
+        this.toast.show(editing === 'new' ? 'Usuario creado correctamente' : 'Usuario actualizado');
+        this.load();
       },
       error: (error) => {
-        this.loading.set(false);
-        this.error.set(error.error?.message || 'No fue posible crear el usuario.');
+        this.saving.set(false);
+        this.formError.set(apiErrorMessage(error, 'No fue posible guardar el usuario.'));
       },
     });
   }
 
-  changeRoles(user: AdminUser, roles: Role[]): void {
-    this.adminService.assignRoles(user.id, roles).subscribe({
-      next: (updated) => {
-        this.allUsers.update((users) =>
-          users.map((item) => (item.id === updated.id ? updated : item)),
-        );
-        this.refreshPage();
-      },
-      error: (error) => this.error.set(error.error?.message || 'No fue posible actualizar el rol.'),
-    });
-  }
+  // ——— Acciones de la tabla ———
 
-  toggleRole(roles: Role[], role: Role): Role[] {
-    return roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role];
-  }
-
-  setSelectedRoles(roles: Role[]): void {
-    this.selectedRoles.set(roles.length ? roles : ['Proveedor']);
-  }
-  toggleSelectedRole(role: Role): void {
-    this.selectedRoles.update((roles) =>
-      roles.includes(role) ? roles.filter((item) => item !== role) : [...roles, role],
-    );
-  }
-  hasInternalRole(roles: Role[]): boolean {
-    return roles.some((role) => role !== 'Proveedor');
+  isSelf(user: AdminUser): boolean {
+    return user.username === this.auth.user()?.username;
   }
 
   toggleStatus(user: AdminUser): void {
-    this.adminService.setStatus(user.id, !user.isActive).subscribe({
+    this.runAction(user, this.admin.setStatus(user.id, !user.isActive), (updated) =>
+      updated.isActive ? 'Usuario activado' : 'Usuario desactivado',
+    );
+  }
+
+  unlock(user: AdminUser): void {
+    this.runAction(user, this.admin.unlock(user.id), () => 'Cuenta desbloqueada');
+  }
+
+  private runAction(
+    user: AdminUser,
+    request: ReturnType<AdminService['unlock']>,
+    message: (updated: AdminUser) => string,
+  ): void {
+    this.busyId.set(user.id);
+    request.subscribe({
       next: (updated) => {
-        this.allUsers.update((users) =>
+        this.busyId.set('');
+        this.users.update((users) =>
           users.map((item) => (item.id === updated.id ? updated : item)),
         );
-        this.refreshPage();
+        this.toast.show(message(updated));
       },
-      error: (error) =>
-        this.error.set(error.error?.message || 'No fue posible actualizar el estado.'),
+      error: (error) => {
+        this.busyId.set('');
+        this.toast.show(apiErrorMessage(error, 'No fue posible completar la acción.'));
+      },
     });
+  }
+
+  private openDialog(target: AdminUser | 'new'): void {
+    this.formError.set('');
+    this.showPassword.set(false);
+    this.editing.set(target);
+  }
+
+  /** Las mismas reglas que valida el backend, para avisar antes de enviar. */
+  private validate(form: UserForm): string {
+    if (this.isNew() && !form.username.trim()) return 'Ingresa el nombre de usuario.';
+    if (!form.name.trim()) return 'Ingresa el nombre o la razón social.';
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return 'Ingresa un correo electrónico válido.';
+    if (!form.roles.length) return 'Asigna al menos un rol.';
+    if (form.roles.includes('PROVIDER') && !/^\d{11}$/.test(form.ruc.trim()))
+      return 'El proveedor necesita un RUC de 11 dígitos.';
+    if (this.isNew() && form.ruc.trim() && !/^\d{11}$/.test(form.ruc.trim()))
+      return 'El RUC debe tener 11 dígitos.';
+    if (form.roles.includes('AREA_APPROVER') && !form.areaId)
+      return 'El aprobador de área necesita un área.';
+    if (!form.companyCodes.length && !form.roles.includes('ADMINISTRATOR'))
+      return 'Asigna al menos una sociedad.';
+    if (this.isNew() && !PASSWORD_RULE.test(form.password))
+      return 'La contraseña temporal debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número.';
+    return '';
   }
 }
