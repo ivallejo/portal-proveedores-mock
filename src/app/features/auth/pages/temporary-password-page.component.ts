@@ -33,14 +33,6 @@ import { AuthHeadingComponent, PasswordFieldComponent } from '../components/auth
         </app-auth-heading>
 
         <app-password-field
-          inputId="pw-current"
-          label="Contraseña temporal"
-          placeholder="La que te entregaron"
-          autocomplete="current-password"
-          [invalid]="error() === 'current'"
-          [(value)]="current"
-        />
-        <app-password-field
           inputId="pw-new"
           label="Nueva contraseña"
           placeholder="Nueva contraseña"
@@ -94,11 +86,6 @@ import { AuthHeadingComponent, PasswordFieldComponent } from '../components/auth
               Verifica que la nueva contraseña y su confirmación sean iguales.
             </app-callout>
           }
-          @case ('current') {
-            <app-callout tone="danger" heading="No pudimos cambiar la contraseña">{{
-              serverError()
-            }}</app-callout>
-          }
           @case ('server') {
             <app-callout tone="danger" heading="No pudimos cambiar la contraseña">{{
               serverError()
@@ -128,10 +115,9 @@ export class TemporaryPasswordPageComponent {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  readonly current = signal('');
   readonly password = signal('');
   readonly confirmation = signal('');
-  readonly error = signal<'' | 'rules' | 'mismatch' | 'current' | 'server'>('');
+  readonly error = signal<'' | 'rules' | 'mismatch' | 'server'>('');
   readonly serverError = signal('');
   readonly busy = signal(false);
 
@@ -148,17 +134,14 @@ export class TemporaryPasswordPageComponent {
   submit(event: Event): void {
     event.preventDefault();
     if (this.busy()) return;
-    if (!this.current()) {
-      this.serverError.set('Ingresa la contraseña temporal que te entregaron.');
-      return this.error.set('current');
-    }
-    if (!this.rules().every((rule) => rule.ok) || this.password() === this.current()) {
+    if (!this.rules().every((rule) => rule.ok)) {
       return this.error.set('rules');
     }
     if (this.password() !== this.confirmation()) return this.error.set('mismatch');
     this.error.set('');
     this.busy.set(true);
-    this.auth.changePassword(this.current(), this.password()).subscribe({
+    // La sesión se abrió con la contraseña temporal: el backend no la vuelve a pedir.
+    this.auth.changePassword(this.password()).subscribe({
       next: () => {
         this.busy.set(false);
         void this.router.navigateByUrl(this.auth.landingPath());
@@ -166,7 +149,7 @@ export class TemporaryPasswordPageComponent {
       error: (error) => {
         this.busy.set(false);
         this.serverError.set(apiErrorMessage(error, 'Inténtalo nuevamente en unos minutos.'));
-        this.error.set(error.status === 400 ? 'current' : 'server');
+        this.error.set('server');
       },
     });
   }
