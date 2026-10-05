@@ -113,7 +113,11 @@ export class ApprovalsPageComponent {
   ];
   readonly areaOptions = this.catalog.areaOptions;
   readonly approverOptions = computed(() =>
-    this.catalog.approverOptions(this.reassignArea(), this.detail()?.approver ?? ''),
+    this.catalog.approverOptions(
+      this.reassignArea(),
+      this.detail()?.companyCode ?? '',
+      this.detail()?.approver ?? '',
+    ),
   );
 
   readonly pageRows = computed(() =>
@@ -242,7 +246,8 @@ export class ApprovalsPageComponent {
     const area = this.reassignArea();
     const approverId = this.reassignApprover();
     const approver =
-      this.catalog.approvers(area).find((item) => item.id === approverId)?.name ?? '';
+      this.catalog.approvers(area, doc.companyCode).find((item) => item.id === approverId)?.name ??
+      '';
     const reason = this.reassignReason().trim();
     this.run(this.documents.reassign(doc.id, approverId, reason), (updated) => ({
       kind: 'swap',

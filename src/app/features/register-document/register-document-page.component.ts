@@ -164,7 +164,9 @@ export class RegisterDocumentPageComponent {
   readonly specialTypes = SPECIAL_DOCUMENT_TYPES;
   readonly companyOptions = this.catalog.companyOptions;
   readonly areaOptions = this.catalog.areaOptions;
-  readonly approverOptions = computed(() => this.catalog.approverOptions(this.area()));
+  readonly approverOptions = computed(() =>
+    this.catalog.approverOptions(this.area(), this.company()),
+  );
   readonly accept = ACCEPT;
   readonly attachmentTone = ATTACHMENT_TONE;
   readonly money = money;
@@ -296,7 +298,7 @@ export class RegisterDocumentPageComponent {
     if (this.pendingApproval()) {
       rows.push({ label: 'Área', value: this.area() || '—' });
       const approver = this.catalog
-        .approvers(this.area())
+        .approvers(this.area(), this.company())
         .find((item) => item.id === this.approver());
       rows.push({
         label: 'Aprobador',
@@ -333,6 +335,10 @@ export class RegisterDocumentPageComponent {
 
   setCompany(code: string): void {
     this.company.set(code);
+    // El aprobador elegido debe trabajar con la nueva sociedad.
+    if (!this.catalog.approvers(this.area(), code).some((item) => item.id === this.approver())) {
+      this.approver.set('');
+    }
     this.formError.set('');
     if (this.orderState() === 'bad') this.orderState.set('idle');
   }

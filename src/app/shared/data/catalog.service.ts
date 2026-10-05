@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/auth/auth.service';
 import { SelectOption } from '../ui/select/select.component';
 
 export interface ApiCompany {
@@ -13,6 +14,8 @@ export interface ApiApprover {
   id: string;
   name: string;
   email: string;
+  /** Sociedades en las que aprueba. */
+  companyCodes: string[];
 }
 
 export interface ApiArea {
@@ -21,7 +24,7 @@ export interface ApiArea {
   approvers: ApiApprover[];
 }
 
-/** Sociedades, áreas y aprobadores desde `api/catalog`. Se cargan una sola vez. */
+/** Sociedades del usuario, áreas y aprobadores desde `api/catalog`. Se cargan una sola vez por sesión. */
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
   private readonly http = inject(HttpClient);
@@ -41,11 +44,17 @@ export class CatalogService {
     this.areas().map((area) => ({ value: area.name, label: area.name })),
   );
 
-  private loaded = false;
+  private readonly auth = inject(AuthService);
+  /** Usuario para el que se cargó el catálogo: las sociedades dependen de quién inició sesión. */
+  private loadedFor: string | null = null;
 
   load(): void {
-    if (this.loaded) return;
-    this.loaded = true;
+    const user = this.auth.user()?.username ?? null;
+    if (this.loadedFor === user) return;
+    this.loadedFor = user;
+    this.companies.set([]);
+    this.areas.set([]);
+    this.loadError.set(false);
     this.http.get<ApiCompany[]>(`${environment.apiBaseUrl}/catalog/companies`).subscribe({
       next: (companies) => this.companies.set(companies),
       error: () => this.fail(),
@@ -60,15 +69,20 @@ export class CatalogService {
     return this.companies().find((company) => company.code === code);
   }
 
-  /** Aprobadores de un área; `excludeName` quita al aprobador actual al reasignar. */
-  approvers(areaName: string, excludeName = ''): ApiApprover[] {
+  /**
+   * Aprobadores de un área que trabajan con la sociedad `companyCode` (si se indica);
+   * `excludeName` quita al aprobador actual al reasignar.
+   */
+  approvers(areaName: string, companyCode = '', excludeName = ''): ApiApprover[] {
     return (this.areas().find((area) => area.name === areaName)?.approvers ?? []).filter(
-      (approver) => approver.name !== excludeName,
+      (approver) =>
+        approver.name !== excludeName &&
+        (!companyCode || approver.companyCodes.includes(companyCode)),
     );
   }
 
-  approverOptions(areaName: string, excludeName = ''): SelectOption[] {
-    return this.approvers(areaName, excludeName).map((approver) => ({
+  approverOptions(areaName: string, companyCode = '', excludeName = ''): SelectOption[] {
+    return this.approvers(areaName, companyCode, excludeName).map((approver) => ({
       value: approver.id,
       label: approver.name,
       sub: approver.email,
@@ -76,7 +90,7 @@ export class CatalogService {
   }
 
   private fail(): void {
-    this.loaded = false;
+    this.loadedFor = null;
     this.loadError.set(true);
   }
 }

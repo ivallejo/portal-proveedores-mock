@@ -21,6 +21,14 @@ Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pend
 4. **Contraseña temporal**: los usuarios cargados por seed (o creados por el administrador) deben cambiarla en su primer ingreso (`/contrasena-temporal`). Mientras no lo hagan, el backend responde 403 `PASSWORD_CHANGE_REQUIRED` a todo lo demás.
 5. Tras el login, cada rol llega a su pantalla de inicio.
 
+## Sociedades por usuario
+
+Cada usuario trabaja con una o varias sociedades (1001 Naviera Transoceánica, 1002 Ultratag, 1003 Petral, 1007 RENADSA). El administrador trabaja con todas.
+- Registrar documentos solo ofrece las sociedades del usuario, y el aprobador elegido debe trabajar con la sociedad del documento.
+- Las bandejas de Documentos y Contabilización solo muestran documentos de sus sociedades. Lo propio (registrado por él, emitido con su RUC o asignado a él como aprobador) siempre es visible.
+- Los proveedores que se registran reciben todas las sociedades; el administrador puede restringirlas.
+- Se asignan con el seed (`"companies"`; si se omite, todas) o con `PUT /api/admin/users/{id}/companies`.
+
 ## 2. Registro de documentos
 
 Pantalla **Registrar documentos**. Archivos requeridos para comprobantes electrónicos: **XML** (UBL 2.1), **PDF**, **CDR** (obligatorio salvo que la serie empiece con «E»), más sustentos PDF opcionales.
@@ -92,7 +100,7 @@ Cada acción queda en el **historial** del documento (quién, cuándo y la nota)
 | Pantalla | Estado |
 |---|---|
 | Registrar documentos, Documentos, Contabilización | Conectadas al backend |
-| Usuarios y roles (administración) | Conectada al backend para usuarios; el resto con datos simulados |
+| Usuarios y roles (administración) | Datos simulados; el backend ya tiene la API (usuarios, rol y sociedades) pero la pantalla aún no la usa |
 | Orden de pago, Estado de factura | Datos simulados (**pendiente** backend) |
 | Workflows, Configuración | Simulados / en preparación |
 
