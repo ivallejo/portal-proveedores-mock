@@ -134,7 +134,7 @@ const COPY: Record<
             }
             @case ('req') {
               <app-callout tone="danger" heading="La contraseña no cumple los requisitos">
-                Debe tener mínimo 6 caracteres, una letra mayúscula, una minúscula y un número.
+                Debe tener mínimo 8 caracteres, una letra mayúscula, una minúscula y un número.
               </app-callout>
             }
             @case ('server') {
@@ -198,7 +198,7 @@ export class SetPasswordPageComponent {
   readonly rules = computed(() => {
     const value = this.password();
     return [
-      { label: 'Mínimo 6 caracteres', ok: value.length >= 6 },
+      { label: 'Mínimo 8 caracteres', ok: value.length >= 8 },
       { label: 'Una letra mayúscula', ok: /[A-ZÁÉÍÓÚÑ]/.test(value) },
       { label: 'Una letra minúscula', ok: /[a-záéíóúñ]/.test(value) },
       { label: 'Un número', ok: /\d/.test(value) },
