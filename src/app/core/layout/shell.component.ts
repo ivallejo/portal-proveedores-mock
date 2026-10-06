@@ -15,7 +15,9 @@ import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ProgressBarComponent } from '../../shared/ui/feedback/feedback.components';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { initials } from '../../shared/utils/format';
-import { MODULES, SETTINGS_LINKS, isLinkLive } from './navigation';
+import { IconName, ICONS } from '../../shared/ui/icon/icons';
+import { MenuService, NavItem } from './menu.service';
+import { isRouteLive } from './navigation';
 import { PageLoadingService } from './page-loading.service';
 
 @Component({
@@ -34,11 +36,12 @@ export class ShellComponent {
   readonly isDesktop = signal(typeof window === 'undefined' || window.innerWidth >= 1024);
   /** En escritorio el menú está visible por defecto; en móvil es un panel deslizable. */
   readonly navOpen = signal(this.isDesktop());
-  readonly settingsOpen = signal(this.router.url.startsWith('/configuracion'));
-
-  readonly modules = computed(() => MODULES.filter((module) => this.auth.hasAnyRole(module.roles)));
-  readonly settings = SETTINGS_LINKS;
-  readonly isLive = isLinkLive;
+  private readonly menu = inject(MenuService);
+  /** Menú de la sesión (Configuración › Roles y permisos define qué opciones ve cada rol). */
+  readonly items = computed(() => this.menu.items() ?? []);
+  /** Menús principales con submenús que están desplegados. */
+  readonly openGroups = signal<ReadonlySet<string>>(new Set());
+  readonly isLive = isRouteLive;
 
   readonly pageTitle = toSignal(
     this.router.events.pipe(
@@ -58,6 +61,13 @@ export class ShellComponent {
   });
 
   constructor() {
+    this.menu.load().subscribe((items) => {
+      // Se despliega el grupo de la pantalla actual.
+      const current = items.find((item) =>
+        item.children.some((child) => child.route && this.router.url.startsWith(child.route)),
+      );
+      if (current) this.openGroups.set(new Set([current.code]));
+    });
     // En móvil el menú se cierra al navegar.
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       if (!this.isDesktop()) this.navOpen.set(false);
@@ -75,8 +85,16 @@ export class ShellComponent {
     this.navOpen.update((open) => !open);
   }
 
-  toggleSettings(): void {
-    this.settingsOpen.update((open) => !open);
+  toggleGroup(code: string): void {
+    this.openGroups.update((open) => {
+      const next = new Set(open);
+      if (!next.delete(code)) next.add(code);
+      return next;
+    });
+  }
+
+  icon(item: NavItem): IconName {
+    return item.icon in ICONS ? (item.icon as IconName) : 'circle';
   }
 
   notImplemented(feature: string): void {

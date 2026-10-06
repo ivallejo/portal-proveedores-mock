@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
+import { MenuService } from '../../core/layout/menu.service';
 import { MODULES, isLinkLive } from '../../core/layout/navigation';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { TONE_CLASSES } from '../../shared/ui/tone';
@@ -80,7 +81,11 @@ export class HomePageComponent {
   readonly auth = inject(AuthService);
   readonly toast = inject(ToastService);
   readonly isLive = isLinkLive;
-  readonly modules = computed(() => MODULES.filter((module) => this.auth.hasAnyRole(module.roles)));
+  private readonly menu = inject(MenuService);
+  /** Tarjetas de las pantallas que están en el menú del usuario. */
+  readonly modules = computed(() =>
+    MODULES.filter((module) => this.menu.routes().has(module.path)),
+  );
   readonly isProvider = computed(() => this.auth.user()?.roles.includes('Proveedor') ?? false);
 
   iconClass(tone: keyof typeof TONE_CLASSES): string {

@@ -3,6 +3,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Role, User, normalizeRole } from '../../shared/models/models';
+import { MenuService } from '../layout/menu.service';
 
 const SESSION_KEY = 'portal-proveedores.session';
 const TOKEN_KEY = 'web-proveedores.access-token';
@@ -19,6 +20,7 @@ const LANDING: [Role, string][] = [
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly menu = inject(MenuService);
   readonly user = signal<User | null>(this.restoreSession());
   readonly isAdmin = computed(() => this.user()?.roles.includes('Administrador') ?? false);
 
@@ -54,6 +56,7 @@ export class AuthService {
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(TOKEN_KEY);
     this.user.set(null);
+    this.menu.reset();
   }
 
   /** El administrador puede entrar a todo; el resto necesita alguno de los roles. */
@@ -119,6 +122,7 @@ export class AuthService {
       mustChangePassword: response.user.mustChangePassword || undefined,
     };
     this.user.set(user);
+    this.menu.reset();
     localStorage.setItem(TOKEN_KEY, response.accessToken);
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
     return user;

@@ -63,7 +63,7 @@ src/app/
     ├── accounting/            # Contabilización (rechazar, observar)
     ├── workflows/             # Workflows de aprobación
     ├── profile/               # Mi perfil (api/profile): datos, correos con verificación, contraseña
-    └── settings/              # organization/: Sociedades y Áreas; users/: Usuarios (api/admin/users); Roles y Menús «Próximamente»
+    └── settings/              # organization/: Sociedades y Áreas; users/: Usuarios; access/: Roles y permisos y Menús
 ```
 
 Cada página es un componente de ruta. Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda que llama al servicio, `loading` enlazado a la barra superior con `PageLoadingService.bind`, skeletons, estado vacío y paginación de 10 filas.
@@ -75,11 +75,9 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 | `/login`, `/registro`, `/recuperar-contrasena` | Sin sesión | Acceso |
 | `/crear-contrasena?ruc&token`, `/cambiar-contrasena?ruc&token` | Todos | Contraseña por enlace |
 | `/inicio`, `/perfil` | Con sesión | Inicio y perfil |
-| `/orden-pago`, `/estado-factura` | Proveedor | Consultas |
-| `/documentos` | Área Usuaria | Aprobaciones |
-| `/registrar-documento` | Proveedor, Colaborador interno | Registro |
-| `/contabilizacion` | CxP | Contabilización |
-| `/configuracion/*` | Administrador | Configuración |
+| Resto de pantallas | Según el menú del rol | `menuGuard`: la ruta debe estar en `api/navigation` |
+
+**Menú dinámico:** `MenuService` carga `api/navigation` (opciones del rol, definidas en Configuración › Roles y permisos y Menús); el menú lateral, las tarjetas de Inicio y `menuGuard` salen de ahí. `navigation.ts` solo guarda la tarjeta de Inicio y el feature flag de cada pantalla por ruta (`isRouteLive`); una opción creada en Menús sin pantalla muestra «en construcción». Al guardar roles o menús se llama `MenuService.refresh()`.
 
 - El **Administrador** entra a todas las rutas.
 - La raíz (`/`) redirige a la pantalla inicial del rol. Los correos del backend enlazan a `/?ruc=…&activationToken=…` o `/?ruc=…&resetToken=…`; `rootRedirectGuard` los convierte a `/crear-contrasena` o `/cambiar-contrasena`.
@@ -112,5 +110,4 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 
 ## Pendientes
 
-- Configuración (Propuesta 4): Roles y permisos, Menús dinámicos.
 - Los listados traen hasta 100 documentos y paginan en el navegador; pasar a paginación del servidor si crece el volumen.

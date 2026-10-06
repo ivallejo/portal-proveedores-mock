@@ -1,6 +1,5 @@
 import { IconName } from '../../shared/ui/icon/icons';
 import { Tone } from '../../shared/ui/tone';
-import { Role } from '../../shared/models/models';
 import { FeatureFlag, isFeatureEnabled } from '../config/features';
 
 export interface ModuleLink {
@@ -12,7 +11,6 @@ export interface ModuleLink {
   cardIcon: IconName;
   cardTone: Tone;
   description: string;
-  roles: Role[];
   /** Funcionalidad que habilita el módulo; apagada, el menú lo marca «Pronto». */
   feature: FeatureFlag;
 }
@@ -23,7 +21,7 @@ export interface SettingsLink {
   feature?: FeatureFlag;
 }
 
-/** Módulos del portal, en el orden del menú lateral. */
+/** Pantallas del portal: tarjeta de Inicio y feature flag. Quién las ve lo define el menú del backend. */
 export const MODULES: ModuleLink[] = [
   {
     label: 'Orden de pago',
@@ -33,7 +31,6 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'purple',
     description:
       'Consulta los pagos realizados a tu empresa, los comprobantes cancelados, retenciones y detracciones.',
-    roles: ['Proveedor', 'CxP'],
     feature: 'ordenPago',
   },
   {
@@ -44,7 +41,6 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'warn',
     description:
       'Sigue cada factura desde que la recibimos hasta su pago: revisión, conformidad, observaciones y fecha programada.',
-    roles: ['Proveedor', 'CxP'],
     feature: 'estadoFactura',
   },
   {
@@ -55,7 +51,6 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'teal',
     description:
       'Revisa los documentos sin orden de compra y los documentos especiales asignados para aprobarlos, rechazarlos o reasignarlos.',
-    roles: ['Área Usuaria'],
     feature: 'documentos',
   },
   {
@@ -66,7 +61,6 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'orange',
     description:
       'Registra tus facturas con o sin orden de compra y documentos especiales, adjuntando XML, PDF y CDR.',
-    roles: ['Proveedor', 'Colaborador interno'],
     feature: 'registrarDocumento',
   },
   {
@@ -77,19 +71,28 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'success',
     description:
       'Revisa los documentos pendientes de contabilización y recházalos u obsérvalos si algo no está conforme.',
-    roles: ['CxP'],
     feature: 'contabilizacion',
   },
 ];
 
-/** Submenú «Configuración» (solo administradores). */
+/** Pantallas de Configuración y su feature flag. */
 export const SETTINGS_LINKS: SettingsLink[] = [
   { label: 'Sociedades', path: '/configuracion/sociedades', feature: 'sociedades' },
   { label: 'Áreas', path: '/configuracion/areas', feature: 'areas' },
   { label: 'Usuarios', path: '/configuracion/usuarios', feature: 'usuarios' },
-  { label: 'Roles y permisos', path: '/configuracion/roles' },
-  { label: 'Menús', path: '/configuracion/menus' },
+  { label: 'Roles y permisos', path: '/configuracion/roles', feature: 'roles' },
+  { label: 'Menús', path: '/configuracion/menus', feature: 'menus' },
 ];
+
+/**
+ * Si la pantalla de la ruta está publicada (su feature flag está encendido). Las rutas sin pantalla en el portal
+ * (opciones creadas en Configuración › Menús) se muestran como «Pronto».
+ */
+export function isRouteLive(route: string | null): boolean {
+  if (route === '/inicio') return true;
+  const link = [...MODULES, ...SETTINGS_LINKS].find((item) => item.path === route);
+  return link ? isLinkLive(link) : false;
+}
 
 /** Si la funcionalidad del enlace está habilitada; sin `feature` (opciones de Configuración sin pantalla) nunca lo está. */
 export function isLinkLive(link: { feature?: FeatureFlag }): boolean {

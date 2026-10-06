@@ -11,6 +11,8 @@ export const environment = {
     sociedades: true,
     areas: true,
     usuarios: true,
+    roles: true,
+    menus: true,
     workflows: true,
     perfil: true,
   },

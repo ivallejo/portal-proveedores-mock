@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Role } from '../../shared/models/models';
+import { MenuService } from '../layout/menu.service';
 import { AuthService } from './auth.service';
 
 /** Solo usuarios autenticados. */
@@ -26,6 +27,13 @@ export const temporaryPasswordGuard: CanActivateFn = () => {
 export const guestGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   return auth.user() ? inject(Router).parseUrl(auth.landingPath()) : true;
+};
+
+/** La pantalla debe estar en el menú del usuario (sus permisos, definidos en Roles y permisos). */
+export const menuGuard: CanActivateFn = async (_route, state) => {
+  const path = state.url.split(/[?#]/)[0];
+  if (await inject(MenuService).allows(path)) return true;
+  return inject(Router).parseUrl('/inicio');
 };
 
 /** Restringe la ruta a los roles de `data.roles` (el administrador siempre entra). */

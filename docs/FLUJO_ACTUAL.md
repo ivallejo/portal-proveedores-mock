@@ -12,6 +12,8 @@ Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pend
 | Cuentas por pagar | `ACCOUNTS_PAYABLE` | Contabiliza: rechaza u observa los documentos pendientes. |
 | Administrador | `ADMINISTRATOR` | Ve todo, administra usuarios; puede actuar como cualquiera de los anteriores. |
 
+Estos son los roles base. En **Configuración › Roles y permisos** se crean otros roles (personal interno) y se elige qué opciones del menú tiene cada uno; esas opciones son también sus permisos: quien tiene «Documentos» aprueba, «Contabilización» contabiliza y «Registrar documentos» registra. **Configuración › Menús** administra las opciones (dos niveles, ruta, ícono y orden). El Administrador siempre conserva Roles y permisos y Menús.
+
 ## 1. Acceso
 
 1. **Login** con RUC/usuario o correo y contraseña. JWT de sesión.
@@ -112,7 +114,8 @@ Cada acción queda en el **historial** del documento (quién, cuándo y la nota)
 | Usuarios (Configuración) | Conectada al backend: un rol por usuario; proveedor (RUC, razón social) o interno (DNI, nombres, área); correos, sociedades, estado (Activo, Inactivo, Bloqueado), cambio de contraseña obligatorio y enlaces de activación / recuperación |
 | Orden de pago, Estado de factura | Conectadas a SAP en línea (zconsopago y zconsfactu). Proveedor: su RUC; CxP y administrador: ingresan el RUC |
 | Sociedades, Áreas | Conectadas al backend (crear, editar, activar/desactivar) |
-| Roles y permisos, Menús, Workflows | En preparación |
+| Roles y permisos, Menús | Conectadas al backend (menú lateral dinámico) |
+| Workflows | En preparación |
 
 ## 7. Integraciones
 

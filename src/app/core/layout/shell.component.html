@@ -45,71 +45,68 @@
         </a>
 
         <div class="flex flex-col gap-1.5">
-          <a
-            routerLink="/inicio"
-            routerLinkActive="!bg-nav-active !text-white shadow-nav-active"
-            ariaCurrentWhenActive="page"
-            class="flex h-[50px] w-full items-center gap-4 rounded-l-[10px] px-4 text-[15px] font-medium text-nav-text no-underline hover:bg-white/5"
-          >
-            <app-icon name="home" [size]="22" />Inicio
-          </a>
-          @for (module of modules(); track module.path) {
-            <a
-              [routerLink]="module.path"
-              routerLinkActive="!bg-nav-active !text-white shadow-nav-active"
-              ariaCurrentWhenActive="page"
-              class="flex h-[50px] w-full items-center gap-4 rounded-l-[10px] px-4 text-[15px] font-medium text-nav-text no-underline hover:bg-white/5"
-            >
-              <app-icon [name]="module.icon" [size]="22" />{{ module.label }}
-              @if (!isLive(module)) {
-                <span
-                  class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-nav-sub"
-                  >Pronto</span
-                >
-              }
-            </a>
-          }
-
-          @if (auth.isAdmin()) {
-            <button
-              type="button"
-              class="flex h-[50px] w-full items-center gap-4 rounded-l-[10px] px-4 text-left text-[15px] font-medium text-nav-text hover:bg-white/5"
-              [class.bg-white/5]="settingsOpen()"
-              [attr.aria-expanded]="settingsOpen()"
-              (click)="toggleSettings()"
-            >
-              <app-icon name="settings" [size]="22" />Configuración
-              <app-icon
-                name="chevron-right"
-                [size]="16"
-                [stroke]="2"
-                class="mr-[18px] ml-auto transition-transform"
-                [class.rotate-90]="settingsOpen()"
-              />
-            </button>
-            @if (settingsOpen()) {
-              <div
-                role="group"
-                aria-label="Configuración"
-                class="flex flex-col gap-0.5 pt-0.5 pb-1.5"
+          @for (item of items(); track item.code) {
+            @if (item.children.length) {
+              <button
+                type="button"
+                class="flex h-[50px] w-full items-center gap-4 rounded-l-[10px] px-4 text-left text-[15px] font-medium text-nav-text hover:bg-white/5"
+                [class.bg-white/5]="openGroups().has(item.code)"
+                [attr.aria-expanded]="openGroups().has(item.code)"
+                (click)="toggleGroup(item.code)"
               >
-                @for (link of settings; track link.path) {
-                  <a
-                    [routerLink]="link.path"
-                    routerLinkActive="!bg-white/10 !text-white font-bold"
-                    ariaCurrentWhenActive="page"
-                    class="flex h-10 items-center gap-3 rounded-l-lg pr-4 pl-[54px] text-sm text-nav-sub no-underline hover:bg-white/5"
+                <app-icon [name]="icon(item)" [size]="22" />{{ item.name }}
+                <app-icon
+                  name="chevron-right"
+                  [size]="16"
+                  [stroke]="2"
+                  class="mr-[18px] ml-auto transition-transform"
+                  [class.rotate-90]="openGroups().has(item.code)"
+                />
+              </button>
+              @if (openGroups().has(item.code)) {
+                <div
+                  role="group"
+                  [attr.aria-label]="item.name"
+                  class="flex flex-col gap-0.5 pt-0.5 pb-1.5"
+                >
+                  @for (child of item.children; track child.code) {
+                    <a
+                      [routerLink]="child.route"
+                      routerLinkActive="!bg-white/10 !text-white font-bold"
+                      ariaCurrentWhenActive="page"
+                      class="flex h-10 items-center gap-3 rounded-l-lg pr-4 pl-[54px] text-sm text-nav-sub no-underline hover:bg-white/5"
+                    >
+                      <span class="size-1.5 shrink-0 rounded-full bg-nav-dot"></span
+                      >{{ child.name }}
+                      @if (!isLive(child.route)) {
+                        <span
+                          class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-nav-sub"
+                          >Pronto</span
+                        >
+                      }
+                    </a>
+                  }
+                </div>
+              }
+            } @else if (item.route) {
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="!bg-nav-active !text-white shadow-nav-active"
+                ariaCurrentWhenActive="page"
+                class="flex h-[50px] w-full items-center gap-4 rounded-l-[10px] px-4 text-[15px] font-medium text-nav-text no-underline hover:bg-white/5"
+              >
+                <app-icon [name]="icon(item)" [size]="22" />{{ item.name }}
+                @if (!isLive(item.route)) {
+                  <span
+                    class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-nav-sub"
+                    >Pronto</span
                   >
-                    <span class="size-1.5 shrink-0 rounded-full bg-nav-dot"></span>{{ link.label }}
-                    @if (!isLive(link)) {
-                      <span
-                        class="ml-auto text-[10px] rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-nav-sub"
-                        >Pronto</span
-                      >
-                    }
-                  </a>
                 }
-              </div>
+              </a>
+            }
+          } @empty {
+            @for (row of [1, 2, 3, 4]; track row) {
+              <span class="mr-[18px] h-[50px] rounded-[10px] bg-white/5" aria-hidden="true"></span>
             }
           }
         </div>
