@@ -26,10 +26,9 @@ export class WorkflowFacade {
   readonly workflowSocieties = [
     'Todas las sociedades',
     'Naviera Transoceánica S.A.',
-    'Naviera Transoceánica Perú S.A.',
-    'Ultratag S.A.',
-    'Petral S.A.',
-    'RENADSA S.A.',
+    'Petrolera Transoceánica S.A.',
+    'Naviera Petral S.A.',
+    'Representaciones Navieras y Aduaneras S.A.C.',
   ];
   readonly workflowDocumentTypes = [
     'Con Orden de Compra',

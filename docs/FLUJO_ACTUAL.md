@@ -23,7 +23,7 @@ Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pend
 
 ## Sociedades por usuario
 
-Cada usuario trabaja con una o varias sociedades (1001 Naviera Transoceánica, 1002 Ultratag, 1003 Petral, 1007 RENADSA). El administrador trabaja con todas.
+Cada usuario trabaja con una o varias sociedades (código SAP · razón social · RUC: 1001 Naviera Transoceánica S.A. · 20522163890; 1002 Petrolera Transoceánica S.A. · 20100126606; 1003 Naviera Petral S.A. · 20511922578; 1007 Representaciones Navieras y Aduaneras S.A.C. (RENADSA) · 20100245796). El administrador trabaja con todas.
 - Registrar documentos solo ofrece las sociedades del usuario, y el aprobador elegido debe trabajar con la sociedad del documento.
 - Las bandejas de Documentos y Contabilización solo muestran documentos de sus sociedades. Lo propio (registrado por él, emitido con su RUC o asignado a él como aprobador) siempre es visible.
 - Los proveedores que se registran reciben todas las sociedades; el administrador puede restringirlas.
