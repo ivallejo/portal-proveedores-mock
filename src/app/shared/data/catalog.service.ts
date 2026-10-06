@@ -8,6 +8,8 @@ export interface ApiCompany {
   code: string;
   name: string;
   ruc: string | null;
+  /** Correo donde la sociedad recibe los comprobantes electrónicos. */
+  billingEmail: string | null;
 }
 
 export interface ApiApprover {

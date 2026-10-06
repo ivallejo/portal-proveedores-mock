@@ -301,6 +301,12 @@
           [value]="company()"
           (valueChange)="setCompany($event)"
         />
+        @if (companyBillingEmail(); as email) {
+          <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+            <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+            <span class="font-medium text-body">{{ email }}</span>
+          </p>
+        }
         <div class="flex flex-col gap-2">
           <span class="field-label">Tipo de documento</span>
           <div
@@ -466,6 +472,12 @@
             [value]="company()"
             (valueChange)="setCompany($event)"
           />
+          @if (companyBillingEmail(); as email) {
+            <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+              <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+              <span class="font-medium text-body">{{ email }}</span>
+            </p>
+          }
           <div class="flex flex-col gap-2">
             <span class="field-label">Tipo de orden</span>
             <div
@@ -580,6 +592,12 @@
             [value]="company()"
             (valueChange)="setCompany($event)"
           />
+          @if (companyBillingEmail(); as email) {
+            <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+              <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+              <span class="font-medium text-body">{{ email }}</span>
+            </p>
+          }
           @if (canPettyCash()) {
             <label
               class="flex cursor-pointer items-start gap-3 rounded-xl border-2 px-4 py-3.5 transition-colors"

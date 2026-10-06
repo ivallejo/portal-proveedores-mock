@@ -163,6 +163,10 @@ export class RegisterDocumentPageComponent {
 
   readonly specialTypes = SPECIAL_DOCUMENT_TYPES;
   readonly companyOptions = this.catalog.companyOptions;
+  /** Correo de facturación de la sociedad elegida (recepción de comprobantes electrónicos). */
+  readonly companyBillingEmail = computed(
+    () => this.catalog.company(this.company())?.billingEmail ?? null,
+  );
   readonly areaOptions = this.catalog.areaOptions;
   readonly approverOptions = computed(() =>
     this.catalog.approverOptions(this.area(), this.company()),
@@ -286,6 +290,8 @@ export class RegisterDocumentPageComponent {
       },
       { label: 'Sociedad', value: this.catalog.company(this.company())?.name ?? '—' },
     ];
+    const billingEmail = this.companyBillingEmail();
+    if (billingEmail) rows.push({ label: 'Correo de facturación', value: billingEmail });
     if (this.entry() === 'oc') {
       rows.push({
         label: this.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra',
