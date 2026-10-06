@@ -181,13 +181,37 @@ export const routes: Routes = [
           ),
         ),
       },
-      settings('configuracion/sociedades', 'Sociedad', 'Sociedades receptoras de los documentos.'),
-      settings('configuracion/areas', 'Área', 'Áreas solicitantes y sus aprobadores.'),
-      settings('configuracion/centros-costo', 'Centro de costo', 'Centros de costo por sociedad.'),
+      {
+        path: 'configuracion/sociedades',
+        title: 'Sociedades · Portal de Proveedores',
+        data: { title: 'Sociedades', roles: ['Administrador'] },
+        canActivate: [roleGuard],
+        loadComponent: gated('sociedades', () =>
+          import('./features/settings/organization/companies-page.component').then(
+            (m) => m.CompaniesPageComponent,
+          ),
+        ),
+      },
+      {
+        path: 'configuracion/areas',
+        title: 'Áreas · Portal de Proveedores',
+        data: { title: 'Áreas', roles: ['Administrador'] },
+        canActivate: [roleGuard],
+        loadComponent: gated('areas', () =>
+          import('./features/settings/organization/areas-page.component').then(
+            (m) => m.AreasPageComponent,
+          ),
+        ),
+      },
       settings(
-        'configuracion/parametros',
-        'Parámetros generales',
-        'Parámetros de operación del portal.',
+        'configuracion/roles',
+        'Roles y permisos',
+        'Define qué opciones del menú puede ver cada perfil.',
+      ),
+      settings(
+        'configuracion/menus',
+        'Menús',
+        'Opciones de navegación del portal en dos niveles, con su ruta, ícono y orden.',
       ),
     ],
   },

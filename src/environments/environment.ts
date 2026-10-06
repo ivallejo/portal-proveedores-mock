@@ -8,6 +8,8 @@ export const environment = {
     documentos: true,
     registrarDocumento: true,
     contabilizacion: true,
+    sociedades: true,
+    areas: true,
     usuarios: true,
     workflows: true,
     perfil: true,

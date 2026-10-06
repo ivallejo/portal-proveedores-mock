@@ -111,7 +111,10 @@ export class ApprovalsPageComponent {
       tone: STATUS_TONE[status],
     })),
   ];
-  readonly areaOptions = this.catalog.areaOptions;
+  /** Para reasignar: áreas de la sociedad del documento. */
+  readonly areaOptions = computed(() =>
+    this.catalog.areaOptionsFor(this.detail()?.companyCode ?? ''),
+  );
   readonly approverOptions = computed(() =>
     this.catalog.approverOptions(
       this.reassignArea(),

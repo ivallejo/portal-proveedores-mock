@@ -167,7 +167,8 @@ export class RegisterDocumentPageComponent {
   readonly companyBillingEmail = computed(
     () => this.catalog.company(this.company())?.billingEmail ?? null,
   );
-  readonly areaOptions = this.catalog.areaOptions;
+  /** Las áreas dependen de la sociedad elegida. */
+  readonly areaOptions = computed(() => this.catalog.areaOptionsFor(this.company()));
   readonly approverOptions = computed(() =>
     this.catalog.approverOptions(this.area(), this.company()),
   );
@@ -341,7 +342,9 @@ export class RegisterDocumentPageComponent {
 
   setCompany(code: string): void {
     this.company.set(code);
-    // El aprobador elegido debe trabajar con la nueva sociedad.
+    // El área es de la sociedad y el aprobador debe trabajar con ella.
+    if (!this.catalog.areaOptionsFor(code).some((option) => option.value === this.area()))
+      this.area.set('');
     if (!this.catalog.approvers(this.area(), code).some((item) => item.id === this.approver())) {
       this.approver.set('');
     }

@@ -28,6 +28,8 @@ Cada usuario trabaja con una o varias sociedades (código SAP · razón social �
 - Las bandejas de Documentos y Contabilización solo muestran documentos de sus sociedades. Lo propio (registrado por él, emitido con su RUC o asignado a él como aprobador) siempre es visible.
 - Los proveedores que se registran reciben todas las sociedades; el administrador puede restringirlas.
 - Se asignan con el seed (`"companies"`; si se omite, todas) o desde Usuarios y roles.
+- **Configuración › Sociedades**: el administrador crea, edita y activa/desactiva sociedades (código SAP, razón social, RUC y correo de facturación). El correo de la sociedad recibe copia de los avisos de rechazo y observación al proveedor.
+- **Configuración › Áreas**: cada área pertenece a una sociedad (el nombre es único dentro de ella). Al registrar o reasignar solo se ofrecen las áreas de la sociedad del documento.
 
 ## 2. Registro de documentos
 
@@ -102,7 +104,8 @@ Cada acción queda en el **historial** del documento (quién, cuándo y la nota)
 | Registrar documentos, Documentos, Contabilización | Conectadas al backend |
 | Usuarios y roles (administración) | Conectada al backend: crear, editar (roles, área, sociedades), activar/desactivar y desbloquear |
 | Orden de pago, Estado de factura | Conectadas a SAP en línea (zconsopago y zconsfactu). Proveedor: su RUC; CxP y administrador: ingresan el RUC |
-| Workflows, Configuración | Simulados / en preparación |
+| Sociedades, Áreas | Conectadas al backend (crear, editar, activar/desactivar) |
+| Roles y permisos, Menús, Workflows | En preparación |
 
 ## 7. Integraciones
 

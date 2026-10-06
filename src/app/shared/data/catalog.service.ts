@@ -23,6 +23,8 @@ export interface ApiApprover {
 export interface ApiArea {
   id: string;
   name: string;
+  /** Sociedad a la que pertenece el área. */
+  companyCode: string;
   approvers: ApiApprover[];
 }
 
@@ -41,9 +43,6 @@ export class CatalogService {
       label: company.name,
       sub: company.ruc ? `RUC ${company.ruc}` : `Código ${company.code}`,
     })),
-  );
-  readonly areaOptions = computed<SelectOption[]>(() =>
-    this.areas().map((area) => ({ value: area.name, label: area.name })),
   );
 
   private readonly auth = inject(AuthService);
@@ -67,8 +66,21 @@ export class CatalogService {
     });
   }
 
+  /** Vuelve a pedir el catálogo (por ejemplo, tras editar sociedades o áreas). */
+  reload(): void {
+    this.loadedFor = null;
+    this.load();
+  }
+
   company(code: string): ApiCompany | undefined {
     return this.companies().find((company) => company.code === code);
+  }
+
+  /** Áreas (con aprobadores) de una sociedad; cada sociedad tiene sus propias áreas. */
+  areaOptionsFor(companyCode: string): SelectOption[] {
+    return this.areas()
+      .filter((area) => area.companyCode === companyCode)
+      .map((area) => ({ value: area.name, label: area.name }));
   }
 
   /**
@@ -76,7 +88,10 @@ export class CatalogService {
    * `excludeName` quita al aprobador actual al reasignar.
    */
   approvers(areaName: string, companyCode = '', excludeName = ''): ApiApprover[] {
-    return (this.areas().find((area) => area.name === areaName)?.approvers ?? []).filter(
+    const area = this.areas().find(
+      (item) => item.name === areaName && (!companyCode || item.companyCode === companyCode),
+    );
+    return (area?.approvers ?? []).filter(
       (approver) =>
         approver.name !== excludeName &&
         (!companyCode || approver.companyCodes.includes(companyCode)),

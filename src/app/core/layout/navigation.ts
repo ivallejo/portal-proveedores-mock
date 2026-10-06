@@ -84,12 +84,11 @@ export const MODULES: ModuleLink[] = [
 
 /** Submenú «Configuración» (solo administradores). */
 export const SETTINGS_LINKS: SettingsLink[] = [
-  { label: 'Sociedad', path: '/configuracion/sociedades' },
-  { label: 'Área', path: '/configuracion/areas' },
-  { label: 'Centro de costo', path: '/configuracion/centros-costo' },
-  { label: 'Usuarios y roles', path: '/configuracion/usuarios', feature: 'usuarios' },
-  { label: 'Workflows de aprobación', path: '/configuracion/workflows', feature: 'workflows' },
-  { label: 'Parámetros generales', path: '/configuracion/parametros' },
+  { label: 'Sociedades', path: '/configuracion/sociedades', feature: 'sociedades' },
+  { label: 'Áreas', path: '/configuracion/areas', feature: 'areas' },
+  { label: 'Usuarios', path: '/configuracion/usuarios', feature: 'usuarios' },
+  { label: 'Roles y permisos', path: '/configuracion/roles' },
+  { label: 'Menús', path: '/configuracion/menus' },
 ];
 
 /** Si la funcionalidad del enlace está habilitada; sin `feature` (opciones de Configuración sin pantalla) nunca lo está. */

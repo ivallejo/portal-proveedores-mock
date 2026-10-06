@@ -46,9 +46,9 @@ src/app/
 │   ├── auth/                  # AuthService, interceptor JWT, guards (auth, guest, role, rootRedirect)
 │   └── layout/                # ShellComponent (menú lateral + encabezado), MODULES/SETTINGS_LINKS, PageLoadingService
 ├── shared/
-│   ├── ui/                    # icon, badge, select, dialog, toast, feedback (callout, empty, result, loading, progress), page (header, kpi, pagination), spinner, tone
+│   ├── ui/                    # icon, badge, select, dialog, confirm-dialog, drawer (panel lateral de formularios), toast, feedback (callout, empty, result, loading, progress), page (header, kpi, pagination), spinner, tone
 │   ├── documents/             # Modelo PortalDocument, DocumentsService (HTTP), mapper backend→UI, historial
-│   ├── data/catalog.service.ts # Sociedades, áreas y aprobadores desde api/catalog
+│   ├── data/catalog.service.ts # Sociedades, áreas (por sociedad: areaOptionsFor) y aprobadores desde api/catalog; reload() tras cambios
 │   ├── data/supplier-scope.ts # RUC propio vs. RUC ingresado y rango de fechas de las consultas a SAP
 │   ├── models/models.ts       # Role, roleLabel, normalizeRole, User
 │   ├── state/mock-users.store # Usuarios mock (Perfil, Workflows)
@@ -64,7 +64,7 @@ src/app/
     ├── administration/users/  # Usuarios y roles (api/admin/users: multirol, área, sociedades, desbloqueo)
     ├── workflows/             # Workflows de aprobación
     ├── profile/               # Mi perfil
-    └── settings/              # Pantallas «Próximamente» de Configuración
+    └── settings/              # organization/: Sociedades y Áreas (api/admin/companies|areas); Roles y Menús «Próximamente»
 ```
 
 Cada página es un componente de ruta. Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda que llama al servicio, `loading` enlazado a la barra superior con `PageLoadingService.bind`, skeletons, estado vacío y paginación de 10 filas.
@@ -113,7 +113,6 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 
 ## Pendientes
 
-- Endpoints de órdenes de pago y estado de factura en el backend.
 - Endpoints de administración multirol y perfil (hoy en `MockUsersStore`).
-- Pantallas de Configuración: Sociedad, Área, Centro de costo, Parámetros generales.
+- Configuración (Propuesta 4): Mi perfil, rediseño de Usuarios, Roles y permisos, Menús dinámicos.
 - Los listados traen hasta 100 documentos y paginan en el navegador; pasar a paginación del servidor si crece el volumen.
