@@ -1,8 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { companyOptions } from '../../shared/data/catalog';
+import { SupplierScope } from '../../shared/data/supplier-scope';
+import { apiErrorMessage } from '../../shared/documents/documents.service';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
-import { EmptyStateComponent } from '../../shared/ui/feedback/feedback.components';
+import {
+  CalloutComponent,
+  EmptyStateComponent,
+} from '../../shared/ui/feedback/feedback.components';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
   KpiCardComponent,
@@ -14,19 +18,13 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { currencyTone } from '../../shared/ui/tone';
 import { formatDate, money, onlyDigits } from '../../shared/utils/format';
 import {
-  INVOICE_STATUS_TONE,
   Invoice,
   InvoiceFilters,
   InvoiceStatusService,
+  invoiceStage,
+  invoiceTone,
 } from './invoice-status.service';
 
-const DEFAULT_FILTERS: InvoiceFilters = {
-  ruc: '',
-  number: '',
-  company: '',
-  from: '2026-08-01',
-  to: '2026-09-30',
-};
 const PAGE_SIZE = 10;
 
 @Component({
@@ -40,20 +38,28 @@ const PAGE_SIZE = 10;
     IconComponent,
     SpinnerComponent,
     EmptyStateComponent,
+    CalloutComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './invoice-status-page.component.html',
 })
 export class InvoiceStatusPageComponent {
   private readonly service = inject(InvoiceStatusService);
+  readonly scope = inject(SupplierScope);
 
-  readonly draft = signal<InvoiceFilters>({ ...DEFAULT_FILTERS });
-  readonly loading = signal(true);
+  readonly draft = signal<InvoiceFilters>(this.defaults());
+  readonly loading = signal(false);
+  /** Ya se hizo al menos una búsqueda (antes no se muestra «sin resultados»). */
+  readonly searched = signal(false);
+  readonly error = signal('');
   readonly invoices = signal<Invoice[]>([]);
   readonly page = signal(1);
 
-  readonly companyOptions = companyOptions('Todas las sociedades', 'Mostrar facturas de todas');
-  readonly tone = INVOICE_STATUS_TONE;
+  readonly companyOptions = this.scope.companyOptions(
+    'Todas las sociedades',
+    'Mostrar facturas de todas',
+  );
+  readonly tone = invoiceTone;
   readonly currencyTone = currencyTone;
   readonly money = money;
   readonly formatDate = formatDate;
@@ -64,19 +70,20 @@ export class InvoiceStatusPageComponent {
   );
   readonly kpis = computed(() => {
     const list = this.invoices();
-    const count = (statuses: string[]) =>
-      String(list.filter((invoice) => statuses.includes(invoice.status)).length);
+    const count = (stage: string) =>
+      String(list.filter((invoice) => invoiceStage(invoice.status) === stage).length);
     return {
       total: String(list.length),
-      inProgress: count(['Registrada', 'En revisión', 'Aprobada']),
-      issues: count(['Observada', 'Rechazada']),
-      paid: count(['Pagada']),
+      inProgress: count('progress'),
+      issues: count('issue'),
+      paid: count('paid'),
     };
   });
 
   constructor() {
-    inject(PageLoadingService).bind(this.loading, 'Buscando facturas');
-    this.search();
+    inject(PageLoadingService).bind(this.loading, 'Consultando facturas en SAP');
+    // El proveedor ve sus facturas al entrar; CxP y el administrador primero indican el RUC.
+    if (this.scope.isProvider()) this.search();
   }
 
   setFilter<K extends keyof InvoiceFilters>(key: K, value: InvoiceFilters[K]): void {
@@ -85,7 +92,7 @@ export class InvoiceStatusPageComponent {
 
   onRuc(event: Event): void {
     const input = event.target as HTMLInputElement;
-    input.value = onlyDigits(input.value);
+    input.value = onlyDigits(input.value).slice(0, 11);
     this.setFilter('ruc', input.value);
   }
 
@@ -96,16 +103,38 @@ export class InvoiceStatusPageComponent {
   }
 
   search(): void {
+    const filters = this.draft();
+    const missing = this.scope.missingRuc(filters.ruc);
+    if (missing) return this.error.set(missing);
+    this.error.set('');
     this.loading.set(true);
-    this.service.search(this.draft()).subscribe((invoices) => {
-      this.invoices.set(invoices);
-      this.page.set(1);
-      this.loading.set(false);
+    this.service.search(filters).subscribe({
+      next: (invoices) => {
+        this.invoices.set(invoices);
+        this.page.set(1);
+        this.searched.set(true);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.invoices.set([]);
+        this.searched.set(true);
+        this.loading.set(false);
+        this.error.set(
+          apiErrorMessage(error, 'No pudimos consultar las facturas. Inténtalo en unos minutos.'),
+        );
+      },
     });
   }
 
   clear(): void {
-    this.draft.set({ ...DEFAULT_FILTERS });
-    this.search();
+    this.draft.set(this.defaults());
+    this.invoices.set([]);
+    this.searched.set(false);
+    this.error.set('');
+    if (this.scope.isProvider()) this.search();
+  }
+
+  private defaults(): InvoiceFilters {
+    return { ruc: '', number: '', company: '', ...this.scope.defaultRange() };
   }
 }

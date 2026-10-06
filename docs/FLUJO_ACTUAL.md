@@ -101,7 +101,7 @@ Cada acción queda en el **historial** del documento (quién, cuándo y la nota)
 |---|---|
 | Registrar documentos, Documentos, Contabilización | Conectadas al backend |
 | Usuarios y roles (administración) | Conectada al backend: crear, editar (roles, área, sociedades), activar/desactivar y desbloquear |
-| Orden de pago, Estado de factura | Datos simulados (**pendiente** backend) |
+| Orden de pago, Estado de factura | Conectadas a SAP en línea (zconsopago y zconsfactu). Proveedor: su RUC; CxP y administrador: ingresan el RUC |
 | Workflows, Configuración | Simulados / en preparación |
 
 ## 7. Integraciones

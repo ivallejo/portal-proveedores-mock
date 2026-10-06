@@ -33,7 +33,7 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'purple',
     description:
       'Consulta los pagos realizados a tu empresa, los comprobantes cancelados, retenciones y detracciones.',
-    roles: ['Proveedor'],
+    roles: ['Proveedor', 'CxP'],
     feature: 'ordenPago',
   },
   {
@@ -44,7 +44,7 @@ export const MODULES: ModuleLink[] = [
     cardTone: 'warn',
     description:
       'Sigue cada factura desde que la recibimos hasta su pago: revisión, conformidad, observaciones y fecha programada.',
-    roles: ['Proveedor'],
+    roles: ['Proveedor', 'CxP'],
     feature: 'estadoFactura',
   },
   {

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { companyOptions } from '../../shared/data/catalog';
+import { SupplierScope } from '../../shared/data/supplier-scope';
+import { apiErrorMessage } from '../../shared/documents/documents.service';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
 import {
+  CalloutComponent,
   EmptyStateComponent,
-  LoadingStateComponent,
 } from '../../shared/ui/feedback/feedback.components';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
@@ -16,16 +17,9 @@ import {
 import { SelectComponent } from '../../shared/ui/select/select.component';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { currencyTone } from '../../shared/ui/tone';
-import { ToastService } from '../../shared/ui/toast/toast.service';
 import { formatDate, money, onlyDigits } from '../../shared/utils/format';
 import { PaymentOrder, PaymentOrderFilters, PaymentOrdersService } from './payment-orders.service';
 
-const DEFAULT_FILTERS: PaymentOrderFilters = {
-  ruc: '',
-  company: '',
-  from: '2026-08-01',
-  to: '2026-09-30',
-};
 const PAGE_SIZE = 10;
 
 @Component({
@@ -39,7 +33,7 @@ const PAGE_SIZE = 10;
     IconComponent,
     SpinnerComponent,
     EmptyStateComponent,
-    LoadingStateComponent,
+    CalloutComponent,
     DialogComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,17 +41,21 @@ const PAGE_SIZE = 10;
 })
 export class PaymentOrdersPageComponent {
   private readonly service = inject(PaymentOrdersService);
-  private readonly toast = inject(ToastService);
+  readonly scope = inject(SupplierScope);
 
-  readonly draft = signal<PaymentOrderFilters>({ ...DEFAULT_FILTERS });
-  readonly loading = signal(true);
+  readonly draft = signal<PaymentOrderFilters>(this.defaults());
+  readonly loading = signal(false);
+  /** Ya se hizo al menos una búsqueda (antes no se muestra «sin resultados»). */
+  readonly searched = signal(false);
+  readonly error = signal('');
   readonly orders = signal<PaymentOrder[]>([]);
   readonly page = signal(1);
-  readonly selectedNumber = signal<string | null>(null);
   readonly detail = signal<PaymentOrder | null>(null);
-  readonly detailLoading = signal(false);
 
-  readonly companyOptions = companyOptions('Todas las sociedades', 'Mostrar pagos de todas');
+  readonly companyOptions = this.scope.companyOptions(
+    'Todas las sociedades',
+    'Mostrar pagos de todas',
+  );
   readonly money = money;
   readonly formatDate = formatDate;
   readonly currencyTone = currencyTone;
@@ -90,8 +88,9 @@ export class PaymentOrdersPageComponent {
   });
 
   constructor() {
-    inject(PageLoadingService).bind(this.loading, 'Buscando órdenes de pago');
-    this.search();
+    inject(PageLoadingService).bind(this.loading, 'Consultando pagos en SAP');
+    // El proveedor ve sus pagos al entrar; CxP y el administrador primero indican el RUC.
+    if (this.scope.isProvider()) this.search();
   }
 
   setFilter<K extends keyof PaymentOrderFilters>(key: K, value: PaymentOrderFilters[K]): void {
@@ -100,41 +99,51 @@ export class PaymentOrdersPageComponent {
 
   onRuc(event: Event): void {
     const input = event.target as HTMLInputElement;
-    input.value = onlyDigits(input.value);
+    input.value = onlyDigits(input.value).slice(0, 11);
     this.setFilter('ruc', input.value);
   }
 
   search(): void {
+    const filters = this.draft();
+    const missing = this.scope.missingRuc(filters.ruc);
+    if (missing) return this.error.set(missing);
+    this.error.set('');
     this.loading.set(true);
-    this.service.search(this.draft()).subscribe((orders) => {
-      this.orders.set(orders);
-      this.page.set(1);
-      this.loading.set(false);
+    this.service.search(filters).subscribe({
+      next: (orders) => {
+        this.orders.set(orders);
+        this.page.set(1);
+        this.searched.set(true);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.orders.set([]);
+        this.searched.set(true);
+        this.loading.set(false);
+        this.error.set(
+          apiErrorMessage(error, 'No pudimos consultar los pagos. Inténtalo en unos minutos.'),
+        );
+      },
     });
   }
 
   clear(): void {
-    this.draft.set({ ...DEFAULT_FILTERS });
-    this.search();
+    this.draft.set(this.defaults());
+    this.orders.set([]);
+    this.searched.set(false);
+    this.error.set('');
+    if (this.scope.isProvider()) this.search();
   }
 
   open(order: PaymentOrder): void {
-    this.selectedNumber.set(order.number);
     this.detail.set(order);
-    this.detailLoading.set(true);
-    this.service.detail(order.number).subscribe((detail) => {
-      if (this.selectedNumber() !== order.number) return;
-      this.detail.set(detail ?? order);
-      this.detailLoading.set(false);
-    });
   }
 
   close(): void {
-    this.selectedNumber.set(null);
     this.detail.set(null);
   }
 
-  download(name: string): void {
-    this.toast.download(`${name}.pdf`);
+  private defaults(): PaymentOrderFilters {
+    return { ruc: '', company: '', ...this.scope.defaultRange() };
   }
 }

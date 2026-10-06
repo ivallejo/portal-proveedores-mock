@@ -63,8 +63,10 @@ export class AuthService {
     return roles.some((role) => user.roles.includes(role));
   }
 
-  /** Cambia la contraseña de quien tiene sesión (obligatorio con clave temporal) y renueva la sesión. */
-  /** `currentPassword` se omite en el cambio forzado de la contraseña temporal. */
+  /**
+   * Cambia la contraseña de quien tiene sesión y renueva la sesión.
+   * `currentPassword` se omite en el cambio forzado de la contraseña temporal.
+   */
   changePassword(newPassword: string, currentPassword?: string): Observable<User> {
     return this.http
       .post<AuthResponse>(`${environment.apiBaseUrl}/auth/change-password`, {

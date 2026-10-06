@@ -6,8 +6,8 @@ Guía del estado real del frontend del Portal de Proveedores. Leer antes de modi
 
 Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
 
-- **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace, y **todo el flujo documental**: Registrar documentos, Documentos (aprobaciones) y Contabilización (`api/documents`, `api/catalog`), y **Usuarios y roles** (`api/admin/users`).
-- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Orden de pago, Estado de factura, Workflows y correos del perfil.
+- **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace, y **todo el flujo documental**: Registrar documentos, Documentos (aprobaciones) y Contabilización (`api/documents`, `api/catalog`), **Usuarios y roles** (`api/admin/users`), y **Orden de pago** y **Estado de factura** (`api/payment-orders`, `api/invoices`: consultas en línea a SAP; el proveedor ve su RUC, CxP y el administrador ingresan el RUC).
+- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Workflows y correos del perfil.
 - No asumir que una pantalla completa tiene persistencia en SQL Server.
 
 ## Feature flags
@@ -49,7 +49,7 @@ src/app/
 │   ├── ui/                    # icon, badge, select, dialog, toast, feedback (callout, empty, result, loading, progress), page (header, kpi, pagination), spinner, tone
 │   ├── documents/             # Modelo PortalDocument, DocumentsService (HTTP), mapper backend→UI, historial
 │   ├── data/catalog.service.ts # Sociedades, áreas y aprobadores desde api/catalog
-│   ├── data/catalog.ts        # Catálogos de prueba, solo para los módulos aún en mock
+│   ├── data/supplier-scope.ts # RUC propio vs. RUC ingresado y rango de fechas de las consultas a SAP
 │   ├── models/models.ts       # Role, roleLabel, normalizeRole, User
 │   ├── state/mock-users.store # Usuarios mock (Perfil, Workflows)
 │   └── utils/format.ts        # money, formatDate, maskEmail, initials…

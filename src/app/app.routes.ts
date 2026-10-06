@@ -99,7 +99,7 @@ export const routes: Routes = [
       {
         path: 'orden-pago',
         title: 'Orden de pago · Portal de Proveedores',
-        data: { title: 'Orden de pago', roles: ['Proveedor'] },
+        data: { title: 'Orden de pago', roles: ['Proveedor', 'CxP'] },
         canActivate: [roleGuard],
         loadComponent: gated('ordenPago', () =>
           import('./features/payment-orders/payment-orders-page.component').then(
@@ -110,7 +110,7 @@ export const routes: Routes = [
       {
         path: 'estado-factura',
         title: 'Estado de factura · Portal de Proveedores',
-        data: { title: 'Estado de factura', roles: ['Proveedor'] },
+        data: { title: 'Estado de factura', roles: ['Proveedor', 'CxP'] },
         canActivate: [roleGuard],
         loadComponent: gated('estadoFactura', () =>
           import('./features/invoice-status/invoice-status-page.component').then(
