@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Observable } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { apiErrorMessage } from '../../shared/documents/documents.service';
+import { apiErrorMessage } from '../../shared/utils/api-errors';
 import { normalizeRole, roleLabel } from '../../shared/models/models';
 import { CalloutComponent } from '../../shared/ui/feedback/feedback.components';
 import { IconComponent } from '../../shared/ui/icon/icon.component';

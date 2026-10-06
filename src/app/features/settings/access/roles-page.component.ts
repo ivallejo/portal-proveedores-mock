@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { forkJoin } from 'rxjs';
 import { MenuService } from '../../../core/layout/menu.service';
 import { PageLoadingService } from '../../../core/layout/page-loading.service';
-import { apiErrorMessage } from '../../../shared/documents/documents.service';
+import { apiErrorMessage } from '../../../shared/utils/api-errors';
 import { BadgeComponent } from '../../../shared/ui/badge/badge.component';
 import { ConfirmDialogComponent } from '../../../shared/ui/dialog/confirm-dialog.component';
 import { DrawerComponent } from '../../../shared/ui/drawer/drawer.component';

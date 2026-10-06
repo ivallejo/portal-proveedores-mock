@@ -11,7 +11,6 @@ import {
 } from '../../shared/documents/document.model';
 import {
   APPROVAL_STATUSES,
-  apiErrorMessage,
   DocumentFilters,
   DocumentsService,
 } from '../../shared/documents/documents.service';
@@ -34,6 +33,7 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { currencyTone } from '../../shared/ui/tone';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { currencyName, formatDate, money, onlyDigits } from '../../shared/utils/format';
+import { apiErrorMessage } from '../../shared/utils/api-errors';
 
 const DEFAULT_FILTERS: DocumentFilters = { ruc: '', status: '' };
 const PAGE_SIZE = 10;

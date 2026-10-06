@@ -20,7 +20,7 @@ import {
   STATUS_TONE,
   SpecialDocumentType,
 } from '../../shared/documents/document.model';
-import { DocumentsService, apiErrorMessage } from '../../shared/documents/documents.service';
+import { DocumentsService } from '../../shared/documents/documents.service';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import {
   CalloutComponent,
@@ -42,6 +42,7 @@ import {
 import { ExtraFile, FileDropComponent, FileState } from './file-drop.component';
 import { OrderInfo, OrderType, RegisterDocumentService } from './register-document.service';
 import { ElectronicDocument } from './xml-reader';
+import { apiErrorMessage } from '../../shared/utils/api-errors';
 
 type Entry = 'oc' | 'sin' | 'esp';
 type Slot = 'xml' | 'pdf' | 'cdr';
