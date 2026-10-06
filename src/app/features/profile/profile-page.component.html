@@ -1,0 +1,649 @@
+<app-page-header
+  heading="Mi perfil"
+  description="Revisa tu información de acceso y actualiza tus datos, correos y contraseña."
+/>
+
+@if (loadError()) {
+  <app-callout tone="danger" heading="No pudimos cargar tu perfil">
+    {{ loadError() }}
+    <button type="button" class="ml-1 font-bold text-primary underline" (click)="load()">
+      Reintentar
+    </button>
+  </app-callout>
+}
+
+<!-- Resumen -->
+<section
+  aria-label="Resumen del usuario"
+  class="card shrink-0 overflow-hidden p-0"
+  [attr.aria-busy]="loading()"
+>
+  <div class="bg-brand-gradient h-[104px]"></div>
+  <div class="relative -mt-11 flex flex-col gap-4 px-7 pb-6 sm:flex-row sm:items-start sm:gap-6">
+    <span
+      class="flex size-24 shrink-0 items-center justify-center rounded-full border-[5px] border-white bg-primary text-[32px] font-bold text-white"
+      >{{ avatar() }}</span
+    >
+    @if (loading()) {
+      <div class="flex grow flex-col gap-2.5 sm:pt-[62px]" aria-hidden="true">
+        <span class="skeleton h-[26px] w-[320px] max-w-full"></span>
+        <span class="skeleton h-4 w-[240px] max-w-full"></span>
+      </div>
+    } @else if (profile(); as me) {
+      <div
+        class="animate-in flex min-w-0 grow flex-col gap-4 sm:pt-[60px] lg:flex-row lg:items-center lg:justify-between"
+      >
+        <div class="flex min-w-0 flex-col gap-2">
+          <span class="truncate text-2xl font-bold tracking-tight">{{ me.displayName }}</span>
+          <span class="flex flex-wrap items-center gap-2 text-[13px]">
+            <span
+              class="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-primary-soft px-2.5 font-bold text-primary"
+            >
+              <app-icon name="shield-check" [size]="14" />{{ role().label }}
+            </span>
+            <span
+              class="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-success-soft px-2.5 font-bold text-success-text"
+            >
+              <span class="size-[7px] rounded-full bg-success"></span>Activo
+            </span>
+            <span class="text-muted tabular-nums">{{ accessId() }}</span>
+          </span>
+        </div>
+        <div class="flex shrink-0 gap-[22px] text-[13px] text-muted">
+          <span class="flex flex-col gap-[3px]"
+            >Miembro desde
+            <strong class="font-bold text-ink tabular-nums">{{
+              stamp(me.createdAtUtc, false)
+            }}</strong></span
+          >
+          <span class="w-px bg-line"></span>
+          <span class="flex flex-col gap-[3px]"
+            >Última actualización
+            <strong class="font-bold text-ink tabular-nums">{{
+              stamp(me.updatedAtUtc)
+            }}</strong></span
+          >
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
+  <!-- Información de la cuenta (solo lectura) -->
+  <aside aria-label="Información de la cuenta" class="card flex flex-col gap-[18px] p-[22px]">
+    <div class="flex items-center justify-between gap-2.5">
+      <span class="text-base font-bold">Información de la cuenta</span>
+      <span title="Solo lectura" class="text-faint"><app-icon name="lock" [size]="16" /></span>
+    </div>
+    @if (loading()) {
+      <div class="flex flex-col gap-4" aria-hidden="true">
+        @for (width of ['70%', '55%', '80%', '45%']; track $index) {
+          <div class="flex flex-col gap-2">
+            <span class="skeleton h-[11px] w-[35%]"></span>
+            <span class="skeleton h-4" [style.width]="width"></span>
+          </div>
+        }
+      </div>
+    } @else if (profile(); as me) {
+      <dl class="m-0 flex flex-col gap-3.5">
+        <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+          <dt class="eyebrow">Usuario de acceso</dt>
+          <dd class="m-0 text-[14.5px] font-medium tabular-nums">{{ accessId() }}</dd>
+        </div>
+        <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+          <dt class="eyebrow">Rol</dt>
+          <dd class="m-0 text-[14.5px] font-medium">
+            {{ role().label }}
+            @if (role().description) {
+              <span class="block text-[12.5px] font-normal text-muted">{{
+                role().description
+              }}</span>
+            }
+          </dd>
+        </div>
+        <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+          @if (me.isProvider) {
+            <dt class="eyebrow">Tipo de contribuyente</dt>
+            <dd class="m-0 text-[14.5px] font-medium">{{ taxpayerType() }}</dd>
+          } @else {
+            <dt class="eyebrow">Área</dt>
+            <dd class="m-0 text-[14.5px] font-medium">
+              {{ me.areaName ?? 'Sin área asignada' }}
+              @if (me.areaCompanyName) {
+                <span class="block text-[12.5px] font-normal text-muted">{{
+                  me.areaCompanyName
+                }}</span>
+              }
+            </dd>
+          }
+        </div>
+        <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+          <dt class="eyebrow">Estado de la cuenta</dt>
+          <dd class="m-0 text-[14.5px] font-medium">
+            Activo
+            <span class="block text-[12.5px] font-normal text-muted tabular-nums"
+              >Último cambio de contraseña: {{ stamp(me.passwordSetAtUtc) }}</span
+            >
+          </dd>
+        </div>
+        <div class="flex flex-col gap-2">
+          <dt class="eyebrow">Sociedades con acceso</dt>
+          <dd class="m-0 flex flex-col gap-2">
+            @for (company of me.companies; track company.code) {
+              <span class="flex items-center gap-2.5 rounded-[10px] bg-surface-alt px-2.5 py-2">
+                <span
+                  class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
+                  ><app-icon name="building" [size]="16"
+                /></span>
+                <span class="flex min-w-0 flex-col">
+                  <span class="truncate text-[13.5px] font-bold">{{ company.name }}</span>
+                  <span class="text-xs text-muted tabular-nums"
+                    >{{ company.code }}{{ company.ruc ? ' · RUC ' + company.ruc : ''
+                    }}{{ company.isActive ? '' : ' · Inactiva' }}</span
+                  >
+                </span>
+              </span>
+            } @empty {
+              <span class="text-[13px] text-muted">Sin sociedades asignadas.</span>
+            }
+          </dd>
+        </div>
+      </dl>
+      <p class="m-0 flex gap-2 text-[12.5px] leading-normal text-muted">
+        <app-icon name="info" [size]="16" class="mt-px shrink-0" />
+        El rol, el área y las sociedades los administra el área de Tecnología. Si necesitas un
+        cambio, contacta al administrador.
+      </p>
+    }
+  </aside>
+
+  <!-- Edición -->
+  <section aria-label="Editar perfil" class="card flex min-w-0 flex-col p-0">
+    <div
+      role="tablist"
+      aria-label="Secciones del perfil"
+      class="flex gap-1.5 overflow-x-auto border-b border-line-soft px-[22px]"
+    >
+      @for (
+        item of [
+          { key: 'datos', label: 'Datos personales' },
+          { key: 'correos', label: 'Mis correos' },
+          { key: 'clave', label: 'Contraseña' },
+        ];
+        track item.key
+      ) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="tab() === item.key"
+          class="flex h-[54px] shrink-0 items-center gap-2 border-b-[3px] px-3 text-[14.5px] whitespace-nowrap transition-colors hover:text-primary"
+          [class]="
+            tab() === item.key
+              ? 'border-primary font-bold text-primary'
+              : 'border-transparent font-medium text-muted'
+          "
+          (click)="tab.set($any(item.key)); confirmRemove.set(null)"
+        >
+          {{ item.label }}
+          @if (item.key === 'correos' && profile()?.emails?.length) {
+            <span
+              class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold"
+              [class]="tab() === 'correos' ? 'bg-primary text-white' : 'bg-surface-muted text-body'"
+              >{{ profile()?.emails?.length }}</span
+            >
+          }
+        </button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="grid grid-cols-1 gap-x-[18px] gap-y-5 p-6 sm:grid-cols-2" aria-hidden="true">
+        @for (span of [1, 1, 2, 2]; track $index) {
+          <div class="flex flex-col gap-[9px]" [class.sm:col-span-2]="span === 2">
+            <span class="skeleton h-[11px] w-[30%]"></span>
+            <span class="skeleton h-11"></span>
+          </div>
+        }
+      </div>
+    } @else if (profile(); as me) {
+      @switch (tab()) {
+        @case ('datos') {
+          <div class="animate-fade flex flex-col">
+            <div class="grid grid-cols-1 gap-[18px] p-6 sm:grid-cols-2">
+              @if (me.isProvider) {
+                <div class="flex flex-col gap-2">
+                  <span class="field-label">RUC</span>
+                  <span class="readonly-field tabular-nums">{{ me.ruc }}</span>
+                  <span class="text-[12.5px] text-muted"
+                    >Es tu usuario de acceso; no se puede modificar.</span
+                  >
+                </div>
+                <div class="flex flex-col gap-2">
+                  <span class="field-label">Tipo de contribuyente</span>
+                  <span class="readonly-field">{{ taxpayerType() }}</span>
+                </div>
+                <div class="flex flex-col gap-2 sm:col-span-2">
+                  <label for="pf-rs" class="field-label"
+                    >Razón social <span class="text-danger-text">*</span></label
+                  >
+                  <input
+                    id="pf-rs"
+                    class="field"
+                    placeholder="Nombre legal de tu empresa"
+                    maxlength="200"
+                    [value]="form().businessName"
+                    (input)="setField('businessName', $any($event.target).value)"
+                    [attr.aria-invalid]="!!errors().businessName"
+                  />
+                  <span
+                    class="text-[12.5px]"
+                    [class]="errors().businessName ? 'text-danger-text' : 'text-muted'"
+                    >{{
+                      errors().businessName ?? 'Debe coincidir con la registrada en SUNAT.'
+                    }}</span
+                  >
+                </div>
+              } @else {
+                <div class="flex flex-col gap-2">
+                  <span class="field-label">{{
+                    accessId().startsWith('DNI') ? 'DNI' : 'Usuario'
+                  }}</span>
+                  <span class="readonly-field tabular-nums">{{ me.username }}</span>
+                  <span class="text-[12.5px] text-muted"
+                    >Es tu usuario de acceso; no se puede modificar.</span
+                  >
+                </div>
+                <div class="flex flex-col gap-2">
+                  <span class="field-label">Área</span>
+                  <span class="readonly-field">{{ me.areaName ?? '—' }}</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="pf-nom" class="field-label"
+                    >Nombres <span class="text-danger-text">*</span></label
+                  >
+                  <input
+                    id="pf-nom"
+                    class="field"
+                    placeholder="Tus nombres"
+                    maxlength="100"
+                    [value]="form().firstName"
+                    (input)="setField('firstName', $any($event.target).value)"
+                    [attr.aria-invalid]="!!errors().firstName"
+                  />
+                  @if (errors().firstName; as error) {
+                    <span class="text-[12.5px] text-danger-text" role="alert">{{ error }}</span>
+                  }
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="pf-ape" class="field-label"
+                    >Apellidos <span class="text-danger-text">*</span></label
+                  >
+                  <input
+                    id="pf-ape"
+                    class="field"
+                    placeholder="Tus apellidos"
+                    maxlength="100"
+                    [value]="form().lastName"
+                    (input)="setField('lastName', $any($event.target).value)"
+                    [attr.aria-invalid]="!!errors().lastName"
+                  />
+                  @if (errors().lastName; as error) {
+                    <span class="text-[12.5px] text-danger-text" role="alert">{{ error }}</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div
+              class="mx-6 flex items-center justify-between gap-3 rounded-xl bg-surface-alt px-4 py-3.5"
+            >
+              <span class="flex min-w-0 items-center gap-2.5 text-[13.5px] text-body">
+                <app-icon name="mail" [size]="18" class="shrink-0 text-primary" />
+                <span class="truncate"
+                  >Correo principal: <strong class="text-ink">{{ primaryEmail() }}</strong></span
+                >
+              </span>
+              <button
+                type="button"
+                class="shrink-0 text-[13.5px] font-bold text-primary"
+                (click)="tab.set('correos')"
+              >
+                Administrar correos
+              </button>
+            </div>
+
+            <div
+              class="mt-[22px] flex flex-wrap items-center justify-between gap-3 rounded-b-[18px] border-t border-line-soft bg-surface-muted px-6 py-4"
+            >
+              @if (saveError()) {
+                <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+                  <app-icon name="alert-circle" [size]="16" />{{ saveError() }}
+                </span>
+              } @else if (errorCount()) {
+                <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+                  <app-icon name="alert-circle" [size]="16" />{{
+                    errorCount() === 1
+                      ? 'Revisa el campo marcado.'
+                      : 'Revisa los ' + errorCount() + ' campos marcados.'
+                  }}
+                </span>
+              } @else if (dirty()) {
+                <span class="flex items-center gap-2 text-[13px] text-warning-text">
+                  <span class="size-2 rounded-full bg-warning"></span>Tienes cambios sin guardar
+                </span>
+              } @else {
+                <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+              }
+              <div class="flex gap-2.5">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  [disabled]="!dirty() || saving()"
+                  (click)="discard()"
+                >
+                  Descartar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="!dirty() || saving()"
+                  [attr.aria-busy]="saving()"
+                  (click)="save()"
+                >
+                  @if (saving()) {
+                    <app-spinner [size]="16" /> Guardando…
+                  } @else {
+                    <app-icon name="check" [size]="16" /> Guardar cambios
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        @case ('correos') {
+          <div class="animate-fade flex flex-col gap-3.5 p-6">
+            <div class="flex flex-col gap-0.5">
+              <span class="text-base font-bold">Mis correos</span>
+              <span class="text-[13px] text-muted"
+                >El correo principal recibe las notificaciones del portal y los enlaces de
+                recuperación de contraseña.</span
+              >
+            </div>
+
+            @for (email of me.emails; track email.id) {
+              <div
+                class="grid grid-cols-[40px_minmax(0,1fr)] items-center gap-3 rounded-xl border px-3.5 py-3 sm:grid-cols-[40px_minmax(0,1fr)_auto]"
+                [class]="
+                  email.isPrimary ? 'border-primary-line bg-primary-tint' : 'border-line bg-white'
+                "
+              >
+                <span
+                  class="flex size-10 items-center justify-center rounded-[10px] border border-primary-line bg-white text-primary"
+                  ><app-icon name="mail" [size]="18"
+                /></span>
+                <span class="flex min-w-0 flex-col gap-1">
+                  <span class="truncate text-sm font-bold">{{ email.email }}</span>
+                  <span class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <span
+                      class="inline-flex h-[22px] items-center rounded-full bg-surface-muted px-2 font-bold text-body"
+                      >{{ emailTypeLabel(email.type) }}</span
+                    >
+                    @if (email.isPrimary) {
+                      <span
+                        class="inline-flex h-[22px] items-center gap-1 rounded-full bg-warning-soft px-2 font-bold text-warning-text"
+                        ><app-icon name="star" [size]="12" />Principal</span
+                      >
+                    }
+                    <span
+                      class="inline-flex h-[22px] items-center rounded-full px-2 font-bold"
+                      [class]="
+                        email.isVerified
+                          ? 'bg-success-soft text-success-text'
+                          : 'bg-warning-soft text-warning-text'
+                      "
+                      >{{ email.isVerified ? 'Verificado' : 'Pendiente de verificación' }}</span
+                    >
+                    <span class="text-muted tabular-nums"
+                      >Registrado {{ stamp(email.createdAtUtc, false) }}</span
+                    >
+                  </span>
+                </span>
+                <span class="col-span-2 flex flex-wrap items-center gap-1.5 sm:col-span-1">
+                  @if (!email.isVerified) {
+                    <button
+                      type="button"
+                      class="btn btn-outline"
+                      [disabled]="!!busyEmail()"
+                      [attr.aria-busy]="busyEmail() === email.id"
+                      (click)="resend(email)"
+                    >
+                      @if (busyEmail() === email.id) {
+                        <app-spinner [size]="16" /> Enviando…
+                      } @else {
+                        Reenviar verificación
+                      }
+                    </button>
+                  }
+                  @if (!email.isPrimary) {
+                    <button
+                      type="button"
+                      class="btn btn-tint"
+                      [disabled]="!email.isVerified || !!busyEmail()"
+                      [title]="
+                        email.isVerified
+                          ? 'Usar como correo principal'
+                          : 'Verifica el correo antes de hacerlo principal'
+                      "
+                      (click)="makePrimary(email)"
+                    >
+                      Hacer principal
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="flex size-[38px] items-center justify-center rounded-[9px] border border-line bg-white hover:bg-surface-alt disabled:cursor-not-allowed"
+                    [class]="email.isPrimary ? 'text-faint' : 'text-danger-text'"
+                    [disabled]="email.isPrimary || !!busyEmail()"
+                    [attr.aria-label]="'Eliminar ' + email.email"
+                    [title]="
+                      email.isPrimary
+                        ? 'El correo principal no se puede eliminar'
+                        : 'Eliminar correo'
+                    "
+                    (click)="askRemove(email)"
+                  >
+                    <app-icon name="trash" [size]="16" />
+                  </button>
+                </span>
+              </div>
+            }
+
+            @if (confirmRemove(); as pending) {
+              <div
+                role="alertdialog"
+                aria-label="Confirmar eliminación"
+                class="animate-in flex flex-wrap items-center justify-between gap-3 rounded-xl border border-danger-line bg-danger-tint px-3.5 py-3"
+              >
+                <span class="text-[13.5px] text-danger-deep"
+                  >¿Eliminar <strong>{{ pending.email }}</strong> de tu perfil?</span
+                >
+                <span class="flex gap-2">
+                  <button type="button" class="btn btn-secondary" (click)="confirmRemove.set(null)">
+                    Cancelar
+                  </button>
+                  <button type="button" class="btn btn-danger" (click)="remove()">Eliminar</button>
+                </span>
+              </div>
+            }
+
+            <div
+              class="flex flex-col gap-2.5 rounded-[14px] border-[1.5px] border-dashed border-primary-line bg-primary-tint/50 px-4 py-3.5"
+            >
+              <label for="pf-new-mail" class="text-sm font-bold">Agregar correo</label>
+              <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2.5">
+                <input
+                  id="pf-new-mail"
+                  type="email"
+                  class="field"
+                  placeholder="nombre@empresa.com"
+                  maxlength="320"
+                  [value]="newEmail()"
+                  (input)="newEmail.set($any($event.target).value); emailError.set('')"
+                  (keydown.enter)="addEmail()"
+                  [attr.aria-invalid]="!!emailError()"
+                />
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [attr.aria-busy]="adding()"
+                  [disabled]="adding()"
+                  (click)="addEmail()"
+                >
+                  @if (adding()) {
+                    <app-spinner [size]="16" /> Agregando…
+                  } @else {
+                    <app-icon name="plus" [size]="16" /> Agregar
+                  }
+                </button>
+              </div>
+              <div role="radiogroup" aria-label="Tipo de correo" class="flex flex-wrap gap-1.5">
+                @for (type of emailTypes; track type.value) {
+                  <button
+                    type="button"
+                    role="radio"
+                    [attr.aria-checked]="newType() === type.value"
+                    class="h-8 rounded-full border px-3 text-[13px] font-bold"
+                    [class]="
+                      newType() === type.value
+                        ? 'border-primary bg-primary-soft text-primary'
+                        : 'border-line bg-white text-body'
+                    "
+                    (click)="newType.set(type.value)"
+                  >
+                    {{ type.label }}
+                  </button>
+                }
+              </div>
+              @if (emailError()) {
+                <span role="alert" class="text-[12.5px] text-danger-text">{{ emailError() }}</span>
+              }
+              <span class="text-[12.5px] text-muted"
+                >Te enviaremos un enlace para verificar el nuevo correo.</span
+              >
+            </div>
+          </div>
+        }
+
+        @case ('clave') {
+          <div
+            class="animate-fade grid grid-cols-1 items-start gap-6 p-6 md:grid-cols-[minmax(0,1fr)_280px]"
+          >
+            <form
+              class="flex flex-col gap-4"
+              novalidate
+              (submit)="$event.preventDefault(); changePassword()"
+            >
+              <div class="flex flex-col gap-0.5">
+                <span class="text-base font-bold">Cambiar contraseña</span>
+                <span class="text-[13px] text-muted tabular-nums"
+                  >Último cambio: {{ stamp(me.passwordSetAtUtc) }}</span
+                >
+              </div>
+              @if (passwordDone()) {
+                <app-callout tone="success" heading="¡Contraseña actualizada!">
+                  Úsala la próxima vez que ingreses al portal.
+                </app-callout>
+              }
+              @if (!me.mustChangePassword) {
+                <app-password-field
+                  inputId="pf-c0"
+                  label="Contraseña actual"
+                  placeholder="Tu contraseña actual"
+                  autocomplete="current-password"
+                  [invalid]="!!passwordErrors().current"
+                  [(value)]="current"
+                />
+                @if (passwordErrors().current; as error) {
+                  <span role="alert" class="-mt-2 text-[12.5px] text-danger-text">{{ error }}</span>
+                }
+              }
+              <app-password-field
+                inputId="pf-c1"
+                label="Nueva contraseña"
+                placeholder="Nueva contraseña"
+                autocomplete="new-password"
+                [invalid]="!!passwordErrors().rules"
+                [(value)]="password"
+              />
+              <app-password-field
+                inputId="pf-c2"
+                label="Confirmar nueva contraseña"
+                placeholder="Confirmar nueva contraseña"
+                autocomplete="new-password"
+                [invalid]="!!passwordErrors().mismatch"
+                [(value)]="confirmation"
+              />
+              @if (passwordErrors().mismatch) {
+                <span role="alert" class="-mt-2 text-[12.5px] text-danger-text"
+                  >Las contraseñas no coinciden.</span
+                >
+              }
+              <button
+                type="submit"
+                class="btn btn-primary self-start"
+                [disabled]="passwordSaving()"
+                [attr.aria-busy]="passwordSaving()"
+              >
+                @if (passwordSaving()) {
+                  <app-spinner [size]="16" /> Actualizando…
+                } @else {
+                  <app-icon name="key" [size]="16" /> Actualizar contraseña
+                }
+              </button>
+            </form>
+
+            <div
+              class="flex flex-col gap-2.5 rounded-[14px] border border-primary-line bg-primary-tint p-4"
+              aria-live="polite"
+            >
+              <span class="text-[13.5px] font-bold">Tu nueva contraseña debe tener</span>
+              @for (rule of rules(); track rule.label) {
+                <span
+                  class="flex items-center gap-2 text-[13px] font-medium"
+                  [class]="
+                    rule.ok
+                      ? 'text-[#15803D]'
+                      : passwordErrors().rules
+                        ? 'text-danger-text'
+                        : 'text-muted'
+                  "
+                >
+                  <app-icon
+                    [name]="rule.ok ? 'check' : 'circle'"
+                    [size]="16"
+                    [stroke]="rule.ok ? 2.6 : 1.8"
+                  />{{ rule.label }}
+                </span>
+              }
+              <span class="my-1 h-px bg-primary-line"></span>
+              <span class="flex flex-col gap-1.5">
+                <span class="text-xs text-muted">Seguridad</span>
+                <span class="grid grid-cols-4 gap-1">
+                  @for (level of [1, 2, 3, 4]; track level) {
+                    <span
+                      class="h-1.5 rounded-full"
+                      [class]="level <= strength() ? strengthColor() : 'bg-line'"
+                    ></span>
+                  }
+                </span>
+                <span class="text-[12.5px] font-bold">{{ strengthLabel() }}</span>
+              </span>
+            </div>
+          </div>
+        }
+      }
+    }
+  </section>
+</div>

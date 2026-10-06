@@ -37,12 +37,16 @@ export const roleGuard: CanActivateFn = (route) => {
 
 /**
  * Los correos del backend enlazan a la raíz con `?ruc=…&activationToken=…`
- * o `?ruc=…&resetToken=…`. Se redirige a la pantalla de contraseña que corresponde.
+ * o `?ruc=…&resetToken=…`, y la verificación de correos con `?emailToken=…`.
+ * Se redirige a la pantalla que corresponde.
  */
 export const rootRedirectGuard: CanActivateFn = (route) => {
   const router = inject(Router);
   const auth = inject(AuthService);
-  const { ruc, activationToken, resetToken } = route.queryParams;
+  const { ruc, activationToken, resetToken, emailToken } = route.queryParams;
+  if (emailToken) {
+    return router.createUrlTree(['/verificar-correo'], { queryParams: { token: emailToken } });
+  }
   if (ruc && activationToken) {
     auth.logout();
     return router.createUrlTree(['/crear-contrasena'], {

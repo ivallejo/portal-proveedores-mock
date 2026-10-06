@@ -76,6 +76,15 @@ export class AuthService {
       .pipe(map((response) => this.startSession(response)));
   }
 
+  /** Mi perfil cambió el nombre o el correo principal: se refleja en el encabezado. */
+  updateIdentity(name: string, email: string): void {
+    const current = this.user();
+    if (!current) return;
+    const updated = { ...current, name, email };
+    this.user.set(updated);
+    localStorage.setItem(SESSION_KEY, JSON.stringify(updated));
+  }
+
   /** El backend exigió cambiar la contraseña (403 PASSWORD_CHANGE_REQUIRED): se actualiza la sesión local. */
   markPasswordChangeRequired(): void {
     const current = this.user();

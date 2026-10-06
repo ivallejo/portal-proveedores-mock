@@ -85,6 +85,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'verificar-correo',
+    title: 'Verificar correo · Portal de Proveedores',
+    loadComponent: () =>
+      import('./features/auth/pages/verify-email-page.component').then(
+        (m) => m.VerifyEmailPageComponent,
+      ),
+  },
+  {
     path: '',
     component: ShellComponent,
     canActivate: [authGuard],

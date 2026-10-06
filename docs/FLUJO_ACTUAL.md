@@ -21,6 +21,13 @@ Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pend
 4. **Contraseña temporal**: los usuarios cargados por seed (o creados por el administrador) deben cambiarla en su primer ingreso (`/contrasena-temporal`). Mientras no lo hagan, el backend responde 403 `PASSWORD_CHANGE_REQUIRED` a todo lo demás.
 5. Tras el login, cada rol llega a su pantalla de inicio.
 
+## Mi perfil
+
+Cada usuario ve su resumen (rol, área, sociedades con acceso) y administra:
+- **Datos personales**: el proveedor edita su razón social; el personal interno, nombres y apellidos. El usuario de acceso (RUC o DNI), el rol, el área y las sociedades los administra el administrador.
+- **Mis correos**: agrega correos (Trabajo, Facturación o Personal). Cada correo nuevo recibe un enlace de verificación (24 h; se puede reenviar). Solo un correo verificado puede ser **principal** (recibe las notificaciones y la recuperación de contraseña) y servir para ingresar. El principal no se elimina.
+- **Contraseña**: pide la actual; mínimo 8 caracteres con mayúscula, minúscula y número.
+
 ## Sociedades por usuario
 
 Cada usuario trabaja con una o varias sociedades (código SAP · razón social · RUC: 1001 Naviera Transoceánica S.A. · 20522163890; 1002 Petrolera Transoceánica S.A. · 20100126606; 1003 Naviera Petral S.A. · 20511922578; 1007 Representaciones Navieras y Aduaneras S.A.C. (RENADSA) · 20100245796). El administrador trabaja con todas.

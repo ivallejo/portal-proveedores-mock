@@ -233,6 +233,17 @@
   .field[aria-invalid='true'] {
     border-color: #e04848;
   }
+  /* Dato de solo lectura con la misma altura que un campo. */
+  .readonly-field {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    background: var(--color-surface-alt);
+    color: var(--color-body);
+    font-size: 14px;
+  }
   .field-label {
     font-size: 12px;
     font-weight: 700;

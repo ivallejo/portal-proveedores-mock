@@ -7,7 +7,7 @@ Guía del estado real del frontend del Portal de Proveedores. Leer antes de modi
 Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
 
 - **Con backend real**: login (JWT), registro online (validación de RUC en SAP y envío del enlace), recuperación de contraseña, creación y cambio de contraseña por enlace, y **todo el flujo documental**: Registrar documentos, Documentos (aprobaciones) y Contabilización (`api/documents`, `api/catalog`), **Usuarios y roles** (`api/admin/users`), y **Orden de pago** y **Estado de factura** (`api/payment-orders`, `api/invoices`: consultas en línea a SAP; el proveedor ve su RUC, CxP y el administrador ingresan el RUC).
-- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Workflows y correos del perfil.
+- **Con servicios mock** (misma forma que tendrá la API, respuestas con `delay`): Workflows.
 - No asumir que una pantalla completa tiene persistencia en SQL Server.
 
 ## Feature flags
@@ -51,7 +51,7 @@ src/app/
 │   ├── data/catalog.service.ts # Sociedades, áreas (por sociedad: areaOptionsFor) y aprobadores desde api/catalog; reload() tras cambios
 │   ├── data/supplier-scope.ts # RUC propio vs. RUC ingresado y rango de fechas de las consultas a SAP
 │   ├── models/models.ts       # Role, roleLabel, normalizeRole, User
-│   ├── state/mock-users.store # Usuarios mock (Perfil, Workflows)
+│   ├── state/mock-users.store # Usuarios mock (Workflows)
 │   └── utils/format.ts        # money, formatDate, maskEmail, initials…
 └── features/
     ├── auth/                  # login, registro, recuperar contraseña, crear/cambiar contraseña
@@ -63,7 +63,7 @@ src/app/
     ├── accounting/            # Contabilización (rechazar, observar)
     ├── administration/users/  # Usuarios y roles (api/admin/users: multirol, área, sociedades, desbloqueo)
     ├── workflows/             # Workflows de aprobación
-    ├── profile/               # Mi perfil
+    ├── profile/               # Mi perfil (api/profile): datos, correos con verificación, contraseña
     └── settings/              # organization/: Sociedades y Áreas (api/admin/companies|areas); Roles y Menús «Próximamente»
 ```
 
@@ -113,6 +113,5 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 
 ## Pendientes
 
-- Endpoints de administración multirol y perfil (hoy en `MockUsersStore`).
-- Configuración (Propuesta 4): Mi perfil, rediseño de Usuarios, Roles y permisos, Menús dinámicos.
+- Configuración (Propuesta 4): rediseño de Usuarios, Roles y permisos, Menús dinámicos.
 - Los listados traen hasta 100 documentos y paginan en el navegador; pasar a paginación del servidor si crece el volumen.
