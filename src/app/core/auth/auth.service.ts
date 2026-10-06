@@ -35,15 +35,16 @@ export class AuthService {
     );
   }
 
+  /** La cuenta del enlace: `ruc` (proveedor) o `user` (personal interno). */
   confirmPasswordReset(
-    ruc: string,
+    account: { ruc?: string; user?: string },
     token: string,
     newPassword: string,
     purpose: 'activation' | 'password-reset',
   ): Observable<void> {
     const endpoint = purpose === 'activation' ? 'activation/confirm' : 'password-reset/confirm';
     return this.http.post<void>(`${environment.apiBaseUrl}/auth/${endpoint}`, {
-      ruc,
+      ...account,
       token,
       newPassword,
     });

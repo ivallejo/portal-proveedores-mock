@@ -33,7 +33,8 @@ const COPY: Record<
     title: 'Crea tu contraseña',
     button: 'Registrar',
     doneTitle: '¡Contraseña registrada!',
-    doneText: 'Tu cuenta quedó activa. Ya puedes ingresar al portal con tu RUC y tu contraseña.',
+    doneText:
+      'Tu cuenta quedó activa. Ya puedes ingresar al portal con tu usuario y tu contraseña.',
   },
   reset: {
     heading: 'Actualiza tu',
@@ -79,8 +80,9 @@ const COPY: Record<
       } @else if (!done()) {
         <form class="animate-fade flex flex-col gap-5" (submit)="submit($event)" novalidate>
           <app-auth-heading icon="lock" [heading]="copy().title">
-            Define la contraseña con la que ingresarás al portal con el RUC
-            <strong class="text-ink tabular-nums">{{ ruc }}</strong
+            Define la contraseña con la que ingresarás al portal con
+            {{ ruc ? 'el RUC' : 'el usuario' }}
+            <strong class="text-ink tabular-nums">{{ ruc || user }}</strong
             >.
           </app-auth-heading>
 
@@ -183,9 +185,11 @@ export class SetPasswordPageComponent {
 
   private readonly mode: Mode =
     this.route.snapshot.data['mode'] === 'reset' ? 'reset' : 'activation';
+  /** Proveedor: RUC. Personal interno: su usuario (DNI). */
   readonly ruc = this.route.snapshot.queryParamMap.get('ruc') ?? '';
+  readonly user = this.route.snapshot.queryParamMap.get('user') ?? '';
   private readonly token = this.route.snapshot.queryParamMap.get('token') ?? '';
-  readonly linkValid = /^\d{11}$/.test(this.ruc) && this.token.length > 0;
+  readonly linkValid = (/^\d{11}$/.test(this.ruc) || this.user.length > 0) && this.token.length > 0;
   readonly copy = signal(COPY[this.mode]);
 
   readonly password = signal('');
@@ -214,7 +218,7 @@ export class SetPasswordPageComponent {
     this.busy.set(true);
     this.auth
       .confirmPasswordReset(
-        this.ruc,
+        { ruc: this.ruc || undefined, user: this.user || undefined },
         this.token,
         this.password(),
         this.mode === 'activation' ? 'activation' : 'password-reset',

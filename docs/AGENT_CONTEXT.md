@@ -61,10 +61,9 @@ src/app/
     ├── approvals/             # Documentos (aprobar, rechazar, reasignar)
     ├── register-document/     # Registro Con OC, Sin OC y Documentos especiales; lector de XML UBL
     ├── accounting/            # Contabilización (rechazar, observar)
-    ├── administration/users/  # Usuarios y roles (api/admin/users: multirol, área, sociedades, desbloqueo)
     ├── workflows/             # Workflows de aprobación
     ├── profile/               # Mi perfil (api/profile): datos, correos con verificación, contraseña
-    └── settings/              # organization/: Sociedades y Áreas (api/admin/companies|areas); Roles y Menús «Próximamente»
+    └── settings/              # organization/: Sociedades y Áreas; users/: Usuarios (api/admin/users); Roles y Menús «Próximamente»
 ```
 
 Cada página es un componente de ruta. Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda que llama al servicio, `loading` enlazado a la barra superior con `PageLoadingService.bind`, skeletons, estado vacío y paginación de 10 filas.
@@ -113,5 +112,5 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 
 ## Pendientes
 
-- Configuración (Propuesta 4): rediseño de Usuarios, Roles y permisos, Menús dinámicos.
+- Configuración (Propuesta 4): Roles y permisos, Menús dinámicos.
 - Los listados traen hasta 100 documentos y paginan en el navegador; pasar a paginación del servidor si crece el volumen.

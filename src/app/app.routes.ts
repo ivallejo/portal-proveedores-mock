@@ -169,12 +169,12 @@ export const routes: Routes = [
       },
       {
         path: 'configuracion/usuarios',
-        title: 'Usuarios y roles · Portal de Proveedores',
-        data: { title: 'Usuarios y roles', roles: ['Administrador'] },
+        title: 'Usuarios · Portal de Proveedores',
+        data: { title: 'Usuarios', roles: ['Administrador'] },
         canActivate: [roleGuard],
         loadComponent: gated('usuarios', () =>
-          import('./features/administration/users/pages/admin-users.component').then(
-            (m) => m.AdminUsersComponent,
+          import('./features/settings/users/users-page.component').then(
+            (m) => m.UsersPageComponent,
           ),
         ),
       },

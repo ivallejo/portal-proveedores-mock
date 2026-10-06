@@ -36,27 +36,29 @@ export const roleGuard: CanActivateFn = (route) => {
 };
 
 /**
- * Los correos del backend enlazan a la raíz con `?ruc=…&activationToken=…`
- * o `?ruc=…&resetToken=…`, y la verificación de correos con `?emailToken=…`.
+ * Los correos del backend enlazan a la raíz con `?ruc=…&activationToken=…` o
+ * `?ruc=…&resetToken=…` (personal interno: `user=…` en lugar de `ruc=…`), y la verificación de correos con `?emailToken=…`.
  * Se redirige a la pantalla que corresponde.
  */
 export const rootRedirectGuard: CanActivateFn = (route) => {
   const router = inject(Router);
   const auth = inject(AuthService);
-  const { ruc, activationToken, resetToken, emailToken } = route.queryParams;
+  const { ruc, user, activationToken, resetToken, emailToken } = route.queryParams;
+  // Proveedor: ?ruc=…; personal interno: ?user=… (su DNI).
+  const account = ruc ? { ruc } : user ? { user } : null;
   if (emailToken) {
     return router.createUrlTree(['/verificar-correo'], { queryParams: { token: emailToken } });
   }
-  if (ruc && activationToken) {
+  if (account && activationToken) {
     auth.logout();
     return router.createUrlTree(['/crear-contrasena'], {
-      queryParams: { ruc, token: activationToken },
+      queryParams: { ...account, token: activationToken },
     });
   }
-  if (ruc && resetToken) {
+  if (account && resetToken) {
     auth.logout();
     return router.createUrlTree(['/cambiar-contrasena'], {
-      queryParams: { ruc, token: resetToken },
+      queryParams: { ...account, token: resetToken },
     });
   }
   return router.parseUrl(auth.user() ? auth.landingPath() : '/login');

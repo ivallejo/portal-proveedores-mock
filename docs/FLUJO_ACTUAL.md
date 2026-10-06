@@ -18,7 +18,7 @@ Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pend
    - 5 intentos fallidos bloquean la cuenta 15 minutos (HTTP 429). Límite de 10 solicitudes por minuto por IP.
 2. **Registro online** (proveedores): se valida el RUC contra SAP y se envía un enlace de activación al correo para crear la contraseña.
 3. **Recuperar contraseña**: la respuesta es siempre genérica (no revela si el usuario existe); se envía un enlace por correo.
-4. **Contraseña temporal**: los usuarios cargados por seed (o creados por el administrador) deben cambiarla en su primer ingreso (`/contrasena-temporal`). Mientras no lo hagan, el backend responde 403 `PASSWORD_CHANGE_REQUIRED` a todo lo demás.
+4. **Alta por el administrador**: la cuenta nueva recibe un enlace de activación en su correo principal (24 h) para crear su contraseña; el personal interno ingresa con su DNI. **Contraseña temporal**: los usuarios del seed (o a quienes el administrador les pide cambiarla) la cambian en su ingreso (`/contrasena-temporal`). Mientras no lo hagan, el backend responde 403 `PASSWORD_CHANGE_REQUIRED` a todo lo demás.
 5. Tras el login, cada rol llega a su pantalla de inicio.
 
 ## Mi perfil
@@ -109,7 +109,7 @@ Cada acción queda en el **historial** del documento (quién, cuándo y la nota)
 | Pantalla | Estado |
 |---|---|
 | Registrar documentos, Documentos, Contabilización | Conectadas al backend |
-| Usuarios y roles (administración) | Conectada al backend: crear, editar (roles, área, sociedades), activar/desactivar y desbloquear |
+| Usuarios (Configuración) | Conectada al backend: un rol por usuario; proveedor (RUC, razón social) o interno (DNI, nombres, área); correos, sociedades, estado (Activo, Inactivo, Bloqueado), cambio de contraseña obligatorio y enlaces de activación / recuperación |
 | Orden de pago, Estado de factura | Conectadas a SAP en línea (zconsopago y zconsfactu). Proveedor: su RUC; CxP y administrador: ingresan el RUC |
 | Sociedades, Áreas | Conectadas al backend (crear, editar, activar/desactivar) |
 | Roles y permisos, Menús, Workflows | En preparación |
