@@ -115,6 +115,5 @@ Cada página es un componente de ruta. Patrón de las pantallas de consulta: fil
 
 - Endpoints de órdenes de pago y estado de factura en el backend.
 - Endpoints de administración multirol y perfil (hoy en `MockUsersStore`).
-- Quitar `shared/data/catalog.ts` cuando Orden de pago y Estado de factura tengan backend.
 - Pantallas de Configuración: Sociedad, Área, Centro de costo, Parámetros generales.
 - Los listados traen hasta 100 documentos y paginan en el navegador; pasar a paginación del servidor si crece el volumen.
