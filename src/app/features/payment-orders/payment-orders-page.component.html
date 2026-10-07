@@ -403,10 +403,9 @@
 
     <div
       dialog-footer
-      class="flex flex-wrap items-center justify-between gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-[18px] sm:px-8"
+      class="flex flex-wrap items-center justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-[18px] sm:px-8 print:hidden"
     >
-      <span class="text-[13px] text-muted">Monto pagado = importe − retención − detracción.</span>
-      <div class="flex gap-2.5 print:hidden">
+      <div class="flex gap-2.5">
         <button type="button" class="btn btn-secondary" (click)="close()">Cerrar</button>
         <button
           type="button"
