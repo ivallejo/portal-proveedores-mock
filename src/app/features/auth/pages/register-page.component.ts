@@ -227,6 +227,9 @@ export class RegisterPageComponent {
             title: 'Usuario ya registrado',
             text: `${err.error?.message ?? 'Este RUC ya tiene una cuenta.'} Si olvidaste tu contraseña, usa la opción «¿Olvidaste tu contraseña?».`,
           });
+        } else if (err.status === 400 && err.error?.message) {
+          // El RUC existe en SAP pero falta un dato para registrarlo (por ejemplo, el correo).
+          this.lookupError.set({ title: 'No podemos registrar este RUC', text: err.error.message });
         } else if (err.status === 0 || err.status >= 500) {
           this.lookupError.set({
             title: 'No pudimos validar el RUC',
