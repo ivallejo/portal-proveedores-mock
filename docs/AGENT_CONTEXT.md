@@ -46,7 +46,7 @@ src/app/
 │   ├── auth/                  # AuthService, interceptor JWT, guards (auth, guest, role, rootRedirect)
 │   └── layout/                # ShellComponent (menú lateral + encabezado), MODULES/SETTINGS_LINKS, PageLoadingService
 ├── shared/
-│   ├── ui/                    # icon, badge, select, dialog, confirm-dialog, drawer (panel lateral de formularios), toast, feedback (callout, empty, result, loading, progress), page (header, kpi, pagination), spinner, tone
+│   ├── ui/                    # icon, badge, select, date-range (rango de fechas, Propuesta E), dialog, confirm-dialog, drawer (panel lateral de formularios), toast, feedback (callout, empty, result, loading, progress), page (header, kpi, pagination), spinner, tone
 │   ├── documents/             # Modelo PortalDocument, DocumentsService (HTTP), mapper backend→UI, historial
 │   ├── data/catalog.service.ts # Sociedades, áreas (por sociedad: areaOptionsFor) y aprobadores desde api/catalog; reload() tras cambios
 │   ├── data/supplier-scope.ts # RUC propio vs. RUC ingresado y rango de fechas de las consultas a SAP

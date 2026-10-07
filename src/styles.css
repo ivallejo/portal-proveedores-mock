@@ -383,3 +383,11 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Listas con desplazamiento horizontal sin barra visible (atajos del calendario). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

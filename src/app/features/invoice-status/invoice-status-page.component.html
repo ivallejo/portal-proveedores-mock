@@ -7,7 +7,7 @@
   aria-label="Filtros de búsqueda"
   class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]"
 >
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1.35fr_1fr_1fr]">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1.25fr_1.6fr]">
     <div class="flex flex-col gap-2">
       <label for="ef-ruc" class="field-label">RUC del proveedor</label>
       @if (scope.isProvider()) {
@@ -56,26 +56,12 @@
       [value]="draft().company"
       (valueChange)="setFilter('company', $event)"
     />
-    <div class="flex flex-col gap-2">
-      <label for="ef-from" class="field-label">Fecha de emisión desde</label>
-      <input
-        id="ef-from"
-        type="date"
-        class="field"
-        [value]="draft().from"
-        (change)="setFilter('from', $any($event.target).value)"
-      />
-    </div>
-    <div class="flex flex-col gap-2">
-      <label for="ef-to" class="field-label">Fecha de emisión hasta</label>
-      <input
-        id="ef-to"
-        type="date"
-        class="field"
-        [value]="draft().to"
-        (change)="setFilter('to', $any($event.target).value)"
-      />
-    </div>
+    <app-date-range
+      label="Fecha de emisión"
+      [maxDays]="maxDays"
+      [value]="range()"
+      (valueChange)="setRange($event)"
+    />
   </div>
   <div class="flex flex-wrap items-center justify-between gap-4 border-t border-line-soft pt-4">
     <span class="text-[13px] text-muted"

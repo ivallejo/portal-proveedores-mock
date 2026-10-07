@@ -8,6 +8,7 @@ import {
   CalloutComponent,
   EmptyStateComponent,
 } from '../../shared/ui/feedback/feedback.components';
+import { DateRange, DateRangeComponent } from '../../shared/ui/date-range/date-range.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import {
   KpiCardComponent,
@@ -22,10 +23,14 @@ import { PaymentOrder, PaymentOrderFilters, PaymentOrdersService } from './payme
 
 const PAGE_SIZE = 10;
 
+/** Igual que el backend (PaymentQueryService.MaxRangeDays). */
+const MAX_RANGE_DAYS = 3 * 366;
+
 @Component({
   selector: 'app-payment-orders-page',
   imports: [
     PageHeaderComponent,
+    DateRangeComponent,
     PaginationComponent,
     KpiCardComponent,
     SelectComponent,
@@ -91,6 +96,14 @@ export class PaymentOrdersPageComponent {
     inject(PageLoadingService).bind(this.loading, 'Consultando pagos en SAP');
     // El proveedor ve sus pagos al entrar; CxP y el administrador primero indican el RUC.
     if (this.scope.isProvider()) this.search();
+  }
+
+  /** Rango máximo de la consulta a SAP (3 años, como valida el backend). */
+  readonly maxDays = MAX_RANGE_DAYS;
+  readonly range = computed<DateRange>(() => ({ from: this.draft().from, to: this.draft().to }));
+
+  setRange(range: DateRange): void {
+    this.draft.update((draft) => ({ ...draft, from: range.from, to: range.to }));
   }
 
   setFilter<K extends keyof PaymentOrderFilters>(key: K, value: PaymentOrderFilters[K]): void {

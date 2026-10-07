@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
 import { normalizeRole } from './shared/models/models';
+import { daysBetween } from './shared/ui/date-range/date-range.component';
 import { parseUblDocument } from './features/register-document/xml-reader';
 
 describe('App', () => {
@@ -26,6 +27,14 @@ describe('normalizeRole', () => {
     expect(normalizeRole('ADMINISTRATOR')).toBe('Administrador');
     expect(normalizeRole('Proveedor')).toBe('Proveedor');
     expect(normalizeRole('desconocido')).toBeNull();
+  });
+});
+
+describe('daysBetween', () => {
+  it('counts both ends of the range, across months', () => {
+    expect(daysBetween('2026-10-06', '2026-10-06')).toBe(1);
+    expect(daysBetween('2026-09-09', '2026-09-18')).toBe(10);
+    expect(daysBetween('2026-09-30', '2026-10-06')).toBe(7);
   });
 });
 

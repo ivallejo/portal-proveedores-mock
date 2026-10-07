@@ -1,0 +1,312 @@
+<span [id]="labelId" class="field-label">{{ label() }}</span>
+<button
+  type="button"
+  class="flex h-11 w-full min-w-0 items-center gap-2.5 rounded-[10px] border bg-white pr-2.5 pl-3 text-left text-ink transition-[border-color,box-shadow]"
+  [class]="
+    open()
+      ? 'border-primary shadow-[0_0_0_3px_rgba(22,104,227,0.14)]'
+      : invalid()
+        ? 'border-[#E04848]'
+        : 'border-field'
+  "
+  aria-haspopup="dialog"
+  [attr.aria-expanded]="open()"
+  [attr.aria-labelledby]="labelId"
+  (click)="toggle()"
+>
+  <app-icon name="calendar" [size]="18" class="shrink-0 text-primary" />
+  @if (hasValue()) {
+    <span
+      class="flex min-w-0 grow items-center gap-2 text-sm font-medium whitespace-nowrap tabular-nums"
+    >
+      <span class="truncate">{{ fromLabel() }}</span>
+      <app-icon name="arrow-right" [size]="15" [stroke]="2" class="shrink-0 text-faint" />
+      <span class="truncate">{{ toLabel() }}</span>
+    </span>
+    <span
+      class="flex h-6 shrink-0 items-center rounded-full bg-primary-soft px-2 text-xs font-bold text-primary"
+      >{{ appliedDays() }}</span
+    >
+  } @else {
+    <span class="grow text-sm text-faint">{{ placeholder() }}</span>
+  }
+</button>
+
+@if (open()) {
+  @if (layout() === 'mobile') {
+    <!-- Móvil: hoja inferior con un mes -->
+    <div class="animate-fade fixed inset-0 z-50 bg-[rgba(14,42,92,0.45)]" (click)="cancel()"></div>
+    <div
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="labelId + '-sheet'"
+      class="animate-in fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col overflow-y-auto rounded-t-3xl bg-white shadow-pop-up"
+    >
+      <div class="flex justify-center pt-2">
+        <span class="h-[5px] w-10 rounded-full bg-field"></span>
+      </div>
+      <div class="flex items-center justify-between px-4 pt-2 pb-1">
+        <span [id]="labelId + '-sheet'" class="text-lg font-bold">{{ label() }}</span>
+        <button
+          type="button"
+          class="flex size-10 items-center justify-center rounded-[10px] bg-[#F3F4F6] text-label"
+          aria-label="Cerrar"
+          (click)="cancel()"
+        >
+          <app-icon name="x" [size]="18" [stroke]="2" />
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-2 px-4 py-2">
+        <span
+          class="flex flex-col gap-0.5 rounded-xl border-[1.5px] bg-surface-alt px-3 py-2"
+          [class]="!pending() ? 'border-primary' : 'border-transparent'"
+        >
+          <span class="eyebrow text-[11px]">Desde</span>
+          <span class="text-sm font-bold tabular-nums" [class.text-faint]="!draft().from">{{
+            fromTile()
+          }}</span>
+        </span>
+        <span
+          class="flex flex-col gap-0.5 rounded-xl border-[1.5px] bg-surface-alt px-3 py-2"
+          [class]="pending() ? 'border-primary' : 'border-transparent'"
+        >
+          <span class="eyebrow text-[11px]">Hasta</span>
+          <span class="text-sm font-bold tabular-nums" [class.text-faint]="!draft().to">{{
+            toTile()
+          }}</span>
+        </span>
+      </div>
+      <div class="px-4 pt-1.5 pb-1">
+        <div role="group" aria-label="Atajos" class="no-scrollbar flex gap-2 overflow-x-auto">
+          @for (preset of presets(); track preset.label) {
+            <button
+              type="button"
+              class="h-[34px] shrink-0 rounded-full border px-3 text-[13px] whitespace-nowrap"
+              [class]="
+                preset.on
+                  ? 'border-primary bg-primary-soft font-bold text-primary'
+                  : 'border-field bg-white font-medium text-label'
+              "
+              [attr.aria-pressed]="preset.on"
+              (click)="usePreset(preset)"
+            >
+              {{ preset.label }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="flex justify-center px-4 pt-2 pb-1">
+        <ng-container
+          *ngTemplateOutlet="calendar; context: { $implicit: months()[0], index: 0, cell: 46 }"
+        />
+      </div>
+      @if (tooLong()) {
+        <p class="m-0 px-4 text-center text-[13px] text-danger-text">{{ draftHint() }}</p>
+      }
+      <div class="flex gap-2.5 border-t border-line-soft px-4 pt-3 pb-6">
+        <button type="button" class="btn btn-secondary flex-1" (click)="clear()">Limpiar</button>
+        <button
+          type="button"
+          class="btn btn-primary flex-[2]"
+          [disabled]="!canApply()"
+          (click)="apply()"
+        >
+          Aplicar
+          @if (draftDays() && !tooLong()) {
+            <span class="rounded-full bg-white/20 px-2 py-0.5 text-xs">{{ draftHint() }}</span>
+          }
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- Escritorio y tablet: panel bajo el campo -->
+    <div
+      role="dialog"
+      aria-label="Elegir rango de fechas"
+      class="animate-in absolute top-full z-40 mt-2 overflow-hidden rounded-[18px] border border-line bg-white shadow-[0_24px_60px_rgba(14,42,92,0.18)]"
+      [class]="alignRight() ? 'right-0' : 'left-0'"
+    >
+      <div class="flex" [class.flex-col]="layout() === 'tablet'">
+        @if (layout() === 'desktop') {
+          <div
+            class="flex w-[184px] shrink-0 flex-col gap-0.5 border-r border-line-soft bg-surface-alt px-2.5 py-4"
+          >
+            <span class="eyebrow px-2.5 pb-2 text-[11px]">Atajos</span>
+            @for (preset of presets(); track preset.label) {
+              <button
+                type="button"
+                class="flex h-[38px] items-center justify-between rounded-[9px] px-2.5 text-left text-[13.5px] hover:bg-[#F1F5FB]"
+                [class]="
+                  preset.on ? 'bg-primary-soft font-bold text-primary' : 'font-medium text-label'
+                "
+                [attr.aria-pressed]="preset.on"
+                (click)="usePreset(preset)"
+              >
+                {{ preset.label }}
+                @if (preset.on) {
+                  <app-icon name="check" [size]="15" [stroke]="2.6" />
+                }
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="flex flex-col gap-2 px-5 pt-4 pb-1">
+            <span class="eyebrow text-[11px]">Atajos</span>
+            <div role="group" aria-label="Atajos" class="no-scrollbar flex gap-2 overflow-x-auto">
+              @for (preset of presets(); track preset.label) {
+                <button
+                  type="button"
+                  class="h-[34px] shrink-0 rounded-full border px-3 text-[13px] whitespace-nowrap"
+                  [class]="
+                    preset.on
+                      ? 'border-primary bg-primary-soft font-bold text-primary'
+                      : 'border-field bg-white font-medium text-label'
+                  "
+                  [attr.aria-pressed]="preset.on"
+                  (click)="usePreset(preset)"
+                >
+                  {{ preset.label }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+        <div class="flex flex-col">
+          <div class="flex justify-center gap-7 px-5 pt-[18px] pb-2.5">
+            @for (month of months(); track month.key; let i = $index) {
+              <ng-container
+                *ngTemplateOutlet="calendar; context: { $implicit: month, index: i, cell: 40 }"
+              />
+            }
+          </div>
+          <div
+            class="flex items-center justify-between gap-3.5 border-t border-line-soft px-5 py-3.5"
+          >
+            <div class="flex min-w-0 items-center gap-2.5">
+              <span class="text-[13.5px] font-bold whitespace-pre tabular-nums">{{
+                draftText()
+              }}</span>
+              @if (draftHint()) {
+                <span
+                  class="flex h-6 items-center rounded-full px-2 text-xs font-bold whitespace-nowrap"
+                  [class]="
+                    tooLong() ? 'bg-danger-tint text-danger-text' : 'bg-primary-soft text-primary'
+                  "
+                  >{{ draftHint() }}</span
+                >
+              }
+            </div>
+            <div class="flex shrink-0 gap-2">
+              <button
+                type="button"
+                class="h-10 rounded-[10px] px-3 text-sm text-muted hover:bg-page"
+                (click)="clear()"
+              >
+                Limpiar
+              </button>
+              <button type="button" class="btn btn-secondary h-10 font-medium" (click)="cancel()">
+                Cancelar
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary h-10"
+                [disabled]="!canApply()"
+                (click)="apply()"
+              >
+                Aplicar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
+
+<!-- Un mes del calendario: cabecera con navegación y grilla de días. -->
+<ng-template #calendar let-month let-index="index" let-cell="cell">
+  <div class="flex flex-col gap-2">
+    <div class="flex h-9 items-center justify-between">
+      @if (index === 0) {
+        <button
+          type="button"
+          class="flex size-[34px] items-center justify-center rounded-[10px] border border-line bg-white text-label hover:bg-[#EEF3FB]"
+          aria-label="Mes anterior"
+          (click)="previousMonth()"
+        >
+          <app-icon name="chevron-left" [size]="16" [stroke]="2.2" />
+        </button>
+      } @else {
+        <span class="w-[34px]"></span>
+      }
+      <span class="text-[15px] font-bold">{{ month.title }}</span>
+      @if (index === months().length - 1) {
+        <button
+          type="button"
+          class="flex size-[34px] items-center justify-center rounded-[10px] border border-line bg-white text-label hover:bg-[#EEF3FB] disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Mes siguiente"
+          [disabled]="!canGoNext()"
+          (click)="nextMonth()"
+        >
+          <app-icon name="chevron-right" [size]="16" [stroke]="2.2" />
+        </button>
+      } @else {
+        <span class="w-[34px]"></span>
+      }
+    </div>
+    <div
+      role="grid"
+      class="grid gap-y-0.5"
+      [style.grid-template-columns]="'repeat(7, ' + (cell + 2) + 'px)'"
+      [attr.aria-label]="month.title"
+    >
+      @for (weekday of weekdays; track weekday.label) {
+        <span
+          class="flex h-[30px] items-center justify-center text-xs font-bold"
+          [class]="weekday.weekend ? 'text-faint' : 'text-muted'"
+          >{{ weekday.label }}</span
+        >
+      }
+      @for (day of month.cells; track $index) {
+        <div class="relative flex items-center justify-center" [style.height.px]="cell">
+          @if (day) {
+            <span
+              class="absolute inset-y-0.5 left-0 w-1/2"
+              [class.bg-primary-soft]="day.bandLeft"
+            ></span>
+            <span
+              class="absolute inset-y-0.5 right-0 w-1/2"
+              [class.bg-primary-soft]="day.bandRight"
+            ></span>
+            <button
+              type="button"
+              class="relative rounded-full border-[1.5px] text-[13.5px] tabular-nums transition-colors enabled:hover:shadow-[inset_0_0_0_1.5px_#9DBDF3] disabled:cursor-not-allowed"
+              [style.width.px]="cell - 2"
+              [style.height.px]="cell - 2"
+              [class]="
+                day.isEnd
+                  ? 'border-primary bg-primary font-bold text-white'
+                  : day.disabled
+                    ? 'border-transparent text-[#B8C0CC]'
+                    : day.inRange
+                      ? 'border-transparent font-medium text-[#0E3E9E]'
+                      : day.isToday
+                        ? 'border-primary font-bold text-ink'
+                        : day.weekend
+                          ? 'border-transparent font-medium text-[#5A6A86]'
+                          : 'border-transparent font-medium text-ink'
+              "
+              [disabled]="day.disabled"
+              [attr.aria-pressed]="day.isEnd"
+              [attr.aria-label]="day.label"
+              (click)="pick(day)"
+              (mouseenter)="enter(day)"
+            >
+              {{ day.day }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</ng-template>
