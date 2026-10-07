@@ -391,3 +391,16 @@
     display: none;
   }
 }
+
+/* Impresión: el diálogo bloquea el scroll del body; al imprimir debe fluir en varias páginas. */
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+  body {
+    overflow: visible !important;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

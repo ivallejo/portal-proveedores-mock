@@ -1,7 +1,7 @@
-<div class="flex min-h-screen bg-page text-ink">
+<div class="flex min-h-screen bg-page text-ink print:block print:min-h-0 print:bg-white">
   @if (navOpen() && !isDesktop()) {
     <div
-      class="animate-fade fixed inset-0 z-40 bg-[rgba(9,22,52,0.5)] lg:hidden"
+      class="animate-fade fixed inset-0 z-40 bg-[rgba(9,22,52,0.5)] lg:hidden print:hidden"
       aria-hidden="true"
       (click)="navOpen.set(false)"
     ></div>
@@ -10,7 +10,7 @@
   @if (navOpen()) {
     <nav
       aria-label="Menú principal"
-      class="bg-nav-gradient fixed inset-y-0 left-0 z-50 w-[264px] shrink-0 overflow-hidden lg:sticky lg:top-0 lg:z-auto lg:h-screen"
+      class="bg-nav-gradient fixed inset-y-0 left-0 z-50 w-[264px] shrink-0 overflow-hidden lg:sticky lg:top-0 lg:z-auto lg:h-screen print:hidden"
       [class.animate-fade]="!isDesktop()"
     >
       <svg
@@ -116,7 +116,7 @@
 
   <div class="flex min-w-0 grow flex-col">
     <header
-      class="sticky top-0 z-30 flex h-[68px] shrink-0 items-center justify-between gap-3 border-b border-line bg-white px-4 sm:px-10"
+      class="sticky top-0 z-30 flex h-[68px] shrink-0 items-center justify-between gap-3 border-b border-line bg-white px-4 sm:px-10 print:hidden"
     >
       <div class="flex min-w-0 items-center gap-3.5">
         <button
@@ -186,12 +186,12 @@
     </header>
 
     @if (loading.label(); as label) {
-      <div class="sticky top-[68px] z-20 h-0">
+      <div class="sticky top-[68px] z-20 h-0 print:hidden">
         <app-progress-bar [label]="label" />
       </div>
     }
 
-    <main class="flex grow flex-col gap-5 px-4 py-6 sm:px-10 sm:py-8">
+    <main class="flex grow flex-col gap-5 px-4 py-6 sm:px-10 sm:py-8 print:p-0">
       <router-outlet />
     </main>
   </div>

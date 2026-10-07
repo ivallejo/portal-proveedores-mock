@@ -23,7 +23,7 @@ let nextId = 0;
   host: { '(document:keydown.escape)': 'closed.emit()' },
   template: `
     <div
-      class="animate-fade fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[rgba(14,42,92,0.55)] px-3 py-6 sm:px-6 sm:pt-16"
+      class="animate-fade fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[rgba(14,42,92,0.55)] px-3 py-6 sm:px-6 sm:pt-16 print:static print:block print:overflow-visible print:bg-transparent print:p-0"
       (click)="onBackdrop($event)"
     >
       <div
@@ -31,7 +31,7 @@ let nextId = 0;
         aria-modal="true"
         [attr.aria-labelledby]="titleId"
         [attr.aria-busy]="busy()"
-        class="animate-pop flex w-full flex-col overflow-hidden rounded-[20px] bg-white shadow-dialog"
+        class="animate-pop flex w-full flex-col overflow-hidden rounded-[20px] bg-white shadow-dialog print:max-w-none! print:animate-none print:rounded-none print:shadow-none"
         [style.max-width.px]="width()"
       >
         <div
@@ -59,7 +59,7 @@ let nextId = 0;
           </div>
           <button
             type="button"
-            class="flex size-11 shrink-0 items-center justify-center rounded-[10px] bg-[#F3F4F6] text-label hover:bg-line"
+            class="flex size-11 shrink-0 items-center justify-center rounded-[10px] bg-[#F3F4F6] text-label hover:bg-line print:hidden"
             [attr.aria-label]="closeLabel()"
             (click)="closed.emit()"
           >

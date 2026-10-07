@@ -1,11 +1,12 @@
 <app-page-header
+  class="print:hidden"
   heading="Orden de pago"
   description="Consulta los pagos realizados a tu empresa por cada sociedad, con el detalle de los comprobantes cancelados, retenciones y detracciones."
 />
 
 <section
   aria-label="Filtros de búsqueda"
-  class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]"
+  class="card relative z-10 print:hidden flex flex-col gap-4 px-6 py-[22px]"
 >
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1.2fr_1.6fr]">
     <div class="flex flex-col gap-2">
@@ -74,10 +75,10 @@
 </section>
 
 @if (error()) {
-  <app-callout tone="danger">{{ error() }}</app-callout>
+  <app-callout class="print:hidden" tone="danger">{{ error() }}</app-callout>
 }
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3 print:hidden">
   <app-kpi-card
     label="Órdenes de pago"
     icon="file-text"
@@ -103,7 +104,7 @@
 
 <section
   aria-label="Órdenes de pago"
-  class="card flex grow flex-col overflow-hidden"
+  class="print:hidden card flex grow flex-col overflow-hidden"
   [attr.aria-busy]="loading()"
 >
   <div class="overflow-x-auto">
@@ -215,6 +216,11 @@
 
     @if (detailTotals(); as totals) {
       <div class="animate-fade flex flex-col gap-5 px-5 pt-[22px] pb-6 sm:px-8">
+        <p class="m-0 hidden text-xs text-muted print:block">
+          Portal de Proveedores · {{ order.providerName }} (RUC {{ order.providerRuc }}) · impreso
+          el
+          {{ printedAt() }}
+        </p>
         <div
           class="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_1.3fr]"
         >
@@ -251,10 +257,12 @@
 
         <div class="flex flex-col gap-3">
           <h3 class="m-0 text-base font-bold">Comprobantes pagados</h3>
-          <div class="flex max-h-[520px] flex-col gap-3.5 overflow-y-auto pr-1">
+          <div
+            class="flex max-h-[520px] flex-col gap-3.5 overflow-y-auto pr-1 print:max-h-none print:overflow-visible"
+          >
             @for (doc of order.documents; track doc.number; let j = $index) {
               <article
-                class="animate-in shrink-0 overflow-hidden rounded-[14px] border border-[#DCE3EE]"
+                class="animate-in shrink-0 overflow-hidden rounded-[14px] border border-[#DCE3EE] print:animate-none print:break-inside-avoid"
                 [style.animation-delay.ms]="j * 60"
               >
                 <div
@@ -386,7 +394,17 @@
       class="flex flex-wrap items-center justify-between gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-[18px] sm:px-8"
     >
       <span class="text-[13px] text-muted">Monto pagado = importe − retención − detracción.</span>
-      <button type="button" class="btn btn-secondary" (click)="close()">Cerrar</button>
+      <div class="flex gap-2.5 print:hidden">
+        <button type="button" class="btn btn-secondary" (click)="close()">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          title="Desde la ventana de impresión también puedes guardarla como PDF"
+          (click)="print()"
+        >
+          <app-icon name="printer" [size]="18" />Imprimir orden de pago
+        </button>
+      </div>
     </div>
   </app-dialog>
 }

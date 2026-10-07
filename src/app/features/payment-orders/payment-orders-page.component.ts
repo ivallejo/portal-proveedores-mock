@@ -18,7 +18,7 @@ import {
 import { SelectComponent } from '../../shared/ui/select/select.component';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { currencyTone } from '../../shared/ui/tone';
-import { formatDate, money, onlyDigits } from '../../shared/utils/format';
+import { formatDate, money, nowStamp, onlyDigits } from '../../shared/utils/format';
 import { PaymentOrder, PaymentOrderFilters, PaymentOrdersService } from './payment-orders.service';
 
 const PAGE_SIZE = 10;
@@ -146,6 +146,16 @@ export class PaymentOrdersPageComponent {
     this.searched.set(false);
     this.error.set('');
     if (this.scope.isProvider()) this.search();
+  }
+
+  /** Fecha y hora que se imprime en el detalle. */
+  readonly printedAt = signal('');
+
+  /** Imprime el detalle de la orden (desde la ventana de impresión también se guarda como PDF). */
+  print(): void {
+    this.printedAt.set(nowStamp());
+    // Se espera un ciclo para que la fecha se pinte antes de abrir la impresión.
+    setTimeout(() => window.print());
   }
 
   open(order: PaymentOrder): void {
