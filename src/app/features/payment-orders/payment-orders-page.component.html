@@ -133,7 +133,10 @@
             <span class="skeleton h-3 w-[70%]"></span>
             <span class="skeleton h-6 w-[80%] rounded-full"></span>
             <span class="flex justify-end"><span class="skeleton h-3 w-[70%]"></span></span>
-            <span class="flex justify-end"><span class="skeleton size-9 rounded-lg"></span></span>
+            <span class="flex justify-end gap-1.5"
+              ><span class="skeleton size-9 rounded-lg"></span
+              ><span class="skeleton size-9 rounded-lg"></span
+            ></span>
           </div>
         }
       } @else {
@@ -167,6 +170,15 @@
                 (click)="open(order)"
               >
                 <app-icon name="eye" [size]="18" />
+              </button>
+              <button
+                type="button"
+                class="flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
+                title="Imprimir orden de pago"
+                [attr.aria-label]="'Imprimir orden de pago ' + order.number"
+                (click)="printOrder(order)"
+              >
+                <app-icon name="printer" [size]="18" />
               </button>
             </div>
           </div>

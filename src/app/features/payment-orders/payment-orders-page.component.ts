@@ -158,6 +158,13 @@ export class PaymentOrdersPageComponent {
     setTimeout(() => window.print());
   }
 
+  /** Desde el listado: abre la orden solo para imprimirla y la cierra al terminar. */
+  printOrder(order: PaymentOrder): void {
+    this.open(order);
+    window.addEventListener('afterprint', () => this.close(), { once: true });
+    this.print();
+  }
+
   open(order: PaymentOrder): void {
     this.detail.set(order);
   }
