@@ -192,7 +192,8 @@
     }
 
     <main class="flex grow flex-col gap-5 px-4 py-6 sm:px-10 sm:py-8 print:p-0">
-      <router-outlet />
+      <!-- Oculto: si no, el gap del main agrega un espacio vacío antes de cada página. -->
+      <router-outlet class="hidden" />
     </main>
   </div>
 </div>
