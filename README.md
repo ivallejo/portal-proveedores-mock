@@ -7,6 +7,10 @@ Frontend Angular 20 + Tailwind CSS 4 del Portal de Proveedores de Naviera Transo
 - Node.js 20 o superior.
 - npm 10 o superior.
 
+## Levantar todo (backend + frontend)
+
+Desde el repo del backend, clonado al lado de este: `scripts/dev-up.sh` (SQL Server, API y este frontend con un solo comando).
+
 ## Instalación y arranque
 
 ```bash
