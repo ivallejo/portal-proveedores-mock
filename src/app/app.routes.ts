@@ -1,11 +1,11 @@
 import { Type, inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { AUTH_ROUTES, authGuard, roleGuard, rootRedirectGuard } from './features/auth';
-import { menuGuard } from './core/layout/menu.guard';
+import { menuGuard } from './features/menus';
 import { FeatureFlag } from './core/config/feature-flag';
 import { FEATURE_FLAGS } from './core/config/feature-flags.token';
 import { isFeatureEnabled } from './core/config/is-feature-enabled';
-import { ShellComponent } from './core/layout/shell.component';
+import { AppShellComponent } from './core/layout/app-shell/app-shell.component';
 
 const underConstruction = () =>
   import('./features/under-construction/under-construction-page.component').then(
@@ -40,7 +40,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: ShellComponent,
+    component: AppShellComponent,
     canActivate: [authGuard],
     children: [
       {
@@ -169,10 +169,8 @@ export const routes: Routes = [
         title: 'Menús · Portal de Proveedores',
         data: { title: 'Menús' },
         canActivate: [menuGuard],
-        loadComponent: gated('menus', () =>
-          import('./features/settings/access/menus-page.component').then(
-            (m) => m.MenusPageComponent,
-          ),
+        loadChildren: gatedRoutes('menus', () =>
+          import('./features/menus').then((m) => m.MENUS_ROUTES),
         ),
       },
       // Opciones creadas en Configuración › Menús que aún no tienen pantalla.

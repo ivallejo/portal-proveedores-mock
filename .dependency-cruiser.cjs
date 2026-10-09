@@ -6,7 +6,7 @@
  * Las reglas por capa se aplican a las features ya migradas a la estructura hexagonal (MIGRATED_FEATURES);
  * cada paso del plan agrega la feature que migra. Al terminar, la lista cubre todas las features.
  */
-const MIGRATED_FEATURES = ['societies', 'areas', 'auth'];
+const MIGRATED_FEATURES = ['societies', 'areas', 'auth', 'menus'];
 
 const APP = '^src/app';
 const migrated = MIGRATED_FEATURES.length ? `(${MIGRATED_FEATURES.join('|')})` : '(?!)';
@@ -79,6 +79,14 @@ module.exports = {
         path: `${APP}/features/[^/]+/`,
         pathNot: [`${APP}/features/$1/`, `${APP}/features/[^/]+/index\\.ts$`],
       },
+    },
+    {
+      name: 'core-uses-feature-public-api',
+      comment:
+        'core compone la app con la API pública de las features (index.ts), nunca con sus archivos internos.',
+      severity: 'error',
+      from: { path: `${APP}/core/` },
+      to: { path: `${APP}/features/[^/]+/`, pathNot: `${APP}/features/[^/]+/index\\.ts$` },
     },
     {
       name: 'no-cycles-in-migrated-features',

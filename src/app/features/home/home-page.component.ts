@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MenuService } from '../../core/layout/menu.service';
 import { FEATURE_FLAGS } from '../../core/config/feature-flags.token';
-import { MODULES, ModuleLink, isLinkLive } from '../../core/layout/navigation';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { TONE_CLASSES } from '../../shared/ui/tone/tone-classes';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { SessionFacade } from '../auth';
+import { MODULES, ModuleLink, SessionMenuFacade, isLinkLive } from '../menus';
 
 @Component({
   selector: 'app-home-page',
@@ -83,7 +82,7 @@ export class HomePageComponent {
   readonly toast = inject(ToastService);
   private readonly featureFlags = inject(FEATURE_FLAGS);
   readonly isLive = (module: ModuleLink) => isLinkLive(this.featureFlags, module);
-  private readonly menu = inject(MenuService);
+  private readonly menu = inject(SessionMenuFacade);
   /** Tarjetas de las pantallas que están en el menú del usuario. */
   readonly modules = computed(() =>
     MODULES.filter((module) => this.menu.routes().has(module.path)),

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { MenuService } from '../../../core/layout/menu.service';
+import { SessionMenuFacade } from '../../menus';
 import { PageLoadingService } from '../../../core/layout/page-loading.service';
 import { apiErrorMessage } from '../../../core/http/api-error-message';
 import { BadgeComponent } from '../../../shared/ui/badge/badge.component';
@@ -54,7 +54,7 @@ const ROLE_TONES: Record<string, Tone> = {
 export class RolesPageComponent {
   private readonly api = inject(AccessService);
   private readonly toast = inject(ToastService);
-  private readonly menu = inject(MenuService);
+  private readonly menu = inject(SessionMenuFacade);
 
   readonly statusOptions = statusOptions(false);
   readonly pageSize = PAGE_SIZE;

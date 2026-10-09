@@ -1,5 +1,5 @@
-import { FeatureFlags } from '../config/feature-flags';
-import { isRouteLive } from './navigation';
+import { FeatureFlags } from '../../../../core/config/feature-flags';
+import { isRouteLive } from './route-live.util';
 
 describe('isRouteLive', () => {
   const flags = (enabled: boolean) =>

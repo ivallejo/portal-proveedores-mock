@@ -6,12 +6,14 @@ import { join } from 'node:path';
 const CHECKED = [
   'src/app/core/config',
   'src/app/core/http',
+  'src/app/core/layout',
   'src/app/shared/errors',
   'src/app/shared/ui',
   'src/app/shared/utils',
   'src/app/features/societies',
   'src/app/features/areas',
   'src/app/features/auth',
+  'src/app/features/menus',
 ];
 
 const TYPE =
