@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Currency } from '../../shared/utils/format';
+import { Currency } from '../../shared/utils/currency';
 import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export interface PaidDocument {

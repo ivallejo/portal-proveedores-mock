@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IconName } from '../../../shared/ui/icon/icons';
+import { IconName } from '../../../shared/ui/icon/icon-name';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
 export interface RoleItem {

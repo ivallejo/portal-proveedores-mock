@@ -12,86 +12,21 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { IconComponent } from '../icon/icon.component';
-
-/** Rango de fechas en formato ISO (aaaa-mm-dd); vacío si no hay fecha. */
-export interface DateRange {
-  from: string;
-  to: string;
-}
-
-type Layout = 'desktop' | 'tablet' | 'mobile';
-
-interface DayCell {
-  iso: string;
-  label: string;
-  day: number;
-  disabled: boolean;
-  isEnd: boolean;
-  inRange: boolean;
-  bandLeft: boolean;
-  bandRight: boolean;
-  isToday: boolean;
-  weekend: boolean;
-}
-
-interface MonthView {
-  key: string;
-  title: string;
-  cells: (DayCell | null)[];
-}
-
-const MONTHS = [
-  'enero',
-  'febrero',
-  'marzo',
-  'abril',
-  'mayo',
-  'junio',
-  'julio',
-  'agosto',
-  'setiembre',
-  'octubre',
-  'noviembre',
-  'diciembre',
-];
-const SHORT_MONTHS = [
-  'ene',
-  'feb',
-  'mar',
-  'abr',
-  'may',
-  'jun',
-  'jul',
-  'ago',
-  'set',
-  'oct',
-  'nov',
-  'dic',
-];
-const WEEKDAYS = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
-
-const pad = (n: number) => String(n).padStart(2, '0');
-const isoOf = (date: Date) =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-const dateOf = (iso: string) => {
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d);
-};
-const addDays = (iso: string, days: number) => {
-  const date = dateOf(iso);
-  date.setDate(date.getDate() + days);
-  return isoOf(date);
-};
-/** Días del rango, contando ambos extremos. */
-export const daysBetween = (from: string, to: string) =>
-  Math.round((dateOf(to).getTime() - dateOf(from).getTime()) / 86400000) + 1;
-/** «15 sep 2026». */
-const longDate = (iso: string) => {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-').map(Number);
-  return `${pad(d)} ${SHORT_MONTHS[m - 1]} ${y}`;
-};
-const daysLabel = (n: number) => `${n} ${n === 1 ? 'día' : 'días'}`;
+import { DateRange } from './date-range';
+import { addDays } from '../../utils/date-format.util';
+import { DayCell } from './day-cell';
+import { MonthView } from './month-view';
+import { DateRangeLayout } from './date-range-layout';
+import {
+  MONTHS,
+  WEEKDAYS,
+  dateOf,
+  daysBetween,
+  daysLabel,
+  isoOf,
+  longDate,
+  pad,
+} from './calendar.util';
 
 /**
  * Selector de rango de fechas (Propuesta E del prototipo): campo tipo píldora que abre un calendario con
@@ -129,7 +64,7 @@ export class DateRangeComponent {
   readonly hover = signal('');
   /** Primer mes visible (año y mes 0-11). */
   readonly view = signal({ year: 0, month: 0 });
-  readonly layout = signal<Layout>('desktop');
+  readonly layout = signal<DateRangeLayout>('desktop');
   /** El panel se alinea a la derecha del campo si no cabe hacia la derecha. */
   readonly alignRight = signal(false);
 

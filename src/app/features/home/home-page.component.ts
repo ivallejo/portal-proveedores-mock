@@ -5,7 +5,7 @@ import { MenuService } from '../../core/layout/menu.service';
 import { FEATURE_FLAGS } from '../../core/config/feature-flags.token';
 import { MODULES, ModuleLink, isLinkLive } from '../../core/layout/navigation';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import { TONE_CLASSES } from '../../shared/ui/tone';
+import { TONE_CLASSES } from '../../shared/ui/tone/tone-classes';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({

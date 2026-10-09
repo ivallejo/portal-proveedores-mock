@@ -81,5 +81,3 @@ export const ICONS = {
     '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10"/><path d="M18 10c0 4-6 3-12 7"/>',
   x: '<path d="M6 6l12 12M18 6L6 18"/>',
 } as const;
-
-export type IconName = keyof typeof ICONS;

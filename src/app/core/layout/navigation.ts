@@ -1,5 +1,5 @@
-import { IconName } from '../../shared/ui/icon/icons';
-import { Tone } from '../../shared/ui/tone';
+import { IconName } from '../../shared/ui/icon/icon-name';
+import { Tone } from '../../shared/ui/tone/tone';
 import { FeatureFlag } from '../config/feature-flag';
 import { FeatureFlags } from '../config/feature-flags';
 import { isFeatureEnabled } from '../config/is-feature-enabled';

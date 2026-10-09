@@ -4,19 +4,21 @@ import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
 import { apiErrorMessage } from '../../core/http/api-error-message';
 import { normalizeRole, roleLabel } from '../../shared/models/models';
-import { CalloutComponent } from '../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import { PageHeaderComponent } from '../../shared/ui/page/page.components';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { ToastService } from '../../shared/ui/toast/toast.service';
-import { initials } from '../../shared/utils/format';
+import { initials } from '../../shared/utils/text-format.util';
 import { PasswordFieldComponent } from '../auth/components/auth-ui.components';
 import { EmailType, Profile, ProfileEmail, ProfileService } from './profile.service';
 
 type Tab = 'datos' | 'correos' | 'clave';
+
 type DataErrors = Partial<Record<'businessName' | 'firstName' | 'lastName', string>>;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+
 const PERSON_NAME = /^[\p{L}' .-]+$/u;
 
 export const EMAIL_TYPES: { value: EmailType; label: string }[] = [

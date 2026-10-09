@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { TONE_CLASSES, Tone } from '../tone';
-
-type BadgeSize = 'sm' | 'md' | 'lg';
+import { TONE_CLASSES } from '../tone/tone-classes';
+import { Tone } from '../tone/tone';
+import { BadgeSize } from './badge-size';
 
 const SIZES: Record<BadgeSize, string> = {
   sm: 'h-6 px-[9px] gap-[5px]',
@@ -14,17 +14,7 @@ const SIZES: Record<BadgeSize, string> = {
   selector: 'app-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'inline-flex' },
-  template: `
-    <span
-      class="inline-flex items-center rounded-full text-xs font-bold whitespace-nowrap"
-      [class]="classes()"
-    >
-      @if (dot()) {
-        <span class="size-[7px] shrink-0 rounded-full" [class]="dotClass()"></span>
-      }
-      <ng-content />
-    </span>
-  `,
+  templateUrl: './badge.component.html',
 })
 export class BadgeComponent {
   readonly tone = input<Tone>('neutral');

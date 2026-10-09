@@ -1,5 +1,5 @@
 import { DocumentItem } from '../../shared/documents/document.model';
-import { Currency } from '../../shared/utils/format';
+import { Currency } from '../../shared/utils/currency';
 
 /** Datos que se muestran en la revisión, leídos del XML del comprobante (UBL 2.1). */
 export interface ElectronicDocument {

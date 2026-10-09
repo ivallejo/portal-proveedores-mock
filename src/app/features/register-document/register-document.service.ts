@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { DocumentItem } from '../../shared/documents/document.model';
-import { todayIso } from '../../shared/utils/format';
+import { todayIso } from '../../shared/utils/date-format.util';
 import { ElectronicDocument, parseUblDocument, seriesFromFileName } from './xml-reader';
 import { API_BASE_URL } from '../../core/config/api-base-url.token';
 

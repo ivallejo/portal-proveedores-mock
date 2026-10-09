@@ -9,7 +9,8 @@
     "test": "ng test",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "arch": "depcruise src --config .dependency-cruiser.cjs",
-    "quality": "npm run format:check && npm run typecheck && npm run arch",
+    "arch:files": "node scripts/check-source-layout.mjs",
+    "quality": "npm run format:check && npm run typecheck && npm run arch && npm run arch:files",
     "format": "prettier --write \"src/**/*.{ts,html,css}\" \"*.json\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,css}\" \"*.json\""
   },

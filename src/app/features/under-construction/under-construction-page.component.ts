@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import { PageHeaderComponent } from '../../shared/ui/page/page.components';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 
 /** Pantalla que se muestra mientras una funcionalidad no está habilitada (ver `core/config/features.ts`). */
 @Component({

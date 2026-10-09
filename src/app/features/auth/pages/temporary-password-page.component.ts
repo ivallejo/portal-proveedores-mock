@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-import { CalloutComponent } from '../../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { apiErrorMessage } from '../../../core/http/api-error-message';

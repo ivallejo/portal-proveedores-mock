@@ -4,21 +4,20 @@ import { SupplierScope } from '../../shared/data/supplier-scope';
 import { apiErrorMessage } from '../../core/http/api-error-message';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
-import {
-  CalloutComponent,
-  EmptyStateComponent,
-} from '../../shared/ui/feedback/feedback.components';
-import { DateRange, DateRangeComponent } from '../../shared/ui/date-range/date-range.component';
+import { CalloutComponent } from '../../shared/ui/callout/callout.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { DateRangeComponent } from '../../shared/ui/date-range/date-range.component';
+import { DateRange } from '../../shared/ui/date-range/date-range';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import {
-  KpiCardComponent,
-  PageHeaderComponent,
-  PaginationComponent,
-} from '../../shared/ui/page/page.components';
+import { KpiCardComponent } from '../../shared/ui/kpi-card/kpi-card.component';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
+import { PaginationComponent } from '../../shared/ui/pagination/pagination.component';
 import { SelectComponent } from '../../shared/ui/select/select.component';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
-import { currencyTone } from '../../shared/ui/tone';
-import { formatDate, money, nowStamp, onlyDigits } from '../../shared/utils/format';
+import { currencyTone } from '../../shared/ui/tone/currency-tone';
+import { formatDate, nowStamp } from '../../shared/utils/date-format.util';
+import { money } from '../../shared/utils/money-format.util';
+import { onlyDigits } from '../../shared/utils/text-format.util';
 import { PaymentOrder, PaymentOrderFilters, PaymentOrdersService } from './payment-orders.service';
 
 const PAGE_SIZE = 10;

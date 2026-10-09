@@ -1,0 +1,19 @@
+<div
+  class="animate-fade flex grow flex-col items-center justify-center gap-3.5 px-6 py-14 text-center"
+>
+  <span class="relative flex size-24 items-center justify-center rounded-full bg-page text-primary">
+    <app-icon [name]="icon()" [size]="40" [stroke]="1.6" />
+    <span
+      class="absolute right-1.5 bottom-2 flex size-[34px] items-center justify-center rounded-full bg-white text-primary shadow-[0_4px_12px_rgba(14,42,92,0.16)]"
+    >
+      <app-icon name="search" [size]="18" [stroke]="2" />
+    </span>
+  </span>
+  <div class="text-lg font-bold">{{ heading() }}</div>
+  <div class="max-w-[440px] text-sm leading-relaxed text-muted">{{ text() }}</div>
+  @if (actionText()) {
+    <button type="button" class="btn btn-outline mt-1" (click)="action.emit()">
+      {{ actionText() }}
+    </button>
+  }
+</div>

@@ -3,19 +3,16 @@ import { PageLoadingService } from '../../../core/layout/page-loading.service';
 import { CatalogService } from '../../../shared/data/catalog.service';
 import { apiErrorMessage } from '../../../core/http/api-error-message';
 import { BadgeComponent } from '../../../shared/ui/badge/badge.component';
-import { ConfirmDialogComponent } from '../../../shared/ui/dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { DrawerComponent } from '../../../shared/ui/drawer/drawer.component';
-import {
-  CalloutComponent,
-  EmptyStateComponent,
-} from '../../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../../shared/ui/callout/callout.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
-import {
-  KpiCardComponent,
-  PageHeaderComponent,
-  PaginationComponent,
-} from '../../../shared/ui/page/page.components';
-import { SelectComponent, SelectOption } from '../../../shared/ui/select/select.component';
+import { KpiCardComponent } from '../../../shared/ui/kpi-card/kpi-card.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { PaginationComponent } from '../../../shared/ui/pagination/pagination.component';
+import { SelectComponent } from '../../../shared/ui/select/select.component';
+import { SelectOption } from '../../../shared/ui/select/select-option';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { Area, AreaInput, Company, OrganizationService } from './organization.service';

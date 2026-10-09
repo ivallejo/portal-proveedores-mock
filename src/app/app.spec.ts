@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
 import { normalizeRole } from './shared/models/models';
-import { daysBetween } from './shared/ui/date-range/date-range.component';
+import { daysBetween } from './shared/ui/date-range/calendar.util';
 import { parseUblDocument } from './features/register-document/xml-reader';
 
 describe('App', () => {

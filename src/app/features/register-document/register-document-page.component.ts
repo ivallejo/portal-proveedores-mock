@@ -22,29 +22,25 @@ import {
 } from '../../shared/documents/document.model';
 import { DocumentsService } from '../../shared/documents/documents.service';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
-import {
-  CalloutComponent,
-  ResultStateComponent,
-} from '../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../shared/ui/callout/callout.component';
+import { ResultStateComponent } from '../../shared/ui/result-state/result-state.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import { IconName } from '../../shared/ui/icon/icons';
-import { PageHeaderComponent } from '../../shared/ui/page/page.components';
+import { IconName } from '../../shared/ui/icon/icon-name';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 import { SelectComponent } from '../../shared/ui/select/select.component';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
-import {
-  Currency,
-  currencyName,
-  fileSize,
-  formatDate,
-  money,
-  onlyDigits,
-} from '../../shared/utils/format';
+import { Currency } from '../../shared/utils/currency';
+import { currencyName, money } from '../../shared/utils/money-format.util';
+import { fileSize } from '../../shared/utils/file-size.util';
+import { formatDate } from '../../shared/utils/date-format.util';
+import { onlyDigits } from '../../shared/utils/text-format.util';
 import { ExtraFile, FileDropComponent, FileState } from './file-drop.component';
 import { OrderInfo, OrderType, RegisterDocumentService } from './register-document.service';
 import { ElectronicDocument } from './xml-reader';
 import { apiErrorMessage } from '../../core/http/api-error-message';
 
 type Entry = 'oc' | 'sin' | 'esp';
+
 type Slot = 'xml' | 'pdf' | 'cdr';
 
 interface SlotState {
@@ -73,19 +69,23 @@ interface RegisterResult {
 }
 
 const MAX_SIZE = 5 * 1024 * 1024;
+
 const ACCEPT: Record<Slot | 'extra', string[]> = {
   xml: ['.xml'],
   pdf: ['.pdf'],
   cdr: ['.zip', '.xml'],
   extra: ['.pdf'],
 };
+
 const SPECIAL_TYPE_CODES: Record<SpecialDocumentType, string> = {
   'Boleto aéreo': 'AirTicket',
   'Recibo público': 'PublicReceipt',
   'No domiciliado': 'NonDomiciled',
   'Liquidación de cobranzas': 'CollectionSettlement',
 };
+
 const EMPTY_SLOT: SlotState = { state: 'none', file: null, name: '', size: '', error: '' };
+
 const EMPTY_SPECIAL: SpecialForm = {
   type: 'Boleto aéreo',
   ruc: '',
@@ -94,6 +94,7 @@ const EMPTY_SPECIAL: SpecialForm = {
   amount: '',
   currency: 'PEN',
 };
+
 const ENTRY_CARDS: { value: Entry; label: string; description: string; icon: IconName }[] = [
   {
     value: 'oc',

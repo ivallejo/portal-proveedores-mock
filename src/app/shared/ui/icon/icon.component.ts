@@ -1,24 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ICONS, IconName } from './icons';
+import { ICONS } from './icons';
+import { IconName } from './icon-name';
 
 @Component({
   selector: 'app-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'inline-flex shrink-0', 'aria-hidden': 'true' },
-  template: `
-    <svg
-      [attr.width]="size()"
-      [attr.height]="size()"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      [attr.stroke-width]="stroke()"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      [innerHTML]="markup()"
-    ></svg>
-  `,
+  templateUrl: './icon.component.html',
 })
 export class IconComponent {
   private readonly sanitizer = inject(DomSanitizer);

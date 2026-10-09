@@ -1,4 +1,4 @@
-import { SelectOption } from '../../../shared/ui/select/select.component';
+import { SelectOption } from '../../../shared/ui/select/select-option';
 
 /** Filtro de estado de Configuración: todas, activas o inactivas. */
 export type StatusFilter = '' | 'active' | 'inactive';

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
-import { IconName } from '../../../shared/ui/icon/icons';
+import { IconName } from '../../../shared/ui/icon/icon-name';
 
 /** Enlace «Volver al inicio de sesión». */
 @Component({

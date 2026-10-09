@@ -1,6 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { AuthService } from '../../core/auth/auth.service';
-import { SelectOption } from '../ui/select/select.component';
+import { SelectOption } from '../ui/select/select-option';
 import { CatalogService } from './catalog.service';
 
 /**

@@ -1,5 +1,5 @@
-import { Tone } from '../ui/tone';
-import { Currency } from '../utils/format';
+import { Tone } from '../ui/tone/tone';
+import { Currency } from '../utils/currency';
 
 export type EntryType = 'Con OC' | 'Sin OC' | 'Documento especial';
 

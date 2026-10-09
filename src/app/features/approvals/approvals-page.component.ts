@@ -16,29 +16,30 @@ import {
 } from '../../shared/documents/documents.service';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
-import {
-  CalloutComponent,
-  EmptyStateComponent,
-  LoadingStateComponent,
-  ResultStateComponent,
-} from '../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../shared/ui/callout/callout.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { LoadingStateComponent } from '../../shared/ui/loading-state/loading-state.component';
+import { ResultStateComponent } from '../../shared/ui/result-state/result-state.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
-import {
-  KpiCardComponent,
-  PageHeaderComponent,
-  PaginationComponent,
-} from '../../shared/ui/page/page.components';
-import { SelectComponent, SelectOption } from '../../shared/ui/select/select.component';
+import { KpiCardComponent } from '../../shared/ui/kpi-card/kpi-card.component';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
+import { PaginationComponent } from '../../shared/ui/pagination/pagination.component';
+import { SelectComponent } from '../../shared/ui/select/select.component';
+import { SelectOption } from '../../shared/ui/select/select-option';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
-import { currencyTone } from '../../shared/ui/tone';
+import { currencyTone } from '../../shared/ui/tone/currency-tone';
 import { ToastService } from '../../shared/ui/toast/toast.service';
-import { currencyName, formatDate, money, onlyDigits } from '../../shared/utils/format';
+import { currencyName, money } from '../../shared/utils/money-format.util';
+import { formatDate } from '../../shared/utils/date-format.util';
+import { onlyDigits } from '../../shared/utils/text-format.util';
 import { apiErrorMessage } from '../../core/http/api-error-message';
 
 const DEFAULT_FILTERS: DocumentFilters = { ruc: '', status: '' };
+
 const PAGE_SIZE = 10;
 
 type Panel = 'approve' | 'reassign' | 'reject' | null;
+
 type ReferenceType = 'pedido' | 'viaje';
 
 interface ActionResult {

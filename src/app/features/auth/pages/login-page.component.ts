@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-import { CalloutComponent } from '../../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { AuthLayoutComponent } from '../components/auth-layout.component';

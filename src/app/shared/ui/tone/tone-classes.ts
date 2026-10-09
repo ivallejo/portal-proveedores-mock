@@ -1,15 +1,4 @@
-/** Paletas de estado de la Propuesta 1 (fondo, texto y punto indicador). */
-export type Tone =
-  | 'neutral'
-  | 'info'
-  | 'warn'
-  | 'success'
-  | 'danger'
-  | 'teal'
-  | 'purple'
-  | 'orange'
-  | 'primary'
-  | 'gray';
+import { Tone } from './tone';
 
 export const TONE_CLASSES: Record<Tone, { pill: string; dot: string; icon: string }> = {
   neutral: {
@@ -63,8 +52,3 @@ export const TONE_CLASSES: Record<Tone, { pill: string; dot: string; icon: strin
     icon: 'bg-[#F1F3F6] text-[#5A6477]',
   },
 };
-
-/** Moneda: PEN en azul, USD en verde. */
-export function currencyTone(currency: string): Tone {
-  return currency === 'USD' ? 'success' : 'primary';
-}

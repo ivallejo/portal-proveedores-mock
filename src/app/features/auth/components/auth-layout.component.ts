@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
-import { IconName } from '../../../shared/ui/icon/icons';
+import { IconName } from '../../../shared/ui/icon/icon-name';
 
 const HIGHLIGHTS: { icon: IconName; label: string }[] = [
   { icon: 'shield-check', label: 'Seguro' },

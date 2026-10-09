@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Tone } from '../../shared/ui/tone';
-import { Currency } from '../../shared/utils/format';
+import { Tone } from '../../shared/ui/tone/tone';
+import { Currency } from '../../shared/utils/currency';
 import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export interface Invoice {

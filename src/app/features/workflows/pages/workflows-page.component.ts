@@ -4,12 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { WorkflowFacade } from '../state/workflow.facade';
 import { BadgeComponent } from '../../../shared/ui/badge/badge.component';
 import { DialogComponent } from '../../../shared/ui/dialog/dialog.component';
-import {
-  CalloutComponent,
-  EmptyStateComponent,
-} from '../../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../../shared/ui/callout/callout.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
-import { PageHeaderComponent } from '../../../shared/ui/page/page.components';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 
 @Component({
   selector: 'app-workflows-page',

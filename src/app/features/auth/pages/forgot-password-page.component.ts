@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-import { CalloutComponent } from '../../../shared/ui/feedback/feedback.components';
+import { CalloutComponent } from '../../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
-import { onlyDigits } from '../../../shared/utils/format';
+import { onlyDigits } from '../../../shared/utils/text-format.util';
 import { AuthLayoutComponent } from '../components/auth-layout.component';
 import { AuthBackLinkComponent, AuthHeadingComponent } from '../components/auth-ui.components';
 

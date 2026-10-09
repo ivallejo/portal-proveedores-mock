@@ -1,9 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-
-export interface ToastState {
-  message: string;
-  busy: boolean;
-}
+import { ToastState } from './toast-state';
 
 /** Aviso flotante (esquina inferior derecha) usado para descargas y confirmaciones. */
 @Injectable({ providedIn: 'root' })
