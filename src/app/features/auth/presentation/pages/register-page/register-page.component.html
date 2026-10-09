@@ -32,11 +32,11 @@
               placeholder="Ingresa los 11 dígitos de tu RUC"
               [value]="ruc()"
               (input)="onRuc($event)"
-              [attr.aria-invalid]="!!rucError() || !!lookupError()"
+              [attr.aria-invalid]="rucInvalid()"
               aria-describedby="rg-ruc-help"
               class="h-[50px] grow rounded-[10px] border bg-white pr-4 pl-12 text-[15px] tracking-[0.04em] text-ink tabular-nums outline-none focus:border-primary"
-              [class.border-field-auth]="!rucError() && !lookupError()"
-              [class.border-[#E04848]]="!!rucError() || !!lookupError()"
+              [class.border-field-auth]="!rucInvalid()"
+              [class.border-[#E04848]]="rucInvalid()"
             />
           </div>
           <span
@@ -47,7 +47,7 @@
           >
         </div>
         @if (lookupError(); as failure) {
-          <app-callout tone="danger" [heading]="failure.title">{{ failure.text }}</app-callout>
+          <app-callout [tone]="failure.tone" [heading]="failure.title">{{ failure.text }}</app-callout>
         }
         <button type="submit" class="btn btn-primary h-[52px] text-base" [disabled]="busy()">
           @if (busy()) {
