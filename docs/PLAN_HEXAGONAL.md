@@ -97,7 +97,7 @@ Inyección: cada puerto es una `interface` con su `InjectionToken` en `di/<featu
 
 ## 5. Pasos
 
-- [x] **Paso 0. Línea base.** Rama `refactor/hexagonal`. `quality` y `build` en verde (bundle inicial 402.72 kB, 111.65 kB transferidos) y 5/5 pruebas. Pantallas públicas (login, registro, recuperar contraseña) revisadas en el navegador contra el backend local; las privadas se revisan con `prueba.admin` antes del paso 4.
+- [x] **Paso 0. Línea base.** Rama `refactor/hexagonal`. `quality` y `build` en verde (bundle inicial 402.72 kB, 111.65 kB transferidos) y 5/5 pruebas. Las 16 pantallas (3 públicas y 13 privadas con `prueba.admin`) cargan contra el backend local, sin errores en consola.
 - [ ] **Paso 1. Reglas de arquitectura.** Agregar `dependency-cruiser` con las reglas de la sección 3. Se aplican a las carpetas ya migradas, y cada paso las extiende a la feature que migra (como las pruebas de arquitectura del backend).
 - [ ] **Paso 2. Core: configuración y HTTP.** `API_BASE_URL` y `FEATURE_FLAGS` como `InjectionToken` provistos desde `environment` en `app.config.ts` (DIP: nadie más importa `environment`). `api-errors` pasa a `core/http`.
 - [ ] **Paso 3. Shared.** Un componente por carpeta con su `.html` (`feedback`, `page`, `dialog`…). `format.ts` se divide por tema. Validadores de formulario a `shared/forms`. Sin cambios visuales.
