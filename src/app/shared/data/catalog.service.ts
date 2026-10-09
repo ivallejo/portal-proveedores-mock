@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/auth/auth.service';
 import { SelectOption } from '../ui/select/select.component';
+import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export interface ApiCompany {
   code: string;
@@ -32,6 +32,7 @@ export interface ApiArea {
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   readonly companies = signal<ApiCompany[]>([]);
   readonly areas = signal<ApiArea[]>([]);
@@ -56,11 +57,11 @@ export class CatalogService {
     this.companies.set([]);
     this.areas.set([]);
     this.loadError.set(false);
-    this.http.get<ApiCompany[]>(`${environment.apiBaseUrl}/catalog/companies`).subscribe({
+    this.http.get<ApiCompany[]>(`${this.apiBaseUrl}/catalog/companies`).subscribe({
       next: (companies) => this.companies.set(companies),
       error: () => this.fail(),
     });
-    this.http.get<ApiArea[]>(`${environment.apiBaseUrl}/catalog/areas`).subscribe({
+    this.http.get<ApiArea[]>(`${this.apiBaseUrl}/catalog/areas`).subscribe({
       next: (areas) => this.areas.set(areas),
       error: () => this.fail(),
     });

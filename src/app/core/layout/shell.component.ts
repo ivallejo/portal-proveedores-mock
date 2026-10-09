@@ -17,6 +17,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 import { initials } from '../../shared/utils/format';
 import { IconName, ICONS } from '../../shared/ui/icon/icons';
 import { MenuService, NavItem } from './menu.service';
+import { FEATURE_FLAGS } from '../config/feature-flags.token';
 import { isRouteLive } from './navigation';
 import { PageLoadingService } from './page-loading.service';
 
@@ -41,7 +42,8 @@ export class ShellComponent {
   readonly items = computed(() => this.menu.items() ?? []);
   /** Menús principales con submenús que están desplegados. */
   readonly openGroups = signal<ReadonlySet<string>>(new Set());
-  readonly isLive = isRouteLive;
+  private readonly featureFlags = inject(FEATURE_FLAGS);
+  readonly isLive = (route: string | null) => isRouteLive(this.featureFlags, route);
 
   readonly pageTitle = toSignal(
     this.router.events.pipe(

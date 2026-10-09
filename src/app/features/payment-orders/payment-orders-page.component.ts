@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
 import { SupplierScope } from '../../shared/data/supplier-scope';
-import { apiErrorMessage } from '../../shared/utils/api-errors';
+import { apiErrorMessage } from '../../core/http/api-error-message';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { DialogComponent } from '../../shared/ui/dialog/dialog.component';
 import {

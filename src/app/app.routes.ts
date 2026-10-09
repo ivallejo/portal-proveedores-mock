@@ -1,4 +1,4 @@
-import { Type } from '@angular/core';
+import { Type, inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import {
   authGuard,
@@ -8,7 +8,9 @@ import {
   rootRedirectGuard,
   temporaryPasswordGuard,
 } from './core/auth/auth.guards';
-import { FeatureFlag, isFeatureEnabled } from './core/config/features';
+import { FeatureFlag } from './core/config/feature-flag';
+import { FEATURE_FLAGS } from './core/config/feature-flags.token';
+import { isFeatureEnabled } from './core/config/is-feature-enabled';
 import { ShellComponent } from './core/layout/shell.component';
 
 const underConstruction = () =>
@@ -18,7 +20,7 @@ const underConstruction = () =>
 
 /** Carga la pantalla real si la funcionalidad está habilitada; si no, «en construcción». */
 const gated = (feature: FeatureFlag, load: () => Promise<Type<unknown>>) => () =>
-  isFeatureEnabled(feature) ? load() : underConstruction();
+  isFeatureEnabled(inject(FEATURE_FLAGS), feature) ? load() : underConstruction();
 
 export const routes: Routes = [
   {

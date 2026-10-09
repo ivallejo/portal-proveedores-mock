@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { MenuService } from '../../core/layout/menu.service';
-import { MODULES, isLinkLive } from '../../core/layout/navigation';
+import { FEATURE_FLAGS } from '../../core/config/feature-flags.token';
+import { MODULES, ModuleLink, isLinkLive } from '../../core/layout/navigation';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { TONE_CLASSES } from '../../shared/ui/tone';
 import { ToastService } from '../../shared/ui/toast/toast.service';
@@ -80,7 +81,8 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 export class HomePageComponent {
   readonly auth = inject(AuthService);
   readonly toast = inject(ToastService);
-  readonly isLive = isLinkLive;
+  private readonly featureFlags = inject(FEATURE_FLAGS);
+  readonly isLive = (module: ModuleLink) => isLinkLive(this.featureFlags, module);
   private readonly menu = inject(MenuService);
   /** Tarjetas de las pantallas que están en el menú del usuario. */
   readonly modules = computed(() =>

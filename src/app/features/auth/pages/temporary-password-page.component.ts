@@ -4,7 +4,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { CalloutComponent } from '../../../shared/ui/feedback/feedback.components';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
-import { apiErrorMessage } from '../../../shared/utils/api-errors';
+import { apiErrorMessage } from '../../../core/http/api-error-message';
 import { AuthLayoutComponent } from '../components/auth-layout.component';
 import { AuthHeadingComponent, PasswordFieldComponent } from '../components/auth-ui.components';
 

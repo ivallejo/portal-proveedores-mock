@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export type EmailType = 'work' | 'billing' | 'personal';
 
@@ -43,7 +43,8 @@ export interface ProfileInput {
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiBaseUrl}/profile`;
+  private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly base = `${this.apiBaseUrl}/profile`;
 
   get(): Observable<Profile> {
     return this.http.get<Profile>(this.base);

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { IconName } from '../../../shared/ui/icon/icons';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
 export interface RoleItem {
   id: string;
@@ -46,7 +46,8 @@ export interface MenuInput {
 @Injectable({ providedIn: 'root' })
 export class AccessService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiBaseUrl}/admin`;
+  private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly base = `${this.apiBaseUrl}/admin`;
 
   roles(): Observable<RoleItem[]> {
     return this.http.get<RoleItem[]>(`${this.base}/roles`);

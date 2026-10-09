@@ -1,6 +1,8 @@
 import { IconName } from '../../shared/ui/icon/icons';
 import { Tone } from '../../shared/ui/tone';
-import { FeatureFlag, isFeatureEnabled } from '../config/features';
+import { FeatureFlag } from '../config/feature-flag';
+import { FeatureFlags } from '../config/feature-flags';
+import { isFeatureEnabled } from '../config/is-feature-enabled';
 
 export interface ModuleLink {
   label: string;
@@ -88,13 +90,13 @@ export const SETTINGS_LINKS: SettingsLink[] = [
  * Si la pantalla de la ruta está publicada (su feature flag está encendido). Las rutas sin pantalla en el portal
  * (opciones creadas en Configuración › Menús) se muestran como «Pronto».
  */
-export function isRouteLive(route: string | null): boolean {
+export function isRouteLive(flags: FeatureFlags, route: string | null): boolean {
   if (route === '/inicio') return true;
   const link = [...MODULES, ...SETTINGS_LINKS].find((item) => item.path === route);
-  return link ? isLinkLive(link) : false;
+  return link ? isLinkLive(flags, link) : false;
 }
 
 /** Si la funcionalidad del enlace está habilitada; sin `feature` (opciones de Configuración sin pantalla) nunca lo está. */
-export function isLinkLive(link: { feature?: FeatureFlag }): boolean {
-  return link.feature ? isFeatureEnabled(link.feature) : false;
+export function isLinkLive(flags: FeatureFlags, link: { feature?: FeatureFlag }): boolean {
+  return link.feature ? isFeatureEnabled(flags, link.feature) : false;
 }

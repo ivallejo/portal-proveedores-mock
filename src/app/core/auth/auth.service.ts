@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { Role, User, normalizeRole } from '../../shared/models/models';
 import { MenuService } from '../layout/menu.service';
+import { API_BASE_URL } from '../config/api-base-url.token';
 
 const SESSION_KEY = 'portal-proveedores.session';
 const TOKEN_KEY = 'web-proveedores.access-token';
@@ -20,21 +20,21 @@ const LANDING: [Role, string][] = [
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
   private readonly menu = inject(MenuService);
   readonly user = signal<User | null>(this.restoreSession());
   readonly isAdmin = computed(() => this.user()?.roles.includes('Administrador') ?? false);
 
   login(identifier: string, password: string): Observable<User> {
     return this.http
-      .post<AuthResponse>(`${environment.apiBaseUrl}/auth/login`, { identifier, password })
+      .post<AuthResponse>(`${this.apiBaseUrl}/auth/login`, { identifier, password })
       .pipe(map((response) => this.startSession(response)));
   }
 
   requestPasswordReset(ruc: string): Observable<PasswordResetResponse> {
-    return this.http.post<PasswordResetResponse>(
-      `${environment.apiBaseUrl}/auth/password-reset/request`,
-      { ruc },
-    );
+    return this.http.post<PasswordResetResponse>(`${this.apiBaseUrl}/auth/password-reset/request`, {
+      ruc,
+    });
   }
 
   /** La cuenta del enlace: `ruc` (proveedor) o `user` (personal interno). */
@@ -45,7 +45,7 @@ export class AuthService {
     purpose: 'activation' | 'password-reset',
   ): Observable<void> {
     const endpoint = purpose === 'activation' ? 'activation/confirm' : 'password-reset/confirm';
-    return this.http.post<void>(`${environment.apiBaseUrl}/auth/${endpoint}`, {
+    return this.http.post<void>(`${this.apiBaseUrl}/auth/${endpoint}`, {
       ...account,
       token,
       newPassword,
@@ -73,7 +73,7 @@ export class AuthService {
    */
   changePassword(newPassword: string, currentPassword?: string): Observable<User> {
     return this.http
-      .post<AuthResponse>(`${environment.apiBaseUrl}/auth/change-password`, {
+      .post<AuthResponse>(`${this.apiBaseUrl}/auth/change-password`, {
         currentPassword,
         newPassword,
       })

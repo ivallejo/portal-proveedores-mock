@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, firstValueFrom, map, of, shareReplay, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { API_BASE_URL } from '../config/api-base-url.token';
 
 /** Opción del menú lateral según el rol de la sesión (Configuración › Roles y permisos). */
 export interface NavItem {
@@ -16,6 +16,7 @@ export interface NavItem {
 @Injectable({ providedIn: 'root' })
 export class MenuService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
   private pending: Observable<NavItem[]> | null = null;
 
   readonly items = signal<NavItem[] | null>(null);
@@ -32,7 +33,7 @@ export class MenuService {
   load(): Observable<NavItem[]> {
     const loaded = this.items();
     if (loaded) return of(loaded);
-    this.pending ??= this.http.get<NavItem[]>(`${environment.apiBaseUrl}/navigation`).pipe(
+    this.pending ??= this.http.get<NavItem[]>(`${this.apiBaseUrl}/navigation`).pipe(
       catchError(() => of([] as NavItem[])),
       tap((items) => {
         this.items.set(items);

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
 export interface Company {
   id: string;
@@ -42,7 +42,8 @@ export interface AreaInput {
 @Injectable({ providedIn: 'root' })
 export class OrganizationService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiBaseUrl}/admin`;
+  private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly base = `${this.apiBaseUrl}/admin`;
 
   companies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.base}/companies`);

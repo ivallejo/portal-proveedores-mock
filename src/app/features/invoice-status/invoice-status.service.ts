@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { Tone } from '../../shared/ui/tone';
 import { Currency } from '../../shared/utils/format';
+import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export interface Invoice {
   number: string;
@@ -53,12 +53,13 @@ export function invoiceTone(status: string): Tone {
 @Injectable({ providedIn: 'root' })
 export class InvoiceStatusService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   search(filters: InvoiceFilters): Observable<Invoice[]> {
     let params = new HttpParams().set('from', filters.from).set('to', filters.to);
     if (filters.ruc) params = params.set('ruc', filters.ruc);
     if (filters.company) params = params.set('company', filters.company);
     if (filters.number.trim()) params = params.set('number', filters.number.trim());
-    return this.http.get<Invoice[]>(`${environment.apiBaseUrl}/invoices`, { params });
+    return this.http.get<Invoice[]>(`${this.apiBaseUrl}/invoices`, { params });
   }
 }

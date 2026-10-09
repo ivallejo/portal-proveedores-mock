@@ -1,10 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { DocumentItem } from '../../shared/documents/document.model';
 import { todayIso } from '../../shared/utils/format';
 import { ElectronicDocument, parseUblDocument, seriesFromFileName } from './xml-reader';
+import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export type OrderType = 'Bien' | 'Servicio';
 
@@ -19,6 +19,7 @@ export interface OrderInfo {
 @Injectable({ providedIn: 'root' })
 export class RegisterDocumentService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   /**
    * Servicio 01 SAP (vía backend): valida que la orden exista, esté aprobada y tenga saldo.
@@ -35,7 +36,7 @@ export class RegisterDocumentService {
         orderType: 'Goods' | 'Service';
         description: string;
         balance: number;
-      }>(`${environment.apiBaseUrl}/documents/orders/validate`, {
+      }>(`${this.apiBaseUrl}/documents/orders/validate`, {
         companyCode,
         orderType: type === 'Bien' ? 'Goods' : 'Service',
         number: number.trim().toUpperCase(),

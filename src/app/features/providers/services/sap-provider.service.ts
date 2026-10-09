@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
 export interface SapProvider {
   ruc: string;
@@ -12,11 +12,12 @@ export interface SapProvider {
 @Injectable({ providedIn: 'root' })
 export class SapProviderService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   lookupByRuc(ruc: string): Observable<SapProvider> {
     const normalizedRuc = ruc.replace(/\D/g, '');
     return this.http
-      .post<ProviderLookupResponse>(`${environment.apiBaseUrl}/auth/validate-ruc`, {
+      .post<ProviderLookupResponse>(`${this.apiBaseUrl}/auth/validate-ruc`, {
         ruc: normalizedRuc,
       })
       .pipe(
@@ -33,7 +34,7 @@ export class SapProviderService {
     termsAccepted = true,
   ): Observable<{ sent: boolean; email: string }> {
     return this.http
-      .post<AccessKeyResponse>(`${environment.apiBaseUrl}/auth/request-access-key`, {
+      .post<AccessKeyResponse>(`${this.apiBaseUrl}/auth/request-access-key`, {
         ruc: provider.ruc,
         termsAccepted,
       })

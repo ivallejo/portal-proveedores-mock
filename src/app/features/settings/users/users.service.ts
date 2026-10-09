@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { EmailType } from '../../profile/profile.service';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
 export type UserStatus = 'active' | 'inactive' | 'locked';
 
@@ -108,7 +108,8 @@ export interface UserFilter {
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiBaseUrl}/admin/users`;
+  private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly base = `${this.apiBaseUrl}/admin/users`;
 
   search(filter: UserFilter, page: number, pageSize: number): Observable<UserPage> {
     let params = new HttpParams().set('page', page).set('pageSize', pageSize);

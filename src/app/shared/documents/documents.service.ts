@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import {
   ApiDocumentDetail,
   ApiPage,
@@ -10,6 +9,7 @@ import {
   toApiStatus,
 } from './document.mapper';
 import { Attachment, DocumentStatus, PortalDocument } from './document.model';
+import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export interface DocumentFilters {
   ruc: string;
@@ -34,7 +34,8 @@ export const ACCOUNTING_STATUSES: DocumentStatus[] = [
 @Injectable({ providedIn: 'root' })
 export class DocumentsService {
   private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiBaseUrl}/documents`;
+  private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly base = `${this.apiBaseUrl}/documents`;
 
   /** Bandeja del aprobador (el administrador ve todas). */
   approvals(filters: DocumentFilters): Observable<PortalDocument[]> {

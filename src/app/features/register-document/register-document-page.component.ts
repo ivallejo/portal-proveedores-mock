@@ -42,7 +42,7 @@ import {
 import { ExtraFile, FileDropComponent, FileState } from './file-drop.component';
 import { OrderInfo, OrderType, RegisterDocumentService } from './register-document.service';
 import { ElectronicDocument } from './xml-reader';
-import { apiErrorMessage } from '../../shared/utils/api-errors';
+import { apiErrorMessage } from '../../core/http/api-error-message';
 
 type Entry = 'oc' | 'sin' | 'esp';
 type Slot = 'xml' | 'pdf' | 'cdr';

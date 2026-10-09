@@ -78,9 +78,17 @@ module.exports = {
       name: 'shared-is-independent',
       comment: 'shared no depende de core ni de features.',
       severity: 'error',
-      // shared/data se va en el paso 11 (feature catalog).
-      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/data/` },
+      // Pendientes de migrar: shared/data pasa a la feature catalog (paso 11) y shared/documents a documents (paso 13).
+      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/(data|documents)/` },
       to: { path: [`${APP}/core/`, `${APP}/features/`] },
+    },
+    {
+      name: 'environment-only-in-config',
+      comment:
+        'El environment se lee solo en core/config (tipos) y en app.config.ts, que provee API_BASE_URL y FEATURE_FLAGS.',
+      severity: 'error',
+      from: { pathNot: [`${APP}/core/config/`, `${APP}/app\\.config\\.ts$`] },
+      to: { path: '^src/environments/' },
     },
     {
       name: 'not-to-unresolvable',

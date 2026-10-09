@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { Currency } from '../../shared/utils/format';
+import { API_BASE_URL } from '../../core/config/api-base-url.token';
 
 export interface PaidDocument {
   number: string;
@@ -47,11 +47,12 @@ export interface PaymentOrderFilters {
 @Injectable({ providedIn: 'root' })
 export class PaymentOrdersService {
   private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   search(filters: PaymentOrderFilters): Observable<PaymentOrder[]> {
     let params = new HttpParams().set('from', filters.from).set('to', filters.to);
     if (filters.ruc) params = params.set('ruc', filters.ruc);
     if (filters.company) params = params.set('company', filters.company);
-    return this.http.get<PaymentOrder[]>(`${environment.apiBaseUrl}/payment-orders`, { params });
+    return this.http.get<PaymentOrder[]>(`${this.apiBaseUrl}/payment-orders`, { params });
   }
 }

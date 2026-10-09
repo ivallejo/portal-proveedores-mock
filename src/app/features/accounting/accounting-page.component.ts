@@ -34,7 +34,7 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { currencyTone } from '../../shared/ui/tone';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { currencyName, formatDate, money, onlyDigits } from '../../shared/utils/format';
-import { apiErrorMessage } from '../../shared/utils/api-errors';
+import { apiErrorMessage } from '../../core/http/api-error-message';
 
 const DEFAULT_FILTERS: DocumentFilters = { ruc: '', status: '' };
 const PAGE_SIZE = 10;
