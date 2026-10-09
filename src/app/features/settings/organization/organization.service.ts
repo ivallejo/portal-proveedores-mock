@@ -14,13 +14,6 @@ export interface Company {
   userCount: number;
 }
 
-export interface CompanyInput {
-  code: string;
-  name: string;
-  ruc: string;
-  billingEmail: string;
-}
-
 export interface Area {
   id: string;
   name: string;
@@ -45,18 +38,9 @@ export class OrganizationService {
   private readonly apiBaseUrl = inject(API_BASE_URL);
   private readonly base = `${this.apiBaseUrl}/admin`;
 
+  /** Sociedades para el selector de Áreas (pasa a la API pública de societies en el paso 5). */
   companies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.base}/companies`);
-  }
-
-  saveCompany(id: string | null, input: CompanyInput): Observable<Company> {
-    return id
-      ? this.http.put<Company>(`${this.base}/companies/${id}`, input)
-      : this.http.post<Company>(`${this.base}/companies`, input);
-  }
-
-  setCompanyStatus(id: string, isActive: boolean): Observable<Company> {
-    return this.http.patch<Company>(`${this.base}/companies/${id}/status`, { isActive });
   }
 
   areas(): Observable<Area[]> {

@@ -2,10 +2,11 @@
  * Reglas de arquitectura del frontend (docs/PLAN_HEXAGONAL.md, sección 3).
  * `npm run arch` las verifica y `npm run quality` las incluye.
  *
+ * Los paquetes de npm se comparan por su ruta resuelta (`node_modules/...`).
  * Las reglas por capa se aplican a las features ya migradas a la estructura hexagonal (MIGRATED_FEATURES);
  * cada paso del plan agrega la feature que migra. Al terminar, la lista cubre todas las features.
  */
-const MIGRATED_FEATURES = [];
+const MIGRATED_FEATURES = ['societies'];
 
 const APP = '^src/app';
 const migrated = MIGRATED_FEATURES.length ? `(${MIGRATED_FEATURES.join('|')})` : '(?!)';
@@ -20,8 +21,8 @@ module.exports = {
       from: { path: layer('domain') },
       to: {
         path: [
-          '^@angular',
-          '^rxjs',
+          '^node_modules/@angular/',
+          '^node_modules/rxjs/',
           `${APP}/features/[^/]+/(application|infrastructure|presentation|di)/`,
           `${APP}/(core|shared)/`,
           '^src/environments/',
@@ -36,8 +37,8 @@ module.exports = {
       from: { path: layer('application') },
       to: {
         path: [
-          '^@angular/common/http',
-          '^@angular/router',
+          '^node_modules/@angular/common/http/',
+          '^node_modules/@angular/router/',
           `${APP}/features/[^/]+/(infrastructure|presentation|di)/`,
           `${APP}/core/`,
           '^src/environments/',
@@ -50,7 +51,9 @@ module.exports = {
         'Las pantallas llegan a los casos de uso por los tokens de di/, nunca por un adaptador.',
       severity: 'error',
       from: { path: layer('presentation') },
-      to: { path: [`${APP}/features/[^/]+/infrastructure/`, '^@angular/common/http$'] },
+      to: {
+        path: [`${APP}/features/[^/]+/infrastructure/`, '^node_modules/@angular/common/http/'],
+      },
     },
     {
       name: 'infrastructure-does-not-know-presentation',

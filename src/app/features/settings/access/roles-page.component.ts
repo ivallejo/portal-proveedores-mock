@@ -18,7 +18,9 @@ import { SelectComponent } from '../../../shared/ui/select/select.component';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { Tone } from '../../../shared/ui/tone/tone';
-import { StatusFilter, includesTerm, matchesStatus, statusOptions } from '../organization/status';
+import { StatusFilter } from '../../../shared/utils/status-filter';
+import { includesTerm } from '../../../shared/utils/text-search.util';
+import { matchesStatus, statusOptions } from '../../../shared/utils/status-filter.util';
 import { AccessService, MenuItem, RoleItem } from './access.service';
 
 const PAGE_SIZE = 10;

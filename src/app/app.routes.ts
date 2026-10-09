@@ -22,6 +22,12 @@ const underConstruction = () =>
 const gated = (feature: FeatureFlag, load: () => Promise<Type<unknown>>) => () =>
   isFeatureEnabled(inject(FEATURE_FLAGS), feature) ? load() : underConstruction();
 
+/** Igual que `gated`, para las features que exportan sus rutas (`<feature>.routes.ts`). */
+const gatedRoutes = (feature: FeatureFlag, load: () => Promise<Routes>) => () =>
+  isFeatureEnabled(inject(FEATURE_FLAGS), feature)
+    ? load()
+    : Promise.resolve<Routes>([{ path: '', loadComponent: underConstruction }]);
+
 export const routes: Routes = [
   {
     path: '',
@@ -189,10 +195,8 @@ export const routes: Routes = [
         title: 'Sociedades · Portal de Proveedores',
         data: { title: 'Sociedades', roles: ['Administrador'] },
         canActivate: [menuGuard],
-        loadComponent: gated('sociedades', () =>
-          import('./features/settings/organization/companies-page.component').then(
-            (m) => m.CompaniesPageComponent,
-          ),
+        loadChildren: gatedRoutes('sociedades', () =>
+          import('./features/societies').then((m) => m.SOCIETIES_ROUTES),
         ),
       },
       {

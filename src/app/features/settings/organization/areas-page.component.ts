@@ -16,7 +16,9 @@ import { SelectOption } from '../../../shared/ui/select/select-option';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { Area, AreaInput, Company, OrganizationService } from './organization.service';
-import { StatusFilter, includesTerm, matchesStatus, statusOptions } from './status';
+import { StatusFilter } from '../../../shared/utils/status-filter';
+import { includesTerm } from '../../../shared/utils/text-search.util';
+import { matchesStatus, statusOptions } from '../../../shared/utils/status-filter.util';
 
 const PAGE_SIZE = 10;
 type Errors = Partial<Record<keyof AreaInput, string>>;
