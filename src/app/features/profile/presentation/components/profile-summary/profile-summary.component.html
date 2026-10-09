@@ -1,0 +1,55 @@
+<section
+  aria-label="Resumen del usuario"
+  class="card shrink-0 overflow-hidden p-0"
+  [attr.aria-busy]="facade.loading()"
+>
+  <div class="bg-brand-gradient h-[104px]"></div>
+  <div class="relative -mt-11 flex flex-col gap-4 px-7 pb-6 sm:flex-row sm:items-start sm:gap-6">
+    <span
+      class="flex size-24 shrink-0 items-center justify-center rounded-full border-[5px] border-white bg-primary text-[32px] font-bold text-white"
+      >{{ facade.avatar() }}</span
+    >
+    @if (facade.loading()) {
+      <div class="flex grow flex-col gap-2.5 sm:pt-[62px]" aria-hidden="true">
+        <span class="skeleton h-[26px] w-[320px] max-w-full"></span>
+        <span class="skeleton h-4 w-[240px] max-w-full"></span>
+      </div>
+    } @else if (facade.profile(); as me) {
+      <div
+        class="animate-in flex min-w-0 grow flex-col gap-4 sm:pt-[60px] lg:flex-row lg:items-center lg:justify-between"
+      >
+        <div class="flex min-w-0 flex-col gap-2">
+          <span class="truncate text-2xl font-bold tracking-tight">{{ me.displayName }}</span>
+          <span class="flex flex-wrap items-center gap-2 text-[13px]">
+            <span
+              class="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-primary-soft px-2.5 font-bold text-primary"
+            >
+              <app-icon name="shield-check" [size]="14" />{{ facade.role().label }}
+            </span>
+            <span
+              class="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-success-soft px-2.5 font-bold text-success-text"
+            >
+              <span class="size-[7px] rounded-full bg-success"></span>Activo
+            </span>
+            <span class="text-muted tabular-nums">{{ facade.accessId() }}</span>
+          </span>
+        </div>
+        <div class="flex shrink-0 gap-[22px] text-[13px] text-muted">
+          <span class="flex flex-col gap-[3px]"
+            >Miembro desde
+            <strong class="font-bold text-ink tabular-nums">{{
+              stamp(me.createdAtUtc, false)
+            }}</strong></span
+          >
+          <span class="w-px bg-line"></span>
+          <span class="flex flex-col gap-[3px]"
+            >Última actualización
+            <strong class="font-bold text-ink tabular-nums">{{
+              stamp(me.updatedAtUtc)
+            }}</strong></span
+          >
+        </div>
+      </div>
+    }
+  </div>
+</section>

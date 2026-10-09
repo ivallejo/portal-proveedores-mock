@@ -16,6 +16,7 @@ const CHECKED = [
   'src/app/features/menus',
   'src/app/features/roles',
   'src/app/features/users',
+  'src/app/features/profile',
 ];
 
 const TYPE =

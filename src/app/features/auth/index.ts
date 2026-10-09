@@ -2,6 +2,8 @@
 export type { AuthenticatedUser } from './domain/models/authenticated-user';
 export type { Role } from './domain/models/role';
 export { normalizeRole, roleLabel } from './domain/rules/role-rules';
+export type { PasswordRule } from './domain/models/password-rule';
+export { passwordRules } from './domain/rules/password-rules';
 export type { SessionListenerPort } from './application/ports/out/session-listener.port';
 export { SESSION_LISTENERS } from './di/auth.tokens';
 export { AUTH_PROVIDERS } from './di/auth.providers';

@@ -33,10 +33,7 @@ export const routes: Routes = [
   {
     path: 'verificar-correo',
     title: 'Verificar correo · Portal de Proveedores',
-    loadComponent: () =>
-      import('./features/profile/verify-email-page.component').then(
-        (m) => m.VerifyEmailPageComponent,
-      ),
+    loadChildren: () => import('./features/profile').then((m) => m.EMAIL_VERIFICATION_ROUTES),
   },
   {
     path: '',
@@ -109,8 +106,8 @@ export const routes: Routes = [
         path: 'perfil',
         title: 'Mi perfil · Portal de Proveedores',
         data: { title: 'Mi perfil' },
-        loadComponent: gated('perfil', () =>
-          import('./features/profile/profile-page.component').then((m) => m.ProfilePageComponent),
+        loadChildren: gatedRoutes('perfil', () =>
+          import('./features/profile').then((m) => m.PROFILE_ROUTES),
         ),
       },
       {

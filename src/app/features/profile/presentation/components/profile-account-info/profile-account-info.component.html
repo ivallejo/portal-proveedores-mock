@@ -1,0 +1,86 @@
+<aside aria-label="Información de la cuenta" class="card flex flex-col gap-[18px] p-[22px]">
+  <div class="flex items-center justify-between gap-2.5">
+    <span class="text-base font-bold">Información de la cuenta</span>
+    <span title="Solo lectura" class="text-faint"><app-icon name="lock" [size]="16" /></span>
+  </div>
+  @if (facade.loading()) {
+    <div class="flex flex-col gap-4" aria-hidden="true">
+      @for (width of ['70%', '55%', '80%', '45%']; track $index) {
+        <div class="flex flex-col gap-2">
+          <span class="skeleton h-[11px] w-[35%]"></span>
+          <span class="skeleton h-4" [style.width]="width"></span>
+        </div>
+      }
+    </div>
+  } @else if (facade.profile(); as me) {
+    <dl class="m-0 flex flex-col gap-3.5">
+      <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+        <dt class="eyebrow">Usuario de acceso</dt>
+        <dd class="m-0 text-[14.5px] font-medium tabular-nums">{{ facade.accessId() }}</dd>
+      </div>
+      <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+        <dt class="eyebrow">Rol</dt>
+        <dd class="m-0 text-[14.5px] font-medium">
+          {{ facade.role().label }}
+          @if (facade.role().description) {
+            <span class="block text-[12.5px] font-normal text-muted">{{
+              facade.role().description
+            }}</span>
+          }
+        </dd>
+      </div>
+      <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+        @if (me.isProvider) {
+          <dt class="eyebrow">Tipo de contribuyente</dt>
+          <dd class="m-0 text-[14.5px] font-medium">{{ facade.taxpayerType() }}</dd>
+        } @else {
+          <dt class="eyebrow">Área</dt>
+          <dd class="m-0 text-[14.5px] font-medium">
+            {{ me.areaName ?? 'Sin área asignada' }}
+            @if (me.areaCompanyName) {
+              <span class="block text-[12.5px] font-normal text-muted">{{
+                me.areaCompanyName
+              }}</span>
+            }
+          </dd>
+        }
+      </div>
+      <div class="flex flex-col gap-1 border-b border-line-soft pb-3.5">
+        <dt class="eyebrow">Estado de la cuenta</dt>
+        <dd class="m-0 text-[14.5px] font-medium">
+          Activo
+          <span class="block text-[12.5px] font-normal text-muted tabular-nums"
+            >Último cambio de contraseña: {{ stamp(me.passwordSetAtUtc) }}</span
+          >
+        </dd>
+      </div>
+      <div class="flex flex-col gap-2">
+        <dt class="eyebrow">Sociedades con acceso</dt>
+        <dd class="m-0 flex flex-col gap-2">
+          @for (company of me.companies; track company.code) {
+            <span class="flex items-center gap-2.5 rounded-[10px] bg-surface-alt px-2.5 py-2">
+              <span
+                class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
+                ><app-icon name="building" [size]="16"
+              /></span>
+              <span class="flex min-w-0 flex-col">
+                <span class="truncate text-[13.5px] font-bold">{{ company.name }}</span>
+                <span class="text-xs text-muted tabular-nums"
+                  >{{ company.code }}{{ company.ruc ? ' · RUC ' + company.ruc : ''
+                  }}{{ company.isActive ? '' : ' · Inactiva' }}</span
+                >
+              </span>
+            </span>
+          } @empty {
+            <span class="text-[13px] text-muted">Sin sociedades asignadas.</span>
+          }
+        </dd>
+      </div>
+    </dl>
+    <p class="m-0 flex gap-2 text-[12.5px] leading-normal text-muted">
+      <app-icon name="info" [size]="16" class="mt-px shrink-0" />
+      El rol, el área y las sociedades los administra el área de Tecnología. Si necesitas un cambio,
+      contacta al administrador.
+    </p>
+  }
+</aside>

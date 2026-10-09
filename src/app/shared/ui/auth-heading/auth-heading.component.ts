@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
-import { IconName } from '../../../../../shared/ui/icon/icon-name';
+import { IconComponent } from '../icon/icon.component';
+import { IconName } from '../icon/icon-name';
 
 /** Ícono en recuadro + título + descripción de cada paso. */
 @Component({

@@ -1,0 +1,147 @@
+<div class="animate-fade flex flex-col">
+  <div class="grid grid-cols-1 gap-[18px] p-6 sm:grid-cols-2">
+    @if (me().isProvider) {
+      <div class="flex flex-col gap-2">
+        <span class="field-label">RUC</span>
+        <span class="readonly-field tabular-nums">{{ me().ruc }}</span>
+        <span class="text-[12.5px] text-muted"
+          >Es tu usuario de acceso; no se puede modificar.</span
+        >
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="field-label">Tipo de contribuyente</span>
+        <span class="readonly-field">{{ facade.taxpayerType() }}</span>
+      </div>
+      <div class="flex flex-col gap-2 sm:col-span-2">
+        <label for="pf-rs" class="field-label"
+          >Razón social <span class="text-danger-text">*</span></label
+        >
+        <input
+          id="pf-rs"
+          class="field"
+          placeholder="Nombre legal de tu empresa"
+          maxlength="200"
+          [value]="facade.form().businessName"
+          (input)="facade.setField('businessName', $any($event.target).value)"
+          [attr.aria-invalid]="!!facade.errors().businessName"
+        />
+        <span
+          class="text-[12.5px]"
+          [class]="facade.errors().businessName ? 'text-danger-text' : 'text-muted'"
+          >{{ facade.errors().businessName ?? 'Debe coincidir con la registrada en SUNAT.' }}</span
+        >
+      </div>
+    } @else {
+      <div class="flex flex-col gap-2">
+        <span class="field-label">{{
+          facade.accessId().startsWith('DNI') ? 'DNI' : 'Usuario'
+        }}</span>
+        <span class="readonly-field tabular-nums">{{ me().username }}</span>
+        <span class="text-[12.5px] text-muted"
+          >Es tu usuario de acceso; no se puede modificar.</span
+        >
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="field-label">Área</span>
+        <span class="readonly-field">{{ me().areaName ?? '—' }}</span>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="pf-nom" class="field-label"
+          >Nombres <span class="text-danger-text">*</span></label
+        >
+        <input
+          id="pf-nom"
+          class="field"
+          placeholder="Tus nombres"
+          maxlength="100"
+          [value]="facade.form().firstName"
+          (input)="facade.setField('firstName', $any($event.target).value)"
+          [attr.aria-invalid]="!!facade.errors().firstName"
+        />
+        @if (facade.errors().firstName; as error) {
+          <span class="text-[12.5px] text-danger-text" role="alert">{{ error }}</span>
+        }
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="pf-ape" class="field-label"
+          >Apellidos <span class="text-danger-text">*</span></label
+        >
+        <input
+          id="pf-ape"
+          class="field"
+          placeholder="Tus apellidos"
+          maxlength="100"
+          [value]="facade.form().lastName"
+          (input)="facade.setField('lastName', $any($event.target).value)"
+          [attr.aria-invalid]="!!facade.errors().lastName"
+        />
+        @if (facade.errors().lastName; as error) {
+          <span class="text-[12.5px] text-danger-text" role="alert">{{ error }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="mx-6 flex items-center justify-between gap-3 rounded-xl bg-surface-alt px-4 py-3.5">
+    <span class="flex min-w-0 items-center gap-2.5 text-[13.5px] text-body">
+      <app-icon name="mail" [size]="18" class="shrink-0 text-primary" />
+      <span class="truncate"
+        >Correo principal: <strong class="text-ink">{{ facade.primaryEmail() }}</strong></span
+      >
+    </span>
+    <button
+      type="button"
+      class="shrink-0 text-[13.5px] font-bold text-primary"
+      (click)="facade.selectTab('emails')"
+    >
+      Administrar correos
+    </button>
+  </div>
+
+  <div
+    class="mt-[22px] flex flex-wrap items-center justify-between gap-3 rounded-b-[18px] border-t border-line-soft bg-surface-muted px-6 py-4"
+  >
+    @if (facade.saveError()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" />{{ facade.saveError() }}
+      </span>
+    } @else if (facade.errorCount()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" />{{
+          facade.errorCount() === 1
+            ? 'Revisa el campo marcado.'
+            : 'Revisa los ' + facade.errorCount() + ' campos marcados.'
+        }}
+      </span>
+    } @else if (facade.dirty()) {
+      <span class="flex items-center gap-2 text-[13px] text-warning-text">
+        <span class="size-2 rounded-full bg-warning"></span>Tienes cambios sin guardar
+      </span>
+    } @else {
+      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+    }
+    <div class="flex gap-2.5">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        [disabled]="!facade.dirty() || facade.saving()"
+        (click)="facade.discard()"
+      >
+        Descartar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!facade.dirty() || facade.saving()"
+        [attr.aria-busy]="facade.saving()"
+        (click)="facade.save()"
+      >
+        @if (facade.saving()) {
+          <app-spinner [size]="16" /> Guardando…
+        } @else {
+          <app-icon name="check" [size]="16" /> Guardar cambios
+        }
+      </button>
+    </div>
+  </div>
+</div>

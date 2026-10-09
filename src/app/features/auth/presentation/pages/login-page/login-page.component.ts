@@ -5,8 +5,8 @@ import { userFacingMessage } from '../../../../../shared/errors/user-facing-mess
 import { CalloutComponent } from '../../../../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
-import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
-import { PasswordFieldComponent } from '../../components/password-field/password-field.component';
+import { AuthLayoutComponent } from '../../../../../shared/ui/auth-layout/auth-layout.component';
+import { PasswordFieldComponent } from '../../../../../shared/ui/password-field/password-field.component';
 
 @Component({
   selector: 'app-login-page',

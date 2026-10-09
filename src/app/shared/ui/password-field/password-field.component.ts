@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
-import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
+import { IconComponent } from '../icon/icon.component';
 
 /** Campo de contraseña con ícono de candado y botón para mostrarla. */
 @Component({

@@ -8,9 +8,9 @@ import { CalloutComponent } from '../../../../../shared/ui/callout/callout.compo
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
 import { onlyDigits } from '../../../../../shared/utils/text-format.util';
-import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
+import { AuthLayoutComponent } from '../../../../../shared/ui/auth-layout/auth-layout.component';
 import { AuthBackLinkComponent } from '../../components/auth-back-link/auth-back-link.component';
-import { AuthHeadingComponent } from '../../components/auth-heading/auth-heading.component';
+import { AuthHeadingComponent } from '../../../../../shared/ui/auth-heading/auth-heading.component';
 import { AuthStepperComponent } from '../../components/auth-stepper/auth-stepper.component';
 import { RegisterStep } from './register-step';
 

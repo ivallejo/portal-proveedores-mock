@@ -6,9 +6,9 @@ import { passwordRules } from '../../../domain/rules/password-rules';
 import { CalloutComponent } from '../../../../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
-import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
-import { AuthHeadingComponent } from '../../components/auth-heading/auth-heading.component';
-import { PasswordFieldComponent } from '../../components/password-field/password-field.component';
+import { AuthLayoutComponent } from '../../../../../shared/ui/auth-layout/auth-layout.component';
+import { AuthHeadingComponent } from '../../../../../shared/ui/auth-heading/auth-heading.component';
+import { PasswordFieldComponent } from '../../../../../shared/ui/password-field/password-field.component';
 
 /** Cambio obligatorio de la contraseña temporal entregada por el administrador. */
 @Component({
