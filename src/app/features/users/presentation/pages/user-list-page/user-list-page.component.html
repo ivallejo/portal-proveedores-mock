@@ -1,0 +1,134 @@
+<app-page-header
+  heading="Usuarios"
+  description="Proveedores externos y colaboradores internos. Administra su rol, correos, sociedades a las que acceden y la seguridad de su cuenta."
+>
+  <button type="button" class="btn btn-primary" (click)="editor.openNew()">
+    <app-icon name="plus" [size]="18" [stroke]="2.2" />Nuevo usuario
+  </button>
+</app-page-header>
+
+<section aria-label="Filtros" class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-[2fr_1fr_1fr]">
+    <div class="flex flex-col gap-2">
+      <label for="uf-q" class="field-label">Buscar</label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[13px] left-3 text-muted"
+        />
+        <input
+          id="uf-q"
+          type="search"
+          class="field pl-[38px]"
+          placeholder="Nombre, RUC / DNI o correo"
+          [value]="list.draft().search"
+          (input)="list.setDraft({ search: $any($event.target).value })"
+          (keyup.enter)="list.search()"
+        />
+      </div>
+    </div>
+    <app-select
+      label="Rol"
+      [options]="list.roleFilterOptions()"
+      [value]="list.draft().role"
+      (valueChange)="list.setDraft({ role: $event })"
+    />
+    <app-select
+      label="Estado"
+      [options]="list.statusFilterOptions"
+      [value]="list.draft().status"
+      (valueChange)="list.setDraft({ status: $any($event) })"
+    />
+  </div>
+  <div class="flex justify-end gap-2.5 border-t border-line-soft pt-4">
+    <button type="button" class="btn btn-secondary" (click)="list.clear()">Limpiar</button>
+    <button type="button" class="btn btn-primary min-w-[132px]" (click)="list.search()">
+      <app-icon name="search" [size]="18" [stroke]="2" />Buscar
+    </button>
+  </div>
+</section>
+
+@if (list.loadError()) {
+  <app-callout tone="danger">{{ list.loadError() }}</app-callout>
+}
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <app-kpi-card
+    label="Total de usuarios"
+    icon="users"
+    tone="primary"
+    [loading]="list.loading() && !list.counts()"
+    [value]="list.kpis().total"
+  />
+  <app-kpi-card
+    label="Activos"
+    icon="circle-check"
+    tone="success"
+    [loading]="list.loading() && !list.counts()"
+    [value]="list.kpis().active"
+  />
+  <app-kpi-card
+    label="Bloqueados o inactivos"
+    icon="lock"
+    tone="gray"
+    [loading]="list.loading() && !list.counts()"
+    [value]="list.kpis().other"
+  />
+</div>
+
+<section
+  aria-label="Usuarios"
+  class="card flex grow flex-col overflow-hidden"
+  [attr.aria-busy]="list.loading()"
+>
+  <app-user-table
+    [rows]="list.rows()"
+    [loading]="list.loading()"
+    (edit)="editor.openEdit($event)"
+    (toggle)="list.askToggle($event)"
+  />
+
+  @if (!list.loading() && !list.rows().length && !list.loadError()) {
+    <app-empty-state
+      heading="No encontramos usuarios"
+      text="Prueba con otro texto de búsqueda o cambia los filtros."
+      icon="users"
+      (action)="list.clear()"
+    />
+  }
+
+  <app-pagination
+    [loading]="list.loading()"
+    loadingText="Cargando usuarios…"
+    [total]="list.total()"
+    [page]="list.page()"
+    [pageSize]="list.pageSize"
+    noun="usuarios"
+    (pageChange)="list.goToPage($event)"
+  />
+</section>
+
+@if (editor.detailLoading()) {
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-[rgba(14,42,92,0.25)]">
+    <span class="flex items-center gap-3 rounded-xl bg-white px-5 py-4 text-sm shadow-toast">
+      <app-spinner [size]="18" /> Abriendo usuario…
+    </span>
+  </div>
+}
+
+@if (editor.editing()) {
+  <app-user-form-drawer />
+}
+
+@if (list.confirming(); as user) {
+  <app-confirm-dialog
+    [heading]="'¿' + list.toggleVerb(user) + ' el usuario?'"
+    [text]="list.confirmText(user)"
+    [confirmText]="list.toggleVerb(user)"
+    [danger]="user.status === 'active'"
+    [busy]="list.toggling()"
+    (cancel)="list.confirming.set(null)"
+    (confirm)="list.toggle()"
+  />
+}

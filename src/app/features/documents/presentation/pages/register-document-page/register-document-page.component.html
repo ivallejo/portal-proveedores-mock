@@ -1,0 +1,33 @@
+<app-page-header
+  heading="Registrar documentos"
+  description="Elige cómo vas a registrar el documento. Validamos la información con SAP y SUNAT antes de registrarlo."
+/>
+
+<app-register-entry-picker />
+
+<section aria-label="Registro" class="card flex flex-col rounded-[18px] shadow-card">
+  <app-register-stepper />
+
+  @if (facade.result()) {
+    <app-register-result />
+  } @else if (facade.step() === 2) {
+    <!-- Paso 2: revisión del documento leído del XML -->
+    <app-register-review />
+  } @else if (facade.entry() === 'esp') {
+    <!-- Documentos especiales: un solo paso -->
+    <div class="animate-fade grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <app-special-document-data />
+      <app-special-document-files />
+    </div>
+  } @else {
+    <!-- Paso 1 (Con OC / Sin OC): datos y archivos -->
+    <div class="animate-fade grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <app-register-order-data />
+      <app-register-files />
+    </div>
+  }
+
+  @if (!facade.result()) {
+    <app-register-footer />
+  }
+</section>

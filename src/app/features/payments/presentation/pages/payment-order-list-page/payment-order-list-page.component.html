@@ -1,0 +1,41 @@
+<app-page-header
+  class="print:hidden"
+  heading="Orden de pago"
+  description="Consulta los pagos realizados a tu empresa por cada sociedad, con el detalle de los comprobantes cancelados, retenciones y detracciones."
+/>
+
+@if (facade.error()) {
+  <app-callout class="print:hidden" tone="danger">{{ facade.error() }}</app-callout>
+}
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3 print:hidden">
+  <app-kpi-card
+    label="Órdenes de pago"
+    icon="file-text"
+    tone="primary"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().count"
+  />
+  <app-kpi-card
+    label="Total pagado en soles"
+    icon="cash"
+    tone="purple"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().pen"
+  />
+  <app-kpi-card
+    label="Total pagado en dólares"
+    icon="cash"
+    tone="success"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().usd"
+  />
+</div>
+
+<app-payment-order-filters />
+
+<app-payment-order-table />
+
+@if (facade.detail(); as order) {
+  <app-payment-order-detail-dialog [order]="order" />
+}

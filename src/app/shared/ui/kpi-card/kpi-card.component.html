@@ -1,0 +1,11 @@
+<span class="flex size-11 shrink-0 items-center justify-center rounded-xl" [class]="iconClass()">
+  <app-icon [name]="icon()" [size]="22" />
+</span>
+<div class="flex min-w-0 grow flex-col gap-1.5">
+  <span class="text-[13px] text-muted">{{ label() }}</span>
+  @if (loading()) {
+    <span class="skeleton h-[22px] w-[36%]"></span>
+  } @else {
+    <span class="animate-fade truncate text-[22px] font-bold tabular-nums">{{ value() }}</span>
+  }
+</div>

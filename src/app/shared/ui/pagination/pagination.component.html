@@ -1,0 +1,39 @@
+<span>{{ summary() }}</span>
+@if (!loading() && total() > 0) {
+  <div class="flex items-center gap-1.5">
+    <button
+      type="button"
+      class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+      aria-label="Página anterior"
+      [disabled]="page() === 1"
+      (click)="pageChange.emit(page() - 1)"
+    >
+      <app-icon name="chevron-left" [size]="16" [stroke]="2" />
+    </button>
+    @for (item of pages(); track item) {
+      <button
+        type="button"
+        class="size-9 rounded-lg text-[13px] font-bold"
+        [class.bg-primary]="item === page()"
+        [class.text-white]="item === page()"
+        [class.border]="item !== page()"
+        [class.border-[#DDE1E7]]="item !== page()"
+        [class.bg-white]="item !== page()"
+        [class.text-muted]="item !== page()"
+        [attr.aria-current]="item === page() ? 'page' : null"
+        (click)="pageChange.emit(item)"
+      >
+        {{ item }}
+      </button>
+    }
+    <button
+      type="button"
+      class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+      aria-label="Página siguiente"
+      [disabled]="page() === pageCount()"
+      (click)="pageChange.emit(page() + 1)"
+    >
+      <app-icon name="chevron-right" [size]="16" [stroke]="2" />
+    </button>
+  </div>
+}

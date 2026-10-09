@@ -1,0 +1,113 @@
+<section
+  aria-label="Órdenes de pago"
+  class="print:hidden card flex grow flex-col overflow-hidden"
+  [attr.aria-busy]="facade.loading()"
+>
+  <div class="overflow-x-auto">
+    <div class="min-w-[880px]">
+      <div
+        class="grid h-12 grid-cols-[1.15fr_1.8fr_0.95fr_0.8fr_1.2fr_112px] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+      >
+        <div>N° orden de pago</div>
+        <div>Sociedad</div>
+        <div>Fecha de pago</div>
+        <div>Moneda</div>
+        <div class="text-right">Monto total pagado</div>
+        <div class="text-right">Acciones</div>
+      </div>
+
+      @if (facade.loading()) {
+        @for (row of [72, 58, 80, 64, 70, 55, 76, 62]; track $index) {
+          <div
+            aria-hidden="true"
+            class="grid h-[60px] grid-cols-[1.15fr_1.8fr_0.95fr_0.8fr_1.2fr_112px] items-center gap-4 border-b border-line-soft px-6"
+          >
+            <span class="skeleton h-3" [style.width.%]="row"></span>
+            <span class="flex flex-col gap-[7px]"
+              ><span class="skeleton h-3 w-[70%]"></span><span class="skeleton h-2.5 w-[40%]"></span
+            ></span>
+            <span class="skeleton h-3 w-[70%]"></span>
+            <span class="skeleton h-6 w-[80%] rounded-full"></span>
+            <span class="flex justify-end"><span class="skeleton h-3 w-[70%]"></span></span>
+            <span class="flex justify-end gap-1.5"
+              ><span class="skeleton size-9 rounded-lg"></span
+              ><span class="skeleton size-9 rounded-lg"></span
+            ></span>
+          </div>
+        }
+      } @else {
+        @for (order of facade.pageRows(); track order.number; let i = $index) {
+          <div
+            class="row-hover animate-in grid h-[60px] grid-cols-[1.15fr_1.8fr_0.95fr_0.8fr_1.2fr_112px] items-center gap-4 border-b border-line-soft px-6 text-sm"
+            [style.animation-delay.ms]="i * 45"
+          >
+            <div class="font-bold tracking-[0.01em] tabular-nums">{{ order.number }}</div>
+            <div class="flex min-w-0 flex-col gap-0.5">
+              <span class="truncate font-medium">{{ order.companyName }}</span>
+              <span class="text-xs text-muted tabular-nums">{{
+                order.companyRuc ? 'RUC ' + order.companyRuc : 'Sociedad ' + order.companyCode
+              }}</span>
+            </div>
+            <div class="text-label tabular-nums">{{ formatDate(order.paidAt ?? '') }}</div>
+            <div>
+              <app-badge size="sm" [tone]="currencyTone(order.currency)">{{
+                order.currency === 'USD' ? 'USD · Dólares' : 'PEN · Soles'
+              }}</app-badge>
+            </div>
+            <div class="text-right font-bold tabular-nums">
+              {{ money(order.currency, order.total) }}
+            </div>
+            <div class="flex justify-end gap-1.5">
+              <button
+                type="button"
+                class="flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
+                title="Ver detalle"
+                [attr.aria-label]="'Ver detalle de ' + order.number"
+                (click)="facade.open(order)"
+              >
+                <app-icon name="eye" [size]="18" />
+              </button>
+              <button
+                type="button"
+                class="flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
+                title="Imprimir orden de pago"
+                [attr.aria-label]="'Imprimir orden de pago ' + order.number"
+                (click)="facade.printOrder(order)"
+              >
+                <app-icon name="printer" [size]="18" />
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  @if (!facade.loading() && !facade.orders().length && !facade.error()) {
+    @if (facade.searched()) {
+      <app-empty-state
+        heading="No hay órdenes de pago"
+        text="No encontramos pagos para los filtros seleccionados. Prueba ampliando el rango de fechas o eligiendo otra sociedad."
+        icon="cash"
+        (action)="facade.clear()"
+      />
+    } @else {
+      <app-empty-state
+        heading="Consulta los pagos de un proveedor"
+        text="Ingresa el RUC del proveedor y el rango de fechas, y presiona Buscar."
+        icon="search"
+        actionText=""
+      />
+    }
+  }
+
+  <app-pagination
+    [loading]="facade.loading()"
+    loadingText="Buscando órdenes de pago…"
+    [total]="facade.orders().length"
+    [page]="facade.page()"
+    [pageSize]="facade.pageSize"
+    noun="órdenes de pago"
+    (pageChange)="facade.page.set($event)"
+  />
+</section>

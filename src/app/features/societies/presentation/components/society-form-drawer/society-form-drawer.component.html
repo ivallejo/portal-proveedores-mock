@@ -1,0 +1,126 @@
+<app-drawer
+  icon="building"
+  [heading]="facade.isNew() ? 'Nueva sociedad' : 'Editar sociedad'"
+  [subtitle]="facade.isNew() ? 'Registra una empresa del grupo.' : facade.form().name"
+  (closed)="facade.closeDrawer()"
+>
+  <div class="grid grid-cols-1 gap-x-[18px] gap-y-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <label for="fld-code" class="field-label"
+        >Código <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="fld-code"
+        class="field font-mono uppercase"
+        placeholder="Ej. 1001"
+        [attr.aria-invalid]="!!facade.errors().code"
+        [value]="facade.form().code"
+        (input)="facade.setField('code', $any($event.target).value)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="facade.errors().code ? 'text-danger-text' : 'text-muted'"
+        >{{
+          facade.errors().code ?? 'Código de sociedad SAP: de 2 a 5 letras o números, único.'
+        }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="fld-ruc" class="field-label">RUC <span class="text-danger-text">*</span></label>
+      <input
+        id="fld-ruc"
+        class="field tabular-nums"
+        inputmode="numeric"
+        placeholder="11 dígitos"
+        [attr.aria-invalid]="!!facade.errors().ruc"
+        [value]="facade.form().ruc"
+        (input)="facade.setField('ruc', $any($event.target).value)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="facade.errors().ruc ? 'text-danger-text' : 'text-muted'"
+        >{{ facade.errors().ruc ?? '11 dígitos, empieza con 20.' }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-2 sm:col-span-2">
+      <label for="fld-name" class="field-label"
+        >Razón social <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="fld-name"
+        class="field"
+        placeholder="Nombre legal de la empresa"
+        [attr.aria-invalid]="!!facade.errors().name"
+        [value]="facade.form().name"
+        (input)="facade.setField('name', $any($event.target).value)"
+      />
+      @if (facade.errors().name; as error) {
+        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+      }
+    </div>
+    <div class="flex flex-col gap-2 sm:col-span-2">
+      <label for="fld-mail" class="field-label"
+        >Correo de la sociedad <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="fld-mail"
+        type="email"
+        class="field"
+        placeholder="facturacion@empresa.pe"
+        [attr.aria-invalid]="!!facade.errors().billingEmail"
+        [value]="facade.form().billingEmail"
+        (input)="facade.setField('billingEmail', $any($event.target).value)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="facade.errors().billingEmail ? 'text-danger-text' : 'text-muted'"
+        >{{
+          facade.errors().billingEmail ??
+            'Recibe los comprobantes electrónicos y copia de las notificaciones a proveedores.'
+        }}</span
+      >
+    </div>
+  </div>
+  @if (!facade.isNew()) {
+    <div class="flex flex-wrap gap-6 rounded-xl bg-[#F7F9FC] px-3.5 py-3 text-[12.5px] text-body">
+      <span
+        ><strong class="font-medium text-ink">{{ society()?.areaCount }}</strong> áreas</span
+      >
+      <span
+        ><strong class="font-medium text-ink">{{ society()?.userCount }}</strong> usuarios con
+        acceso</span
+      >
+    </div>
+  }
+  <div
+    drawer-footer
+    class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
+  >
+    @if (facade.saveError()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" />{{ facade.saveError() }}
+      </span>
+    } @else {
+      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+    }
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="facade.closeDrawer()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [attr.aria-busy]="facade.saving()"
+        (click)="!facade.saving() && facade.save()"
+      >
+        @if (facade.saving()) {
+          <app-spinner [size]="18" />Guardando…
+        } @else {
+          <app-icon name="check" [size]="18" [stroke]="2.2" />{{
+            facade.isNew() ? 'Crear sociedad' : 'Guardar cambios'
+          }}
+        }
+      </button>
+    </div>
+  </div>
+</app-drawer>

@@ -1,0 +1,58 @@
+<div class="flex flex-col gap-[18px] border-line-soft px-5 py-6 sm:px-7 lg:border-r">
+  <app-register-section-title
+    [n]="1"
+    heading="Tipo de documento"
+    sub="Elige la sociedad y el tipo"
+  />
+  <app-select
+    label="Sociedad"
+    placeholder="Selecciona la sociedad"
+    [options]="facade.companyOptions()"
+    [invalid]="!!facade.formError() && !facade.company()"
+    [value]="facade.company()"
+    (valueChange)="facade.setCompany($event)"
+  />
+  @if (facade.companyBillingEmail(); as email) {
+    <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+      <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+      <span class="font-medium text-body">{{ email }}</span>
+    </p>
+  }
+  <div class="flex flex-col gap-2">
+    <span class="field-label">Tipo de documento</span>
+    <div
+      role="radiogroup"
+      aria-label="Tipo de documento"
+      class="grid grid-cols-1 gap-2.5 sm:grid-cols-2"
+    >
+      @for (type of facade.specialTypes; track type) {
+        @let on = facade.special().type === type;
+        <button
+          type="button"
+          role="radio"
+          class="option-card flex min-h-14 items-center justify-between gap-2 rounded-xl border-2 px-3.5 py-2.5 text-left text-sm font-bold text-ink"
+          [class]="on ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
+          [attr.aria-checked]="on"
+          (click)="facade.setSpecial('type', type)"
+        >
+          {{ type }}
+          <span
+            class="size-[18px] shrink-0 rounded-full border-2"
+            [class]="
+              on
+                ? 'border-primary bg-primary shadow-[inset_0_0_0_3px_#fff]'
+                : 'border-control bg-white'
+            "
+          ></span>
+        </button>
+      }
+    </div>
+  </div>
+  <app-callout [tone]="facade.isSettlement() ? 'warn' : 'info'">
+    {{
+      facade.isSettlement()
+        ? 'Las liquidaciones de cobranza se validan en SAP y en SUNAT (validez del documento y duplicidad).'
+        : 'Validaremos en SAP que el documento no esté registrado previamente (duplicidad).'
+    }}
+  </app-callout>
+</div>

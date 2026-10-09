@@ -1,0 +1,93 @@
+<app-drawer
+  icon="layers"
+  [heading]="facade.isNew() ? 'Nueva área' : 'Editar área'"
+  [subtitle]="facade.isNew() ? 'Crea una unidad interna de una sociedad.' : facade.form().name"
+  (closed)="facade.closeDrawer()"
+>
+  <div class="grid grid-cols-1 gap-y-4">
+    <app-select
+      label="Sociedad *"
+      placeholder="Selecciona la sociedad"
+      [options]="facade.societyFormOptions()"
+      [invalid]="!!facade.errors().societyId"
+      [value]="facade.form().societyId"
+      (valueChange)="facade.setField('societyId', $event)"
+    />
+    @if (facade.errors().societyId; as error) {
+      <span class="-mt-2 text-[12.5px] text-danger-text">{{ error }}</span>
+    }
+    <div class="flex flex-col gap-2">
+      <label for="fld-name" class="field-label"
+        >Nombre <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="fld-name"
+        class="field"
+        placeholder="Ej. Finanzas"
+        [attr.aria-invalid]="!!facade.errors().name"
+        [value]="facade.form().name"
+        (input)="facade.setField('name', $any($event.target).value)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="facade.errors().name ? 'text-danger-text' : 'text-muted'"
+        >{{ facade.errors().name ?? 'Único dentro de la sociedad.' }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="fld-desc" class="field-label">Descripción</label>
+      <textarea
+        id="fld-desc"
+        rows="3"
+        class="field h-auto py-2.5"
+        placeholder="¿Qué hace esta área?"
+        maxlength="300"
+        [attr.aria-invalid]="!!facade.errors().description"
+        [value]="facade.form().description"
+        (input)="facade.setField('description', $any($event.target).value)"
+      ></textarea>
+      @if (facade.errors().description; as error) {
+        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+      }
+    </div>
+  </div>
+  @if (!facade.isNew()) {
+    <div class="flex flex-wrap gap-6 rounded-xl bg-[#F7F9FC] px-3.5 py-3 text-[12.5px] text-body">
+      <span
+        ><strong class="font-medium text-ink">{{ area()?.userCount }}</strong> usuarios en esta
+        área</span
+      >
+    </div>
+  }
+  <div
+    drawer-footer
+    class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
+  >
+    @if (facade.saveError()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" />{{ facade.saveError() }}
+      </span>
+    } @else {
+      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+    }
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="facade.closeDrawer()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [attr.aria-busy]="facade.saving()"
+        (click)="!facade.saving() && facade.save()"
+      >
+        @if (facade.saving()) {
+          <app-spinner [size]="18" />Guardando…
+        } @else {
+          <app-icon name="check" [size]="18" [stroke]="2.2" />{{
+            facade.isNew() ? 'Crear área' : 'Guardar cambios'
+          }}
+        }
+      </button>
+    </div>
+  </div>
+</app-drawer>

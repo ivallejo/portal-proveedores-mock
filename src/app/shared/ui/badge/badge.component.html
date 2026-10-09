@@ -1,0 +1,9 @@
+<span
+  class="inline-flex items-center rounded-full text-xs font-bold whitespace-nowrap"
+  [class]="classes()"
+>
+  @if (dot()) {
+    <span class="size-[7px] shrink-0 rounded-full" [class]="dotClass()"></span>
+  }
+  <ng-content />
+</span>

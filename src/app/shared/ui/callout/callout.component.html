@@ -1,0 +1,13 @@
+<div
+  class="flex items-start gap-3 rounded-xl px-4 py-3 text-[13.5px] leading-normal"
+  [class]="style().box"
+  [attr.role]="tone() === 'danger' ? 'alert' : null"
+>
+  <app-icon [name]="icon() ?? style().icon" [size]="20" [stroke]="1.9" class="mt-px" />
+  <div class="flex min-w-0 flex-col gap-0.5">
+    @if (heading()) {
+      <span class="text-sm font-bold">{{ heading() }}</span>
+    }
+    <span><ng-content /></span>
+  </div>
+</div>

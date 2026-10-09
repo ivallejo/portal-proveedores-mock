@@ -1,0 +1,111 @@
+<section
+  aria-label="Facturas"
+  class="card flex grow flex-col overflow-hidden"
+  [attr.aria-busy]="facade.loading()"
+>
+  <div class="overflow-x-auto">
+    <div class="min-w-[980px]">
+      <div
+        class="grid h-12 grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+      >
+        <div>RUC</div>
+        <div>N° de factura</div>
+        <div class="text-right">Importe</div>
+        <div>Moneda</div>
+        <div>Fecha de emisión</div>
+        <div>Detracción</div>
+        <div>Retención</div>
+        <div>Estado</div>
+      </div>
+
+      @if (facade.loading()) {
+        @for (row of [78, 62, 84, 70, 66, 80, 58, 74, 68, 76]; track $index) {
+          <div
+            aria-hidden="true"
+            class="grid h-[60px] grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6"
+          >
+            <span class="skeleton h-3" [style.width.%]="row"></span>
+            <span class="flex flex-col gap-[7px]"
+              ><span class="skeleton h-3 w-[70%]"></span><span class="skeleton h-2.5 w-[50%]"></span
+            ></span>
+            <span class="flex justify-end"><span class="skeleton h-3 w-[70%]"></span></span>
+            <span class="skeleton h-6 w-12 rounded-full"></span>
+            <span class="skeleton h-3 w-[70%]"></span>
+            <span class="skeleton h-6 w-10 rounded-full"></span>
+            <span class="skeleton h-6 w-10 rounded-full"></span>
+            <span class="skeleton h-7 w-[80%] rounded-full"></span>
+          </div>
+        }
+      } @else {
+        @for (invoice of facade.pageRows(); track invoice.number; let i = $index) {
+          <div
+            class="row-hover animate-in grid h-[60px] grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6 text-sm"
+            [style.animation-delay.ms]="i * 40"
+          >
+            <div class="tracking-[0.01em] text-label tabular-nums">{{ invoice.providerRuc }}</div>
+            <div class="flex min-w-0 flex-col gap-0.5">
+              <span class="font-bold tracking-[0.01em] tabular-nums">{{ invoice.number }}</span>
+              <span class="truncate text-xs text-muted">{{
+                invoice.type +
+                  ' · ' +
+                  (invoice.companyName ?? (invoice.companyRuc ? 'RUC ' + invoice.companyRuc : '—'))
+              }}</span>
+            </div>
+            <div class="text-right font-bold tabular-nums">
+              {{ money(invoice.currency, invoice.amount) }}
+            </div>
+            <div>
+              <app-badge size="sm" [tone]="currencyTone(invoice.currency)">{{
+                invoice.currency
+              }}</app-badge>
+            </div>
+            <div class="text-label tabular-nums">{{ formatDate(invoice.issuedAt ?? '') }}</div>
+            <div>
+              <app-badge size="sm" [tone]="invoice.hasDetraction ? 'primary' : 'gray'">{{
+                invoice.hasDetraction ? 'Sí' : 'No'
+              }}</app-badge>
+            </div>
+            <div>
+              <app-badge size="sm" [tone]="invoice.hasRetention ? 'primary' : 'gray'">{{
+                invoice.hasRetention ? 'Sí' : 'No'
+              }}</app-badge>
+            </div>
+            <div>
+              <app-badge size="lg" [dot]="true" [tone]="tone(invoice.status)">{{
+                invoice.status
+              }}</app-badge>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  @if (!facade.loading() && !facade.invoices().length && !facade.error()) {
+    @if (facade.searched()) {
+      <app-empty-state
+        heading="No hay facturas"
+        text="No encontramos facturas con los filtros seleccionados. Verifica el número de factura o amplía el rango de fechas."
+        icon="receipt"
+        (action)="facade.clear()"
+      />
+    } @else {
+      <app-empty-state
+        heading="Consulta las facturas de un proveedor"
+        text="Ingresa el RUC del proveedor y el rango de fechas, y presiona Buscar."
+        icon="search"
+        actionText=""
+      />
+    }
+  }
+
+  <app-pagination
+    [loading]="facade.loading()"
+    loadingText="Buscando facturas…"
+    [total]="facade.invoices().length"
+    [page]="facade.page()"
+    [pageSize]="facade.pageSize"
+    noun="facturas"
+    (pageChange)="facade.page.set($event)"
+  />
+</section>

@@ -7,21 +7,7 @@ import { ToastService } from './toast.service';
   selector: 'app-toast-host',
   imports: [IconComponent, SpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (toast.current(); as current) {
-      <div
-        role="status"
-        class="animate-in fixed right-4 bottom-4 z-50 flex max-w-[calc(100vw-32px)] items-center gap-3 rounded-xl bg-ink px-[18px] py-3.5 text-sm font-medium text-white shadow-toast sm:right-10 sm:bottom-10"
-      >
-        @if (current.busy) {
-          <app-spinner [size]="18" tone="muted" />
-        } @else {
-          <app-icon name="circle-check" [size]="18" [stroke]="2" class="text-[#7FD7A4]" />
-        }
-        {{ current.message }}
-      </div>
-    }
-  `,
+  templateUrl: './toast-host.component.html',
 })
 export class ToastHostComponent {
   readonly toast = inject(ToastService);

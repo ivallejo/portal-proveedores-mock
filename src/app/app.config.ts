@@ -1,11 +1,16 @@
 import {
   ApplicationConfig,
+  inject,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
-import { authInterceptor } from './core/auth/auth.interceptor';
+import { environment } from '../environments/environment';
+import { API_BASE_URL } from './core/config/api-base-url.token';
+import { NAVIGATION_PROVIDERS, SessionMenuFacade } from './features/menus';
+import { AUTH_PROVIDERS, SESSION_LISTENERS, authInterceptor } from './features/auth';
+import { FEATURE_FLAGS } from './core/config/feature-flags.token';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -18,5 +23,18 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
     ),
     provideHttpClient(withInterceptors([authInterceptor])),
+    { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
+    { provide: FEATURE_FLAGS, useValue: environment.features },
+    AUTH_PROVIDERS,
+    NAVIGATION_PROVIDERS,
+    // El menú se vuelve a cargar cuando cambia la sesión (auth no conoce al menú).
+    {
+      provide: SESSION_LISTENERS,
+      multi: true,
+      useFactory: () => {
+        const menu = inject(SessionMenuFacade);
+        return { sessionChanged: () => menu.reset() };
+      },
+    },
   ],
 };

@@ -1,0 +1,201 @@
+<app-dialog
+  eyebrow="Orden de pago"
+  [heading]="order().number"
+  [subtitle]="order().companyName + (order().companyRuc ? ' · RUC ' + order().companyRuc : '')"
+  [width]="1120"
+  (closed)="facade.close()"
+>
+  <app-badge dialog-status size="lg" [dot]="true" tone="success">Pagada</app-badge>
+
+  @if (facade.detailTotals(); as totals) {
+    <div class="animate-fade flex flex-col gap-5 px-5 pt-[22px] pb-6 sm:px-8">
+      <p class="m-0 hidden text-xs text-muted print:block">
+        Portal de Proveedores · {{ order().providerName }} (RUC {{ order().providerRuc }}) · impreso
+        el
+        {{ facade.printedAt() }}
+      </p>
+      <div
+        class="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_1.3fr]"
+      >
+        @for (
+          item of [
+            { icon: 'calendar', label: 'Fecha de pago', value: formatDate(order().paidAt ?? '') },
+            { icon: 'file-text', label: 'Comprobantes pagados', value: totals.documents },
+            { icon: 'hash', label: 'Total retenciones', value: totals.retention },
+            { icon: 'bank', label: 'Total detracciones', value: totals.detraction },
+          ];
+          track item.label
+        ) {
+          <div class="flex min-w-0 items-start gap-3">
+            <span
+              class="flex size-[38px] shrink-0 items-center justify-center rounded-[10px] bg-page text-primary"
+            >
+              <app-icon [name]="$any(item.icon)" [size]="20" />
+            </span>
+            <span class="flex min-w-0 flex-col gap-[3px]">
+              <span class="text-xs font-medium text-muted">{{ item.label }}</span>
+              <span class="text-[14.5px] font-bold tabular-nums">{{ item.value }}</span>
+            </span>
+          </div>
+        }
+        <div
+          class="bg-brand-gradient flex flex-col justify-center gap-1 rounded-[14px] px-[18px] py-3.5 text-white"
+        >
+          <span class="text-xs font-medium text-[#CFE0FF]">Monto total pagado</span>
+          <span class="text-2xl font-bold tracking-tight tabular-nums">{{
+            money(order().currency, order().total)
+          }}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <h3 class="m-0 text-base font-bold">Comprobantes pagados</h3>
+        <div
+          class="flex max-h-[520px] flex-col gap-3.5 overflow-y-auto pr-1 print:max-h-none print:overflow-visible"
+        >
+          @for (doc of order().documents; track doc.number; let j = $index) {
+            <article
+              class="animate-in shrink-0 overflow-hidden rounded-[14px] border border-[#DCE3EE] print:animate-none print:break-inside-avoid"
+              [style.animation-delay.ms]="j * 60"
+            >
+              <div
+                class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-[#E3EAF5] bg-[#F5F8FD] px-[18px] py-3.5"
+              >
+                <div class="flex min-w-0 items-center gap-3">
+                  <span
+                    class="flex size-10 shrink-0 items-center justify-center rounded-[10px] border border-line-auth bg-white text-primary"
+                  >
+                    <app-icon name="file-text" [size]="20" />
+                  </span>
+                  <span class="flex min-w-0 flex-col gap-0.5">
+                    <span class="text-base font-bold tracking-[0.01em] tabular-nums">{{
+                      doc.number
+                    }}</span>
+                    <span class="text-[13px] text-muted"
+                      >{{ doc.type }} · Emitido el
+                      <span class="tabular-nums">{{ formatDate(doc.issuedAt ?? '') }}</span></span
+                    >
+                  </span>
+                </div>
+                <div class="flex flex-col items-end gap-0.5">
+                  <span class="text-xs font-medium text-muted">Monto pagado</span>
+                  <span class="text-xl font-bold text-primary tabular-nums">{{
+                    money(order().currency, doc.paid)
+                  }}</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-px bg-line-soft md:grid-cols-3">
+                <section
+                  class="flex flex-col gap-[9px] bg-white px-[18px] py-3.5 text-[13.5px] tabular-nums"
+                >
+                  <span
+                    class="flex items-center gap-[7px] text-[11.5px] font-bold tracking-[0.06em] text-muted-auth uppercase"
+                  >
+                    <app-icon name="cash" [size]="16" />Importes
+                  </span>
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="text-body">Importe</span
+                    ><span class="font-medium">{{ money(order().currency, doc.amount) }}</span>
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="text-body">Retención</span>
+                    <span
+                      class="font-medium"
+                      [class]="doc.retention ? 'text-danger-text' : 'text-[#8A93A3]'"
+                      >{{
+                        doc.retention ? '− ' + money(order().currency, doc.retention) : '—'
+                      }}</span
+                    >
+                  </div>
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="text-body">Detracción</span>
+                    <span
+                      class="font-medium"
+                      [class]="doc.detraction ? 'text-danger-text' : 'text-[#8A93A3]'"
+                      >{{
+                        doc.detraction ? '− ' + money(order().currency, doc.detraction) : '—'
+                      }}</span
+                    >
+                  </div>
+                  <div
+                    class="flex items-baseline justify-between gap-3 border-t border-dashed border-[#DCE3EE] pt-[9px]"
+                  >
+                    <span class="font-bold">Monto pagado</span
+                    ><span class="font-bold">{{ money(order().currency, doc.paid) }}</span>
+                  </div>
+                </section>
+                <section class="flex flex-col gap-[9px] bg-white px-[18px] py-3.5 text-[13.5px]">
+                  <span
+                    class="flex items-center gap-[7px] text-[11.5px] font-bold tracking-[0.06em] text-muted-auth uppercase"
+                  >
+                    <app-icon name="bank" [size]="16" />Datos del pago
+                  </span>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-xs text-muted">Forma de pago</span
+                    ><span class="font-bold">{{ order().paymentMethod }}</span>
+                  </div>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-xs text-muted">Entidad bancaria</span
+                    ><span class="font-bold">{{ order().bank ?? '—' }}</span>
+                  </div>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-xs text-muted">Cuenta de pago · documento SAP</span>
+                    <span class="font-bold tabular-nums">{{ order().account ?? '—' }}</span>
+                    <span class="text-[12.5px] text-muted tabular-nums">{{
+                      order().paymentDocument
+                    }}</span>
+                  </div>
+                </section>
+                <section class="flex flex-col gap-[9px] bg-white px-[18px] py-3.5 text-[13.5px]">
+                  <span
+                    class="flex items-center gap-[7px] text-[11.5px] font-bold tracking-[0.06em] text-muted-auth uppercase"
+                  >
+                    <app-icon name="receipt" [size]="16" />Retención y detracción
+                  </span>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-xs text-muted">Comprobante retenido</span>
+                    @if (doc.retentionDocument; as retention) {
+                      <span class="font-bold tabular-nums">{{ retention }}</span>
+                    } @else {
+                      <span class="text-[#8A93A3]">No aplica</span>
+                    }
+                  </div>
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-xs text-muted">Información de la detracción</span>
+                    @if (doc.detractionCertificate; as certificate) {
+                      <span class="font-bold tabular-nums">Constancia {{ certificate }}</span>
+                      <span class="text-[12.5px] text-muted">{{
+                        doc.detractionRate
+                          ? doc.detractionRate + ' · Banco de la Nación'
+                          : 'Banco de la Nación'
+                      }}</span>
+                    } @else {
+                      <span class="text-[#8A93A3]">No aplica</span>
+                    }
+                  </div>
+                </section>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <div
+    dialog-footer
+    class="flex flex-wrap items-center justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-[18px] sm:px-8 print:hidden"
+  >
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="facade.close()">Cerrar</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        title="Desde la ventana de impresión también puedes guardarla como PDF"
+        (click)="facade.print()"
+      >
+        <app-icon name="printer" [size]="18" />Imprimir orden de pago
+      </button>
+    </div>
+  </div>
+</app-dialog>

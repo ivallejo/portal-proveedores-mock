@@ -1,0 +1,120 @@
+<app-page-header
+  heading="Sociedades"
+  description="Empresas del grupo con las que operan los proveedores. Cada sociedad agrupa sus áreas y define a qué usuarios se les da acceso."
+>
+  <button type="button" class="btn btn-primary" (click)="facade.openNew()">
+    <app-icon name="plus" [size]="18" [stroke]="2.2" />Nueva sociedad
+  </button>
+</app-page-header>
+
+<section aria-label="Filtros" class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-[2fr_1fr]">
+    <div class="flex flex-col gap-2">
+      <label for="cf-q" class="field-label">Buscar</label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[13px] left-3 text-muted"
+        />
+        <input
+          id="cf-q"
+          type="search"
+          class="field pl-[38px]"
+          placeholder="Código, razón social o RUC"
+          [value]="facade.draft().search"
+          (input)="facade.setDraft({ search: $any($event.target).value })"
+          (keyup.enter)="facade.search()"
+        />
+      </div>
+    </div>
+    <app-select
+      label="Estado"
+      [options]="facade.statusOptions"
+      [value]="facade.draft().status"
+      (valueChange)="facade.setDraft({ status: $any($event) })"
+    />
+  </div>
+  <div class="flex justify-end gap-2.5 border-t border-line-soft pt-4">
+    <button type="button" class="btn btn-secondary" (click)="facade.clear()">Limpiar</button>
+    <button type="button" class="btn btn-primary min-w-[132px]" (click)="facade.search()">
+      <app-icon name="search" [size]="18" [stroke]="2" />Buscar
+    </button>
+  </div>
+</section>
+
+@if (facade.loadError()) {
+  <app-callout tone="danger">{{ facade.loadError() }}</app-callout>
+}
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <app-kpi-card
+    label="Total de sociedades"
+    icon="building"
+    tone="primary"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().total"
+  />
+  <app-kpi-card
+    label="Activas"
+    icon="circle-check"
+    tone="success"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().active"
+  />
+  <app-kpi-card
+    label="Inactivas"
+    icon="power"
+    tone="gray"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().inactive"
+  />
+</div>
+
+<section
+  aria-label="Sociedades"
+  class="card flex grow flex-col overflow-hidden"
+  [attr.aria-busy]="facade.loading()"
+>
+  <app-society-table
+    [rows]="facade.pageRows()"
+    [loading]="facade.loading()"
+    (edit)="facade.openEdit($event)"
+    (toggle)="facade.askToggle($event)"
+  />
+
+  @if (!facade.loading() && !facade.rows().length && !facade.loadError()) {
+    <app-empty-state
+      heading="No encontramos sociedades"
+      text="Prueba con otro texto de búsqueda o cambia los filtros."
+      icon="building"
+      (action)="facade.clear()"
+    />
+  }
+
+  <app-pagination
+    [loading]="facade.loading()"
+    loadingText="Cargando sociedades…"
+    [total]="facade.rows().length"
+    [page]="facade.page()"
+    [pageSize]="facade.pageSize"
+    noun="sociedades"
+    (pageChange)="facade.page.set($event)"
+  />
+</section>
+
+@if (facade.editing()) {
+  <app-society-form-drawer />
+}
+
+@if (facade.confirming(); as society) {
+  <app-confirm-dialog
+    [heading]="(society.isActive ? '¿Desactivar' : '¿Activar') + ' la sociedad?'"
+    [text]="facade.confirmText(society)"
+    [confirmText]="society.isActive ? 'Desactivar' : 'Activar'"
+    [danger]="society.isActive"
+    [busy]="facade.toggling()"
+    (cancel)="facade.confirming.set(null)"
+    (confirm)="facade.toggle()"
+  />
+}

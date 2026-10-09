@@ -1,0 +1,18 @@
+<div
+  role="status"
+  class="animate-fade flex flex-col items-center gap-4 px-5 pt-12 pb-11 text-center sm:px-8"
+>
+  <span class="flex size-[92px] items-center justify-center rounded-full" [class]="style().ring">
+    <span
+      class="animate-pop flex size-[62px] items-center justify-center rounded-full text-white"
+      [class]="style().fill"
+    >
+      <app-icon [name]="style().icon" [size]="30" [stroke]="2.4" />
+    </span>
+  </span>
+  <h3 class="m-0 text-[26px] font-bold tracking-tight">{{ heading() }}</h3>
+  @if (text()) {
+    <p class="m-0 max-w-[620px] text-[15px] leading-relaxed text-body">{{ text() }}</p>
+  }
+  <ng-content />
+</div>

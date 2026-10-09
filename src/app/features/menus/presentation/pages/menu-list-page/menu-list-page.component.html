@@ -1,0 +1,112 @@
+<app-page-header
+  heading="Menús"
+  description="Opciones de navegación del portal en dos niveles: menús principales y sus submenús, con su ruta, ícono y orden."
+>
+  <button type="button" class="btn btn-primary" (click)="facade.openNew()">
+    <app-icon name="plus" [size]="18" [stroke]="2.2" />Nuevo menú
+  </button>
+</app-page-header>
+
+<section aria-label="Filtros" class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-[2fr_1fr]">
+    <div class="flex flex-col gap-2">
+      <label for="mf-q" class="field-label">Buscar</label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[13px] left-3 text-muted"
+        />
+        <input
+          id="mf-q"
+          type="search"
+          class="field pl-[38px]"
+          placeholder="Nombre o ruta"
+          [value]="facade.draft().search"
+          (input)="facade.setDraft({ search: $any($event.target).value })"
+          (keyup.enter)="facade.search()"
+        />
+      </div>
+    </div>
+    <app-select
+      label="Estado"
+      [options]="facade.statusOptions"
+      [value]="facade.draft().status"
+      (valueChange)="facade.setDraft({ status: $any($event) })"
+    />
+  </div>
+  <div class="flex justify-end gap-2.5 border-t border-line-soft pt-4">
+    <button type="button" class="btn btn-secondary" (click)="facade.clear()">Limpiar</button>
+    <button type="button" class="btn btn-primary min-w-[132px]" (click)="facade.search()">
+      <app-icon name="search" [size]="18" [stroke]="2" />Buscar
+    </button>
+  </div>
+</section>
+
+@if (facade.loadError()) {
+  <app-callout tone="danger">{{ facade.loadError() }}</app-callout>
+}
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <app-kpi-card
+    label="Menús principales"
+    icon="menu"
+    tone="primary"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().main"
+  />
+  <app-kpi-card
+    label="Submenús"
+    icon="layers"
+    tone="success"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().sub"
+  />
+  <app-kpi-card
+    label="Inactivos"
+    icon="power"
+    tone="gray"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().inactive"
+  />
+</div>
+
+<section
+  aria-label="Menús"
+  class="card flex grow flex-col overflow-hidden"
+  [attr.aria-busy]="facade.loading()"
+>
+  <app-menu-table
+    [rows]="facade.rows()"
+    [menus]="facade.menus()"
+    [loading]="facade.loading()"
+    (addChild)="facade.openNew($event)"
+    (edit)="facade.openEdit($event)"
+    (toggle)="facade.confirming.set($event)"
+  />
+
+  @if (!facade.loading() && !facade.rows().length && !facade.loadError()) {
+    <app-empty-state
+      heading="No encontramos menús"
+      text="Prueba con otro texto de búsqueda o cambia los filtros."
+      icon="menu"
+      (action)="facade.clear()"
+    />
+  }
+</section>
+
+@if (facade.editing()) {
+  <app-menu-form-drawer />
+}
+
+@if (facade.confirming(); as menu) {
+  <app-confirm-dialog
+    [heading]="(menu.isActive ? '¿Desactivar' : '¿Activar') + ' la opción?'"
+    [text]="facade.confirmText(menu)"
+    [confirmText]="menu.isActive ? 'Desactivar' : 'Activar'"
+    [danger]="menu.isActive"
+    [busy]="facade.toggling()"
+    (cancel)="facade.confirming.set(null)"
+    (confirm)="facade.toggleStatus()"
+  />
+}

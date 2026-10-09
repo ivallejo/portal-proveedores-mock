@@ -1,0 +1,41 @@
+<app-page-header
+  heading="Contabilización"
+  description="Cuentas por pagar: revisa los documentos registrados con o sin orden de compra y los documentos especiales. Si algo no está conforme, recházalo u obsérvalo y notificaremos por correo."
+/>
+
+<app-document-inbox-filters idPrefix="ct" />
+
+<div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+  <app-kpi-card
+    label="Pendientes de contabilización"
+    icon="clock"
+    tone="info"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().pending"
+  />
+  <app-kpi-card
+    label="Contabilizados"
+    icon="circle-check"
+    tone="success"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().booked"
+  />
+  <app-kpi-card
+    label="Observados"
+    icon="alert-triangle"
+    tone="warn"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().observed"
+  />
+  <app-kpi-card
+    label="Rechazados"
+    icon="x"
+    tone="danger"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().rejected"
+  />
+</div>
+
+<app-document-inbox-table label="Documentos por contabilizar" [minWidth]="940" emptyIcon="book" />
+
+<app-accounting-detail-dialog />

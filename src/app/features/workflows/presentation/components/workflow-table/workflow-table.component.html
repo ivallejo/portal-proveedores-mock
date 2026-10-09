@@ -1,0 +1,177 @@
+<section class="card flex grow flex-col overflow-hidden">
+  <div
+    class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft px-6 py-4"
+  >
+    <div class="flex flex-col">
+      <h2 class="m-0 text-base font-bold">Workflows configurados</h2>
+      <span class="text-[13px] text-muted"
+        >{{ list.workflows().length }} workflows en el sistema</span
+      >
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <label class="flex items-center gap-2 text-[13px] text-muted">
+        Mostrar
+        <select
+          class="field h-10 w-auto pr-8"
+          aria-label="Registros por página"
+          [ngModel]="list.workflowPageSize()"
+          (ngModelChange)="list.setWorkflowPageSize($event)"
+        >
+          @for (size of [5, 10, 25, 50]; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[11px] left-3 text-muted"
+        />
+        <input
+          class="field h-10 w-64 pl-[38px]"
+          placeholder="Nombre o tipo de documento"
+          aria-label="Buscar workflow"
+          [ngModel]="list.workflowSearch()"
+          (ngModelChange)="list.setWorkflowSearch($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[900px] border-collapse text-left text-sm">
+      <thead>
+        <tr
+          class="h-12 border-b border-line bg-surface-muted text-xs font-bold tracking-[0.04em] text-body uppercase"
+        >
+          <th class="px-6 font-bold">Workflow</th>
+          <th class="px-3 font-bold">Condición</th>
+          <th class="px-3 font-bold">Aprobadores</th>
+          <th class="px-3 font-bold">Estado</th>
+          <th class="px-6 text-right font-bold">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (workflow of list.workflowsPage(); track workflow.id) {
+          <tr class="row-hover border-b border-line-soft align-top">
+            <td class="px-6 py-4">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-bold">{{ workflow.name }}</span>
+                <span class="text-xs text-muted">{{ workflow.description }}</span>
+              </div>
+            </td>
+            <td class="px-3 py-4">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-bold">{{ workflow.documentType }}</span>
+                <span class="text-xs text-muted">{{ workflow.society }}</span>
+              </div>
+            </td>
+            <td class="px-3 py-4">
+              <div class="flex flex-col gap-2.5">
+                @for (level of workflow.approvalLevels; track $index; let i = $index) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-xs font-bold">
+                      Nivel {{ i + 1 }}
+                      <span class="font-normal text-muted"
+                        >·
+                        {{
+                          level.rule === 'all' ? 'Todos deben aprobar' : 'Cualquiera puede aprobar'
+                        }}</span
+                      >
+                    </span>
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (approver of level.approvers; track approver) {
+                        <app-badge size="sm" tone="primary">{{ roleLabel(approver) }}</app-badge>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </td>
+            <td class="px-3 py-4">
+              <button
+                type="button"
+                role="switch"
+                class="relative h-6 w-11 rounded-full transition-colors"
+                [class]="workflow.isActive ? 'bg-success' : 'bg-control'"
+                [attr.aria-checked]="workflow.isActive"
+                [attr.aria-label]="(workflow.isActive ? 'Desactivar ' : 'Activar ') + workflow.name"
+                (click)="list.toggleWorkflow(workflow)"
+              >
+                <span
+                  class="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform"
+                  [class.translate-x-5]="workflow.isActive"
+                ></span>
+              </button>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button
+                type="button"
+                class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
+                title="Editar workflow"
+                [attr.aria-label]="'Editar ' + workflow.name"
+                (click)="editor.openWorkflowForm(workflow)"
+              >
+                <app-icon name="edit" [size]="17" />
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (!list.filteredWorkflows().length) {
+    <app-empty-state
+      heading="No encontramos workflows"
+      text="No hay workflows que coincidan con ese criterio."
+      icon="workflow"
+      (action)="list.setWorkflowSearch('')"
+    />
+  }
+
+  <div
+    class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft px-6 py-3 text-[13px] text-body"
+  >
+    <span
+      >Página {{ list.workflowPage() }} de {{ list.workflowPageCount() }} ·
+      {{ list.filteredWorkflows().length }} workflows</span
+    >
+    <div class="flex items-center gap-1.5">
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        aria-label="Página anterior"
+        [disabled]="list.workflowPage() === 1"
+        (click)="list.setWorkflowPage(list.workflowPage() - 1)"
+      >
+        <app-icon name="chevron-left" [size]="16" [stroke]="2" />
+      </button>
+      @for (item of list.workflowPaginationPages(); track item) {
+        <button
+          type="button"
+          class="size-9 rounded-lg text-[13px] font-bold"
+          [class]="
+            item === list.workflowPage()
+              ? 'bg-primary text-white'
+              : 'border border-[#DDE1E7] bg-white text-muted'
+          "
+          [attr.aria-current]="item === list.workflowPage() ? 'page' : null"
+          (click)="list.setWorkflowPage(item)"
+        >
+          {{ item }}
+        </button>
+      }
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        aria-label="Página siguiente"
+        [disabled]="list.workflowPage() === list.workflowPageCount()"
+        (click)="list.setWorkflowPage(list.workflowPage() + 1)"
+      >
+        <app-icon name="chevron-right" [size]="16" [stroke]="2" />
+      </button>
+    </div>
+  </div>
+</section>

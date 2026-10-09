@@ -1,0 +1,185 @@
+<div class="flex flex-col gap-[18px] border-line-soft px-5 py-6 sm:px-7 lg:border-r">
+  @if (facade.entry() === 'oc') {
+    <app-register-section-title
+      [n]="1"
+      heading="Datos de la orden"
+      sub="Validaremos la orden en SAP"
+    />
+    <app-select
+      label="Sociedad"
+      placeholder="Selecciona la sociedad"
+      [options]="facade.companyOptions()"
+      [disabled]="facade.orderState() === 'busy'"
+      [invalid]="!!facade.formError() && !facade.company()"
+      [value]="facade.company()"
+      (valueChange)="facade.setCompany($event)"
+    />
+    @if (facade.companyBillingEmail(); as email) {
+      <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+        <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+        <span class="font-medium text-body">{{ email }}</span>
+      </p>
+    }
+    <div class="flex flex-col gap-2">
+      <span class="field-label">Tipo de orden</span>
+      <div
+        role="radiogroup"
+        aria-label="Tipo de orden"
+        class="grid grid-cols-2 gap-1 rounded-xl bg-[#EEF2F8] p-1"
+      >
+        @for (type of ['Bien', 'Servicio']; track type) {
+          <button
+            type="button"
+            role="radio"
+            class="flex h-[38px] items-center justify-center rounded-[9px] text-sm font-bold"
+            [class]="
+              facade.orderType() === type
+                ? 'bg-white text-primary shadow-segment'
+                : 'bg-transparent text-body'
+            "
+            [attr.aria-checked]="facade.orderType() === type"
+            (click)="facade.setOrderType($any(type))"
+          >
+            {{ type }}
+          </button>
+        }
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="rg-nro" class="field-label">{{
+        facade.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra'
+      }}</label>
+      <input
+        id="rg-nro"
+        type="text"
+        class="field uppercase tracking-[0.02em] tabular-nums"
+        [placeholder]="facade.orderType() === 'Bien' ? 'Ej. CR-2026-00418' : 'Ej. 4500012873'"
+        [attr.aria-invalid]="
+          facade.orderState() === 'bad' || (!!facade.formError() && !facade.orderNumber())
+        "
+        [value]="facade.orderNumber()"
+        (input)="onOrderNumber($event)"
+        (keyup.enter)="facade.validateOrder()"
+      />
+      <span class="text-[12.5px] text-muted">
+        {{
+          facade.orderType() === 'Bien'
+            ? 'Para órdenes de bienes se valida el carrier de la entrega.'
+            : 'Número de 10 dígitos de la orden de servicio.'
+        }}
+      </span>
+    </div>
+    <button
+      type="button"
+      class="btn btn-lg text-white"
+      [class]="facade.orderState() === 'busy' ? 'bg-primary-busy' : 'btn-primary'"
+      [attr.aria-busy]="facade.orderState() === 'busy'"
+      (click)="facade.validateOrder()"
+    >
+      @if (facade.orderState() === 'busy') {
+        <app-spinner [size]="18" />Validando en SAP…
+      } @else {
+        <app-icon name="shield-check" [size]="18" />{{
+          facade.orderState() === 'ok' ? 'Validar nuevamente' : 'Validar orden'
+        }}
+      }
+    </button>
+    @if (facade.orderState() === 'bad') {
+      <app-callout tone="danger" heading="Orden no válida" class="animate-in">
+        SAP no encontró la
+        {{ facade.orderType() === 'Bien' ? 'entrega con carrier' : 'orden de compra' }}
+        <strong>{{ facade.orderNumber() }}</strong> para la sociedad seleccionada, o ya no tiene
+        saldo por facturar. Verifica el número e inténtalo nuevamente.
+      </app-callout>
+    }
+    @if (facade.order(); as validOrder) {
+      <div
+        class="animate-in flex flex-col gap-2.5 rounded-[14px] border border-[#CDEBD8] bg-success-tint px-4 py-3.5"
+      >
+        <span class="flex items-center gap-2 text-sm font-bold text-success-text">
+          <app-icon name="circle-check" [size]="18" />Orden válida en SAP
+        </span>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[13px]">
+          <span class="flex flex-col gap-0.5">
+            <span class="text-muted">{{
+              validOrder.type === 'Bien' ? 'N° de carrier' : 'N° de orden'
+            }}</span>
+            <span class="font-bold tabular-nums">{{ validOrder.number }}</span>
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <span class="text-muted">Saldo por facturar</span>
+            <span class="font-bold tabular-nums">{{ money('PEN', validOrder.balance) }}</span>
+          </span>
+          <span class="col-span-2 flex flex-col gap-0.5">
+            <span class="text-muted">Descripción</span
+            ><span class="font-medium">{{ validOrder.description }}</span>
+          </span>
+        </div>
+      </div>
+    }
+  } @else {
+    <app-register-section-title
+      [n]="1"
+      heading="Datos del registro"
+      [sub]="facade.pettyCash() ? 'Documento de Caja Chica' : 'Elige quién aprobará el documento'"
+    />
+    <app-select
+      label="Sociedad"
+      placeholder="Selecciona la sociedad"
+      [options]="facade.companyOptions()"
+      [invalid]="!!facade.formError() && !facade.company()"
+      [value]="facade.company()"
+      (valueChange)="facade.setCompany($event)"
+    />
+    @if (facade.companyBillingEmail(); as email) {
+      <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+        <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+        <span class="font-medium text-body">{{ email }}</span>
+      </p>
+    }
+    @if (facade.canPettyCash()) {
+      <label
+        class="flex cursor-pointer items-start gap-3 rounded-xl border-2 px-4 py-3.5 transition-colors"
+        [class]="facade.pettyCash() ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
+      >
+        <input
+          type="checkbox"
+          class="mt-0.5 size-[18px] shrink-0 accent-primary"
+          [checked]="facade.pettyCash()"
+          (change)="facade.pettyCash.set($any($event.target).checked); facade.formError.set('')"
+        />
+        <span class="flex flex-col gap-0.5">
+          <span class="text-sm font-bold">Documento de Caja Chica</span>
+          <span class="text-[12.5px] leading-normal text-muted"
+            >No requiere aprobación: se registra directamente como Pendiente de
+            contabilización.</span
+          >
+        </span>
+      </label>
+    }
+    @if (facade.pettyCash()) {
+      <app-callout tone="info">
+        Al ser de Caja Chica no necesitas elegir área ni aprobador: el documento se registrará
+        directamente como <strong>Pendiente de contabilización</strong>.
+      </app-callout>
+    } @else {
+      <app-select
+        label="Área"
+        placeholder="Selecciona el área"
+        [options]="facade.areaOptions()"
+        [invalid]="!!facade.formError() && !facade.area()"
+        [value]="facade.area()"
+        (valueChange)="facade.setArea($event)"
+      />
+      <app-select
+        label="Aprobador"
+        [placeholder]="facade.area() ? 'Selecciona el aprobador' : 'Primero elige un área'"
+        [disabled]="!facade.area()"
+        [options]="facade.approverOptions()"
+        [invalid]="!!facade.formError() && !!facade.area() && !facade.approver()"
+        [value]="facade.approver()"
+        (valueChange)="facade.setApprover($event)"
+      />
+    }
+  }
+</div>

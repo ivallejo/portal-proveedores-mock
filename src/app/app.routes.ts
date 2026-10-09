@@ -1,24 +1,22 @@
-import { Type } from '@angular/core';
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import {
-  authGuard,
-  guestGuard,
-  menuGuard,
-  roleGuard,
-  rootRedirectGuard,
-  temporaryPasswordGuard,
-} from './core/auth/auth.guards';
-import { FeatureFlag, isFeatureEnabled } from './core/config/features';
-import { ShellComponent } from './core/layout/shell.component';
+import { AUTH_ROUTES, authGuard, roleGuard, rootRedirectGuard } from './features/auth';
+import { menuGuard } from './features/menus';
+import { FeatureFlag } from './core/config/feature-flag';
+import { FEATURE_FLAGS } from './core/config/feature-flags.token';
+import { isFeatureEnabled } from './core/config/is-feature-enabled';
+import { AppShellComponent } from './core/layout/app-shell/app-shell.component';
 
 const underConstruction = () =>
-  import('./features/under-construction/under-construction-page.component').then(
+  import('./core/layout/under-construction-page/under-construction-page.component').then(
     (m) => m.UnderConstructionPageComponent,
   );
 
-/** Carga la pantalla real si la funcionalidad está habilitada; si no, «en construcción». */
-const gated = (feature: FeatureFlag, load: () => Promise<Type<unknown>>) => () =>
-  isFeatureEnabled(feature) ? load() : underConstruction();
+/** Carga las rutas de la feature si está habilitada; si no, «en construcción». */
+const gatedRoutes = (feature: FeatureFlag, load: () => Promise<Routes>) => () =>
+  isFeatureEnabled(inject(FEATURE_FLAGS), feature)
+    ? load()
+    : Promise.resolve<Routes>([{ path: '', loadComponent: underConstruction }]);
 
 export const routes: Routes = [
   {
@@ -27,85 +25,30 @@ export const routes: Routes = [
     canActivate: [rootRedirectGuard],
     children: [],
   },
-  {
-    path: 'login',
-    title: 'Ingreso · Portal de Proveedores',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/login-page.component').then((m) => m.LoginPageComponent),
-  },
-  {
-    path: 'registro',
-    title: 'Regístrate · Portal de Proveedores',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/register-page.component').then((m) => m.RegisterPageComponent),
-  },
-  {
-    path: 'recuperar-contrasena',
-    title: 'Recuperar contraseña · Portal de Proveedores',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/forgot-password-page.component').then(
-        (m) => m.ForgotPasswordPageComponent,
-      ),
-  },
-  {
-    path: 'crear-contrasena',
-    title: 'Crear contraseña · Portal de Proveedores',
-    data: { mode: 'activation' },
-    loadComponent: () =>
-      import('./features/auth/pages/set-password-page.component').then(
-        (m) => m.SetPasswordPageComponent,
-      ),
-  },
-  {
-    path: 'contrasena-temporal',
-    title: 'Cambiar contraseña temporal · Portal de Proveedores',
-    canActivate: [temporaryPasswordGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/temporary-password-page.component').then(
-        (m) => m.TemporaryPasswordPageComponent,
-      ),
-  },
-  {
-    path: 'cambiar-contrasena',
-    title: 'Cambiar contraseña · Portal de Proveedores',
-    data: { mode: 'reset' },
-    loadComponent: () =>
-      import('./features/auth/pages/set-password-page.component').then(
-        (m) => m.SetPasswordPageComponent,
-      ),
-  },
+  ...AUTH_ROUTES,
   {
     path: 'verificar-correo',
     title: 'Verificar correo · Portal de Proveedores',
-    loadComponent: () =>
-      import('./features/auth/pages/verify-email-page.component').then(
-        (m) => m.VerifyEmailPageComponent,
-      ),
+    loadChildren: () => import('./features/profile').then((m) => m.EMAIL_VERIFICATION_ROUTES),
   },
   {
     path: '',
-    component: ShellComponent,
+    component: AppShellComponent,
     canActivate: [authGuard],
     children: [
       {
         path: 'inicio',
         title: 'Inicio · Portal de Proveedores',
         data: { title: 'Inicio' },
-        loadComponent: () =>
-          import('./features/home/home-page.component').then((m) => m.HomePageComponent),
+        loadChildren: () => import('./features/home').then((m) => m.HOME_ROUTES),
       },
       {
         path: 'orden-pago',
         title: 'Orden de pago · Portal de Proveedores',
         data: { title: 'Orden de pago', roles: ['Proveedor', 'CxP'] },
         canActivate: [menuGuard],
-        loadComponent: gated('ordenPago', () =>
-          import('./features/payment-orders/payment-orders-page.component').then(
-            (m) => m.PaymentOrdersPageComponent,
-          ),
+        loadChildren: gatedRoutes('ordenPago', () =>
+          import('./features/payments').then((m) => m.PAYMENT_ORDERS_ROUTES),
         ),
       },
       {
@@ -113,10 +56,8 @@ export const routes: Routes = [
         title: 'Estado de factura · Portal de Proveedores',
         data: { title: 'Estado de factura', roles: ['Proveedor', 'CxP'] },
         canActivate: [menuGuard],
-        loadComponent: gated('estadoFactura', () =>
-          import('./features/invoice-status/invoice-status-page.component').then(
-            (m) => m.InvoiceStatusPageComponent,
-          ),
+        loadChildren: gatedRoutes('estadoFactura', () =>
+          import('./features/payments').then((m) => m.INVOICE_STATUS_ROUTES),
         ),
       },
       {
@@ -124,10 +65,8 @@ export const routes: Routes = [
         title: 'Documentos · Portal de Proveedores',
         data: { title: 'Documentos', roles: ['Área Usuaria'] },
         canActivate: [menuGuard],
-        loadComponent: gated('documentos', () =>
-          import('./features/approvals/approvals-page.component').then(
-            (m) => m.ApprovalsPageComponent,
-          ),
+        loadChildren: gatedRoutes('documentos', () =>
+          import('./features/documents').then((m) => m.APPROVAL_INBOX_ROUTES),
         ),
       },
       {
@@ -135,10 +74,8 @@ export const routes: Routes = [
         title: 'Registrar documentos · Portal de Proveedores',
         data: { title: 'Registrar documentos', roles: ['Proveedor', 'Colaborador interno'] },
         canActivate: [menuGuard],
-        loadComponent: gated('registrarDocumento', () =>
-          import('./features/register-document/register-document-page.component').then(
-            (m) => m.RegisterDocumentPageComponent,
-          ),
+        loadChildren: gatedRoutes('registrarDocumento', () =>
+          import('./features/documents').then((m) => m.REGISTER_DOCUMENT_ROUTES),
         ),
       },
       {
@@ -146,18 +83,16 @@ export const routes: Routes = [
         title: 'Contabilización · Portal de Proveedores',
         data: { title: 'Contabilización', roles: ['CxP'] },
         canActivate: [menuGuard],
-        loadComponent: gated('contabilizacion', () =>
-          import('./features/accounting/accounting-page.component').then(
-            (m) => m.AccountingPageComponent,
-          ),
+        loadChildren: gatedRoutes('contabilizacion', () =>
+          import('./features/documents').then((m) => m.ACCOUNTING_INBOX_ROUTES),
         ),
       },
       {
         path: 'perfil',
         title: 'Mi perfil · Portal de Proveedores',
         data: { title: 'Mi perfil' },
-        loadComponent: gated('perfil', () =>
-          import('./features/profile/profile-page.component').then((m) => m.ProfilePageComponent),
+        loadChildren: gatedRoutes('perfil', () =>
+          import('./features/profile').then((m) => m.PROFILE_ROUTES),
         ),
       },
       {
@@ -165,10 +100,8 @@ export const routes: Routes = [
         title: 'Usuarios · Portal de Proveedores',
         data: { title: 'Usuarios', roles: ['Administrador'] },
         canActivate: [menuGuard],
-        loadComponent: gated('usuarios', () =>
-          import('./features/settings/users/users-page.component').then(
-            (m) => m.UsersPageComponent,
-          ),
+        loadChildren: gatedRoutes('usuarios', () =>
+          import('./features/users').then((m) => m.USERS_ROUTES),
         ),
       },
       {
@@ -176,10 +109,8 @@ export const routes: Routes = [
         title: 'Workflows de aprobación · Portal de Proveedores',
         data: { title: 'Workflows de aprobación', roles: ['Administrador'] },
         canActivate: [roleGuard],
-        loadComponent: gated('workflows', () =>
-          import('./features/workflows/pages/workflows-page.component').then(
-            (m) => m.WorkflowsPageComponent,
-          ),
+        loadChildren: gatedRoutes('workflows', () =>
+          import('./features/workflows').then((m) => m.WORKFLOWS_ROUTES),
         ),
       },
       {
@@ -187,10 +118,8 @@ export const routes: Routes = [
         title: 'Sociedades · Portal de Proveedores',
         data: { title: 'Sociedades', roles: ['Administrador'] },
         canActivate: [menuGuard],
-        loadComponent: gated('sociedades', () =>
-          import('./features/settings/organization/companies-page.component').then(
-            (m) => m.CompaniesPageComponent,
-          ),
+        loadChildren: gatedRoutes('sociedades', () =>
+          import('./features/societies').then((m) => m.SOCIETIES_ROUTES),
         ),
       },
       {
@@ -198,10 +127,8 @@ export const routes: Routes = [
         title: 'Áreas · Portal de Proveedores',
         data: { title: 'Áreas', roles: ['Administrador'] },
         canActivate: [menuGuard],
-        loadComponent: gated('areas', () =>
-          import('./features/settings/organization/areas-page.component').then(
-            (m) => m.AreasPageComponent,
-          ),
+        loadChildren: gatedRoutes('areas', () =>
+          import('./features/areas').then((m) => m.AREAS_ROUTES),
         ),
       },
       {
@@ -209,10 +136,8 @@ export const routes: Routes = [
         title: 'Roles y permisos · Portal de Proveedores',
         data: { title: 'Roles y permisos' },
         canActivate: [menuGuard],
-        loadComponent: gated('roles', () =>
-          import('./features/settings/access/roles-page.component').then(
-            (m) => m.RolesPageComponent,
-          ),
+        loadChildren: gatedRoutes('roles', () =>
+          import('./features/roles').then((m) => m.ROLES_ROUTES),
         ),
       },
       {
@@ -220,10 +145,8 @@ export const routes: Routes = [
         title: 'Menús · Portal de Proveedores',
         data: { title: 'Menús' },
         canActivate: [menuGuard],
-        loadComponent: gated('menus', () =>
-          import('./features/settings/access/menus-page.component').then(
-            (m) => m.MenusPageComponent,
-          ),
+        loadChildren: gatedRoutes('menus', () =>
+          import('./features/menus').then((m) => m.MENUS_ROUTES),
         ),
       },
       // Opciones creadas en Configuración › Menús que aún no tienen pantalla.

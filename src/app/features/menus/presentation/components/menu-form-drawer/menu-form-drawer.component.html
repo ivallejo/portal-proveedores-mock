@@ -1,0 +1,194 @@
+<app-drawer
+  icon="menu"
+  [heading]="
+    facade.isNew() ? (facade.form().parentId ? 'Nuevo submenú' : 'Nuevo menú') : 'Editar menú'
+  "
+  [subtitle]="
+    facade.isNew()
+      ? facade.form().parentId
+        ? 'Submenú de ' + facade.parentName()
+        : 'Completa los datos para registrarlo.'
+      : (facade.current()?.name ?? '')
+  "
+  (closed)="facade.closeDrawer()"
+>
+  @if (facade.current()?.isSystem) {
+    <app-callout tone="info"
+      >Opción del sistema: abre una pantalla del portal, por eso su ruta y su nivel no se
+      cambian.</app-callout
+    >
+  }
+  <div class="grid grid-cols-1 gap-x-[18px] gap-y-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <label for="mf-name" class="field-label"
+        >Nombre <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="mf-name"
+        class="field"
+        placeholder="Ej. Reportes"
+        maxlength="80"
+        [attr.aria-invalid]="facade.showErrors() && !!facade.errors().name"
+        [value]="facade.form().name"
+        (input)="facade.setField('name', $any($event.target).value)"
+      />
+      @if (facade.showErrors() && facade.errors().name; as error) {
+        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+      }
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="field-label">Estado</span>
+      <span role="radiogroup" class="flex h-11 rounded-[10px] bg-surface-muted p-1">
+        @for (option of [true, false]; track option) {
+          <button
+            type="button"
+            role="radio"
+            [attr.aria-checked]="facade.form().isActive === option"
+            [disabled]="!option && !!facade.current() && isProtected($any(facade.current()))"
+            class="grow rounded-lg text-[13px] font-bold disabled:opacity-40"
+            [class]="
+              facade.form().isActive === option ? 'bg-white text-primary shadow-sm' : 'text-muted'
+            "
+            (click)="facade.setActive(option)"
+          >
+            {{ option ? 'Activo' : 'Inactivo' }}
+          </button>
+        }
+      </span>
+    </div>
+    <div class="flex flex-col gap-2 sm:col-span-2">
+      <app-select
+        label="Menú padre"
+        [options]="facade.parentOptions()"
+        [value]="facade.form().parentId"
+        [disabled]="!!facade.current()?.isSystem || facade.hasChildren()"
+        [invalid]="facade.showErrors() && !!facade.errors().parentId"
+        (valueChange)="facade.setField('parentId', $event)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="
+          facade.showErrors() && facade.errors().parentId ? 'text-danger-text' : 'text-muted'
+        "
+        >{{
+          (facade.showErrors() && facade.errors().parentId) ||
+            (facade.hasChildren()
+              ? 'Tiene submenús, por eso es menú principal.'
+              : 'Elige un menú principal para crear un submenú.')
+        }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-2 sm:col-span-2">
+      <label for="mf-route" class="field-label"
+        >Ruta
+        @if (facade.form().parentId) {
+          <span class="text-danger-text">*</span>
+        }
+      </label>
+      @if (facade.current()?.isSystem) {
+        <span class="readonly-field font-mono">{{ facade.form().route || '—' }}</span>
+      } @else {
+        <input
+          id="mf-route"
+          class="field font-mono"
+          [placeholder]="facade.form().parentId ? '/configuracion/nueva-opcion' : '/nueva-opcion'"
+          maxlength="200"
+          [attr.aria-invalid]="facade.showErrors() && !!facade.errors().route"
+          [value]="facade.form().route"
+          (input)="facade.setField('route', $any($event.target).value)"
+        />
+      }
+      <span
+        class="text-[12.5px]"
+        [class]="facade.showErrors() && facade.errors().route ? 'text-danger-text' : 'text-muted'"
+        >{{
+          (facade.showErrors() && facade.errors().route) ||
+            'Dirección de la pantalla, única. Un menú principal puede no tenerla si solo agrupa submenús.'
+        }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-2">
+      <app-select
+        label="Ícono *"
+        placeholder="Elige un ícono"
+        [options]="facade.iconOptions"
+        [value]="facade.form().icon"
+        [invalid]="facade.showErrors() && !!facade.errors().icon"
+        (valueChange)="facade.setField('icon', $event)"
+      />
+      @if (facade.form().icon) {
+        <span class="flex items-center gap-2 text-[12.5px] text-muted">
+          <span
+            class="flex size-7 items-center justify-center rounded-lg bg-primary-soft text-primary"
+            ><app-icon [name]="icon(facade.form().icon)" [size]="16"
+          /></span>
+          Vista previa
+        </span>
+      } @else if (facade.showErrors() && facade.errors().icon; as error) {
+        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+      }
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="mf-order" class="field-label"
+        >Orden <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="mf-order"
+        class="field tabular-nums"
+        inputmode="numeric"
+        [attr.aria-invalid]="facade.showErrors() && !!facade.errors().order"
+        [value]="facade.form().order"
+        (input)="facade.setField('order', $any($event.target).value)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="facade.showErrors() && facade.errors().order ? 'text-danger-text' : 'text-muted'"
+        >{{
+          (facade.showErrors() && facade.errors().order) || 'Posición dentro de su nivel.'
+        }}</span
+      >
+    </div>
+  </div>
+  @if (facade.isNew()) {
+    <app-callout tone="info"
+      >La opción nueva la verá el Administrador. Asígnala a otros roles en Roles y
+      permisos.</app-callout
+    >
+  }
+
+  <div
+    drawer-footer
+    class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
+  >
+    @if (facade.saveError()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" />{{ facade.saveError() }}
+      </span>
+    } @else {
+      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+    }
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="facade.closeDrawer()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [attr.aria-busy]="facade.saving()"
+        (click)="facade.save()"
+      >
+        @if (facade.saving()) {
+          <app-spinner [size]="18" />Guardando…
+        } @else {
+          <app-icon name="check" [size]="18" [stroke]="2.2" />{{
+            facade.isNew()
+              ? facade.form().parentId
+                ? 'Crear submenú'
+                : 'Crear menú'
+              : 'Guardar cambios'
+          }}
+        }
+      </button>
+    </div>
+  </div>
+</app-drawer>

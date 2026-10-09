@@ -1,0 +1,77 @@
+<app-page-header
+  heading="Mi perfil"
+  description="Revisa tu información de acceso y actualiza tus datos, correos y contraseña."
+/>
+
+@if (facade.loadError()) {
+  <app-callout tone="danger" heading="No pudimos cargar tu perfil">
+    {{ facade.loadError() }}
+    <button type="button" class="ml-1 font-bold text-primary underline" (click)="facade.load()">
+      Reintentar
+    </button>
+  </app-callout>
+}
+
+<app-profile-summary />
+
+<div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
+  <app-profile-account-info />
+
+  <!-- Edición -->
+  <section aria-label="Editar perfil" class="card flex min-w-0 flex-col p-0">
+    <div
+      role="tablist"
+      aria-label="Secciones del perfil"
+      class="flex gap-1.5 overflow-x-auto border-b border-line-soft px-[22px]"
+    >
+      @for (item of tabs; track item.key) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="facade.tab() === item.key"
+          class="flex h-[54px] shrink-0 items-center gap-2 border-b-[3px] px-3 text-[14.5px] whitespace-nowrap transition-colors hover:text-primary"
+          [class]="
+            facade.tab() === item.key
+              ? 'border-primary font-bold text-primary'
+              : 'border-transparent font-medium text-muted'
+          "
+          (click)="facade.selectTab(item.key)"
+        >
+          {{ item.label }}
+          @if (item.key === 'emails' && facade.profile()?.emails?.length) {
+            <span
+              class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold"
+              [class]="
+                facade.tab() === 'emails' ? 'bg-primary text-white' : 'bg-surface-muted text-body'
+              "
+              >{{ facade.profile()?.emails?.length }}</span
+            >
+          }
+        </button>
+      }
+    </div>
+
+    @if (facade.loading()) {
+      <div class="grid grid-cols-1 gap-x-[18px] gap-y-5 p-6 sm:grid-cols-2" aria-hidden="true">
+        @for (span of [1, 1, 2, 2]; track $index) {
+          <div class="flex flex-col gap-[9px]" [class.sm:col-span-2]="span === 2">
+            <span class="skeleton h-[11px] w-[30%]"></span>
+            <span class="skeleton h-11"></span>
+          </div>
+        }
+      </div>
+    } @else if (facade.profile(); as me) {
+      @switch (facade.tab()) {
+        @case ('personal-data') {
+          <app-profile-personal-data-tab [me]="me" />
+        }
+        @case ('emails') {
+          <app-profile-emails-tab [me]="me" />
+        }
+        @case ('password') {
+          <app-profile-password-tab [me]="me" />
+        }
+      }
+    }
+  </section>
+</div>

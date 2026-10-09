@@ -1,0 +1,48 @@
+<section
+  aria-label="Filtros de búsqueda"
+  class="card relative z-10 grid grid-cols-1 items-end gap-4 px-6 py-[22px] md:grid-cols-[280px_340px_1fr]"
+>
+  <div class="flex flex-col gap-2">
+    <label [for]="idPrefix() + '-ruc'" class="field-label">RUC del proveedor</label>
+    <div class="relative flex">
+      <app-icon
+        name="search"
+        [size]="18"
+        class="pointer-events-none absolute top-[13px] left-3 text-muted"
+      />
+      <input
+        [id]="idPrefix() + '-ruc'"
+        type="text"
+        inputmode="numeric"
+        placeholder="11 dígitos"
+        class="field pl-[38px] tracking-[0.02em] tabular-nums"
+        [value]="facade.draft().ruc"
+        (input)="onRuc($event)"
+        (keyup.enter)="facade.search()"
+      />
+    </div>
+  </div>
+  <app-select
+    label="Estado"
+    [options]="facade.statusOptions"
+    [showEmptyDot]="true"
+    [value]="facade.draft().status"
+    (valueChange)="facade.setFilter('status', $event)"
+  />
+  <div class="flex justify-end gap-2.5">
+    <button type="button" class="btn btn-secondary" (click)="facade.clear()">Limpiar</button>
+    <button
+      type="button"
+      class="btn min-w-[132px] text-white"
+      [class]="facade.loading() ? 'bg-primary-busy' : 'btn-primary'"
+      [attr.aria-busy]="facade.loading()"
+      (click)="!facade.loading() && facade.search()"
+    >
+      @if (facade.loading()) {
+        <app-spinner [size]="18" />Buscando…
+      } @else {
+        <app-icon name="search" [size]="18" [stroke]="2" />Buscar
+      }
+    </button>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+@if (facade.result(); as res) {
+  <app-result-state [kind]="res.ok ? 'ok' : 'bad'" [heading]="res.title" [text]="res.text">
+    <div class="mt-1 flex flex-wrap justify-center gap-3">
+      @for (chip of res.chips; track chip.label) {
+        <div
+          class="flex min-w-[170px] flex-col items-start gap-[3px] rounded-xl border border-line bg-surface-alt px-4 py-3 text-left"
+        >
+          <span class="text-xs text-muted">{{ chip.label }}</span>
+          <span
+            class="text-[14.5px] font-bold tabular-nums"
+            [class]="
+              chip.tone === 'danger'
+                ? 'text-[#A51E1E]'
+                : chip.tone === 'warn'
+                  ? 'text-warning-text'
+                  : chip.tone === 'info'
+                    ? 'text-[#1E3FA8]'
+                    : 'text-ink'
+            "
+            >{{ chip.value }}</span
+          >
+        </div>
+      }
+    </div>
+    @if (res.mail) {
+      <div
+        class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
+      >
+        <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
+      </div>
+    }
+    <div class="mt-2 flex flex-wrap justify-center gap-3">
+      <button type="button" class="btn btn-outline btn-lg" (click)="facade.reset()">
+        <app-icon name="plus" [size]="18" [stroke]="2.2" />Registrar otro documento
+      </button>
+      @if (facade.isInternal()) {
+        <a routerLink="/inicio" class="btn btn-primary btn-lg"
+          >Ir al inicio<app-icon name="arrow-right" [size]="18" [stroke]="2.2"
+        /></a>
+      } @else {
+        <a routerLink="/estado-factura" class="btn btn-primary btn-lg"
+          >Ver estado de mis facturas<app-icon name="arrow-right" [size]="18" [stroke]="2.2"
+        /></a>
+      }
+    </div>
+  </app-result-state>
+}

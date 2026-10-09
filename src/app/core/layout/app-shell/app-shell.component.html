@@ -1,0 +1,28 @@
+<div class="flex min-h-screen bg-page text-ink print:block print:min-h-0 print:bg-white">
+  @if (layout.navOpen() && !layout.isDesktop()) {
+    <div
+      class="animate-fade fixed inset-0 z-40 bg-[rgba(9,22,52,0.5)] lg:hidden print:hidden"
+      aria-hidden="true"
+      (click)="layout.navOpen.set(false)"
+    ></div>
+  }
+
+  @if (layout.navOpen()) {
+    <app-sidebar />
+  }
+
+  <div class="flex min-w-0 grow flex-col">
+    <app-header />
+
+    @if (loading.label(); as label) {
+      <div class="sticky top-[68px] z-20 h-0 print:hidden">
+        <app-progress-bar [label]="label" />
+      </div>
+    }
+
+    <main class="flex grow flex-col gap-5 px-4 py-6 sm:px-10 sm:py-8 print:p-0">
+      <!-- Oculto: si no, el gap del main agrega un espacio vacío antes de cada página. -->
+      <router-outlet class="hidden" />
+    </main>
+  </div>
+</div>

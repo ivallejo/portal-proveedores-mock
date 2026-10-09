@@ -8,7 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
-    "quality": "npm run format:check && npm run typecheck",
+    "arch": "depcruise src --config .dependency-cruiser.cjs",
+    "arch:files": "node scripts/check-source-layout.mjs",
+    "quality": "npm run format:check && npm run typecheck && npm run arch && npm run arch:files",
     "format": "prettier --write \"src/**/*.{ts,html,css}\" \"*.json\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,css}\" \"*.json\""
   },
@@ -42,6 +44,7 @@
     "@angular/compiler-cli": "^20.3.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/jasmine": "~5.1.0",
+    "dependency-cruiser": "^18.5.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

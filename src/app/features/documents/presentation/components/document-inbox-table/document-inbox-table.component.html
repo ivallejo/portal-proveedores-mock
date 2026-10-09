@@ -1,0 +1,105 @@
+<section
+  [attr.aria-label]="label()"
+  class="card flex grow flex-col overflow-hidden"
+  [attr.aria-busy]="facade.loading()"
+>
+  <div class="overflow-x-auto">
+    <div [style.min-width.px]="minWidth()">
+      <div
+        class="grid h-12 grid-cols-[1.05fr_2fr_0.75fr_1.05fr_1.35fr_136px] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+      >
+        <div>Tipo</div>
+        <div>N° del documento</div>
+        <div>Moneda</div>
+        <div class="text-right">Importe</div>
+        <div>Estado</div>
+        <div class="text-right">Acción</div>
+      </div>
+
+      @if (facade.loading()) {
+        @for (row of [70, 58, 76, 64, 72, 55, 68, 61]; track $index) {
+          <div
+            aria-hidden="true"
+            class="grid h-[60px] grid-cols-[1.05fr_2fr_0.75fr_1.05fr_1.35fr_136px] items-center gap-4 border-b border-line-soft px-6"
+          >
+            <span class="skeleton h-6 w-[88px] rounded-full"></span>
+            <span class="flex flex-col gap-[7px]"
+              ><span class="skeleton h-3" [style.width.%]="row"></span
+              ><span class="skeleton h-2.5 w-[46%]"></span
+            ></span>
+            <span class="skeleton h-6 w-12 rounded-full"></span>
+            <span class="flex justify-end"><span class="skeleton h-3 w-[72%]"></span></span>
+            <span class="skeleton h-7 w-[70%] rounded-full"></span>
+            <span class="flex justify-end"
+              ><span class="skeleton h-10 w-[120px] rounded-[10px]"></span
+            ></span>
+          </div>
+        }
+      } @else {
+        @for (doc of facade.pageRows(); track doc.number; let i = $index) {
+          <div
+            class="row-hover animate-in grid h-[60px] grid-cols-[1.05fr_2fr_0.75fr_1.05fr_1.35fr_136px] items-center gap-4 border-b border-line-soft px-6 text-sm"
+            [style.animation-delay.ms]="i * 45"
+          >
+            <div>
+              <app-badge [tone]="entryTone[doc.entryType]">{{ doc.entryType }}</app-badge>
+            </div>
+            <div class="flex min-w-0 flex-col gap-0.5">
+              <span class="font-bold tracking-[0.01em] tabular-nums">{{ doc.number }}</span>
+              @if (facade.rowCaption(doc); as caption) {
+                <span class="truncate text-xs text-muted">{{ caption }}</span>
+              } @else {
+                <span class="truncate text-xs text-muted"
+                  >{{ doc.providerName }} · RUC
+                  <span class="tabular-nums">{{ doc.providerRuc }}</span></span
+                >
+              }
+            </div>
+            <div>
+              <app-badge size="sm" [tone]="currencyTone(doc.currency)">{{
+                doc.currency
+              }}</app-badge>
+            </div>
+            <div class="text-right font-bold tabular-nums">
+              {{ money(doc.currency, doc.amount) }}
+            </div>
+            <div>
+              <app-badge size="lg" [dot]="true" [tone]="statusTone[doc.status]">{{
+                doc.status
+              }}</app-badge>
+            </div>
+            <div class="flex justify-end">
+              <button
+                type="button"
+                class="btn btn-tint h-10 px-3.5 text-[13.5px]"
+                [attr.aria-label]="'Ver detalle de ' + doc.number"
+                (click)="facade.open(doc)"
+              >
+                <app-icon name="eye" [size]="17" />Ver detalle
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  @if (!facade.loading() && !facade.rows().length) {
+    <app-empty-state
+      heading="No hay documentos por mostrar"
+      text="No encontramos documentos con el RUC o estado seleccionado. Verifica el RUC o elige otro estado."
+      [icon]="emptyIcon()"
+      (action)="facade.clear()"
+    />
+  }
+
+  <app-pagination
+    [loading]="facade.loading()"
+    loadingText="Buscando documentos…"
+    [total]="facade.rows().length"
+    [page]="facade.page()"
+    [pageSize]="facade.pageSize"
+    noun="documentos"
+    (pageChange)="facade.page.set($event)"
+  />
+</section>
