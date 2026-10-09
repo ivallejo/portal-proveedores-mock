@@ -1,5 +1,5 @@
 import { AuthenticatedUser } from '../models/authenticated-user';
-import { hasAnyRole, landingPathFor } from './role-rules';
+import { hasAnyRole, landingPathFor, normalizeRole } from './role-rules';
 
 const user = (
   roles: AuthenticatedUser['roles'],
@@ -26,5 +26,15 @@ describe('role rules', () => {
     expect(landingPathFor(user(['Colaborador interno']))).toBe('/registrar-documento');
     expect(landingPathFor(user(['CxP'], true))).toBe('/contrasena-temporal');
     expect(landingPathFor(null)).toBe('/inicio');
+  });
+});
+
+describe('normalizeRole', () => {
+  it('maps backend role names and codes to frontend roles', () => {
+    expect(normalizeRole('Aprobador de área')).toBe('Área Usuaria');
+    expect(normalizeRole('Gestor de cuentas por pagar')).toBe('CxP');
+    expect(normalizeRole('ADMINISTRATOR')).toBe('Administrador');
+    expect(normalizeRole('Proveedor')).toBe('Proveedor');
+    expect(normalizeRole('desconocido')).toBeNull();
   });
 });

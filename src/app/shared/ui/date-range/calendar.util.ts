@@ -13,7 +13,7 @@ export const MONTHS = [
   'diciembre',
 ];
 
-export const SHORT_MONTHS = [
+const SHORT_MONTHS = [
   'ene',
   'feb',
   'mar',

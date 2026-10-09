@@ -3,23 +3,10 @@
  * `npm run arch` las verifica y `npm run quality` las incluye.
  *
  * Los paquetes de npm se comparan por su ruta resuelta (`node_modules/...`).
- * Las reglas por capa se aplican a las features ya migradas a la estructura hexagonal (MIGRATED_FEATURES);
- * cada paso del plan agrega la feature que migra. Al terminar, la lista cubre todas las features.
+ * Las reglas por capa se aplican a todas las features (`src/app/features/<feature>/<capa>/`).
  */
-const MIGRATED_FEATURES = [
-  'societies',
-  'areas',
-  'auth',
-  'menus',
-  'roles',
-  'users',
-  'profile',
-  'catalog',
-];
-
 const APP = '^src/app';
-const migrated = MIGRATED_FEATURES.length ? `(${MIGRATED_FEATURES.join('|')})` : '(?!)';
-const layer = (name) => `${APP}/features/${migrated}/${name}/`;
+const layer = (name) => `${APP}/features/[^/]+/${name}/`;
 
 module.exports = {
   forbidden: [
@@ -83,7 +70,7 @@ module.exports = {
       name: 'features-talk-through-public-api',
       comment: 'Otra feature solo se importa por su index.ts.',
       severity: 'error',
-      from: { path: `${APP}/features/${migrated}/` },
+      from: { path: `${APP}/features/([^/]+)/` },
       to: {
         path: `${APP}/features/[^/]+/`,
         pathNot: [`${APP}/features/$1/`, `${APP}/features/[^/]+/index\\.ts$`],
@@ -98,9 +85,17 @@ module.exports = {
       to: { path: `${APP}/features/[^/]+/`, pathNot: `${APP}/features/[^/]+/index\\.ts$` },
     },
     {
-      name: 'no-cycles-in-migrated-features',
+      name: 'app-uses-feature-public-api',
+      comment: 'La composición de la app (app.config.ts, app.routes.ts) usa solo la API pública.',
       severity: 'error',
-      from: { path: `${APP}/features/${migrated}/` },
+      from: { path: `${APP}/[^/]+\\.ts$` },
+      to: { path: `${APP}/features/[^/]+/`, pathNot: `${APP}/features/[^/]+/index\\.ts$` },
+    },
+    {
+      name: 'no-circular',
+      comment: 'Ningún ciclo de dependencias en toda la aplicación.',
+      severity: 'error',
+      from: { path: `${APP}/` },
       to: { circular: true },
     },
     {
@@ -117,6 +112,16 @@ module.exports = {
       severity: 'error',
       from: { pathNot: [`${APP}/core/config/`, `${APP}/app\\.config\\.ts$`] },
       to: { path: '^src/environments/' },
+    },
+    {
+      name: 'no-orphans',
+      comment: 'Ningún archivo sin usar: todo archivo de src/app lo importa alguien.',
+      severity: 'error',
+      from: {
+        orphan: true,
+        pathNot: ['\\.d\\.ts$', '^src/main\\.ts$', '^src/environments/'],
+      },
+      to: {},
     },
     {
       name: 'not-to-unresolvable',

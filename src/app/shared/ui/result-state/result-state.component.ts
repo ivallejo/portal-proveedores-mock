@@ -3,7 +3,7 @@ import { IconComponent } from '../icon/icon.component';
 import { IconName } from '../icon/icon-name';
 import { ResultKind } from './result-kind';
 
-export const RESULT_STYLES: Record<ResultKind, { ring: string; fill: string; icon: IconName }> = {
+const RESULT_STYLES: Record<ResultKind, { ring: string; fill: string; icon: IconName }> = {
   ok: { ring: 'bg-success-soft', fill: 'bg-success-bright', icon: 'check' },
   bad: { ring: 'bg-[#FDE8E8]', fill: 'bg-danger', icon: 'x' },
   swap: { ring: 'bg-primary-soft', fill: 'bg-primary', icon: 'swap' },

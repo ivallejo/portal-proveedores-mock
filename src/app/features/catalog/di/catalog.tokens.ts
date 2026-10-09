@@ -8,7 +8,7 @@ import { CatalogHttpAdapter } from '../infrastructure/http/catalog-http.adapter'
 
 // El catálogo es de toda la sesión y lo usan varias features: los tokens se proveen en la raíz con su fábrica, así
 // el adaptador solo se descarga con la primera pantalla que lo usa (no en el bundle inicial).
-export const CATALOG_QUERY = new InjectionToken<CatalogQueryPort>('CATALOG_QUERY', {
+const CATALOG_QUERY = new InjectionToken<CatalogQueryPort>('CATALOG_QUERY', {
   providedIn: 'root',
   factory: () => new CatalogHttpAdapter(),
 });

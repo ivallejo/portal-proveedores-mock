@@ -15,7 +15,7 @@ import { UserEmailResponseDto } from '../http/dto/user-email-response.dto';
 import { UserPageResponseDto } from '../http/dto/user-page-response.dto';
 import { UserSummaryResponseDto } from '../http/dto/user-summary-response.dto';
 
-export function toUserSummary(dto: UserSummaryResponseDto): UserSummary {
+function toUserSummary(dto: UserSummaryResponseDto): UserSummary {
   return { ...dto, companyCodes: [...dto.companyCodes] };
 }
 
@@ -23,7 +23,7 @@ export function toUserPage(dto: UserPageResponseDto): UserPage {
   return { ...dto, items: dto.items.map(toUserSummary), counts: { ...dto.counts } };
 }
 
-export function toUserEmail(dto: UserEmailResponseDto): UserEmail {
+function toUserEmail(dto: UserEmailResponseDto): UserEmail {
   return { ...dto };
 }
 

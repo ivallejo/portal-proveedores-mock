@@ -1,28 +1,20 @@
-// Regla 7 de docs/PLAN_HEXAGONAL.md: un tipo por archivo, plantillas en .html y ningún archivo como script global.
-// Se aplica a las carpetas ya migradas (CHECKED); cada paso del plan agrega las suyas.
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+// Reglas 6 y 7 de docs/PLAN_HEXAGONAL.md para todo src/app:
+// - un tipo por archivo, plantillas en .html y ningún archivo como script global;
+// - cada feature tiene solo su index.ts, su <feature>.routes.ts y las carpetas de sus capas, con sus subcarpetas.
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const CHECKED = [
-  'src/app/core/config',
-  'src/app/core/http',
-  'src/app/core/layout',
-  'src/app/shared/errors',
-  'src/app/shared/ui',
-  'src/app/shared/utils',
-  'src/app/features/societies',
-  'src/app/features/areas',
-  'src/app/features/auth',
-  'src/app/features/menus',
-  'src/app/features/roles',
-  'src/app/features/users',
-  'src/app/features/profile',
-  'src/app/features/catalog',
-  'src/app/features/payments',
-  'src/app/features/documents',
-  'src/app/features/workflows',
-  'src/app/features/home',
-];
+const ROOT = 'src/app';
+const FEATURES = join(ROOT, 'features');
+
+/** Subcarpetas permitidas por capa (`null`: libre, p. ej. una por tecnología en infrastructure). */
+const LAYERS = {
+  domain: ['models', 'rules', 'errors'],
+  application: ['models', 'ports', 'use-cases'],
+  infrastructure: null,
+  di: [],
+  presentation: ['pages', 'components', 'facades', 'catalog', 'guards', 'interceptors', 'browser'],
+};
 
 const TYPE =
   /^(?:export\s+)?(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(class|interface|type|enum)\s+(\w+)/gm;
@@ -34,8 +26,9 @@ const files = (dir) =>
     if (statSync(path).isDirectory()) return files(path);
     return path.endsWith('.ts') && !path.endsWith('.spec.ts') ? [path] : [];
   });
+const dirs = (dir) => readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory());
 
-const problems = CHECKED.flatMap(files).flatMap((path) => {
+const sourceProblems = files(ROOT).flatMap((path) => {
   const text = readFileSync(path, 'utf8');
   const found = [];
   const types = [...text.matchAll(TYPE)].map((match) => match[2]);
@@ -46,10 +39,42 @@ const problems = CHECKED.flatMap(files).flatMap((path) => {
   return found.map((problem) => `${path}: ${problem}`);
 });
 
+const layoutProblems = dirs(FEATURES).flatMap((feature) => {
+  const base = join(FEATURES, feature);
+  const found = [];
+  if (!existsSync(join(base, 'index.ts'))) found.push(`${base}: falta index.ts (API pública)`);
+  for (const name of readdirSync(base)) {
+    const path = join(base, name);
+    if (statSync(path).isDirectory()) {
+      if (!(name in LAYERS)) {
+        found.push(`${path}: carpeta fuera de las capas (${Object.keys(LAYERS).join(', ')})`);
+        continue;
+      }
+      const allowed = LAYERS[name];
+      for (const sub of allowed ? dirs(path) : []) {
+        if (!allowed.includes(sub))
+          found.push(
+            `${join(path, sub)}: subcarpeta no permitida en ${name} (${allowed.join(', ') || 'ninguna'})`,
+          );
+      }
+      const ports = join(path, 'ports');
+      if (name === 'application' && existsSync(ports)) {
+        for (const sub of dirs(ports))
+          if (!['in', 'out'].includes(sub))
+            found.push(`${join(ports, sub)}: los puertos van en in/ u out/`);
+      }
+    } else if (!['index.ts', `${feature}.routes.ts`].includes(name) && !name.endsWith('.spec.ts')) {
+      found.push(`${path}: en la raíz de la feature solo van index.ts y ${feature}.routes.ts`);
+    }
+  }
+  return found;
+});
+
+const problems = [...sourceProblems, ...layoutProblems];
 if (problems.length) {
   console.error(`✘ ${problems.length} problema(s) de estructura:\n${problems.join('\n')}`);
   process.exit(1);
 }
 console.log(
-  `✔ estructura de archivos correcta (${CHECKED.flatMap(files).length} archivos revisados)`,
+  `✔ estructura de archivos correcta (${files(ROOT).length} archivos y ${dirs(FEATURES).length} features revisados)`,
 );

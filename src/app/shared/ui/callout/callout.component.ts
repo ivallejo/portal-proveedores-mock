@@ -3,7 +3,7 @@ import { IconComponent } from '../icon/icon.component';
 import { IconName } from '../icon/icon-name';
 import { CalloutTone } from './callout-tone';
 
-export const CALLOUT_STYLES: Record<CalloutTone, { box: string; icon: IconName }> = {
+const CALLOUT_STYLES: Record<CalloutTone, { box: string; icon: IconName }> = {
   info: { box: 'bg-page text-ink-soft', icon: 'info' },
   danger: {
     box: 'border border-danger-line bg-danger-soft text-danger-deep',

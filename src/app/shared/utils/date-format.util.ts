@@ -17,12 +17,6 @@ export function nowStamp(date = new Date()): string {
   return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} · ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export function todayIso(): string {
-  const date = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}
-
 /** «dd/mm/aaaa hh:mm» (o solo la fecha) en hora local; las fechas UTC del backend pueden venir sin «Z». */
 export function formatDateTime(iso: string | null, withTime = true): string {
   if (!iso) return '—';
