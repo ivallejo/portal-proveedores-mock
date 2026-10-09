@@ -204,10 +204,8 @@ export const routes: Routes = [
         title: 'Áreas · Portal de Proveedores',
         data: { title: 'Áreas', roles: ['Administrador'] },
         canActivate: [menuGuard],
-        loadComponent: gated('areas', () =>
-          import('./features/settings/organization/areas-page.component').then(
-            (m) => m.AreasPageComponent,
-          ),
+        loadChildren: gatedRoutes('areas', () =>
+          import('./features/areas').then((m) => m.AREAS_ROUTES),
         ),
       },
       {

@@ -1,0 +1,83 @@
+<div class="overflow-x-auto">
+  <div class="min-w-[780px]">
+    <div
+      class="grid h-12 grid-cols-[2.4fr_2fr_0.7fr_0.9fr_90px] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+    >
+      <div>Área</div>
+      <div>Sociedad</div>
+      <div class="text-center">Usuarios</div>
+      <div>Estado</div>
+      <div class="text-right">Acciones</div>
+    </div>
+    @if (loading()) {
+      @for (row of [70, 55, 80, 62]; track $index) {
+        <div
+          aria-hidden="true"
+          class="grid h-[62px] grid-cols-[2.4fr_2fr_0.7fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6"
+        >
+          <span class="skeleton h-3" [style.width.%]="row"></span>
+          <span class="skeleton h-3 w-[70%]"></span>
+          <span class="skeleton mx-auto h-3 w-6"></span>
+          <span class="skeleton h-6 w-[78px] rounded-full"></span>
+          <span class="flex justify-end gap-1.5"
+            ><span class="skeleton size-[38px] rounded-[9px]"></span
+            ><span class="skeleton size-[38px] rounded-[9px]"></span
+          ></span>
+        </div>
+      }
+    } @else {
+      @for (area of rows(); track area.id; let i = $index) {
+        <div
+          class="row-hover animate-in grid min-h-[62px] grid-cols-[2.4fr_2fr_0.7fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.opacity-70]="!area.isActive"
+          [style.animation-delay.ms]="i * 40"
+        >
+          <div class="flex min-w-0 items-center gap-2.5">
+            <span
+              class="flex size-[34px] shrink-0 items-center justify-center rounded-[9px] bg-[#EEF4FD] text-primary"
+            >
+              <app-icon name="layers" [size]="18" />
+            </span>
+            <span class="flex min-w-0 flex-col gap-0.5">
+              <span class="truncate font-bold">{{ area.name }}</span>
+              @if (area.description) {
+                <span class="truncate text-xs text-muted">{{ area.description }}</span>
+              }
+            </span>
+          </div>
+          <div class="flex min-w-0 flex-col gap-0.5">
+            <span class="truncate">{{ area.societyName }}</span>
+            <span class="text-xs text-muted">{{ area.societyCode }}</span>
+          </div>
+          <div class="text-center tabular-nums">{{ area.userCount }}</div>
+          <div>
+            <app-badge size="sm" [dot]="true" [tone]="area.isActive ? 'success' : 'gray'">{{
+              area.isActive ? 'Activa' : 'Inactiva'
+            }}</app-badge>
+          </div>
+          <div class="flex justify-end gap-1.5">
+            <button
+              type="button"
+              class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth text-primary hover:bg-primary-tint"
+              title="Editar"
+              [attr.aria-label]="'Editar ' + area.name"
+              (click)="edit.emit(area)"
+            >
+              <app-icon name="edit" [size]="17" />
+            </button>
+            <button
+              type="button"
+              class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth hover:bg-page"
+              [class]="area.isActive ? 'text-[#B42318]' : 'text-[#13653A]'"
+              [title]="(area.isActive ? 'Desactivar ' : 'Activar ') + area.name"
+              [attr.aria-label]="(area.isActive ? 'Desactivar ' : 'Activar ') + area.name"
+              (click)="toggle.emit(area)"
+            >
+              <app-icon name="power" [size]="17" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

@@ -10,6 +10,7 @@ const CHECKED = [
   'src/app/shared/ui',
   'src/app/shared/utils',
   'src/app/features/societies',
+  'src/app/features/areas',
 ];
 
 const TYPE =
