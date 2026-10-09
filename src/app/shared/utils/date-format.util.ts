@@ -22,3 +22,12 @@ export function todayIso(): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
+
+/** «dd/mm/aaaa hh:mm» (o solo la fecha) en hora local; las fechas UTC del backend pueden venir sin «Z». */
+export function formatDateTime(iso: string | null, withTime = true): string {
+  if (!iso) return '—';
+  const date = new Date(iso.endsWith('Z') ? iso : `${iso}Z`);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const day = `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+  return withTime ? `${day} ${pad(date.getHours())}:${pad(date.getMinutes())}` : day;
+}

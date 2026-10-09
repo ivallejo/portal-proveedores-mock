@@ -1,0 +1,102 @@
+<app-drawer
+  icon="users"
+  [heading]="editor.isNew() ? 'Nuevo usuario' : 'Editar usuario'"
+  [subtitle]="
+    editor.isNew()
+      ? 'Completa los datos para registrarlo.'
+      : editor.detail()!.displayName +
+        ' · ' +
+        editor.detail()!.documentType +
+        ' ' +
+        editor.detail()!.document
+  "
+  (closed)="editor.closeDrawer()"
+>
+  <div
+    drawer-tabs
+    role="tablist"
+    aria-label="Secciones del usuario"
+    class="flex gap-1.5 overflow-x-auto border-b border-line-soft px-5 sm:px-7"
+  >
+    @for (item of editor.tabs(); track item.key) {
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="editor.tab() === item.key"
+        class="flex h-[50px] shrink-0 items-center gap-2 border-b-[3px] px-2.5 text-sm whitespace-nowrap hover:text-primary"
+        [class]="
+          editor.tab() === item.key
+            ? 'border-primary font-bold text-primary'
+            : 'border-transparent font-medium text-muted'
+        "
+        (click)="editor.selectTab(item.key)"
+      >
+        {{ item.label }}
+        @if (item.error) {
+          <span
+            class="flex size-5 items-center justify-center rounded-full bg-danger-tint text-[11.5px] font-bold text-danger-text"
+            >!</span
+          >
+        } @else if (item.count) {
+          <span
+            class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold"
+            [class]="
+              editor.tab() === item.key ? 'bg-primary text-white' : 'bg-surface-muted text-body'
+            "
+            >{{ item.count }}</span
+          >
+        }
+      </button>
+    }
+  </div>
+
+  @switch (editor.tab()) {
+    @case ('datos') {
+      <app-user-data-tab />
+    }
+
+    @case ('correos') {
+      <app-user-emails-tab />
+    }
+
+    @case ('socs') {
+      <app-user-societies-tab />
+    }
+
+    @case ('seg') {
+      <app-user-security-tab />
+    }
+  }
+
+  <div
+    drawer-footer
+    class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
+  >
+    @if (editor.footerError()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" />{{ editor.footerError() }}
+      </span>
+    } @else {
+      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+    }
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="editor.closeDrawer()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [attr.aria-busy]="editor.saving()"
+        (click)="editor.save()"
+      >
+        @if (editor.saving()) {
+          <app-spinner [size]="18" />Guardando…
+        } @else {
+          <app-icon name="check" [size]="18" [stroke]="2.2" />{{
+            editor.isNew() ? 'Crear usuario' : 'Guardar cambios'
+          }}
+        }
+      </button>
+    </div>
+  </div>
+</app-drawer>

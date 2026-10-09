@@ -1,0 +1,43 @@
+<div class="flex flex-col gap-3.5">
+  <div class="flex flex-col gap-0.5">
+    <span class="text-base font-bold">Acceso a sociedades</span>
+    <span class="text-[13px] text-muted"
+      >{{ editor.companies().length }} de {{ list.catalog().companies.length }} sociedades asignadas
+      · el usuario solo verá información de estas sociedades.</span
+    >
+  </div>
+  @if (editor.showErrors() && editor.errors().companies; as error) {
+    <app-callout tone="danger">{{ error }}</app-callout>
+  }
+  <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+    @for (company of editor.companyCards(); track company.code) {
+      <button
+        type="button"
+        role="checkbox"
+        [attr.aria-checked]="company.on"
+        [disabled]="company.disabled"
+        class="flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left disabled:cursor-not-allowed disabled:opacity-60"
+        [class]="company.on ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
+        (click)="editor.toggleCompany(company.code)"
+      >
+        <span
+          class="flex size-5 shrink-0 items-center justify-center rounded-[5px] border-2 text-white"
+          [class]="company.on ? 'border-primary bg-primary' : 'border-[#B8C2D3] bg-white'"
+        >
+          @if (company.on) {
+            <app-icon name="check" [size]="13" [stroke]="3" />
+          }
+        </span>
+        <span class="flex min-w-0 flex-col">
+          <span class="truncate text-[13.5px] font-bold">{{ company.name }}</span>
+          <span class="text-xs text-muted tabular-nums"
+            >{{ company.code }}{{ company.ruc ? ' · RUC ' + company.ruc : '' }}</span
+          >
+          @if (!company.isActive) {
+            <span class="text-xs font-bold text-warning-text">Sociedad inactiva</span>
+          }
+        </span>
+      </button>
+    }
+  </div>
+</div>

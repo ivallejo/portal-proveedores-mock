@@ -6,7 +6,7 @@
  * Las reglas por capa se aplican a las features ya migradas a la estructura hexagonal (MIGRATED_FEATURES);
  * cada paso del plan agrega la feature que migra. Al terminar, la lista cubre todas las features.
  */
-const MIGRATED_FEATURES = ['societies', 'areas', 'auth', 'menus', 'roles'];
+const MIGRATED_FEATURES = ['societies', 'areas', 'auth', 'menus', 'roles', 'users'];
 
 const APP = '^src/app';
 const migrated = MIGRATED_FEATURES.length ? `(${MIGRATED_FEATURES.join('|')})` : '(?!)';

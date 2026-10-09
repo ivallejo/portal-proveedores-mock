@@ -118,10 +118,8 @@ export const routes: Routes = [
         title: 'Usuarios · Portal de Proveedores',
         data: { title: 'Usuarios', roles: ['Administrador'] },
         canActivate: [menuGuard],
-        loadComponent: gated('usuarios', () =>
-          import('./features/settings/users/users-page.component').then(
-            (m) => m.UsersPageComponent,
-          ),
+        loadChildren: gatedRoutes('usuarios', () =>
+          import('./features/users').then((m) => m.USERS_ROUTES),
         ),
       },
       {

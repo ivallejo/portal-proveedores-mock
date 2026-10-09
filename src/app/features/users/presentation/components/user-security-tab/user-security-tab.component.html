@@ -1,0 +1,100 @@
+<div class="flex flex-col gap-5">
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line px-4 py-3.5"
+  >
+    <span class="flex min-w-0 flex-col gap-0.5">
+      <span class="text-sm font-bold">Solicitar cambio de contraseña en el próximo inicio</span>
+      <span class="text-[12.5px] text-muted"
+        >El usuario deberá definir una nueva contraseña al ingresar.</span
+      >
+    </span>
+    <span role="radiogroup" class="flex rounded-[10px] bg-surface-muted p-1">
+      @for (option of [false, true]; track option) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="editor.form().mustChangePassword === option"
+          class="h-8 rounded-lg px-4 text-[13px] font-bold"
+          [class]="
+            editor.form().mustChangePassword === option
+              ? 'bg-white text-primary shadow-sm'
+              : 'text-muted'
+          "
+          (click)="editor.setField('mustChangePassword', option)"
+        >
+          {{ option ? 'Sí' : 'No' }}
+        </button>
+      }
+    </span>
+  </div>
+
+  <div class="flex flex-col gap-3 rounded-xl border border-line px-4 py-3.5">
+    <span class="flex flex-col gap-0.5">
+      <span class="text-sm font-bold">{{
+        editor.detail()!.isActivated ? 'Recuperación de contraseña' : 'Activación de la cuenta'
+      }}</span>
+      <span class="text-[12.5px] text-muted"
+        >{{ editor.detail()!.isActivated ? '' : 'El usuario aún no activa su cuenta.' }} El enlace
+        se envía a <strong class="text-ink">{{ editor.primaryEmail() }}</strong> y vence en 24
+        horas.</span
+      >
+    </span>
+    <button
+      type="button"
+      class="btn btn-outline self-start"
+      [disabled]="editor.sendingLink() || editor.form().status === 'inactive'"
+      [attr.aria-busy]="editor.sendingLink()"
+      (click)="editor.sendLink()"
+    >
+      @if (editor.sendingLink()) {
+        <app-spinner [size]="16" /> Enviando…
+      } @else {
+        <app-icon name="mail" [size]="16" />{{
+          editor.detail()!.isActivated
+            ? 'Enviar enlace de recuperación'
+            : 'Reenviar enlace de activación'
+        }}
+      }
+    </button>
+  </div>
+
+  <div class="flex flex-col gap-2.5">
+    <span class="text-sm font-bold">Historial de enlaces</span>
+    <div class="overflow-hidden rounded-xl border border-line">
+      <div
+        class="grid grid-cols-[1.2fr_1fr_1fr_0.9fr] gap-3 bg-surface-muted px-4 py-2.5 text-[11.5px] font-bold tracking-[0.04em] text-body uppercase"
+      >
+        <span>Token</span><span>Creado</span><span>Expira</span><span>Estado</span>
+      </div>
+      @if (editor.linksLoading()) {
+        <div class="flex items-center gap-2 px-4 py-3 text-[13px] text-muted">
+          <app-spinner [size]="16" /> Cargando…
+        </div>
+      } @else {
+        @for (link of editor.links(); track link.fingerprint + link.createdAtUtc) {
+          <div
+            class="grid grid-cols-[1.2fr_1fr_1fr_0.9fr] items-center gap-3 border-t border-line-soft px-4 py-2.5 text-[13px] tabular-nums"
+          >
+            <span class="flex flex-col">
+              <span class="font-mono text-[12.5px]">{{ link.fingerprint }}</span>
+              <span class="text-[11.5px] text-muted">{{
+                link.kind === 'activation' ? 'Activación' : 'Recuperación'
+              }}</span>
+            </span>
+            <span>{{ stamp(link.createdAtUtc) }}</span>
+            <span>{{ stamp(link.expiresAtUtc) }}</span>
+            <span
+              ><app-badge size="sm" [dot]="true" [tone]="linkStatus[link.status].tone">{{
+                linkStatus[link.status].label
+              }}</app-badge></span
+            >
+          </div>
+        } @empty {
+          <div class="border-t border-line-soft px-4 py-3 text-[13px] text-muted">
+            Aún no se han generado enlaces.
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
