@@ -76,7 +76,7 @@ src/app/
     └── index.ts           API pública: lo único que otras features pueden importar
 ```
 
-**Reglas** (las verifica `dependency-cruiser`, que se agrega en el paso 1):
+**Reglas** (las 1 a 6 las verifica `dependency-cruiser`, desde el paso 1; la 7, un script propio desde el paso 3):
 
 1. `domain` no importa Angular, RxJS ni otras capas.
 2. `application` importa solo `domain` y sus propios puertos (RxJS permitido para `Observable`). Nunca `HttpClient`, `localStorage` ni `infrastructure`.
@@ -98,7 +98,7 @@ Inyección: cada puerto es una `interface` con su `InjectionToken` en `di/<featu
 ## 5. Pasos
 
 - [x] **Paso 0. Línea base.** Rama `refactor/hexagonal`. `quality` y `build` en verde (bundle inicial 402.72 kB, 111.65 kB transferidos) y 5/5 pruebas. Las 16 pantallas (3 públicas y 13 privadas con `prueba.admin`) cargan contra el backend local, sin errores en consola.
-- [ ] **Paso 1. Reglas de arquitectura.** Agregar `dependency-cruiser` con las reglas de la sección 3. Se aplican a las carpetas ya migradas, y cada paso las extiende a la feature que migra (como las pruebas de arquitectura del backend).
+- [x] **Paso 1. Reglas de arquitectura.** `dependency-cruiser` 18.5 con `.dependency-cruiser.cjs` y `npm run arch`, incluido en `npm run quality`. Reglas: dominio puro, aplicación sin adaptadores, presentación sin infraestructura, infraestructura sin presentación, features solo por `index.ts`, sin ciclos y `shared` independiente. Las reglas por capa aplican a `MIGRATED_FEATURES`, que crece en cada paso. Verificadas con violaciones de prueba. La regla 7 (un tipo por archivo) se verifica con un script propio desde el paso 3.
 - [ ] **Paso 2. Core: configuración y HTTP.** `API_BASE_URL` y `FEATURE_FLAGS` como `InjectionToken` provistos desde `environment` en `app.config.ts` (DIP: nadie más importa `environment`). `api-errors` pasa a `core/http`.
 - [ ] **Paso 3. Shared.** Un componente por carpeta con su `.html` (`feedback`, `page`, `dialog`…). `format.ts` se divide por tema. Validadores de formulario a `shared/forms`. Sin cambios visuales.
 - [ ] **Paso 4. Piloto: `societies`.** Feature pequeña (listar, crear, editar, activar) para fijar el patrón completo: dominio, puertos, casos de uso, adaptador HTTP, DTO, mapper, facade, providers, rutas, `index.ts` y pruebas. Se revisa el resultado contigo antes de repetirlo en el resto.
