@@ -158,10 +158,8 @@ export const routes: Routes = [
         title: 'Roles y permisos · Portal de Proveedores',
         data: { title: 'Roles y permisos' },
         canActivate: [menuGuard],
-        loadComponent: gated('roles', () =>
-          import('./features/settings/access/roles-page.component').then(
-            (m) => m.RolesPageComponent,
-          ),
+        loadChildren: gatedRoutes('roles', () =>
+          import('./features/roles').then((m) => m.ROLES_ROUTES),
         ),
       },
       {

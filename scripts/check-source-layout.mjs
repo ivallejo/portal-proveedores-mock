@@ -14,6 +14,7 @@ const CHECKED = [
   'src/app/features/areas',
   'src/app/features/auth',
   'src/app/features/menus',
+  'src/app/features/roles',
 ];
 
 const TYPE =

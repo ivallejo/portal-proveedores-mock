@@ -1,0 +1,89 @@
+<div class="overflow-x-auto">
+  <div class="min-w-[820px]">
+    <div
+      class="grid h-12 grid-cols-[2.6fr_1.3fr_0.8fr_0.9fr_90px] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+    >
+      <div>Rol</div>
+      <div>Menús asignados</div>
+      <div class="text-center">Usuarios</div>
+      <div>Estado</div>
+      <div class="text-right">Acciones</div>
+    </div>
+    @if (loading()) {
+      @for (row of [70, 55, 80, 62]; track $index) {
+        <div
+          aria-hidden="true"
+          class="grid h-[66px] grid-cols-[2.6fr_1.3fr_0.8fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6"
+        >
+          <span class="skeleton h-3" [style.width.%]="row"></span>
+          <span class="skeleton h-3 w-[60%]"></span>
+          <span class="skeleton mx-auto h-3 w-6"></span>
+          <span class="skeleton h-6 w-[78px] rounded-full"></span>
+          <span class="flex justify-end gap-1.5"
+            ><span class="skeleton size-[38px] rounded-[9px]"></span
+            ><span class="skeleton size-[38px] rounded-[9px]"></span
+          ></span>
+        </div>
+      }
+    } @else {
+      @for (role of rows(); track role.id; let i = $index) {
+        <div
+          class="row-hover animate-in grid min-h-[66px] grid-cols-[2.6fr_1.3fr_0.8fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.opacity-70]="!role.isActive"
+          [style.animation-delay.ms]="i * 40"
+        >
+          <div class="flex min-w-0 items-center gap-3">
+            <app-badge [tone]="roleTone(role)" class="shrink-0"
+              ><app-icon name="shield-check" [size]="16"
+            /></app-badge>
+            <div class="flex min-w-0 flex-col gap-0.5">
+              <span class="truncate font-bold"
+                >{{ role.name }}
+                @if (role.isSystem) {
+                  <span class="ml-1 text-[11px] font-semibold text-muted">· Base</span>
+                }
+              </span>
+              <span class="truncate text-xs text-muted">{{ role.description ?? '—' }}</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="font-medium tabular-nums">{{ menuSummary(role).count }}</span>
+            <span class="text-xs text-muted">{{ menuSummary(role).caption }}</span>
+          </div>
+          <div class="text-center tabular-nums">{{ role.userCount }}</div>
+          <div>
+            <app-badge size="sm" [dot]="true" [tone]="role.isActive ? 'success' : 'gray'">{{
+              role.isActive ? 'Activo' : 'Inactivo'
+            }}</app-badge>
+          </div>
+          <div class="flex justify-end gap-1.5">
+            <button
+              type="button"
+              class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth text-primary hover:bg-primary-tint"
+              title="Editar"
+              [attr.aria-label]="'Editar ' + role.name"
+              (click)="edit.emit(role)"
+            >
+              <app-icon name="edit" [size]="17" />
+            </button>
+            <button
+              type="button"
+              class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth hover:bg-page disabled:cursor-not-allowed disabled:opacity-40"
+              [class]="role.isActive ? 'text-[#B42318]' : 'text-[#13653A]'"
+              [disabled]="role.code === 'ADMINISTRATOR'"
+              [title]="
+                role.code === 'ADMINISTRATOR'
+                  ? 'El rol Administrador no se puede desactivar'
+                  : (role.isActive ? 'Desactivar ' : 'Activar ') + role.name
+              "
+              [attr.aria-label]="(role.isActive ? 'Desactivar ' : 'Activar ') + role.name"
+              (click)="toggle.emit(role)"
+            >
+              <app-icon name="power" [size]="17" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
