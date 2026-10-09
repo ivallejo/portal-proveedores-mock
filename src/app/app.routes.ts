@@ -1,4 +1,4 @@
-import { Type, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { AUTH_ROUTES, authGuard, roleGuard, rootRedirectGuard } from './features/auth';
 import { menuGuard } from './features/menus';
@@ -8,15 +8,11 @@ import { isFeatureEnabled } from './core/config/is-feature-enabled';
 import { AppShellComponent } from './core/layout/app-shell/app-shell.component';
 
 const underConstruction = () =>
-  import('./features/under-construction/under-construction-page.component').then(
+  import('./core/layout/under-construction-page/under-construction-page.component').then(
     (m) => m.UnderConstructionPageComponent,
   );
 
-/** Carga la pantalla real si la funcionalidad está habilitada; si no, «en construcción». */
-const gated = (feature: FeatureFlag, load: () => Promise<Type<unknown>>) => () =>
-  isFeatureEnabled(inject(FEATURE_FLAGS), feature) ? load() : underConstruction();
-
-/** Igual que `gated`, para las features que exportan sus rutas (`<feature>.routes.ts`). */
+/** Carga las rutas de la feature si está habilitada; si no, «en construcción». */
 const gatedRoutes = (feature: FeatureFlag, load: () => Promise<Routes>) => () =>
   isFeatureEnabled(inject(FEATURE_FLAGS), feature)
     ? load()
@@ -44,8 +40,7 @@ export const routes: Routes = [
         path: 'inicio',
         title: 'Inicio · Portal de Proveedores',
         data: { title: 'Inicio' },
-        loadComponent: () =>
-          import('./features/home/home-page.component').then((m) => m.HomePageComponent),
+        loadChildren: () => import('./features/home').then((m) => m.HOME_ROUTES),
       },
       {
         path: 'orden-pago',
@@ -114,10 +109,8 @@ export const routes: Routes = [
         title: 'Workflows de aprobación · Portal de Proveedores',
         data: { title: 'Workflows de aprobación', roles: ['Administrador'] },
         canActivate: [roleGuard],
-        loadComponent: gated('workflows', () =>
-          import('./features/workflows/pages/workflows-page.component').then(
-            (m) => m.WorkflowsPageComponent,
-          ),
+        loadChildren: gatedRoutes('workflows', () =>
+          import('./features/workflows').then((m) => m.WORKFLOWS_ROUTES),
         ),
       },
       {

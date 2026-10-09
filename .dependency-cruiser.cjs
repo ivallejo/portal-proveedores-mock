@@ -107,8 +107,7 @@ module.exports = {
       name: 'shared-is-independent',
       comment: 'shared no depende de core ni de features.',
       severity: 'error',
-      // Pendiente de migrar: shared/state pasa a la feature workflows (paso 14).
-      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/state/` },
+      from: { path: `${APP}/shared/` },
       to: { path: [`${APP}/core/`, `${APP}/features/`] },
     },
     {

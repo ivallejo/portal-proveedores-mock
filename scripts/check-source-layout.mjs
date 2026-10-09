@@ -20,6 +20,8 @@ const CHECKED = [
   'src/app/features/catalog',
   'src/app/features/payments',
   'src/app/features/documents',
+  'src/app/features/workflows',
+  'src/app/features/home',
 ];
 
 const TYPE =

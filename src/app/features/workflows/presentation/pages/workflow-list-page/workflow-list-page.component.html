@@ -1,0 +1,14 @@
+<app-page-header
+  heading="Workflows de aprobación"
+  description="Define las reglas y aprobadores para cada tipo de documento."
+>
+  <button type="button" class="btn btn-primary" (click)="editor.openWorkflowForm()">
+    <app-icon name="plus" [size]="18" [stroke]="2.2" />Nuevo workflow
+  </button>
+</app-page-header>
+
+<app-workflow-table />
+
+@if (editor.showWorkflowForm()) {
+  <app-workflow-form-dialog />
+}

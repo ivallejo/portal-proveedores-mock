@@ -1,0 +1,179 @@
+<app-dialog
+  [heading]="editor.editingWorkflow() ? 'Editar workflow' : 'Nuevo workflow'"
+  subtitle="Configura la condición y los aprobadores en orden."
+  [width]="880"
+  closeLabel="Cerrar"
+  (closed)="editor.closeWorkflowForm()"
+>
+  <div class="flex flex-col gap-5 px-5 py-6 sm:px-8">
+    @if (editor.workflowError()) {
+      <app-callout tone="danger">{{ editor.workflowError() }}</app-callout>
+    }
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <label class="flex flex-col gap-2">
+        <span class="field-label">Nombre del workflow *</span>
+        <input
+          class="field"
+          [(ngModel)]="editor.workflowForm.name"
+          placeholder="Ej. Aprobación de servicios"
+        />
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="field-label">Sociedad</span>
+        <select class="field" [(ngModel)]="editor.workflowForm.society">
+          @for (society of editor.workflowSocieties; track society) {
+            <option [value]="society">{{ society }}</option>
+          }
+        </select>
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="field-label">Tipo de documento</span>
+        <select class="field" [(ngModel)]="editor.workflowForm.documentType">
+          @for (type of editor.workflowDocumentTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="field-label">Descripción</span>
+        <input
+          class="field"
+          [(ngModel)]="editor.workflowForm.description"
+          placeholder="Describe cuándo aplica"
+        />
+      </label>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-col gap-0.5">
+        <h3 class="m-0 text-sm font-bold">Aprobadores *</h3>
+        <p class="m-0 text-[13px] text-muted">
+          Los niveles se ejecutan en orden. Puedes definir uno o varios aprobadores por nivel.
+        </p>
+      </div>
+      @for (
+        level of editor.workflowForm.approvalLevels;
+        track $index;
+        let i = $index;
+        let last = $last
+      ) {
+        <article class="flex flex-col gap-3 rounded-[14px] border border-line bg-surface-alt p-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex flex-col">
+              <span class="text-sm font-bold">Nivel {{ i + 1 }}</span>
+              <span class="text-xs text-muted">Se notifica después del nivel anterior</span>
+            </div>
+            <div class="flex gap-1.5">
+              <button
+                type="button"
+                class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted disabled:opacity-40"
+                title="Subir nivel"
+                aria-label="Subir nivel"
+                [disabled]="i === 0"
+                (click)="editor.moveWorkflowLevel(i, -1)"
+              >
+                <app-icon name="chevron-up" [size]="16" [stroke]="2" />
+              </button>
+              <button
+                type="button"
+                class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted disabled:opacity-40"
+                title="Bajar nivel"
+                aria-label="Bajar nivel"
+                [disabled]="last"
+                (click)="editor.moveWorkflowLevel(i, 1)"
+              >
+                <app-icon name="chevron-down" [size]="16" [stroke]="2" />
+              </button>
+              <button
+                type="button"
+                class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted hover:text-danger-text"
+                title="Eliminar nivel"
+                aria-label="Eliminar nivel"
+                (click)="editor.removeWorkflowLevel(i)"
+              >
+                <app-icon name="trash" [size]="16" />
+              </button>
+            </div>
+          </div>
+          <label class="flex flex-col gap-2">
+            <span class="field-label">Regla del nivel</span>
+            <select
+              class="field"
+              [ngModel]="level.rule"
+              (ngModelChange)="editor.setWorkflowRule(i, $event)"
+            >
+              <option value="any">Cualquiera de los aprobadores</option>
+              <option value="all">Todos los aprobadores</option>
+            </select>
+          </label>
+          <div class="flex flex-wrap gap-1.5">
+            @for (approver of level.approvers; track approver) {
+              <span
+                class="inline-flex h-7 items-center gap-1 rounded-full bg-primary-soft pr-1 pl-2.5 text-xs font-bold text-[#1E3FA8]"
+              >
+                {{ approver }}
+                <button
+                  type="button"
+                  class="flex size-5 items-center justify-center rounded-full hover:bg-white"
+                  [attr.aria-label]="'Quitar ' + approver"
+                  (click)="editor.removeWorkflowApprover(i, approver)"
+                >
+                  <app-icon name="x" [size]="12" [stroke]="2.4" />
+                </button>
+              </span>
+            } @empty {
+              <span class="text-[13px] text-muted">Aún no has seleccionado aprobadores.</span>
+            }
+          </div>
+          <div class="relative flex">
+            <app-icon
+              name="search"
+              [size]="18"
+              class="pointer-events-none absolute top-[13px] left-3 text-muted"
+            />
+            <input
+              class="field pl-[38px]"
+              placeholder="Buscar usuario, rol o área"
+              [attr.aria-label]="'Buscar aprobadores del nivel ' + (i + 1)"
+              [ngModel]="editor.workflowApproverSearches[i]"
+              (ngModelChange)="editor.setWorkflowApproverSearch(i, $event)"
+            />
+          </div>
+          <div class="flex flex-wrap gap-2">
+            @for (approver of editor.filteredWorkflowApprovers(i); track approver) {
+              <button
+                type="button"
+                class="btn btn-tint h-9 px-3 text-[13px]"
+                (click)="editor.toggleWorkflowApprover(i, approver)"
+              >
+                <app-icon name="plus" [size]="15" [stroke]="2.2" />{{ roleLabel(approver) }}
+              </button>
+            } @empty {
+              <span class="text-[13px] text-muted">
+                {{
+                  editor.workflowApproverSearches[i]?.trim()
+                    ? 'No hay resultados disponibles.'
+                    : 'Escribe un nombre, rol o área para buscar.'
+                }}
+              </span>
+            }
+          </div>
+        </article>
+      }
+      <button type="button" class="btn btn-outline self-start" (click)="editor.addWorkflowLevel()">
+        <app-icon name="plus" [size]="18" [stroke]="2.2" />Agregar nivel
+      </button>
+    </div>
+  </div>
+  <div
+    dialog-footer
+    class="flex justify-end gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
+  >
+    <button type="button" class="btn btn-secondary" (click)="editor.closeWorkflowForm()">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-primary" (click)="editor.saveWorkflow()">
+      Guardar workflow
+    </button>
+  </div>
+</app-dialog>
