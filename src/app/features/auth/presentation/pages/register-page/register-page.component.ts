@@ -5,6 +5,7 @@ import { ProviderLookupError } from '../../../domain/errors/provider-lookup.erro
 import { ProviderCandidate } from '../../../domain/models/provider-candidate';
 import { userFacingMessage } from '../../../../../shared/errors/user-facing-message';
 import { CalloutComponent } from '../../../../../shared/ui/callout/callout.component';
+import { CalloutTone } from '../../../../../shared/ui/callout/callout-tone';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
 import { onlyDigits } from '../../../../../shared/utils/text-format.util';
@@ -36,7 +37,9 @@ export class RegisterPageComponent {
   readonly step = signal<RegisterStep>('ruc');
   readonly ruc = signal('');
   readonly rucError = signal('');
-  readonly lookupError = signal<{ title: string; text: string } | null>(null);
+  readonly lookupError = signal<{ title: string; text: string; tone: CalloutTone } | null>(null);
+  /** El RUC no es incorrecto (por ejemplo, existe pero no tiene correo): el campo no se marca en rojo. */
+  readonly rucInvalid = computed(() => !!this.rucError() || this.lookupError()?.tone === 'danger');
   readonly registerError = signal('');
   readonly busy = signal(false);
   readonly provider = signal<ProviderCandidate | null>(null);
@@ -74,19 +77,32 @@ export class RegisterPageComponent {
           this.lookupError.set({
             title: 'Usuario ya registrado',
             text: `${failure.message || 'Este RUC ya tiene una cuenta.'} Si olvidaste tu contraseña, usa la opción «¿Olvidaste tu contraseña?».`,
+            tone: 'danger',
+          });
+        } else if (failure.failure === 'missing-email') {
+          this.lookupError.set({
+            title: 'Tu RUC no tiene un correo registrado',
+            text: 'Tu empresa sí está registrada como proveedor, pero no tiene un correo de contacto en SAP y lo necesitamos para enviarte el enlace de activación. Comunícate con el área de Compras para que lo registren y vuelve a intentarlo.',
+            tone: 'warn',
           });
         } else if (failure.failure === 'cannot-register') {
-          // El RUC existe en SAP pero falta un dato para registrarlo (por ejemplo, el correo).
-          this.lookupError.set({ title: 'No podemos registrar este RUC', text: failure.message });
+          // El RUC existe en SAP pero falta otro dato para registrarlo.
+          this.lookupError.set({
+            title: 'No podemos registrar este RUC',
+            text: failure.message,
+            tone: 'danger',
+          });
         } else if (failure.failure === 'unavailable') {
           this.lookupError.set({
             title: 'No pudimos validar el RUC',
             text: 'El servicio de consulta no está disponible en este momento. Inténtalo en unos minutos.',
+            tone: 'danger',
           });
         } else {
           this.lookupError.set({
             title: 'RUC no válido',
             text: 'No encontramos este RUC en nuestro registro de proveedores. Verifica el número o comunícate con el área de Compras.',
+            tone: 'danger',
           });
         }
       },

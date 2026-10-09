@@ -13,11 +13,20 @@ export function toAccessKeyResult(dto: AccessKeyResponseDto): AccessKeyResult {
   return { sent: dto.sent, email: dto.maskedEmail };
 }
 
-/** 409: ya tiene cuenta; 400 con mensaje: falta un dato en SAP; sin conexión o 5xx: servicio caído; lo demás: no existe. */
+/** Código del backend cuando el RUC es de un proveedor pero no tiene correo en SAP. */
+const PROVIDER_EMAIL_MISSING = 'PROVIDER_EMAIL_MISSING';
+
+/**
+ * 409: ya tiene cuenta; 400 con `PROVIDER_EMAIL_MISSING`: sin correo en SAP; 400 con mensaje: falta otro dato en SAP;
+ * sin conexión o 5xx: servicio caído; lo demás: no existe.
+ */
 export function toProviderLookupError(error: unknown): ProviderLookupError {
   const status = error instanceof HttpErrorResponse ? error.status : undefined;
-  const message: string = (error instanceof HttpErrorResponse && error.error?.message) || '';
+  const body = error instanceof HttpErrorResponse ? error.error : null;
+  const message: string = body?.message || '';
   if (status === 409) return new ProviderLookupError('already-registered', message);
+  if (status === 400 && body?.code === PROVIDER_EMAIL_MISSING)
+    return new ProviderLookupError('missing-email', message);
   if (status === 400 && message) return new ProviderLookupError('cannot-register', message);
   if (status === 0 || (status ?? 0) >= 500) return new ProviderLookupError('unavailable');
   return new ProviderLookupError('not-found');
