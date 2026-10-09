@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { CatalogService } from '../../../../shared/data/catalog.service';
+import { CatalogFacade } from '../../../catalog';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import {
   CHANGE_AREA_STATUS,
@@ -44,7 +44,7 @@ describe('AreaListFacade', () => {
         { provide: GET_AREA_SOCIETIES, useValue: { execute: () => of([naviera, petral]) } },
         { provide: SAVE_AREA, useValue: { execute: save } },
         { provide: CHANGE_AREA_STATUS, useValue: { execute: () => of(compras) } },
-        { provide: CatalogService, useValue: { reload: () => undefined } },
+        { provide: CatalogFacade, useValue: { reload: () => undefined } },
         { provide: ToastService, useValue: { show: () => undefined } },
       ],
     });

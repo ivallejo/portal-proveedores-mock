@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { CatalogService } from '../../shared/data/catalog.service';
+import { CatalogFacade } from '../catalog';
 import { DocumentHistoryComponent } from '../../shared/documents/document-history.component';
 import {
   ENTRY_TONE,
@@ -71,7 +71,7 @@ interface ActionResult {
 })
 export class ApprovalsPageComponent {
   private readonly documents = inject(DocumentsService);
-  private readonly catalog = inject(CatalogService);
+  private readonly catalog = inject(CatalogFacade);
   private readonly toast = inject(ToastService);
 
   readonly draft = signal<DocumentFilters>({ ...DEFAULT_FILTERS });

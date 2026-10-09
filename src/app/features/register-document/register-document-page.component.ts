@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
-import { CatalogService } from '../../shared/data/catalog.service';
+import { CatalogFacade } from '../catalog';
 import {
   ATTACHMENT_TONE,
   Attachment,
@@ -137,7 +137,7 @@ export class RegisterDocumentPageComponent {
   private readonly auth = inject(SessionFacade);
   private readonly api = inject(RegisterDocumentService);
   private readonly documents = inject(DocumentsService);
-  private readonly catalog = inject(CatalogService);
+  private readonly catalog = inject(CatalogFacade);
   private readonly timers = new Set<ReturnType<typeof setTimeout>>();
 
   readonly entry = signal<Entry>('oc');

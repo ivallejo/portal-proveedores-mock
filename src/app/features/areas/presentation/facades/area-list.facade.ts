@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { CatalogService } from '../../../../shared/data/catalog.service';
+import { CatalogFacade } from '../../../catalog';
 import { userFacingMessage } from '../../../../shared/errors/user-facing-message';
 import { SelectOption } from '../../../../shared/ui/select/select-option';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
@@ -33,7 +33,7 @@ export class AreaListFacade {
   private readonly getSocieties = inject(GET_AREA_SOCIETIES);
   private readonly saveArea = inject(SAVE_AREA);
   private readonly changeStatus = inject(CHANGE_AREA_STATUS);
-  private readonly catalog = inject(CatalogService);
+  private readonly catalog = inject(CatalogFacade);
   private readonly toast = inject(ToastService);
 
   readonly statusOptions = statusOptions(true);

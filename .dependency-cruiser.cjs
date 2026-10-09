@@ -6,7 +6,16 @@
  * Las reglas por capa se aplican a las features ya migradas a la estructura hexagonal (MIGRATED_FEATURES);
  * cada paso del plan agrega la feature que migra. Al terminar, la lista cubre todas las features.
  */
-const MIGRATED_FEATURES = ['societies', 'areas', 'auth', 'menus', 'roles', 'users', 'profile'];
+const MIGRATED_FEATURES = [
+  'societies',
+  'areas',
+  'auth',
+  'menus',
+  'roles',
+  'users',
+  'profile',
+  'catalog',
+];
 
 const APP = '^src/app';
 const migrated = MIGRATED_FEATURES.length ? `(${MIGRATED_FEATURES.join('|')})` : '(?!)';
@@ -98,9 +107,12 @@ module.exports = {
       name: 'shared-is-independent',
       comment: 'shared no depende de core ni de features.',
       severity: 'error',
-      // Pendientes de migrar: shared/data pasa a la feature catalog (paso 11), shared/documents a documents (paso 13)
-      // y shared/state a workflows (paso 14).
-      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/(data|documents|state)/` },
+      // Pendientes de migrar: shared/data/supplier-scope pasa a la feature payments (paso 12), shared/documents a
+      // documents (paso 13) y shared/state a workflows (paso 14).
+      from: {
+        path: `${APP}/shared/`,
+        pathNot: [`${APP}/shared/data/supplier-scope\\.ts$`, `${APP}/shared/(documents|state)/`],
+      },
       to: { path: [`${APP}/core/`, `${APP}/features/`] },
     },
     {

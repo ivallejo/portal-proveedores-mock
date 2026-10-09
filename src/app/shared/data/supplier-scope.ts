@@ -1,6 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { SelectOption } from '../ui/select/select-option';
-import { CatalogService } from './catalog.service';
+import { CatalogFacade } from '../../features/catalog';
 import { SessionFacade } from '../../features/auth';
 
 /**
@@ -10,7 +10,7 @@ import { SessionFacade } from '../../features/auth';
 @Injectable({ providedIn: 'root' })
 export class SupplierScope {
   private readonly auth = inject(SessionFacade);
-  private readonly catalog = inject(CatalogService);
+  private readonly catalog = inject(CatalogFacade);
 
   readonly isProvider = computed(() => {
     const roles = this.auth.user()?.roles ?? [];

@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { CatalogService } from '../../../../shared/data/catalog.service';
+import { CatalogFacade } from '../../../catalog';
 import { userFacingMessage } from '../../../../shared/errors/user-facing-message';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { StatusFilter } from '../../../../shared/utils/status-filter';
@@ -27,7 +27,7 @@ export class SocietyListFacade {
   private readonly getSocieties = inject(GET_SOCIETIES);
   private readonly saveSociety = inject(SAVE_SOCIETY);
   private readonly changeStatus = inject(CHANGE_SOCIETY_STATUS);
-  private readonly catalog = inject(CatalogService);
+  private readonly catalog = inject(CatalogFacade);
   private readonly toast = inject(ToastService);
 
   readonly statusOptions = statusOptions(true);

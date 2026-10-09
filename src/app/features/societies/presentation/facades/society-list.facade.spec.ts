@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { CatalogService } from '../../../../shared/data/catalog.service';
+import { CatalogFacade } from '../../../catalog';
 import { UserFacingError } from '../../../../shared/errors/user-facing-error';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { CHANGE_SOCIETY_STATUS, GET_SOCIETIES, SAVE_SOCIETY } from '../../di/societies.tokens';
@@ -38,7 +38,7 @@ describe('SocietyListFacade', () => {
         { provide: GET_SOCIETIES, useValue: { execute: () => of([naviera, petrolera]) } },
         { provide: SAVE_SOCIETY, useValue: { execute: save } },
         { provide: CHANGE_SOCIETY_STATUS, useValue: { execute: () => of(naviera) } },
-        { provide: CatalogService, useValue: { reload } },
+        { provide: CatalogFacade, useValue: { reload } },
         { provide: ToastService, useValue: { show: () => undefined } },
       ],
     });
