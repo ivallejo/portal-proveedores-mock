@@ -1,0 +1,44 @@
+<div
+  class="flex flex-wrap items-center justify-between gap-4 rounded-b-[18px] border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <button
+      type="button"
+      class="btn btn-secondary btn-lg"
+      [disabled]="facade.registering()"
+      (click)="facade.back()"
+    >
+      <app-icon name="arrow-left" [size]="18" [stroke]="2" />
+      {{ facade.entry() === 'esp' ? 'Limpiar' : facade.step() === 1 ? 'Cancelar' : 'Atrás' }}
+    </button>
+    @if (facade.formError()) {
+      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+        <app-icon name="alert-circle" [size]="16" [stroke]="2" />{{ facade.formError() }}
+      </span>
+    }
+  </div>
+  @if (facade.entry() === 'esp' || facade.step() === 2) {
+    <button
+      type="button"
+      class="btn btn-lg min-w-[168px] text-white"
+      [class]="facade.registering() ? 'bg-success-busy' : 'btn-success'"
+      [attr.aria-busy]="facade.registering()"
+      [disabled]="facade.reviewLoading()"
+      (click)="facade.next()"
+    >
+      @if (facade.registering()) {
+        <app-spinner [size]="18" />{{
+          facade.entry() === 'esp' && facade.isSettlement()
+            ? 'Validando en SAP y SUNAT…'
+            : 'Validando en SAP…'
+        }}
+      } @else {
+        Registrar<app-icon name="arrow-right" [size]="18" [stroke]="2.2" />
+      }
+    </button>
+  } @else {
+    <button type="button" class="btn btn-primary btn-lg min-w-[168px]" (click)="facade.next()">
+      Siguiente<app-icon name="arrow-right" [size]="18" [stroke]="2.2" />
+    </button>
+  }
+</div>

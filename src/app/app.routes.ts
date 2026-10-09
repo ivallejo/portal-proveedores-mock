@@ -70,10 +70,8 @@ export const routes: Routes = [
         title: 'Documentos · Portal de Proveedores',
         data: { title: 'Documentos', roles: ['Área Usuaria'] },
         canActivate: [menuGuard],
-        loadComponent: gated('documentos', () =>
-          import('./features/approvals/approvals-page.component').then(
-            (m) => m.ApprovalsPageComponent,
-          ),
+        loadChildren: gatedRoutes('documentos', () =>
+          import('./features/documents').then((m) => m.APPROVAL_INBOX_ROUTES),
         ),
       },
       {
@@ -81,10 +79,8 @@ export const routes: Routes = [
         title: 'Registrar documentos · Portal de Proveedores',
         data: { title: 'Registrar documentos', roles: ['Proveedor', 'Colaborador interno'] },
         canActivate: [menuGuard],
-        loadComponent: gated('registrarDocumento', () =>
-          import('./features/register-document/register-document-page.component').then(
-            (m) => m.RegisterDocumentPageComponent,
-          ),
+        loadChildren: gatedRoutes('registrarDocumento', () =>
+          import('./features/documents').then((m) => m.REGISTER_DOCUMENT_ROUTES),
         ),
       },
       {
@@ -92,10 +88,8 @@ export const routes: Routes = [
         title: 'Contabilización · Portal de Proveedores',
         data: { title: 'Contabilización', roles: ['CxP'] },
         canActivate: [menuGuard],
-        loadComponent: gated('contabilizacion', () =>
-          import('./features/accounting/accounting-page.component').then(
-            (m) => m.AccountingPageComponent,
-          ),
+        loadChildren: gatedRoutes('contabilizacion', () =>
+          import('./features/documents').then((m) => m.ACCOUNTING_INBOX_ROUTES),
         ),
       },
       {

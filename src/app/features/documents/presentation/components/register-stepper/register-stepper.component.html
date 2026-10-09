@@ -1,0 +1,38 @@
+<ol
+  aria-label="Pasos"
+  class="m-0 flex list-none items-center gap-3 overflow-x-auto border-b border-line-soft px-5 py-4 sm:px-7"
+>
+  @for (step of facade.steps(); track step.label; let last = $last; let i = $index) {
+    <li
+      class="flex items-center gap-2.5"
+      [class.flex-1]="!last"
+      [attr.aria-current]="step.current ? 'step' : null"
+    >
+      <span
+        class="flex size-[30px] shrink-0 items-center justify-center rounded-full border-2 text-[13px] font-bold"
+        [class]="
+          step.failed
+            ? 'border-danger bg-danger text-white'
+            : step.done
+              ? 'border-primary bg-primary text-white'
+              : step.current
+                ? 'border-primary bg-white text-primary'
+                : 'border-control bg-white text-subtle'
+        "
+        >{{ step.failed ? '!' : step.done ? '✓' : i + 1 }}</span
+      >
+      <span
+        class="text-sm whitespace-nowrap"
+        [class]="step.current || step.done ? 'text-ink' : 'text-subtle'"
+        [class.font-bold]="step.current"
+        >{{ step.label }}</span
+      >
+      @if (!last) {
+        <span
+          class="h-0.5 min-w-6 grow rounded-sm"
+          [class]="step.done && !step.current ? 'bg-primary' : 'bg-[#DCE3EE]'"
+        ></span>
+      }
+    </li>
+  }
+</ol>

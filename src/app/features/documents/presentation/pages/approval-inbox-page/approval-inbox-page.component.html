@@ -1,0 +1,41 @@
+<app-page-header
+  heading="Documentos por aprobar"
+  description="Revisa los documentos electrónicos sin orden de compra y los documentos especiales que te asignaron. Apruébalos, recházalos o reasígnalos a otro aprobador."
+/>
+
+<app-document-inbox-filters idPrefix="dc" />
+
+<div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+  <app-kpi-card
+    label="Por aprobar"
+    icon="clock"
+    tone="warn"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().pending"
+  />
+  <app-kpi-card
+    label="Aprobados"
+    icon="circle-check"
+    tone="teal"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().approved"
+  />
+  <app-kpi-card
+    label="Pendientes de contabilización"
+    icon="book"
+    tone="info"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().accounting"
+  />
+  <app-kpi-card
+    label="Rechazados"
+    icon="x"
+    tone="danger"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().rejected"
+  />
+</div>
+
+<app-document-inbox-table label="Documentos" [minWidth]="920" emptyIcon="file-text" />
+
+<app-approval-detail-dialog />

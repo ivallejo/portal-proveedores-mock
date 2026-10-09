@@ -1,0 +1,143 @@
+@if (facade.detail(); as doc) {
+  <app-dialog
+    [heading]="doc.number"
+    [subtitle]="doc.providerName + ' · RUC ' + doc.providerRuc"
+    [busy]="facade.detailLoading()"
+    (closed)="facade.close()"
+  >
+    <div dialog-tags class="flex items-center gap-2.5">
+      <app-badge size="sm" [tone]="entryTone[doc.entryType]">{{ doc.entryType }}</app-badge>
+      <span class="text-[13px] text-muted">{{ doc.documentType }}</span>
+    </div>
+    <app-badge dialog-status size="lg" [dot]="true" [tone]="statusTone[doc.status]">{{
+      doc.status
+    }}</app-badge>
+
+    @if (facade.detailLoading()) {
+      <app-loading-state text="Cargando documento" [height]="460" />
+    } @else if (facade.result(); as res) {
+      <app-result-state [kind]="res.kind" [heading]="res.title" [text]="res.text">
+        <div
+          class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
+        >
+          <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
+        </div>
+      </app-result-state>
+    } @else {
+      <div
+        class="animate-fade grid min-h-0 grid-cols-1 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]"
+      >
+        <div
+          class="flex flex-col gap-5 border-line-soft px-5 pt-[22px] pb-6 sm:px-8 lg:border-r lg:pr-7"
+        >
+          <div class="grid grid-cols-2 gap-x-5 gap-y-[18px] sm:grid-cols-3">
+            @for (
+              field of [
+                ['Fecha de emisión', formatDate(doc.issuedAt)],
+                ['Fecha de recepción', formatDate(doc.registeredAt)],
+                ['Moneda', currencyName(doc.currency)],
+                ['Área solicitante', doc.area ?? '—'],
+                ['Aprobador actual', doc.approver ?? '—'],
+                [
+                  facade.isXml() ? 'Validación SUNAT' : 'Validación',
+                  facade.isXml() ? 'Aceptado' : (doc.validation ?? 'Conforme'),
+                ],
+              ];
+              track field[0]
+            ) {
+              <div class="flex min-w-0 flex-col gap-[3px]">
+                <span class="text-xs text-muted">{{ field[0] }}</span>
+                <span class="text-[14.5px] font-bold tabular-nums">{{ field[1] }}</span>
+              </div>
+            }
+          </div>
+          <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-[1fr_1fr_1.3fr]">
+            <div class="flex flex-col gap-1 rounded-[14px] border border-line px-4 py-3.5">
+              <span class="text-xs text-muted">Subtotal</span>
+              <span class="text-lg font-bold tabular-nums">{{
+                money(doc.currency, doc.subtotal)
+              }}</span>
+            </div>
+            <div class="flex flex-col gap-1 rounded-[14px] border border-line px-4 py-3.5">
+              <span class="text-xs text-muted">{{ doc.igv === null ? 'IGV' : 'IGV (18%)' }}</span>
+              <span class="text-lg font-bold tabular-nums">{{
+                doc.igv === null ? 'No aplica' : money(doc.currency, doc.igv)
+              }}</span>
+            </div>
+            <div
+              class="bg-brand-gradient flex flex-col gap-1 rounded-[14px] px-[18px] py-3.5 text-white"
+            >
+              <span class="text-xs text-[#CFE0FF]">Importe total</span>
+              <span class="text-[22px] font-bold tabular-nums">{{
+                money(doc.currency, doc.amount)
+              }}</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="eyebrow">Concepto</span>
+            <p class="m-0 text-[14.5px] leading-relaxed text-[#2A3A55]">{{ doc.concept }}</p>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="eyebrow">Archivos del documento</span>
+            <div class="flex flex-wrap gap-2.5">
+              @for (file of doc.attachments; track file.name) {
+                <button
+                  type="button"
+                  class="btn btn-tint h-10 border-line-auth text-[13px]"
+                  [attr.aria-label]="'Descargar ' + file.name"
+                  (click)="facade.download(doc, file)"
+                >
+                  <app-icon
+                    [name]="file.tag === 'XML' ? 'code' : 'file'"
+                    [size]="17"
+                    [stroke]="1.9"
+                  />{{ file.name }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="flex min-h-0 flex-col bg-surface-alt px-5 pt-[22px] pb-6 sm:px-7">
+          <app-document-history heading="Historial de aprobaciones" [events]="doc.history" />
+        </div>
+      </div>
+
+      @if (!facade.isPending()) {
+        <app-callout tone="info" class="mx-5 mb-5 sm:mx-8">
+          Este documento está en estado <strong>{{ doc.status }}</strong
+          >, por lo que no requiere acciones de aprobación.
+        </app-callout>
+      }
+
+      <app-approval-action-panels />
+    }
+
+    <div
+      dialog-footer
+      class="flex flex-wrap items-center justify-between gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
+    >
+      <span class="text-[13px] text-muted">{{ facade.footNote() }}</span>
+      @if (!facade.detailLoading() && !facade.result() && facade.isPending() && !facade.panel()) {
+        <div class="flex flex-wrap gap-2.5">
+          <button type="button" class="btn btn-outline-danger" (click)="facade.openPanel('reject')">
+            <app-icon name="x" [size]="18" [stroke]="2.2" />Rechazar
+          </button>
+          <button type="button" class="btn btn-outline" (click)="facade.openPanel('reassign')">
+            <app-icon name="swap" [size]="18" [stroke]="2.2" />Reasignar
+          </button>
+          <button
+            type="button"
+            class="btn btn-success min-w-[140px]"
+            (click)="facade.openPanel('approve')"
+          >
+            <app-icon name="check" [size]="18" [stroke]="2.4" />Aprobar
+          </button>
+        </div>
+      } @else if (!facade.panel()) {
+        <button type="button" class="btn btn-primary" (click)="facade.close()">
+          {{ facade.result() ? 'Volver al listado' : 'Cerrar' }}
+        </button>
+      }
+    </div>
+  </app-dialog>
+}

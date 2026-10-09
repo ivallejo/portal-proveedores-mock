@@ -1,0 +1,278 @@
+@if (facade.detail(); as doc) {
+  <app-dialog
+    [heading]="doc.number"
+    [subtitle]="doc.providerName + ' · RUC ' + doc.providerRuc"
+    [busy]="facade.detailLoading()"
+    (closed)="facade.close()"
+  >
+    <div dialog-tags class="flex items-center gap-2.5">
+      <app-badge size="sm" [tone]="entryTone[doc.entryType]">{{ doc.entryType }}</app-badge>
+      <span class="text-[13px] text-muted">{{ doc.documentType }}</span>
+    </div>
+    <app-badge dialog-status size="lg" [dot]="true" [tone]="statusTone[doc.status]">{{
+      doc.status
+    }}</app-badge>
+
+    @if (facade.detailLoading()) {
+      <app-loading-state text="Cargando documento" [height]="460" />
+    } @else if (facade.result(); as res) {
+      <app-result-state [kind]="res.kind" [heading]="res.title" [text]="res.text">
+        <div
+          class="flex w-full max-w-[560px] flex-col gap-1 rounded-xl border border-line bg-surface-alt px-4 py-3 text-left"
+        >
+          <span class="text-xs text-muted">Motivo</span>
+          <span class="text-sm leading-normal font-medium">{{ res.reason }}</span>
+        </div>
+        <div
+          class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
+        >
+          <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
+        </div>
+      </app-result-state>
+    } @else {
+      <div
+        class="animate-fade grid min-h-0 grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]"
+      >
+        <div
+          class="flex flex-col gap-5 border-line-soft px-5 pt-[22px] pb-6 sm:px-8 lg:border-r lg:pr-7"
+        >
+          <div class="grid grid-cols-2 gap-x-5 gap-y-4 xl:grid-cols-4">
+            <div class="flex min-w-0 flex-col gap-[3px]">
+              <span class="text-xs text-muted">Tipo de ingreso</span>
+              <span class="text-[14.5px] font-bold"
+                >{{ entryLabel[doc.entryType] }}{{ doc.isPettyCash ? ' · Caja Chica' : '' }}</span
+              >
+            </div>
+            <div class="flex min-w-0 flex-col gap-[3px]">
+              <span class="text-xs text-muted">Sociedad</span>
+              <span class="text-[14.5px] font-bold">{{ doc.companyName }}</span>
+              <span class="text-xs text-muted tabular-nums">RUC {{ doc.companyRuc }}</span>
+            </div>
+            <div class="flex min-w-0 flex-col gap-[3px]">
+              <span class="text-xs text-muted">Fecha de registro</span>
+              <span class="text-[14.5px] font-bold tabular-nums">{{
+                formatDate(doc.registeredAt)
+              }}</span>
+            </div>
+            <div class="flex min-w-0 flex-col gap-[3px]">
+              <span class="text-xs text-muted">Registrado por</span>
+              <span class="text-[14.5px] font-bold">{{ doc.registeredBy }}</span>
+            </div>
+          </div>
+
+          @if (doc.entryType === 'Con OC') {
+            <div
+              class="flex flex-col gap-3 rounded-[14px] border border-[#CDEBD8] bg-success-tint px-4 py-3.5"
+            >
+              <span class="flex items-center gap-2 text-[13px] font-bold text-success-text">
+                <app-icon name="circle-check" [size]="17" />Orden de compra · validada en SAP
+              </span>
+              <div
+                class="grid grid-cols-1 gap-x-4 gap-y-2.5 text-[13px] sm:grid-cols-[0.8fr_1fr_1fr]"
+              >
+                <span class="flex flex-col gap-0.5"
+                  ><span class="text-muted">Tipo de orden</span
+                  ><span class="font-bold">{{ doc.orderType }}</span></span
+                >
+                <span class="flex flex-col gap-0.5">
+                  <span class="text-muted">{{
+                    doc.orderType === 'Bien' ? 'N° de carrier' : 'N° de orden de compra'
+                  }}</span>
+                  <span class="font-bold tabular-nums">{{ doc.orderNumber }}</span>
+                </span>
+                <span class="flex flex-col gap-0.5">
+                  <span class="text-muted">Saldo por facturar (al registrar)</span>
+                  <span class="font-bold tabular-nums">{{
+                    money(doc.currency, doc.orderBalance)
+                  }}</span>
+                </span>
+              </div>
+              <span class="text-[13px] text-[#2F6B47]">{{ doc.orderDescription }}</span>
+            </div>
+          }
+
+          @if (doc.entryType === 'Sin OC') {
+            <div
+              class="flex flex-col gap-3 rounded-[14px] border border-[#D9CCF5] bg-[#FAF8FF] px-4 py-3.5"
+            >
+              <span class="flex items-center gap-2 text-[13px] font-bold text-[#5B3AA8]">
+                <app-icon name="users" [size]="17" />Aprobación
+              </span>
+              <div
+                class="grid grid-cols-1 gap-x-4 gap-y-2.5 text-[13px] sm:grid-cols-[0.8fr_1.3fr_1fr]"
+              >
+                <span class="flex flex-col gap-0.5"
+                  ><span class="text-muted">Área</span
+                  ><span class="font-bold">{{ doc.area ?? '—' }}</span></span
+                >
+                <span class="flex min-w-0 flex-col gap-0.5">
+                  <span class="text-muted">Aprobador</span
+                  ><span class="font-bold">{{ doc.approver ?? '—' }}</span>
+                  <span class="truncate text-xs text-muted">{{ doc.approverEmail }}</span>
+                </span>
+                <span class="flex flex-col gap-0.5"
+                  ><span class="text-muted">Aprobado el</span
+                  ><span class="font-bold tabular-nums">{{ doc.approvedAt ?? '—' }}</span></span
+                >
+              </div>
+            </div>
+          }
+
+          @if (doc.entryType !== 'Documento especial') {
+            <div class="flex flex-col gap-3.5">
+              <span class="eyebrow">Documento electrónico · leído del XML</span>
+              <div class="grid grid-cols-1 gap-x-5 gap-y-3 sm:grid-cols-3">
+                <div class="flex min-w-0 flex-col gap-[3px]">
+                  <span class="text-xs text-muted">Emisor</span>
+                  <span class="text-sm font-bold">{{ doc.providerName }}</span>
+                  <span class="text-xs text-muted tabular-nums">RUC {{ doc.providerRuc }}</span>
+                </div>
+                <div class="flex flex-col gap-[3px]">
+                  <span class="text-xs text-muted">Fecha de emisión</span>
+                  <span class="text-sm font-bold tabular-nums">{{ formatDate(doc.issuedAt) }}</span>
+                </div>
+                <div class="flex flex-col gap-[3px]">
+                  <span class="text-xs text-muted">Moneda</span>
+                  <span class="text-sm font-bold">{{ currencyName(doc.currency) }}</span>
+                </div>
+              </div>
+              <div class="overflow-x-auto rounded-[14px] border border-line">
+                <div class="min-w-[520px]">
+                  <div
+                    class="grid grid-cols-[minmax(0,3fr)_0.5fr_1fr_1fr] gap-3 border-b border-line bg-surface-muted px-4 py-2.5 text-[11.5px] font-bold tracking-[0.04em] text-body uppercase"
+                  >
+                    <div>Descripción</div>
+                    <div class="text-right">Cant.</div>
+                    <div class="text-right">P. unitario</div>
+                    <div class="text-right">Importe</div>
+                  </div>
+                  @for (item of doc.items; track $index) {
+                    <div
+                      class="grid grid-cols-[minmax(0,3fr)_0.5fr_1fr_1fr] gap-3 border-b border-line-soft px-4 py-3 text-[13.5px] tabular-nums"
+                    >
+                      <div>{{ item.description }}</div>
+                      <div class="text-right">{{ item.quantity }}</div>
+                      <div class="text-right">{{ money(doc.currency, item.unitPrice) }}</div>
+                      <div class="text-right font-bold">
+                        {{ money(doc.currency, item.quantity * item.unitPrice) }}
+                      </div>
+                    </div>
+                  }
+                  <div
+                    class="flex justify-end gap-7 bg-surface-alt px-4 py-3 text-[13.5px] tabular-nums"
+                  >
+                    <span class="flex flex-col items-end gap-0.5"
+                      ><span class="text-xs text-muted">Subtotal</span
+                      ><span class="font-bold">{{ money(doc.currency, doc.subtotal) }}</span></span
+                    >
+                    <span class="flex flex-col items-end gap-0.5">
+                      <span class="text-xs text-muted">{{
+                        doc.igv === null ? 'IGV' : 'IGV (18%)'
+                      }}</span>
+                      <span class="font-bold">{{
+                        doc.igv === null ? 'No aplica' : money(doc.currency, doc.igv)
+                      }}</span>
+                    </span>
+                    <span class="flex flex-col items-end gap-0.5"
+                      ><span class="text-xs text-muted">Total</span
+                      ><span class="text-lg font-bold text-primary">{{
+                        money(doc.currency, doc.amount)
+                      }}</span></span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="flex flex-col gap-3.5 rounded-[14px] border border-line px-4 py-3.5">
+              <span class="eyebrow">Datos del documento especial</span>
+              <div class="grid grid-cols-2 gap-x-5 gap-y-3 sm:grid-cols-3">
+                @for (
+                  field of [
+                    ['Tipo de documento', doc.documentType, ''],
+                    ['RUC del proveedor', doc.providerRuc, doc.providerName],
+                    ['N° de documento', doc.number, ''],
+                    ['Fecha de emisión', formatDate(doc.issuedAt), ''],
+                    ['Moneda', currencyName(doc.currency), ''],
+                    ['Importe', money(doc.currency, doc.amount), ''],
+                  ];
+                  track field[0]
+                ) {
+                  <div class="flex min-w-0 flex-col gap-[3px]">
+                    <span class="text-xs text-muted">{{ field[0] }}</span>
+                    <span class="text-sm font-bold tabular-nums">{{ field[1] }}</span>
+                    @if (field[2]) {
+                      <span class="truncate text-xs text-muted">{{ field[2] }}</span>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="flex items-center gap-2 text-[13px] font-medium text-success-text">
+                <app-icon name="shield-check" [size]="17" />{{ doc.validation }}
+              </div>
+            </div>
+          }
+
+          <div class="flex flex-col gap-2">
+            <span class="eyebrow">Archivos adjuntos</span>
+            <div class="flex flex-wrap gap-2">
+              @for (file of doc.attachments; track file.name) {
+                <button
+                  type="button"
+                  class="flex h-10 items-center gap-2 rounded-[10px] border border-line-auth bg-white pr-3 pl-1.5 text-[13px] font-bold text-ink hover:bg-primary-tint"
+                  [attr.aria-label]="'Descargar ' + file.name"
+                  (click)="facade.download(doc, file)"
+                >
+                  <span
+                    class="flex h-7 items-center rounded-md px-1.5 text-[10.5px] font-bold"
+                    [class]="attachmentTone[file.tag]"
+                    >{{ file.tag }}</span
+                  >
+                  {{ file.name }}
+                  <app-icon name="download" [size]="15" [stroke]="1.9" class="text-primary" />
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="flex min-h-0 flex-col bg-surface-alt px-5 pt-[22px] pb-6 sm:px-7">
+          <app-document-history [events]="doc.history" />
+        </div>
+      </div>
+
+      @if (!facade.isPending()) {
+        <app-callout tone="info" class="mx-5 mb-5 sm:mx-8">
+          Este documento está en estado <strong>{{ doc.status }}</strong
+          >, por lo que no requiere acciones de contabilización.
+        </app-callout>
+      }
+
+      <app-accounting-action-panels />
+    }
+
+    <div
+      dialog-footer
+      class="flex flex-wrap items-center justify-between gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
+    >
+      <span class="text-[13px] text-muted">{{ facade.footNote() }}</span>
+      @if (!facade.detailLoading() && !facade.result() && facade.isPending() && !facade.panel()) {
+        <div class="flex flex-wrap gap-2.5">
+          <button type="button" class="btn btn-outline-danger" (click)="facade.openPanel('reject')">
+            <app-icon name="x" [size]="18" [stroke]="2.2" />Rechazar
+          </button>
+          <button
+            type="button"
+            class="btn border-[1.5px] border-[#E0A458] bg-white text-warning-text hover:bg-warning-tint"
+            (click)="facade.openPanel('observe')"
+          >
+            <app-icon name="alert-triangle" [size]="18" [stroke]="2" />Observar
+          </button>
+        </div>
+      } @else if (!facade.panel()) {
+        <button type="button" class="btn btn-primary" (click)="facade.close()">
+          {{ facade.result() ? 'Volver al listado' : 'Cerrar' }}
+        </button>
+      }
+    </div>
+  </app-dialog>
+}

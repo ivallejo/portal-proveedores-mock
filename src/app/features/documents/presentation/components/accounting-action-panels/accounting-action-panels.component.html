@@ -1,0 +1,142 @@
+@switch (facade.panel()) {
+  @case ('reject') {
+    <div
+      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-[14px] border border-danger-line bg-danger-tint px-5 py-[18px] sm:mx-8"
+    >
+      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-danger-deep">
+        <app-icon name="x" [size]="20" [stroke]="2.2" />Rechazar documento
+        <span class="text-[13px] font-normal text-[#7F1D1D]"
+          >· notificaremos por correo al proveedor</span
+        >
+      </div>
+      <label for="ct-motivo-rj" class="field-label"
+        >Motivo del rechazo <span class="text-danger-text">*</span></label
+      >
+      <textarea
+        id="ct-motivo-rj"
+        rows="2"
+        class="field h-auto resize-y py-2.5 leading-normal"
+        [class.!border-[#E8B4B4]]="!facade.reasonInvalid()"
+        placeholder="Ej. El documento no corresponde a un servicio prestado a la sociedad."
+        [value]="facade.reason()"
+        (input)="
+          facade.reason.set($any($event.target).value);
+          facade.reasonInvalid.set(false);
+          facade.panelError.set('')
+        "
+        [attr.aria-invalid]="facade.reasonInvalid()"
+      ></textarea>
+      <div class="flex flex-wrap items-center justify-between gap-2.5">
+        <span role="alert" class="text-[13px] text-danger-text">{{ facade.panelError() }}</span>
+        <div class="flex gap-2.5">
+          <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger min-w-[168px]"
+            [attr.aria-busy]="facade.busy()"
+            (click)="facade.reject()"
+          >
+            @if (facade.busy()) {
+              <app-spinner [size]="18" />
+            } @else {
+              <app-icon name="x" [size]="18" [stroke]="2.2" />
+            }
+            Confirmar rechazo
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  @case ('observe') {
+    <div
+      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-[14px] border border-warning-line bg-warning-tint px-5 py-[18px] sm:mx-8"
+    >
+      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-warning-text">
+        <app-icon name="alert-triangle" [size]="20" [stroke]="2" />Observar documento
+        <span class="text-[13px] font-normal text-[#7A4A00]"
+          >· enviaremos la observación al correo que indiques</span
+        >
+      </div>
+      <div class="grid grid-cols-1 gap-3.5 md:grid-cols-[1.4fr_1fr]">
+        <div class="flex flex-col gap-2">
+          <label for="ct-motivo-ob" class="field-label"
+            >Motivo de la observación <span class="text-danger-text">*</span></label
+          >
+          <textarea
+            id="ct-motivo-ob"
+            rows="2"
+            class="field h-auto resize-y py-2.5 leading-normal"
+            placeholder="Ej. Falta adjuntar la guía de remisión firmada."
+            [value]="facade.reason()"
+            (input)="
+              facade.reason.set($any($event.target).value);
+              facade.reasonInvalid.set(false);
+              facade.panelError.set('')
+            "
+            [attr.aria-invalid]="facade.reasonInvalid()"
+          ></textarea>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="ct-correo" class="field-label"
+            >Correo de destino <span class="text-danger-text">*</span></label
+          >
+          <div class="relative flex">
+            <app-icon
+              name="mail"
+              [size]="18"
+              class="pointer-events-none absolute top-[13px] left-3 text-muted"
+            />
+            <input
+              id="ct-correo"
+              type="email"
+              class="field pl-[38px]"
+              placeholder="nombre@empresa.com"
+              [value]="facade.email()"
+              (input)="
+                facade.email.set($any($event.target).value);
+                facade.emailInvalid.set(false);
+                facade.panelError.set('')
+              "
+              [attr.aria-invalid]="facade.emailInvalid()"
+              aria-describedby="ct-correo-help"
+            />
+          </div>
+          <span
+            id="ct-correo-help"
+            class="text-xs"
+            [class]="facade.emailInvalid() ? 'text-danger-text' : 'text-muted'"
+          >
+            {{
+              facade.emailInvalid()
+                ? 'El correo no tiene un formato válido.'
+                : 'Por defecto, el correo del proveedor.'
+            }}
+          </span>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2.5">
+        <span role="alert" class="text-[13px] text-danger-text">{{ facade.panelError() }}</span>
+        <div class="flex gap-2.5">
+          <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn min-w-[180px] bg-[#C26A0A] text-white hover:bg-[#A85B08]"
+            [attr.aria-busy]="facade.busy()"
+            (click)="facade.observe()"
+          >
+            @if (facade.busy()) {
+              <app-spinner [size]="18" />
+            } @else {
+              <app-icon name="mail" [size]="18" [stroke]="2" />
+            }
+            Enviar observación
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+}

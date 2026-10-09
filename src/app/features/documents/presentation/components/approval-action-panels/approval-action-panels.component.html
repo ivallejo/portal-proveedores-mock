@@ -1,0 +1,231 @@
+@switch (facade.panel()) {
+  @case ('approve') {
+    <div
+      class="animate-in mx-5 mb-5 flex flex-col gap-3.5 rounded-[14px] border border-success-line bg-success-tint px-5 py-[18px] sm:mx-8"
+    >
+      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-success-text">
+        <app-icon name="circle-check" [size]="20" />Aprobar documento
+        <span class="text-[13px] font-normal text-[#2F6B47]"
+          >· se enviará a contabilización como Pendiente de contabilización</span
+        >
+      </div>
+      <div class="grid grid-cols-1 items-end gap-3.5 md:grid-cols-[auto_1fr_auto]">
+        <div class="flex flex-col gap-2">
+          <span class="field-label">Referencia</span>
+          <div
+            role="radiogroup"
+            aria-label="Tipo de referencia"
+            class="flex gap-1 rounded-xl bg-[#E2F1E7] p-1"
+          >
+            @for (
+              option of [
+                { value: 'pedido', label: 'Pedido' },
+                { value: 'viaje', label: 'Viaje' },
+              ];
+              track option.value
+            ) {
+              <button
+                type="button"
+                role="radio"
+                class="h-9 rounded-[9px] px-4 text-sm font-bold"
+                [class]="
+                  facade.referenceType() === option.value
+                    ? 'bg-white text-success-text shadow-segment'
+                    : 'bg-transparent text-[#3B5A47]'
+                "
+                [attr.aria-checked]="facade.referenceType() === option.value"
+                (click)="
+                  facade.referenceType.set($any(option.value)); facade.referenceError.set(false)
+                "
+              >
+                {{ option.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="dc-apnro" class="field-label"
+            >{{ facade.referenceLabel() }} <span class="text-danger-text">*</span></label
+          >
+          <input
+            id="dc-apnro"
+            type="text"
+            class="field uppercase tracking-[0.02em] tabular-nums"
+            [class.!border-success-line]="!facade.referenceError()"
+            [placeholder]="
+              facade.referenceType() === 'viaje' ? 'Ej. VJ-2026-0312' : 'Ej. PED-2026-01842'
+            "
+            [value]="facade.reference()"
+            (input)="onReference($event)"
+            aria-required="true"
+            [attr.aria-invalid]="facade.referenceError()"
+            aria-describedby="dc-apnro-help"
+          />
+        </div>
+        <div class="flex gap-2.5">
+          <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn min-w-[190px] text-white"
+            [class]="facade.busy() ? 'bg-success-busy' : 'btn-success'"
+            [attr.aria-busy]="facade.busy()"
+            (click)="facade.approve()"
+          >
+            @if (facade.busy()) {
+              <app-spinner [size]="18" />Aprobando…
+            } @else {
+              <app-icon name="check" [size]="18" [stroke]="2.4" />Confirmar aprobación
+            }
+          </button>
+        </div>
+      </div>
+      <span
+        id="dc-apnro-help"
+        class="text-[13px]"
+        [attr.role]="facade.referenceError() ? 'alert' : null"
+        [class]="facade.referenceError() ? 'text-danger-text' : 'text-[#3B5A47]'"
+      >
+        {{
+          facade.referenceError()
+            ? 'Ingresa el ' +
+              (facade.referenceType() === 'viaje' ? 'número de viaje' : 'número de pedido') +
+              ' para aprobar el documento.'
+            : 'Campo obligatorio. Elige si el documento corresponde a un pedido o a un viaje.'
+        }}
+      </span>
+    </div>
+  }
+  @case ('reassign') {
+    <div
+      class="animate-in mx-5 mb-5 flex flex-col gap-3.5 rounded-[14px] border border-primary-line bg-primary-tint px-5 py-[18px] sm:mx-8"
+    >
+      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold">
+        <app-icon name="swap" [size]="20" [stroke]="2.2" class="text-primary" />Reasignar documento
+        <span class="text-[13px] font-normal text-muted"
+          >· enviaremos un correo al nuevo aprobador</span
+        >
+      </div>
+      <div class="grid grid-cols-1 items-end gap-3.5 md:grid-cols-2">
+        <app-select
+          label="Área"
+          placeholder="Selecciona un área"
+          [dropUp]="true"
+          [options]="facade.areaOptions()"
+          [invalid]="facade.reassignError() && !facade.reassignArea()"
+          [value]="facade.reassignArea()"
+          (valueChange)="facade.setReassignArea($event)"
+        />
+        <app-select
+          label="Aprobador"
+          [placeholder]="
+            facade.reassignArea() ? 'Selecciona un aprobador' : 'Primero elige un área'
+          "
+          emptyText="No hay otros aprobadores en esta área"
+          [dropUp]="true"
+          [disabled]="!facade.reassignArea()"
+          [options]="facade.approverOptions()"
+          [invalid]="facade.reassignError() && !facade.reassignApprover()"
+          [value]="facade.reassignApprover()"
+          (valueChange)="facade.reassignApprover.set($event); facade.reassignError.set(false)"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="dc-motivo-re" class="field-label"
+          >Motivo de la reasignación (se incluirá en el correo)
+          <span class="text-danger-text">*</span></label
+        >
+        <textarea
+          id="dc-motivo-re"
+          rows="2"
+          class="field h-auto resize-y py-2.5 leading-normal"
+          [class.!border-[#E04848]]="facade.reassignError() && !facade.reassignReason().trim()"
+          placeholder="Ej. El servicio corresponde al centro de costo de Finanzas."
+          [value]="facade.reassignReason()"
+          (input)="
+            facade.reassignReason.set($any($event.target).value); facade.reassignError.set(false)
+          "
+          [attr.aria-invalid]="facade.reassignError() && !facade.reassignReason().trim()"
+        ></textarea>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2.5">
+        @if (facade.reassignError()) {
+          <span role="alert" class="text-[13px] text-danger-text"
+            >Selecciona el área y el aprobador e indica el motivo para reasignar.</span
+          >
+        } @else {
+          <span></span>
+        }
+        <div class="flex gap-2.5">
+          <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn min-w-[132px] text-white"
+            [class]="facade.busy() ? 'bg-primary-busy' : 'btn-primary'"
+            [attr.aria-busy]="facade.busy()"
+            (click)="facade.reassign()"
+          >
+            @if (facade.busy()) {
+              <app-spinner [size]="18" />
+            } @else {
+              <app-icon name="swap" [size]="18" [stroke]="2.2" />
+            }
+            Reasignar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  @case ('reject') {
+    <div
+      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-[14px] border border-danger-line bg-danger-tint px-5 py-[18px] sm:mx-8"
+    >
+      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-danger-deep">
+        <app-icon name="x" [size]="20" [stroke]="2.2" />Rechazar documento
+        <span class="text-[13px] font-normal text-[#7F1D1D]"
+          >· notificaremos por correo al proveedor</span
+        >
+      </div>
+      <label for="dc-motivo" class="field-label"
+        >Motivo del rechazo (se incluirá en el correo)
+        <span class="text-danger-text">*</span></label
+      >
+      <textarea
+        id="dc-motivo"
+        rows="2"
+        class="field h-auto resize-y py-2.5 leading-normal"
+        [class.!border-[#E8B4B4]]="!facade.reasonError()"
+        placeholder="Ej. El importe no coincide con el servicio prestado."
+        [value]="facade.reason()"
+        (input)="facade.reason.set($any($event.target).value); facade.reasonError.set(false)"
+        [attr.aria-invalid]="facade.reasonError()"
+      ></textarea>
+      <div class="flex flex-wrap items-center justify-between gap-2.5">
+        <span role="alert" class="text-[13px] text-danger-text">{{
+          facade.reasonError() ? 'Ingresa el motivo del rechazo.' : ''
+        }}</span>
+        <div class="flex gap-2.5">
+          <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger min-w-[168px]"
+            [attr.aria-busy]="facade.busy()"
+            (click)="facade.reject()"
+          >
+            @if (facade.busy()) {
+              <app-spinner [size]="18" />
+            } @else {
+              <app-icon name="x" [size]="18" [stroke]="2.2" />
+            }
+            Confirmar rechazo
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+}

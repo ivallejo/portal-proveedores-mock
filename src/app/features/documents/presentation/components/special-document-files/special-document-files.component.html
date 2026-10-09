@@ -1,0 +1,101 @@
+<div class="flex flex-col gap-[18px] px-5 py-6 sm:px-7">
+  <app-register-section-title
+    [n]="2"
+    heading="Datos del documento"
+    sub="Completa los datos y adjunta el PDF"
+  />
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <label for="es-ruc" class="field-label">RUC del proveedor</label>
+      <input
+        id="es-ruc"
+        type="text"
+        inputmode="numeric"
+        placeholder="11 dígitos"
+        class="field tracking-[0.02em] tabular-nums"
+        [attr.aria-invalid]="!!facade.formError() && facade.special().ruc.length !== 11"
+        [value]="facade.special().ruc"
+        (input)="onSpecialRuc($event)"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="es-fecha" class="field-label">Fecha de emisión</label>
+      <input
+        id="es-fecha"
+        type="date"
+        class="field"
+        [attr.aria-invalid]="!!facade.formError() && !facade.special().date"
+        [value]="facade.special().date"
+        (change)="facade.setSpecial('date', $any($event.target).value)"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="es-nro" class="field-label">N° de documento</label>
+      <input
+        id="es-nro"
+        type="text"
+        placeholder="Ej. 075-2310045678"
+        class="field uppercase tabular-nums"
+        [attr.aria-invalid]="!!facade.formError() && !facade.special().number"
+        [value]="facade.special().number"
+        (input)="onSpecialNumber($event)"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="es-imp" class="field-label">Importe</label>
+      <div class="flex gap-2">
+        <div
+          role="radiogroup"
+          aria-label="Moneda"
+          class="flex shrink-0 gap-[3px] rounded-[10px] bg-[#EEF2F8] p-[3px]"
+        >
+          @for (
+            option of [
+              { value: 'PEN', label: 'S/' },
+              { value: 'USD', label: 'US$' },
+            ];
+            track option.value
+          ) {
+            <button
+              type="button"
+              role="radio"
+              class="h-[38px] rounded-lg px-2.5 text-[13px] font-bold"
+              [class]="
+                facade.special().currency === option.value
+                  ? 'bg-white text-primary shadow-segment'
+                  : 'bg-transparent text-body'
+              "
+              [attr.aria-checked]="facade.special().currency === option.value"
+              (click)="facade.setSpecial('currency', $any(option.value))"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+        <input
+          id="es-imp"
+          type="text"
+          inputmode="decimal"
+          placeholder="0.00"
+          class="field text-right tabular-nums"
+          [attr.aria-invalid]="!!facade.formError() && !facade.special().amount"
+          [value]="facade.special().amount"
+          (input)="onSpecialAmount($event)"
+        />
+      </div>
+    </div>
+  </div>
+  <app-file-drop
+    tag="PDF"
+    title="Documento en PDF"
+    description="Escaneado o descargado del emisor"
+    [accept]="facade.accept.pdf"
+    [state]="facade.slots().pdf.state"
+    [fileName]="facade.slots().pdf.name"
+    [fileSize]="facade.slots().pdf.size"
+    [error]="facade.slots().pdf.error"
+    [highlightMissing]="!!facade.formError()"
+    (files)="facade.addFile('pdf', $event)"
+    (removed)="facade.removeFile('pdf')"
+  />
+</div>
