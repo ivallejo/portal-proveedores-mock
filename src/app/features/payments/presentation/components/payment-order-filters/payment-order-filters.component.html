@@ -1,0 +1,69 @@
+<section
+  aria-label="Filtros de búsqueda"
+  class="card relative z-10 print:hidden flex flex-col gap-4 px-6 py-[22px]"
+>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1.2fr_1.6fr]">
+    <div class="flex flex-col gap-2">
+      <label for="op-ruc" class="field-label">RUC del proveedor</label>
+      @if (facade.scope.isProvider()) {
+        <input
+          id="op-ruc"
+          type="text"
+          class="field bg-surface-muted tracking-[0.02em] text-muted tabular-nums"
+          [value]="facade.scope.ownRuc()"
+          readonly
+        />
+      } @else {
+        <div class="relative flex">
+          <app-icon
+            name="search"
+            [size]="18"
+            class="pointer-events-none absolute top-[13px] left-3 text-muted"
+          />
+          <input
+            id="op-ruc"
+            type="text"
+            inputmode="numeric"
+            placeholder="11 dígitos"
+            class="field pl-[38px] tracking-[0.02em] tabular-nums"
+            [value]="facade.draft().ruc"
+            (input)="onRuc($event)"
+            (keyup.enter)="facade.search()"
+          />
+        </div>
+      }
+    </div>
+    <app-select
+      label="Sociedad"
+      [options]="facade.companyOptions()"
+      [value]="facade.draft().company"
+      (valueChange)="facade.setFilter('company', $event)"
+    />
+    <app-date-range
+      class="sm:col-span-2 xl:col-span-1"
+      label="Fecha de pago"
+      [maxDays]="maxDays"
+      [value]="facade.range()"
+      (valueChange)="facade.setRange($event)"
+    />
+  </div>
+  <div class="flex flex-wrap items-center justify-between gap-4 border-t border-line-soft pt-4">
+    <span class="text-[13px] text-muted">Pagos registrados en SAP · rango máximo de 3 años.</span>
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="facade.clear()">Limpiar</button>
+      <button
+        type="button"
+        class="btn min-w-[132px] text-white"
+        [class]="facade.loading() ? 'bg-primary-busy' : 'btn-primary'"
+        [attr.aria-busy]="facade.loading()"
+        (click)="!facade.loading() && facade.search()"
+      >
+        @if (facade.loading()) {
+          <app-spinner [size]="18" />Buscando…
+        } @else {
+          <app-icon name="search" [size]="18" [stroke]="2" />Buscar
+        }
+      </button>
+    </div>
+  </div>
+</section>

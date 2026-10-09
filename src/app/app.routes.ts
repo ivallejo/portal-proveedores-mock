@@ -52,10 +52,8 @@ export const routes: Routes = [
         title: 'Orden de pago · Portal de Proveedores',
         data: { title: 'Orden de pago', roles: ['Proveedor', 'CxP'] },
         canActivate: [menuGuard],
-        loadComponent: gated('ordenPago', () =>
-          import('./features/payment-orders/payment-orders-page.component').then(
-            (m) => m.PaymentOrdersPageComponent,
-          ),
+        loadChildren: gatedRoutes('ordenPago', () =>
+          import('./features/payments').then((m) => m.PAYMENT_ORDERS_ROUTES),
         ),
       },
       {
@@ -63,10 +61,8 @@ export const routes: Routes = [
         title: 'Estado de factura · Portal de Proveedores',
         data: { title: 'Estado de factura', roles: ['Proveedor', 'CxP'] },
         canActivate: [menuGuard],
-        loadComponent: gated('estadoFactura', () =>
-          import('./features/invoice-status/invoice-status-page.component').then(
-            (m) => m.InvoiceStatusPageComponent,
-          ),
+        loadChildren: gatedRoutes('estadoFactura', () =>
+          import('./features/payments').then((m) => m.INVOICE_STATUS_ROUTES),
         ),
       },
       {

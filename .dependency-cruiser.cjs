@@ -107,12 +107,8 @@ module.exports = {
       name: 'shared-is-independent',
       comment: 'shared no depende de core ni de features.',
       severity: 'error',
-      // Pendientes de migrar: shared/data/supplier-scope pasa a la feature payments (paso 12), shared/documents a
-      // documents (paso 13) y shared/state a workflows (paso 14).
-      from: {
-        path: `${APP}/shared/`,
-        pathNot: [`${APP}/shared/data/supplier-scope\\.ts$`, `${APP}/shared/(documents|state)/`],
-      },
+      // Pendientes de migrar: shared/documents pasa a la feature documents (paso 13) y shared/state a workflows (paso 14).
+      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/(documents|state)/` },
       to: { path: [`${APP}/core/`, `${APP}/features/`] },
     },
     {

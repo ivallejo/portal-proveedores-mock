@@ -1,0 +1,43 @@
+<app-page-header
+  heading="Estado de factura"
+  description="Sigue cada factura desde su registro hasta el pago: revisión, observaciones, aprobación y si aplica detracción o retención."
+/>
+
+@if (facade.error()) {
+  <app-callout tone="danger">{{ facade.error() }}</app-callout>
+}
+
+<div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+  <app-kpi-card
+    label="Facturas encontradas"
+    icon="receipt"
+    tone="primary"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().total"
+  />
+  <app-kpi-card
+    label="En proceso"
+    icon="clock"
+    tone="info"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().inProgress"
+  />
+  <app-kpi-card
+    label="Anuladas u observadas"
+    icon="alert-triangle"
+    tone="warn"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().issues"
+  />
+  <app-kpi-card
+    label="Pagadas"
+    icon="circle-check"
+    tone="success"
+    [loading]="facade.loading()"
+    [value]="facade.kpis().paid"
+  />
+</div>
+
+<app-invoice-filters />
+
+<app-invoice-table />

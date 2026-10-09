@@ -18,6 +18,7 @@ const CHECKED = [
   'src/app/features/users',
   'src/app/features/profile',
   'src/app/features/catalog',
+  'src/app/features/payments',
 ];
 
 const TYPE =

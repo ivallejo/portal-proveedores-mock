@@ -1,0 +1,82 @@
+<section
+  aria-label="Filtros de búsqueda"
+  class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]"
+>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1.25fr_1.6fr]">
+    <div class="flex flex-col gap-2">
+      <label for="ef-ruc" class="field-label">RUC del proveedor</label>
+      @if (facade.scope.isProvider()) {
+        <input
+          id="ef-ruc"
+          type="text"
+          class="field bg-surface-muted tracking-[0.02em] text-muted tabular-nums"
+          [value]="facade.scope.ownRuc()"
+          readonly
+        />
+      } @else {
+        <input
+          id="ef-ruc"
+          type="text"
+          inputmode="numeric"
+          placeholder="11 dígitos"
+          class="field tracking-[0.02em] tabular-nums"
+          [value]="facade.draft().ruc"
+          (input)="onRuc($event)"
+          (keyup.enter)="facade.search()"
+        />
+      }
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="ef-nro" class="field-label">N° de factura</label>
+      <div class="relative flex">
+        <app-icon
+          name="search"
+          [size]="18"
+          class="pointer-events-none absolute top-[13px] left-3 text-muted"
+        />
+        <input
+          id="ef-nro"
+          type="text"
+          placeholder="Ej. F008-00008365"
+          class="field pl-[38px] uppercase tabular-nums"
+          [value]="facade.draft().number"
+          (input)="onNumber($event)"
+          (keyup.enter)="facade.search()"
+        />
+      </div>
+    </div>
+    <app-select
+      label="Sociedad"
+      [options]="facade.companyOptions()"
+      [value]="facade.draft().company"
+      (valueChange)="facade.setFilter('company', $event)"
+    />
+    <app-date-range
+      label="Fecha de emisión"
+      [maxDays]="maxDays"
+      [value]="facade.range()"
+      (valueChange)="facade.setRange($event)"
+    />
+  </div>
+  <div class="flex flex-wrap items-center justify-between gap-4 border-t border-line-soft pt-4">
+    <span class="text-[13px] text-muted"
+      >Facturas y su estado en SAP · rango máximo de 3 años.</span
+    >
+    <div class="flex gap-2.5">
+      <button type="button" class="btn btn-secondary" (click)="facade.clear()">Limpiar</button>
+      <button
+        type="button"
+        class="btn min-w-[132px] text-white"
+        [class]="facade.loading() ? 'bg-primary-busy' : 'btn-primary'"
+        [attr.aria-busy]="facade.loading()"
+        (click)="!facade.loading() && facade.search()"
+      >
+        @if (facade.loading()) {
+          <app-spinner [size]="18" />Buscando…
+        } @else {
+          <app-icon name="search" [size]="18" [stroke]="2" />Buscar
+        }
+      </button>
+    </div>
+  </div>
+</section>

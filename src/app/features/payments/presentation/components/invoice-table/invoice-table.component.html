@@ -1,130 +1,7 @@
-<app-page-header
-  heading="Estado de factura"
-  description="Sigue cada factura desde su registro hasta el pago: revisión, observaciones, aprobación y si aplica detracción o retención."
-/>
-
-<section
-  aria-label="Filtros de búsqueda"
-  class="card relative z-10 flex flex-col gap-4 px-6 py-[22px]"
->
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1.25fr_1.6fr]">
-    <div class="flex flex-col gap-2">
-      <label for="ef-ruc" class="field-label">RUC del proveedor</label>
-      @if (scope.isProvider()) {
-        <input
-          id="ef-ruc"
-          type="text"
-          class="field bg-surface-muted tracking-[0.02em] text-muted tabular-nums"
-          [value]="scope.ownRuc()"
-          readonly
-        />
-      } @else {
-        <input
-          id="ef-ruc"
-          type="text"
-          inputmode="numeric"
-          placeholder="11 dígitos"
-          class="field tracking-[0.02em] tabular-nums"
-          [value]="draft().ruc"
-          (input)="onRuc($event)"
-          (keyup.enter)="search()"
-        />
-      }
-    </div>
-    <div class="flex flex-col gap-2">
-      <label for="ef-nro" class="field-label">N° de factura</label>
-      <div class="relative flex">
-        <app-icon
-          name="search"
-          [size]="18"
-          class="pointer-events-none absolute top-[13px] left-3 text-muted"
-        />
-        <input
-          id="ef-nro"
-          type="text"
-          placeholder="Ej. F008-00008365"
-          class="field pl-[38px] uppercase tabular-nums"
-          [value]="draft().number"
-          (input)="onNumber($event)"
-          (keyup.enter)="search()"
-        />
-      </div>
-    </div>
-    <app-select
-      label="Sociedad"
-      [options]="companyOptions()"
-      [value]="draft().company"
-      (valueChange)="setFilter('company', $event)"
-    />
-    <app-date-range
-      label="Fecha de emisión"
-      [maxDays]="maxDays"
-      [value]="range()"
-      (valueChange)="setRange($event)"
-    />
-  </div>
-  <div class="flex flex-wrap items-center justify-between gap-4 border-t border-line-soft pt-4">
-    <span class="text-[13px] text-muted"
-      >Facturas y su estado en SAP · rango máximo de 3 años.</span
-    >
-    <div class="flex gap-2.5">
-      <button type="button" class="btn btn-secondary" (click)="clear()">Limpiar</button>
-      <button
-        type="button"
-        class="btn min-w-[132px] text-white"
-        [class]="loading() ? 'bg-primary-busy' : 'btn-primary'"
-        [attr.aria-busy]="loading()"
-        (click)="!loading() && search()"
-      >
-        @if (loading()) {
-          <app-spinner [size]="18" />Buscando…
-        } @else {
-          <app-icon name="search" [size]="18" [stroke]="2" />Buscar
-        }
-      </button>
-    </div>
-  </div>
-</section>
-
-@if (error()) {
-  <app-callout tone="danger">{{ error() }}</app-callout>
-}
-
-<div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-  <app-kpi-card
-    label="Facturas encontradas"
-    icon="receipt"
-    tone="primary"
-    [loading]="loading()"
-    [value]="kpis().total"
-  />
-  <app-kpi-card
-    label="En proceso"
-    icon="clock"
-    tone="info"
-    [loading]="loading()"
-    [value]="kpis().inProgress"
-  />
-  <app-kpi-card
-    label="Anuladas u observadas"
-    icon="alert-triangle"
-    tone="warn"
-    [loading]="loading()"
-    [value]="kpis().issues"
-  />
-  <app-kpi-card
-    label="Pagadas"
-    icon="circle-check"
-    tone="success"
-    [loading]="loading()"
-    [value]="kpis().paid"
-  />
-</div>
-
 <section
   aria-label="Facturas"
   class="card flex grow flex-col overflow-hidden"
-  [attr.aria-busy]="loading()"
+  [attr.aria-busy]="facade.loading()"
 >
   <div class="overflow-x-auto">
     <div class="min-w-[980px]">
@@ -141,7 +18,7 @@
         <div>Estado</div>
       </div>
 
-      @if (loading()) {
+      @if (facade.loading()) {
         @for (row of [78, 62, 84, 70, 66, 80, 58, 74, 68, 76]; track $index) {
           <div
             aria-hidden="true"
@@ -160,7 +37,7 @@
           </div>
         }
       } @else {
-        @for (invoice of pageRows(); track invoice.number; let i = $index) {
+        @for (invoice of facade.pageRows(); track invoice.number; let i = $index) {
           <div
             class="row-hover animate-in grid h-[60px] grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6 text-sm"
             [style.animation-delay.ms]="i * 40"
@@ -204,13 +81,13 @@
     </div>
   </div>
 
-  @if (!loading() && !invoices().length && !error()) {
-    @if (searched()) {
+  @if (!facade.loading() && !facade.invoices().length && !facade.error()) {
+    @if (facade.searched()) {
       <app-empty-state
         heading="No hay facturas"
         text="No encontramos facturas con los filtros seleccionados. Verifica el número de factura o amplía el rango de fechas."
         icon="receipt"
-        (action)="clear()"
+        (action)="facade.clear()"
       />
     } @else {
       <app-empty-state
@@ -223,12 +100,12 @@
   }
 
   <app-pagination
-    [loading]="loading()"
+    [loading]="facade.loading()"
     loadingText="Buscando facturas…"
-    [total]="invoices().length"
-    [page]="page()"
-    [pageSize]="pageSize"
+    [total]="facade.invoices().length"
+    [page]="facade.page()"
+    [pageSize]="facade.pageSize"
     noun="facturas"
-    (pageChange)="page.set($event)"
+    (pageChange)="facade.page.set($event)"
   />
 </section>
