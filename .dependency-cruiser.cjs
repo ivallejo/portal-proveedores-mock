@@ -6,7 +6,7 @@
  * Las reglas por capa se aplican a las features ya migradas a la estructura hexagonal (MIGRATED_FEATURES);
  * cada paso del plan agrega la feature que migra. Al terminar, la lista cubre todas las features.
  */
-const MIGRATED_FEATURES = ['societies', 'areas'];
+const MIGRATED_FEATURES = ['societies', 'areas', 'auth'];
 
 const APP = '^src/app';
 const migrated = MIGRATED_FEATURES.length ? `(${MIGRATED_FEATURES.join('|')})` : '(?!)';
@@ -51,9 +51,18 @@ module.exports = {
         'Las pantallas llegan a los casos de uso por los tokens de di/, nunca por un adaptador.',
       severity: 'error',
       from: { path: layer('presentation') },
-      to: {
-        path: [`${APP}/features/[^/]+/infrastructure/`, '^node_modules/@angular/common/http/'],
+      to: { path: `${APP}/features/[^/]+/infrastructure/` },
+    },
+    {
+      name: 'only-interceptors-know-http',
+      comment:
+        'En presentación, solo los interceptores (parte del pipeline HTTP) usan @angular/common/http.',
+      severity: 'error',
+      from: {
+        path: layer('presentation'),
+        pathNot: `${APP}/features/[^/]+/presentation/interceptors/`,
       },
+      to: { path: '^node_modules/@angular/common/http/' },
     },
     {
       name: 'infrastructure-does-not-know-presentation',
@@ -81,8 +90,9 @@ module.exports = {
       name: 'shared-is-independent',
       comment: 'shared no depende de core ni de features.',
       severity: 'error',
-      // Pendientes de migrar: shared/data pasa a la feature catalog (paso 11) y shared/documents a documents (paso 13).
-      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/(data|documents)/` },
+      // Pendientes de migrar: shared/data pasa a la feature catalog (paso 11), shared/documents a documents (paso 13)
+      // y shared/state a workflows (paso 14).
+      from: { path: `${APP}/shared/`, pathNot: `${APP}/shared/(data|documents|state)/` },
       to: { path: [`${APP}/core/`, `${APP}/features/`] },
     },
     {

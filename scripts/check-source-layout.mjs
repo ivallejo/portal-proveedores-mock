@@ -11,6 +11,7 @@ const CHECKED = [
   'src/app/shared/utils',
   'src/app/features/societies',
   'src/app/features/areas',
+  'src/app/features/auth',
 ];
 
 const TYPE =

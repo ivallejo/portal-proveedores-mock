@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
 import { MenuService } from '../../core/layout/menu.service';
 import { FEATURE_FLAGS } from '../../core/config/feature-flags.token';
 import { MODULES, ModuleLink, isLinkLive } from '../../core/layout/navigation';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { TONE_CLASSES } from '../../shared/ui/tone/tone-classes';
 import { ToastService } from '../../shared/ui/toast/toast.service';
+import { SessionFacade } from '../auth';
 
 @Component({
   selector: 'app-home-page',
@@ -79,7 +79,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
   `,
 })
 export class HomePageComponent {
-  readonly auth = inject(AuthService);
+  readonly auth = inject(SessionFacade);
   readonly toast = inject(ToastService);
   private readonly featureFlags = inject(FEATURE_FLAGS);
   readonly isLive = (module: ModuleLink) => isLinkLive(this.featureFlags, module);

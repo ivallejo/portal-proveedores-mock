@@ -1,0 +1,37 @@
+<app-auth-layout
+  heading="Confirma tu"
+  accent="correo"
+  description="Los correos verificados reciben las notificaciones del portal y sirven para ingresar."
+>
+  @switch (state()) {
+    @case ('loading') {
+      <div class="flex items-center gap-3 text-sm text-muted" role="status">
+        <app-spinner [size]="20" /> Verificando tu correo…
+      </div>
+    }
+    @case ('done') {
+      <app-auth-heading icon="circle-check" heading="¡Correo verificado!" [success]="true">
+        <strong class="text-ink">{{ email() }}</strong> quedó verificado. Ya puedes usarlo como
+        correo principal desde Mi perfil.
+      </app-auth-heading>
+      <a
+        [routerLink]="auth.user() ? '/perfil' : '/login'"
+        class="btn btn-primary h-[52px] text-base"
+      >
+        {{ auth.user() ? 'Ir a Mi perfil' : 'Ingresar al portal' }}
+      </a>
+    }
+    @case ('error') {
+      <app-callout tone="danger" heading="Enlace no válido">
+        El enlace es inválido o ya venció. Desde Mi perfil › Mis correos puedes pedir uno nuevo con
+        «Reenviar verificación».
+      </app-callout>
+      <a
+        [routerLink]="auth.user() ? '/perfil' : '/login'"
+        class="btn btn-primary h-[52px] text-base"
+      >
+        {{ auth.user() ? 'Ir a Mi perfil' : 'Ingresar al portal' }}
+      </a>
+    }
+  }
+</app-auth-layout>

@@ -9,8 +9,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
-import { roleLabel } from '../../shared/models/models';
+import { SessionFacade } from '../../features/auth';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ProgressBarComponent } from '../../shared/ui/progress-bar/progress-bar.component';
 import { ToastService } from '../../shared/ui/toast/toast.service';
@@ -21,6 +20,7 @@ import { MenuService, NavItem } from './menu.service';
 import { FEATURE_FLAGS } from '../config/feature-flags.token';
 import { isRouteLive } from './navigation';
 import { PageLoadingService } from './page-loading.service';
+import { roleLabel } from '../../features/auth';
 
 @Component({
   selector: 'app-shell',
@@ -32,7 +32,7 @@ export class ShellComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
-  readonly auth = inject(AuthService);
+  readonly auth = inject(SessionFacade);
   readonly loading = inject(PageLoadingService);
 
   readonly isDesktop = signal(typeof window === 'undefined' || window.innerWidth >= 1024);

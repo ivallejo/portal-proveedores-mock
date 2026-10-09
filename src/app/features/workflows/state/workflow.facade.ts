@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { ApprovalLevel, ApprovalWorkflow, WorkflowService } from '../services/workflow.service';
 import { MockUsersStore } from '../../../shared/state/mock-users.store';
-import { roleLabel } from '../../../shared/models/models';
+import { roleLabel } from '../../auth';
 
 @Injectable({ providedIn: 'root' })
 export class WorkflowFacade {

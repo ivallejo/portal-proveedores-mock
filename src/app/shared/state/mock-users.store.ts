@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Role } from '../models/models';
+import { Role } from '../../features/auth';
 
 export interface MockUserRecord {
   id: string;

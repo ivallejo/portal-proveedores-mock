@@ -1,13 +1,7 @@
 import { Type, inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import {
-  authGuard,
-  guestGuard,
-  menuGuard,
-  roleGuard,
-  rootRedirectGuard,
-  temporaryPasswordGuard,
-} from './core/auth/auth.guards';
+import { AUTH_ROUTES, authGuard, roleGuard, rootRedirectGuard } from './features/auth';
+import { menuGuard } from './core/layout/menu.guard';
 import { FeatureFlag } from './core/config/feature-flag';
 import { FEATURE_FLAGS } from './core/config/feature-flags.token';
 import { isFeatureEnabled } from './core/config/is-feature-enabled';
@@ -35,61 +29,12 @@ export const routes: Routes = [
     canActivate: [rootRedirectGuard],
     children: [],
   },
-  {
-    path: 'login',
-    title: 'Ingreso · Portal de Proveedores',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/login-page.component').then((m) => m.LoginPageComponent),
-  },
-  {
-    path: 'registro',
-    title: 'Regístrate · Portal de Proveedores',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/register-page.component').then((m) => m.RegisterPageComponent),
-  },
-  {
-    path: 'recuperar-contrasena',
-    title: 'Recuperar contraseña · Portal de Proveedores',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/forgot-password-page.component').then(
-        (m) => m.ForgotPasswordPageComponent,
-      ),
-  },
-  {
-    path: 'crear-contrasena',
-    title: 'Crear contraseña · Portal de Proveedores',
-    data: { mode: 'activation' },
-    loadComponent: () =>
-      import('./features/auth/pages/set-password-page.component').then(
-        (m) => m.SetPasswordPageComponent,
-      ),
-  },
-  {
-    path: 'contrasena-temporal',
-    title: 'Cambiar contraseña temporal · Portal de Proveedores',
-    canActivate: [temporaryPasswordGuard],
-    loadComponent: () =>
-      import('./features/auth/pages/temporary-password-page.component').then(
-        (m) => m.TemporaryPasswordPageComponent,
-      ),
-  },
-  {
-    path: 'cambiar-contrasena',
-    title: 'Cambiar contraseña · Portal de Proveedores',
-    data: { mode: 'reset' },
-    loadComponent: () =>
-      import('./features/auth/pages/set-password-page.component').then(
-        (m) => m.SetPasswordPageComponent,
-      ),
-  },
+  ...AUTH_ROUTES,
   {
     path: 'verificar-correo',
     title: 'Verificar correo · Portal de Proveedores',
     loadComponent: () =>
-      import('./features/auth/pages/verify-email-page.component').then(
+      import('./features/profile/verify-email-page.component').then(
         (m) => m.VerifyEmailPageComponent,
       ),
   },

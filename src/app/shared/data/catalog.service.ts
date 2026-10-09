@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { AuthService } from '../../core/auth/auth.service';
 import { SelectOption } from '../ui/select/select-option';
 import { API_BASE_URL } from '../../core/config/api-base-url.token';
+import { SessionFacade } from '../../features/auth';
 
 export interface ApiCompany {
   code: string;
@@ -46,7 +46,7 @@ export class CatalogService {
     })),
   );
 
-  private readonly auth = inject(AuthService);
+  private readonly auth = inject(SessionFacade);
   /** Usuario para el que se cargó el catálogo: las sociedades dependen de quién inició sesión. */
   private loadedFor: string | null = null;
 

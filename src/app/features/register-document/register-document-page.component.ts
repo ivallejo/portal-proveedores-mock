@@ -9,7 +9,6 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
 import { CatalogService } from '../../shared/data/catalog.service';
 import {
@@ -38,6 +37,7 @@ import { ExtraFile, FileDropComponent, FileState } from './file-drop.component';
 import { OrderInfo, OrderType, RegisterDocumentService } from './register-document.service';
 import { ElectronicDocument } from './xml-reader';
 import { apiErrorMessage } from '../../core/http/api-error-message';
+import { SessionFacade } from '../auth';
 
 type Entry = 'oc' | 'sin' | 'esp';
 
@@ -134,7 +134,7 @@ const ENTRY_CARDS: { value: Entry; label: string; description: string; icon: Ico
   templateUrl: './register-document-page.component.html',
 })
 export class RegisterDocumentPageComponent {
-  private readonly auth = inject(AuthService);
+  private readonly auth = inject(SessionFacade);
   private readonly api = inject(RegisterDocumentService);
   private readonly documents = inject(DocumentsService);
   private readonly catalog = inject(CatalogService);

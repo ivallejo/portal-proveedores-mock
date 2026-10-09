@@ -1,7 +1,7 @@
 import { Injectable, computed, inject } from '@angular/core';
-import { AuthService } from '../../core/auth/auth.service';
 import { SelectOption } from '../ui/select/select-option';
 import { CatalogService } from './catalog.service';
+import { SessionFacade } from '../../features/auth';
 
 /**
  * Contexto de las consultas a SAP por proveedor (Orden de pago, Estado de factura):
@@ -9,7 +9,7 @@ import { CatalogService } from './catalog.service';
  */
 @Injectable({ providedIn: 'root' })
 export class SupplierScope {
-  private readonly auth = inject(AuthService);
+  private readonly auth = inject(SessionFacade);
   private readonly catalog = inject(CatalogService);
 
   readonly isProvider = computed(() => {

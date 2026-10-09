@@ -1,0 +1,12 @@
+<span
+  class="flex size-[52px] shrink-0 items-center justify-center rounded-[14px]"
+  [class]="success() ? 'bg-success-soft text-[#15803D]' : 'bg-primary-soft text-primary'"
+>
+  <app-icon [name]="icon()" [size]="26" />
+</span>
+<div class="flex flex-col gap-1.5">
+  <h2 class="m-0 text-[26px] font-bold tracking-tight text-ink sm:text-[30px]">
+    {{ heading() }}
+  </h2>
+  <p class="m-0 text-[15px] leading-relaxed text-body-auth"><ng-content /></p>
+</div>

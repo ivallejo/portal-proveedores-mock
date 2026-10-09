@@ -1,17 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../core/auth/auth.service';
 import { PageLoadingService } from '../../core/layout/page-loading.service';
 import { apiErrorMessage } from '../../core/http/api-error-message';
-import { normalizeRole, roleLabel } from '../../shared/models/models';
 import { CalloutComponent } from '../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { initials } from '../../shared/utils/text-format.util';
-import { PasswordFieldComponent } from '../auth/components/auth-ui.components';
+import { PasswordFieldComponent } from '../auth/presentation/components/password-field/password-field.component';
 import { EmailType, Profile, ProfileEmail, ProfileService } from './profile.service';
+import { SessionFacade, normalizeRole, roleLabel } from '../auth';
 
 type Tab = 'datos' | 'correos' | 'clave';
 
@@ -59,7 +58,7 @@ function stamp(iso: string | null, withTime = true): string {
 })
 export class ProfilePageComponent {
   private readonly api = inject(ProfileService);
-  private readonly auth = inject(AuthService);
+  private readonly auth = inject(SessionFacade);
   private readonly toast = inject(ToastService);
 
   readonly emailTypes = EMAIL_TYPES;
