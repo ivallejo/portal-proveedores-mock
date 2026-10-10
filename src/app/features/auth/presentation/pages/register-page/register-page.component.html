@@ -47,7 +47,9 @@
           >
         </div>
         @if (lookupError(); as failure) {
-          <app-callout [tone]="failure.tone" [heading]="failure.title">{{ failure.text }}</app-callout>
+          <app-callout [tone]="failure.tone" [heading]="failure.title">{{
+            failure.text
+          }}</app-callout>
         }
         <button type="submit" class="btn btn-primary h-[52px] text-base" [disabled]="busy()">
           @if (busy()) {

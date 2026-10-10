@@ -12,7 +12,9 @@ describe('toProviderLookupError', () => {
     expect(toProviderLookupError(http(400, 'Sin correo.', 'PROVIDER_EMAIL_MISSING')).failure).toBe(
       'missing-email',
     );
-    expect(toProviderLookupError(http(400, 'Falta un dato en SAP.')).failure).toBe('cannot-register');
+    expect(toProviderLookupError(http(400, 'Falta un dato en SAP.')).failure).toBe(
+      'cannot-register',
+    );
     expect(toProviderLookupError(http(400)).failure).toBe('not-found');
     expect(toProviderLookupError(http(0)).failure).toBe('unavailable');
     expect(toProviderLookupError(http(503)).failure).toBe('unavailable');
