@@ -4,7 +4,9 @@ import { SessionMenuFacade } from '../facades/session-menu.facade';
 
 /** La pantalla debe estar en el menú del usuario (sus permisos, definidos en Roles y permisos). */
 export const menuGuard: CanActivateFn = async (_route, state) => {
+  // inject() solo funciona antes del primer await: después ya no hay contexto de inyección.
+  const menu = inject(SessionMenuFacade);
+  const router = inject(Router);
   const path = state.url.split(/[?#]/)[0];
-  if (await inject(SessionMenuFacade).allows(path)) return true;
-  return inject(Router).parseUrl('/inicio');
+  return (await menu.allows(path)) ? true : router.parseUrl('/inicio');
 };
