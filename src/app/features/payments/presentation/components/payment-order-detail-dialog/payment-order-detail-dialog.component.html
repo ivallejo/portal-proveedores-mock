@@ -9,11 +9,6 @@
 
   @if (facade.detailTotals(); as totals) {
     <div class="animate-fade flex flex-col gap-5 px-5 pt-[22px] pb-6 sm:px-8">
-      <p class="m-0 hidden text-xs text-muted print:block">
-        Portal de Proveedores · {{ order().providerName }} (RUC {{ order().providerRuc }}) · impreso
-        el
-        {{ facade.printedAt() }}
-      </p>
       <div
         class="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_1.3fr]"
       >
@@ -188,13 +183,8 @@
   >
     <div class="flex gap-2.5">
       <button type="button" class="btn btn-secondary" (click)="facade.close()">Cerrar</button>
-      <button
-        type="button"
-        class="btn btn-primary"
-        title="Desde la ventana de impresión también puedes guardarla como PDF"
-        (click)="facade.print()"
-      >
-        <app-icon name="printer" [size]="18" />Imprimir orden de pago
+      <button type="button" class="btn btn-primary" (click)="facade.openPdf(order())">
+        <app-icon name="file-download" [size]="18" />Ver PDF
       </button>
     </div>
   </div>

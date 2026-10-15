@@ -1,7 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { userFacingMessage } from '../../../../shared/errors/user-facing-message';
 import { DateRange } from '../../../../shared/ui/date-range/date-range';
-import { nowStamp } from '../../../../shared/utils/date-format.util';
 import { money } from '../../../../shared/utils/money-format.util';
 import { PaymentOrderFilter } from '../../application/models/payment-order-filter';
 import { SEARCH_PAYMENT_ORDERS } from '../../di/payments.tokens';
@@ -25,8 +24,8 @@ export class PaymentOrderListFacade {
   readonly orders = signal<PaymentOrder[]>([]);
   readonly page = signal(1);
   readonly detail = signal<PaymentOrder | null>(null);
-  /** Fecha y hora que se imprime en el detalle. */
-  readonly printedAt = signal('');
+  /** Orden abierta en la vista previa del PDF. */
+  readonly pdf = signal<PaymentOrder | null>(null);
 
   readonly pageSize = PAGE_SIZE;
   readonly companyOptions = this.scope.companyOptions(
@@ -109,18 +108,13 @@ export class PaymentOrderListFacade {
     this.detail.set(null);
   }
 
-  /** Imprime el detalle de la orden (desde la ventana de impresión también se guarda como PDF). */
-  print(): void {
-    this.printedAt.set(nowStamp());
-    // Se espera un ciclo para que la fecha se pinte antes de abrir la impresión.
-    setTimeout(() => window.print());
+  /** Abre la vista previa del PDF (A4) de la orden, desde el listado o desde su detalle. */
+  openPdf(order: PaymentOrder): void {
+    this.pdf.set(order);
   }
 
-  /** Desde el listado: abre la orden solo para imprimirla y la cierra al terminar. */
-  printOrder(order: PaymentOrder): void {
-    this.open(order);
-    window.addEventListener('afterprint', () => this.close(), { once: true });
-    this.print();
+  closePdf(): void {
+    this.pdf.set(null);
   }
 
   private defaults(): PaymentOrderFilter {

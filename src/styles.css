@@ -394,6 +394,13 @@
 
 /* Impresión: el diálogo bloquea el scroll del body; al imprimir debe fluir en varias páginas. */
 @media print {
+  /* Vista previa del PDF de la orden de pago: solo se imprime la hoja A4, sin márgenes de página. */
+  body:has(> app-payment-order-pdf-viewer) > :not(app-payment-order-pdf-viewer) {
+    display: none !important;
+  }
+  .op-sheet {
+    page: op-sheet;
+  }
   @page {
     margin: 14mm 12mm;
   }
@@ -403,4 +410,9 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+}
+
+@page op-sheet {
+  size: A4;
+  margin: 0;
 }

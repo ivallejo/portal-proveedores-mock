@@ -1,0 +1,112 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'Vista previa de ' + fileName()"
+  class="animate-fade fixed inset-0 z-[60] flex flex-col bg-[#0B1730] text-white print:static print:block print:bg-white print:text-ink"
+>
+  <header
+    class="grid h-16 shrink-0 grid-cols-[1fr_auto] items-center gap-4 border-b border-white/10 bg-[#102A5C] px-3 sm:grid-cols-[1fr_auto_1fr] sm:px-5 print:hidden"
+  >
+    <div class="flex min-w-0 items-center gap-3">
+      <button
+        type="button"
+        class="flex size-10 shrink-0 items-center justify-center rounded-[9px] text-[#DCE4F2] hover:bg-white/10"
+        aria-label="Volver a la orden de pago"
+        title="Volver"
+        (click)="closed.emit()"
+      >
+        <app-icon name="arrow-left" [size]="20" />
+      </button>
+      <span
+        class="hidden size-[34px] shrink-0 items-center justify-center rounded-lg bg-[#E5484D] text-[10px] font-bold sm:flex"
+        aria-hidden="true"
+        >PDF</span
+      >
+      <span class="flex min-w-0 flex-col">
+        <span class="truncate text-[14.5px] font-bold">{{ fileName() }}</span>
+        <span class="truncate text-xs text-[#A9BBDA]">A4 · Orden de pago</span>
+      </span>
+    </div>
+
+    <div
+      role="toolbar"
+      aria-label="Zoom"
+      class="hidden items-center gap-1 rounded-xl bg-white/[0.06] p-1 sm:flex"
+    >
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-[9px] text-[#DCE4F2] hover:bg-white/10 disabled:opacity-40"
+        aria-label="Alejar"
+        [disabled]="!canZoomOut()"
+        (click)="zoomOut()"
+      >
+        <app-icon name="minus" [size]="18" [stroke]="2.2" />
+      </button>
+      <span
+        aria-live="polite"
+        class="min-w-[54px] text-center text-[13.5px] font-bold tabular-nums"
+        >{{ zoomLabel() }}</span
+      >
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-[9px] text-[#DCE4F2] hover:bg-white/10 disabled:opacity-40"
+        aria-label="Acercar"
+        [disabled]="!canZoomIn()"
+        (click)="zoomIn()"
+      >
+        <app-icon name="plus" [size]="18" [stroke]="2.2" />
+      </button>
+      <span class="mx-1 h-5 w-px bg-white/15"></span>
+      <button
+        type="button"
+        class="flex size-9 items-center justify-center rounded-[9px] text-[#DCE4F2] hover:bg-white/10"
+        aria-label="Ajustar a la pantalla"
+        title="Ajustar"
+        (click)="fit()"
+      >
+        <app-icon name="maximize" [size]="17" [stroke]="2" />
+      </button>
+    </div>
+
+    <div class="flex items-center justify-end gap-2.5">
+      <button
+        type="button"
+        class="flex size-10 items-center justify-center rounded-[9px] text-[#DCE4F2] hover:bg-white/10"
+        aria-label="Imprimir"
+        title="Imprimir"
+        (click)="print()"
+      >
+        <app-icon name="printer" [size]="19" [stroke]="1.9" />
+      </button>
+      <button
+        type="button"
+        class="flex h-10 items-center justify-center gap-2 rounded-[10px] bg-primary px-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(22,104,227,0.35)] hover:bg-primary-hover sm:min-w-[150px]"
+        title="En la ventana de impresión elige «Guardar como PDF»"
+        (click)="print()"
+      >
+        <app-icon name="download" [size]="18" [stroke]="2" /><span class="hidden sm:inline"
+          >Descargar PDF</span
+        >
+      </button>
+    </div>
+  </header>
+
+  <main
+    aria-label="Vista previa del documento"
+    class="flex min-h-0 grow justify-center overflow-auto bg-[radial-gradient(1200px_600px_at_50%_0%,#15284F_0%,#0B1730_70%)] px-4 pt-8 pb-12 print:block print:overflow-visible print:bg-none print:p-0"
+  >
+    <!-- El contenedor reserva el tamaño escalado; la hoja se dibuja a tamaño real y se escala. -->
+    <div
+      class="relative shrink-0 transition-[width,height] duration-200 print:static print:size-auto!"
+      [style.width.px]="794 * zoom()"
+      [style.min-height.px]="1123 * zoom()"
+    >
+      <div
+        class="absolute top-0 left-0 origin-top-left overflow-hidden rounded-sm shadow-[0_30px_80px_rgba(0,0,0,0.45)] transition-transform duration-200 print:static print:transform-none! print:rounded-none print:shadow-none"
+        [style.transform]="'scale(' + zoom() + ')'"
+      >
+        <app-payment-order-pdf-sheet [order]="order()" [generatedAt]="generatedAt()" />
+      </div>
+    </div>
+  </main>
+</div>

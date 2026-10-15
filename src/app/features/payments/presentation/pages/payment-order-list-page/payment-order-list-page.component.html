@@ -39,3 +39,7 @@
 @if (facade.detail(); as order) {
   <app-payment-order-detail-dialog [order]="order" />
 }
+
+@if (facade.pdf(); as order) {
+  <app-payment-order-pdf-viewer [order]="order" (closed)="facade.closePdf()" />
+}

@@ -12,3 +12,8 @@ export function totalPaidIn(orders: readonly PaymentOrder[], currency: Currency)
 export function withheldTotal(order: PaymentOrder, key: 'retention' | 'detraction'): number {
   return order.documents.reduce((sum, doc) => sum + doc[key], 0);
 }
+
+/** Importe de todos los comprobantes de la orden, antes de retenciones y detracciones. */
+export function grossTotal(order: PaymentOrder): number {
+  return order.documents.reduce((sum, doc) => sum + doc.amount, 0);
+}

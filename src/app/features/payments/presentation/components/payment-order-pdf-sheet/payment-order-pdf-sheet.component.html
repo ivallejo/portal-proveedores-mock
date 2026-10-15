@@ -1,0 +1,212 @@
+<article
+  class="op-sheet flex min-h-[1123px] w-[794px] flex-col bg-white text-ink print:min-h-[297mm] print:w-[210mm]"
+  [attr.aria-label]="'Orden de pago ' + order().number"
+>
+  <header
+    class="relative flex h-32 shrink-0 items-center justify-between overflow-hidden bg-[linear-gradient(120deg,#0B1D42_0%,#102A5C_55%,#163C82_100%)] px-11 text-white"
+  >
+    <svg
+      width="360"
+      height="128"
+      viewBox="0 0 360 128"
+      fill="none"
+      aria-hidden="true"
+      class="absolute top-0 right-[150px]"
+    >
+      <path d="M250 -20 L310 15 L250 50 L190 15 Z" fill="#6F9BFF" fill-opacity="0.14" />
+      <path d="M190 15 L250 50 L250 120 L190 85 Z" fill="#3F6BD0" fill-opacity="0.12" />
+      <path d="M250 50 L310 15 L310 85 L250 120 Z" fill="#5A86EA" fill-opacity="0.14" />
+      <path d="M110 70 L140 87 L110 104 L80 87 Z" fill="#9CC0FF" fill-opacity="0.12" />
+    </svg>
+    <div class="relative flex items-center gap-3">
+      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M24 3l18 10.4v21.2L24 45 6 34.6V13.4z" fill="#FFFFFF" />
+        <path d="M24 13l9 5.2v10.4L24 34l-9-5.4V18.2z" fill="#1A66DB" />
+        <path d="M24 13l9 5.2-9 5.2-9-5.2z" fill="#6FA5F5" />
+      </svg>
+      <div class="flex flex-col gap-0.5">
+        <span class="text-base font-bold">{{ order().companyName }}</span>
+        @if (order().companyRuc; as ruc) {
+          <span class="text-[10.5px] text-[#C7D7F5] tabular-nums">RUC {{ ruc }}</span>
+        }
+      </div>
+    </div>
+    <div
+      class="relative flex min-w-[170px] flex-col items-center gap-0.5 rounded-[10px] bg-white px-4 py-2.5 text-ink"
+    >
+      <span class="text-[10px] font-bold tracking-[0.12em] text-primary">ORDEN DE PAGO</span>
+      <span class="text-[15px] font-bold tabular-nums">{{ order().number }}</span>
+    </div>
+  </header>
+
+  <div class="flex flex-col gap-5 px-11 pt-[26px]">
+    <div
+      class="grid grid-cols-[1.4fr_1fr_1fr_0.8fr] gap-[18px] rounded-[10px] border border-[#E3E8F0] bg-[#F8FAFD] px-[18px] py-4"
+    >
+      <div class="flex flex-col gap-[3px]">
+        <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase"
+          >Beneficiario</span
+        >
+        <span class="text-xs font-bold">{{ order().providerName }}</span>
+        <span class="text-[10.5px] text-[#4A5A78] tabular-nums">RUC {{ order().providerRuc }}</span>
+      </div>
+      <div class="flex flex-col gap-[3px]">
+        <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase"
+          >Fecha de pago</span
+        >
+        <span class="text-xs font-bold tabular-nums">{{ formatDate(order().paidAt ?? '') }}</span>
+      </div>
+      <div class="flex flex-col gap-[3px]">
+        <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">Moneda</span>
+        <span class="text-xs font-bold">{{ currencyLabel() }}</span>
+      </div>
+      <div class="flex flex-col gap-[3px]">
+        <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">Estado</span>
+        <span
+          class="inline-flex h-[22px] items-center gap-1.5 self-start rounded-full bg-[#E3F5EA] px-[9px] text-[11px] font-bold text-[#13653A]"
+        >
+          <span class="size-1.5 rounded-full bg-[#22A05A]"></span>Pagado
+        </span>
+      </div>
+    </div>
+
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-[12.5px] font-bold">Comprobantes pagados</h2>
+      <table class="w-full border-collapse text-[11px] tabular-nums">
+        <thead>
+          <tr class="bg-ink text-left text-[9.5px] tracking-[0.06em] text-white uppercase">
+            <th class="rounded-tl-md px-2.5 py-[9px] font-bold">Comprobante</th>
+            <th class="px-2.5 py-[9px] font-bold">Tipo</th>
+            <th class="px-2.5 py-[9px] font-bold">Emisión</th>
+            <th class="px-2.5 py-[9px] text-right font-bold">Importe</th>
+            <th class="px-2.5 py-[9px] text-right font-bold">Retención</th>
+            <th class="px-2.5 py-[9px] text-right font-bold">Detracción</th>
+            <th class="rounded-tr-md px-2.5 py-[9px] text-right font-bold">Neto pagado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of order().documents; track doc.number) {
+            <tr class="break-inside-avoid border-b border-[#E6EAF0]">
+              <td class="p-2.5 font-bold">{{ doc.number }}</td>
+              <td class="p-2.5">{{ doc.type }}</td>
+              <td class="p-2.5">{{ formatDate(doc.issuedAt ?? '') }}</td>
+              <td class="p-2.5 text-right">{{ money(order().currency, doc.amount) }}</td>
+              <td
+                class="p-2.5 text-right"
+                [class]="doc.retention ? 'text-[#B42318]' : 'text-[#8A93A3]'"
+              >
+                {{ doc.retention ? '− ' + money(order().currency, doc.retention) : '—' }}
+              </td>
+              <td
+                class="p-2.5 text-right"
+                [class]="doc.detraction ? 'text-[#B42318]' : 'text-[#8A93A3]'"
+              >
+                {{ doc.detraction ? '− ' + money(order().currency, doc.detraction) : '—' }}
+              </td>
+              <td class="p-2.5 text-right font-bold">{{ money(order().currency, doc.paid) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <div class="flex break-inside-avoid items-start justify-between gap-6">
+      <div
+        class="flex flex-1 flex-col gap-1.5 rounded-lg border border-dashed border-[#C9D6EA] bg-[#F8FAFD] px-3.5 py-3"
+      >
+        <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">Son</span>
+        <span class="text-[11px] font-bold">{{ totals().words }}</span>
+      </div>
+      <div
+        class="flex w-[270px] flex-col overflow-hidden rounded-lg border border-[#E3E8F0] text-[11px] tabular-nums"
+      >
+        <div class="flex justify-between px-3 py-2">
+          <span class="text-[#4A5A78]">Importe total</span
+          ><span>{{ money(order().currency, totals().gross) }}</span>
+        </div>
+        <div class="flex justify-between border-t border-[#EEF1F5] px-3 py-2">
+          <span class="text-[#4A5A78]">Retenciones</span>
+          <span [class.text-[#B42318]]="totals().retention > 0">{{
+            totals().retention
+              ? '− ' + money(order().currency, totals().retention)
+              : money(order().currency, 0)
+          }}</span>
+        </div>
+        <div class="flex justify-between border-t border-[#EEF1F5] px-3 py-2">
+          <span class="text-[#4A5A78]">Detracciones</span>
+          <span [class.text-[#B42318]]="totals().detraction > 0">{{
+            totals().detraction
+              ? '− ' + money(order().currency, totals().detraction)
+              : money(order().currency, 0)
+          }}</span>
+        </div>
+        <div class="flex items-center justify-between bg-primary px-3 py-[11px] text-white">
+          <span class="font-bold">Total pagado</span>
+          <span class="text-[15px] font-bold">{{ money(order().currency, order().total) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="flex break-inside-avoid flex-col gap-2">
+      <h2 class="m-0 text-[12.5px] font-bold">Datos del pago</h2>
+      <table class="w-full border-collapse text-[11px] tabular-nums">
+        <thead>
+          <tr
+            class="bg-[#EEF3FB] text-left text-[9.5px] tracking-[0.06em] text-[#3B4A66] uppercase"
+          >
+            <th class="px-2.5 py-[9px] font-bold">Forma de pago</th>
+            <th class="px-2.5 py-[9px] font-bold">Entidad bancaria</th>
+            <th class="px-2.5 py-[9px] font-bold">Cuenta de pago</th>
+            <th class="px-2.5 py-[9px] font-bold">Documento de pago</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-[#E6EAF0]">
+            <td class="p-2.5">{{ order().paymentMethod }}</td>
+            <td class="p-2.5">{{ order().bank ?? '—' }}</td>
+            <td class="p-2.5">{{ order().account ?? '—' }}</td>
+            <td class="p-2.5">{{ order().paymentDocument }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    @if (retentions().length) {
+      <section class="flex break-inside-avoid flex-col gap-2">
+        <h2 class="m-0 text-[12.5px] font-bold">Comprobantes de retención emitidos</h2>
+        <div class="flex flex-wrap gap-2.5">
+          @for (doc of retentions(); track doc.number) {
+            <span class="rounded-lg border border-[#E3E8F0] px-3 py-2 text-[11px] tabular-nums">
+              <strong>{{ doc.retentionDocument }}</strong> · aplica a {{ doc.number }} ·
+              {{ money(order().currency, doc.retention) }}
+            </span>
+          }
+        </div>
+      </section>
+    }
+
+    @if (detractions().length) {
+      <section class="flex break-inside-avoid flex-col gap-2">
+        <h2 class="m-0 text-[12.5px] font-bold">Constancias de detracción · Banco de la Nación</h2>
+        <div class="flex flex-wrap gap-2.5">
+          @for (doc of detractions(); track doc.number) {
+            <span class="rounded-lg border border-[#E3E8F0] px-3 py-2 text-[11px] tabular-nums">
+              <strong>Constancia {{ doc.detractionCertificate }}</strong> · aplica a
+              {{ doc.number }} · {{ money(order().currency, doc.detraction) }}
+              @if (doc.detractionRate) {
+                ({{ doc.detractionRate }})
+              }
+            </span>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <footer
+    class="mx-11 mt-auto mb-8 flex items-end justify-between gap-5 border-t border-[#E3E8F0] pt-4 text-[10px] text-[#4A5A78]"
+  >
+    <span>Documento generado el {{ generatedAt() }} · Portal de Proveedores</span>
+    <span class="text-[#6B7894]">{{ order().companyName }}</span>
+  </footer>
+</article>

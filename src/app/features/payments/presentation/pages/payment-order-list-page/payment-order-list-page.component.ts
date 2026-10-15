@@ -4,11 +4,12 @@ import { CalloutComponent } from '../../../../../shared/ui/callout/callout.compo
 import { KpiCardComponent } from '../../../../../shared/ui/kpi-card/kpi-card.component';
 import { PageHeaderComponent } from '../../../../../shared/ui/page-header/page-header.component';
 import { PaymentOrderDetailDialogComponent } from '../../components/payment-order-detail-dialog/payment-order-detail-dialog.component';
+import { PaymentOrderPdfViewerComponent } from '../../components/payment-order-pdf-viewer/payment-order-pdf-viewer.component';
 import { PaymentOrderFiltersComponent } from '../../components/payment-order-filters/payment-order-filters.component';
 import { PaymentOrderTableComponent } from '../../components/payment-order-table/payment-order-table.component';
 import { PaymentOrderListFacade } from '../../facades/payment-order-list.facade';
 
-/** Orden de pago: pagos de SAP por sociedad, con el detalle imprimible de cada orden. */
+/** Orden de pago: pagos de SAP por sociedad, con el detalle de cada orden y su PDF. */
 @Component({
   selector: 'app-payment-order-list-page',
   imports: [
@@ -18,6 +19,7 @@ import { PaymentOrderListFacade } from '../../facades/payment-order-list.facade'
     PaymentOrderFiltersComponent,
     PaymentOrderTableComponent,
     PaymentOrderDetailDialogComponent,
+    PaymentOrderPdfViewerComponent,
   ],
   providers: [PaymentOrderListFacade],
   changeDetection: ChangeDetectionStrategy.OnPush,
