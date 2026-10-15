@@ -9,7 +9,7 @@
       [attr.aria-current]="step.current ? 'step' : null"
     >
       <span
-        class="flex size-[30px] shrink-0 items-center justify-center rounded-full border-2 text-[13px] font-bold"
+        class="flex size-[30px] shrink-0 items-center justify-center rounded-full border-2 text-title-s"
         [class]="
           step.failed
             ? 'border-danger bg-danger text-white'
@@ -22,7 +22,7 @@
         >{{ step.failed ? '!' : step.done ? '✓' : i + 1 }}</span
       >
       <span
-        class="text-sm whitespace-nowrap"
+        class="text-body-m whitespace-nowrap"
         [class]="step.current || step.done ? 'text-ink' : 'text-subtle'"
         [class.font-bold]="step.current"
         >{{ step.label }}</span
@@ -30,7 +30,7 @@
       @if (!last) {
         <span
           class="h-0.5 min-w-6 grow rounded-sm"
-          [class]="step.done && !step.current ? 'bg-primary' : 'bg-[#DCE3EE]'"
+          [class]="step.done && !step.current ? 'bg-primary' : 'bg-line-blue'"
         ></span>
       }
     </li>

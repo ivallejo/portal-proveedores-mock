@@ -7,7 +7,7 @@ import { Invoice } from '../../domain/models/invoice';
 import { countInStage } from '../../domain/rules/invoice-rules';
 import { SupplierScopeFacade } from './supplier-scope.facade';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 
 /** Estado de Estado de factura: filtros, resultados de SAP, paginación e indicadores por etapa. */
 @Injectable()
@@ -23,7 +23,7 @@ export class InvoiceStatusFacade {
   readonly invoices = signal<Invoice[]>([]);
   readonly page = signal(1);
 
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
   readonly companyOptions = this.scope.companyOptions(
     'Todas las sociedades',
     'Mostrar facturas de todas',
@@ -32,7 +32,7 @@ export class InvoiceStatusFacade {
   readonly range = computed<DateRange>(() => ({ from: this.draft().from, to: this.draft().to }));
 
   readonly pageRows = computed(() =>
-    this.invoices().slice((this.page() - 1) * PAGE_SIZE, this.page() * PAGE_SIZE),
+    this.invoices().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()),
   );
 
   readonly kpis = computed(() => {
@@ -92,5 +92,11 @@ export class InvoiceStatusFacade {
 
   private defaults(): InvoiceFilter {
     return { ruc: '', number: '', company: '', ...this.scope.defaultPeriod() };
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.page.set(1);
   }
 }

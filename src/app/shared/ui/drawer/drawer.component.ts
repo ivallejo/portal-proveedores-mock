@@ -8,6 +8,7 @@ import {
   input,
   output,
 } from '@angular/core';
+import { FocusTrapDirective } from '../focus-trap/focus-trap.directive';
 import { IconComponent } from '../icon/icon.component';
 import { IconName } from '../icon/icon-name';
 
@@ -19,9 +20,13 @@ let nextId = 0;
  */
 @Component({
   selector: 'app-drawer',
-  imports: [IconComponent],
+  imports: [FocusTrapDirective, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown.escape)': 'closed.emit()' },
+  host: {
+    // Al cerrarse, Angular espera la salida animada (ver `.animate-leave` en src/styles/m3-tokens.css).
+    'animate.leave': 'animate-leave',
+    '(document:keydown.escape)': 'closed.emit()',
+  },
   templateUrl: './drawer.component.html',
 })
 export class DrawerComponent implements OnInit, OnDestroy {

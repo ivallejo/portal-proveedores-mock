@@ -41,7 +41,7 @@ export class HeaderComponent {
   });
 
   notImplemented(feature: string): void {
-    this.toast.show(`${feature} estará disponible próximamente`);
+    this.toast.show(`${feature} estará disponible próximamente`, { tone: 'info' });
   }
 
   logout(): void {

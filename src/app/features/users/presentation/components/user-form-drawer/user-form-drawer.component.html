@@ -23,7 +23,7 @@
         type="button"
         role="tab"
         [attr.aria-selected]="editor.tab() === item.key"
-        class="flex h-[50px] shrink-0 items-center gap-2 border-b-[3px] px-2.5 text-sm whitespace-nowrap hover:text-primary"
+        class="ripple flex h-[50px] shrink-0 items-center gap-2 border-b-[3px] px-2.5 text-body-m whitespace-nowrap hover:text-primary"
         [class]="
           editor.tab() === item.key
             ? 'border-primary font-bold text-primary'
@@ -34,12 +34,12 @@
         {{ item.label }}
         @if (item.error) {
           <span
-            class="flex size-5 items-center justify-center rounded-full bg-danger-tint text-[11.5px] font-bold text-danger-text"
+            class="flex size-5 items-center justify-center rounded-full bg-danger-tint text-label-s text-danger-text"
             >!</span
           >
         } @else if (item.count) {
           <span
-            class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold"
+            class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-label-s"
             [class]="
               editor.tab() === item.key ? 'bg-primary text-white' : 'bg-surface-muted text-body'
             "
@@ -73,11 +73,11 @@
     class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
   >
     @if (editor.footerError()) {
-      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+      <span role="alert" class="flex items-center gap-1.5 text-body-m text-danger-text">
         <app-icon name="alert-circle" [size]="16" />{{ editor.footerError() }}
       </span>
     } @else {
-      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+      <span class="text-body-m text-muted">Los campos con * son obligatorios.</span>
     }
     <div class="flex gap-2.5">
       <button type="button" class="btn btn-secondary" (click)="editor.closeDrawer()">

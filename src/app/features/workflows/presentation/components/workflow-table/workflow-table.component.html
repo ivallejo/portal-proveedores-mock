@@ -3,13 +3,13 @@
     class="flex flex-wrap items-center justify-between gap-4 border-b border-line-soft px-6 py-4"
   >
     <div class="flex flex-col">
-      <h2 class="m-0 text-base font-bold">Workflows configurados</h2>
-      <span class="text-[13px] text-muted"
+      <h2 class="m-0 text-title-m">Workflows configurados</h2>
+      <span class="text-body-m text-muted"
         >{{ list.workflows().length }} workflows en el sistema</span
       >
     </div>
     <div class="flex flex-wrap items-center gap-3">
-      <label class="flex items-center gap-2 text-[13px] text-muted">
+      <label class="flex items-center gap-2 text-body-m text-muted">
         Mostrar
         <select
           class="field h-10 w-auto pr-8"
@@ -39,17 +39,17 @@
     </div>
   </div>
 
-  <div class="overflow-x-auto">
-    <table class="w-full min-w-[900px] border-collapse text-left text-sm">
-      <thead>
+  <div class="table-scroll">
+    <table class="w-full min-w-[900px] border-collapse text-left text-body-m">
+      <thead class="table-head">
         <tr
-          class="h-12 border-b border-line bg-surface-muted text-xs font-bold tracking-[0.04em] text-body uppercase"
+          class="h-12 border-b border-line bg-surface-muted text-label-m tracking-[0.04em] text-body uppercase"
         >
-          <th class="px-6 font-bold">Workflow</th>
-          <th class="px-3 font-bold">Condición</th>
-          <th class="px-3 font-bold">Aprobadores</th>
-          <th class="px-3 font-bold">Estado</th>
-          <th class="px-6 text-right font-bold">Acciones</th>
+          <th class="px-6 font-medium">Workflow</th>
+          <th class="px-3 font-medium">Condición</th>
+          <th class="px-3 font-medium">Aprobadores</th>
+          <th class="px-3 font-medium">Estado</th>
+          <th class="table-actions px-6 text-right font-medium">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -57,21 +57,21 @@
           <tr class="row-hover border-b border-line-soft align-top">
             <td class="px-6 py-4">
               <div class="flex flex-col gap-0.5">
-                <span class="font-bold">{{ workflow.name }}</span>
-                <span class="text-xs text-muted">{{ workflow.description }}</span>
+                <span class="font-medium">{{ workflow.name }}</span>
+                <span class="text-body-s text-muted">{{ workflow.description }}</span>
               </div>
             </td>
             <td class="px-3 py-4">
               <div class="flex flex-col gap-0.5">
-                <span class="font-bold">{{ workflow.documentType }}</span>
-                <span class="text-xs text-muted">{{ workflow.society }}</span>
+                <span class="font-medium">{{ workflow.documentType }}</span>
+                <span class="text-body-s text-muted">{{ workflow.society }}</span>
               </div>
             </td>
             <td class="px-3 py-4">
               <div class="flex flex-col gap-2.5">
                 @for (level of workflow.approvalLevels; track $index; let i = $index) {
                   <div class="flex flex-col gap-1">
-                    <span class="text-xs font-bold">
+                    <span class="text-label-m">
                       Nivel {{ i + 1 }}
                       <span class="font-normal text-muted"
                         >·
@@ -105,11 +105,11 @@
                 ></span>
               </button>
             </td>
-            <td class="px-6 py-4 text-right">
+            <td class="table-actions px-6 py-4 text-right">
               <button
                 type="button"
-                class="inline-flex size-9 items-center justify-center rounded-lg border border-line-auth text-primary hover:bg-primary-tint"
-                title="Editar workflow"
+                class="ripple inline-flex size-10 items-center justify-center rounded-full border border-line-auth text-primary hover:bg-primary-tint touch-target"
+                data-tooltip="Editar workflow"
                 [attr.aria-label]="'Editar ' + workflow.name"
                 (click)="editor.openWorkflowForm(workflow)"
               >
@@ -132,7 +132,7 @@
   }
 
   <div
-    class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft px-6 py-3 text-[13px] text-body"
+    class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft px-6 py-3 text-body-m text-body"
   >
     <span
       >Página {{ list.workflowPage() }} de {{ list.workflowPageCount() }} ·
@@ -141,7 +141,7 @@
     <div class="flex items-center gap-1.5">
       <button
         type="button"
-        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        class="ripple flex size-10 items-center justify-center rounded-full border border-control-soft bg-white text-muted disabled:opacity-40 touch-target"
         aria-label="Página anterior"
         [disabled]="list.workflowPage() === 1"
         (click)="list.setWorkflowPage(list.workflowPage() - 1)"
@@ -151,11 +151,11 @@
       @for (item of list.workflowPaginationPages(); track item) {
         <button
           type="button"
-          class="size-9 rounded-lg text-[13px] font-bold"
+          class="ripple size-10 rounded-full text-title-s touch-target"
           [class]="
             item === list.workflowPage()
               ? 'bg-primary text-white'
-              : 'border border-[#DDE1E7] bg-white text-muted'
+              : 'border border-control-soft bg-white text-muted'
           "
           [attr.aria-current]="item === list.workflowPage() ? 'page' : null"
           (click)="list.setWorkflowPage(item)"
@@ -165,7 +165,7 @@
       }
       <button
         type="button"
-        class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+        class="ripple flex size-10 items-center justify-center rounded-full border border-control-soft bg-white text-muted disabled:opacity-40 touch-target"
         aria-label="Página siguiente"
         [disabled]="list.workflowPage() === list.workflowPageCount()"
         (click)="list.setWorkflowPage(list.workflowPage() + 1)"

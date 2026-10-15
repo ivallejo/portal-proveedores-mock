@@ -3,10 +3,10 @@
   class="card flex grow flex-col overflow-hidden"
   [attr.aria-busy]="facade.loading()"
 >
-  <div class="overflow-x-auto">
+  <div class="table-scroll">
     <div class="min-w-[980px]">
       <div
-        class="grid h-12 grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+        class="table-head grid h-12 grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line bg-surface-muted px-6 text-label-m tracking-[0.04em] text-body uppercase"
       >
         <div>RUC</div>
         <div>N° de factura</div>
@@ -22,7 +22,7 @@
         @for (row of [78, 62, 84, 70, 66, 80, 58, 74, 68, 76]; track $index) {
           <div
             aria-hidden="true"
-            class="grid h-[60px] grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6"
+            class="grid h-13 grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6"
           >
             <span class="skeleton h-3" [style.width.%]="row"></span>
             <span class="flex flex-col gap-[7px]"
@@ -39,19 +39,19 @@
       } @else {
         @for (invoice of facade.pageRows(); track invoice.number; let i = $index) {
           <div
-            class="row-hover animate-in grid h-[60px] grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6 text-sm"
+            class="row-hover animate-in grid h-13 grid-cols-[1.05fr_1.5fr_1fr_0.85fr_0.95fr_0.8fr_0.8fr_1.05fr] items-center gap-4 border-b border-line-soft px-6 text-body-m"
             [style.animation-delay.ms]="i * 40"
           >
             <div class="tracking-[0.01em] text-label tabular-nums">{{ invoice.providerRuc }}</div>
             <div class="flex min-w-0 flex-col gap-0.5">
-              <span class="font-bold tracking-[0.01em] tabular-nums">{{ invoice.number }}</span>
-              <span class="truncate text-xs text-muted">{{
+              <span class="font-medium tracking-[0.01em] tabular-nums">{{ invoice.number }}</span>
+              <span class="truncate text-body-s text-muted">{{
                 invoice.type +
                   ' · ' +
                   (invoice.companyName ?? (invoice.companyRuc ? 'RUC ' + invoice.companyRuc : '—'))
               }}</span>
             </div>
-            <div class="text-right font-bold tabular-nums">
+            <div class="text-right font-medium tabular-nums">
               {{ money(invoice.currency, invoice.amount) }}
             </div>
             <div>
@@ -104,7 +104,8 @@
     loadingText="Buscando facturas…"
     [total]="facade.invoices().length"
     [page]="facade.page()"
-    [pageSize]="facade.pageSize"
+    [pageSize]="facade.pageSize()"
+    (pageSizeChange)="facade.setPageSize($event)"
     noun="facturas"
     (pageChange)="facade.page.set($event)"
   />

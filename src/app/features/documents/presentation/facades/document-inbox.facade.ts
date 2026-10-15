@@ -16,7 +16,7 @@ import { saveBlob } from '../browser/save-blob';
 
 const DEFAULT_FILTER: InboxFilter = { ruc: '', status: '' };
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 
 /**
  * Lo común de las bandejas (Documentos por aprobar y Contabilización): filtros, listado paginado, detalle,
@@ -43,9 +43,9 @@ export abstract class DocumentInboxFacade<TResult = unknown> {
   readonly busy = signal(false);
   readonly result = signal<TResult | null>(null);
 
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
   readonly pageRows = computed(() =>
-    this.rows().slice((this.page() - 1) * PAGE_SIZE, this.page() * PAGE_SIZE),
+    this.rows().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()),
   );
 
   /** Segunda línea de la fila; vacío: proveedor y RUC. */
@@ -81,7 +81,9 @@ export abstract class DocumentInboxFacade<TResult = unknown> {
       error: (error) => {
         this.detail.set(null);
         this.detailLoading.set(false);
-        this.toast.show(userFacingMessage(error, 'No fue posible cargar el documento.'));
+        this.toast.show(userFacingMessage(error, 'No fue posible cargar el documento.'), {
+          tone: 'error',
+        });
       },
     });
   }
@@ -97,7 +99,9 @@ export abstract class DocumentInboxFacade<TResult = unknown> {
     this.downloadAttachment.execute(doc.id, file.id).subscribe({
       next: (blob) => saveBlob(blob, file.name),
       error: (error) =>
-        this.toast.show(userFacingMessage(error, 'No fue posible descargar el archivo.')),
+        this.toast.show(userFacingMessage(error, 'No fue posible descargar el archivo.'), {
+          tone: 'error',
+        }),
     });
   }
 
@@ -121,7 +125,9 @@ export abstract class DocumentInboxFacade<TResult = unknown> {
       },
       error: (error) => {
         this.busy.set(false);
-        this.toast.show(userFacingMessage(error, 'No fue posible completar la acción.'));
+        this.toast.show(userFacingMessage(error, 'No fue posible completar la acción.'), {
+          tone: 'error',
+        });
       },
     });
   }
@@ -137,8 +143,16 @@ export abstract class DocumentInboxFacade<TResult = unknown> {
       error: (error) => {
         this.rows.set([]);
         this.loading.set(false);
-        this.toast.show(userFacingMessage(error, 'No fue posible cargar los documentos.'));
+        this.toast.show(userFacingMessage(error, 'No fue posible cargar los documentos.'), {
+          tone: 'error',
+        });
       },
     });
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.page.set(1);
   }
 }

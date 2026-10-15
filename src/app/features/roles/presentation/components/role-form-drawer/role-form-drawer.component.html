@@ -21,19 +21,19 @@
         (input)="facade.setField('name', $any($event.target).value)"
       />
       @if (facade.showErrors() && facade.errors().name; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
     <div class="flex flex-col gap-2">
       <span class="field-label">Estado</span>
-      <span role="radiogroup" class="flex h-11 rounded-[10px] bg-surface-muted p-1">
+      <span role="radiogroup" class="flex h-12 rounded-full bg-surface-muted p-1">
         @for (option of [true, false]; track option) {
           <button
             type="button"
             role="radio"
             [attr.aria-checked]="facade.form().isActive === option"
             [disabled]="!option && facade.current()?.code === 'ADMINISTRATOR'"
-            class="grow rounded-lg text-[13px] font-bold disabled:opacity-40"
+            class="ripple grow rounded-full text-title-s disabled:opacity-40"
             [class]="
               facade.form().isActive === option ? 'bg-white text-primary shadow-sm' : 'text-muted'
             "
@@ -60,22 +60,22 @@
   <div class="flex flex-col gap-3">
     <div class="flex flex-wrap items-end justify-between gap-3">
       <span class="flex flex-col gap-0.5">
-        <span class="text-base font-bold">Permisos de menú</span>
-        <span class="text-[13px] text-muted tabular-nums"
+        <span class="text-title-m">Permisos de menú</span>
+        <span class="text-body-m text-muted tabular-nums"
           >{{ facade.selectedCount() }} de {{ facade.menus().length }} opciones seleccionadas</span
         >
       </span>
       <span class="flex gap-2">
         <button
           type="button"
-          class="btn btn-secondary h-9 px-3 text-[13px]"
+          class="btn btn-secondary h-9 px-3 text-body-m"
           (click)="facade.selectAll()"
         >
           Seleccionar todo
         </button>
         <button
           type="button"
-          class="btn btn-secondary h-9 px-3 text-[13px]"
+          class="btn btn-secondary h-9 px-3 text-body-m"
           (click)="facade.selectNone()"
         >
           Quitar todo
@@ -90,20 +90,20 @@
         >El Administrador siempre conserva Configuración › Roles y permisos y Menús.</app-callout
       >
     }
-    <div class="overflow-hidden rounded-xl border border-line">
+    <div class="overflow-hidden rounded-shape-md border border-line">
       @for (node of facade.tree(); track node.menu.id) {
         <button
           type="button"
           role="checkbox"
           [attr.aria-checked]="node.mixed ? 'mixed' : node.on"
           class="flex w-full items-center gap-3 border-b border-line-soft py-2.5 pr-4 text-left last:border-b-0 hover:bg-surface-alt"
-          [class]="node.isChild ? 'bg-white pl-[52px]' : 'bg-[#FAFBFD] pl-4'"
+          [class]="node.isChild ? 'bg-white pl-[52px]' : 'bg-surface-alt pl-4'"
           (click)="facade.toggle(node.menu)"
         >
           <span
-            class="flex size-5 shrink-0 items-center justify-center rounded-[5px] border-2 text-white"
+            class="flex size-5 shrink-0 items-center justify-center rounded-xs border-2 text-white"
             [class]="
-              node.on || node.mixed ? 'border-primary bg-primary' : 'border-[#B8C2D3] bg-white'
+              node.on || node.mixed ? 'border-primary bg-primary' : 'border-control-strong bg-white'
             "
           >
             @if (node.on) {
@@ -113,10 +113,10 @@
             }
           </span>
           <app-icon [name]="icon(node.menu.icon)" [size]="18" class="shrink-0 text-primary" />
-          <span class="grow text-sm" [class.font-bold]="!node.isChild"
+          <span class="grow text-body-m" [class.font-bold]="!node.isChild"
             >{{ node.menu.name }}{{ node.menu.isActive ? '' : ' (inactivo)' }}</span
           >
-          <span class="font-mono text-xs text-muted">{{ node.menu.route ?? '' }}</span>
+          <span class="font-mono text-body-s text-muted">{{ node.menu.route ?? '' }}</span>
         </button>
       }
     </div>
@@ -127,11 +127,11 @@
     class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
   >
     @if (facade.saveError()) {
-      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+      <span role="alert" class="flex items-center gap-1.5 text-body-m text-danger-text">
         <app-icon name="alert-circle" [size]="16" />{{ facade.saveError() }}
       </span>
     } @else {
-      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+      <span class="text-body-m text-muted">Los campos con * son obligatorios.</span>
     }
     <div class="flex gap-2.5">
       <button type="button" class="btn btn-secondary" (click)="facade.closeDrawer()">

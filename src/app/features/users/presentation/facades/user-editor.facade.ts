@@ -162,7 +162,9 @@ export class UserEditorFacade {
       },
       error: (error) => {
         this.detailLoading.set(false);
-        this.toast.show(userFacingMessage(error, 'No pudimos abrir el usuario.'), 4000);
+        this.toast.show(userFacingMessage(error, 'No pudimos abrir el usuario.'), {
+          tone: 'error',
+        });
       },
     });
   }
@@ -266,7 +268,9 @@ export class UserEditorFacade {
       },
       error: (error) => {
         this.sendingLink.set(false);
-        this.toast.show(userFacingMessage(error, 'No pudimos enviar el enlace.'), 4000);
+        this.toast.show(userFacingMessage(error, 'No pudimos enviar el enlace.'), {
+          tone: 'error',
+        });
       },
     });
   }

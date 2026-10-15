@@ -1,0 +1,183 @@
+/*
+ * Sistema visual no cromático inspirado en Material Design 3 (referencia: Angular Material 22.2.3).
+ * Tipografía, forma, elevación y movimiento. AQUÍ NO HAY COLORES: la paleta sigue en `src/styles.css`.
+ * Guía de uso: docs/DESIGN_SYSTEM.md.
+ */
+@theme {
+  /* Roboto autoalojada (@fontsource-variable/roboto, declarada en angular.json). */
+  --font-sans: 'Roboto Variable', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /*
+   * Escala tipográfica M3 → utilidades `text-display-l`, `text-headline-m`, `text-title-s`, `text-body-m`, `text-label-l`…
+   * Cada rol fija tamaño, interlineado, tracking y peso. Un `leading-*`, `tracking-*` o `font-*`
+   * explícito en la plantilla sigue teniendo prioridad.
+   */
+  --text-display-l: 3.5625rem; /* 57/64 */
+  --text-display-l--line-height: 4rem;
+  --text-display-l--letter-spacing: -0.015625rem;
+  --text-display-l--font-weight: 400;
+  --text-display-m: 2.8125rem; /* 45/52 */
+  --text-display-m--line-height: 3.25rem;
+  --text-display-m--letter-spacing: 0;
+  --text-display-m--font-weight: 400;
+  --text-display-s: 2.25rem; /* 36/44 */
+  --text-display-s--line-height: 2.75rem;
+  --text-display-s--letter-spacing: 0;
+  --text-display-s--font-weight: 400;
+
+  --text-headline-l: 2rem; /* 32/40 */
+  --text-headline-l--line-height: 2.5rem;
+  --text-headline-l--letter-spacing: 0;
+  --text-headline-l--font-weight: 400;
+  --text-headline-m: 1.75rem; /* 28/36 */
+  --text-headline-m--line-height: 2.25rem;
+  --text-headline-m--letter-spacing: 0;
+  --text-headline-m--font-weight: 400;
+  --text-headline-s: 1.5rem; /* 24/32 */
+  --text-headline-s--line-height: 2rem;
+  --text-headline-s--letter-spacing: 0;
+  --text-headline-s--font-weight: 400;
+
+  --text-title-l: 1.375rem; /* 22/28 */
+  --text-title-l--line-height: 1.75rem;
+  --text-title-l--letter-spacing: 0;
+  --text-title-l--font-weight: 400;
+  --text-title-m: 1rem; /* 16/24 */
+  --text-title-m--line-height: 1.5rem;
+  --text-title-m--letter-spacing: 0.009375rem;
+  --text-title-m--font-weight: 500;
+  --text-title-s: 0.875rem; /* 14/20 */
+  --text-title-s--line-height: 1.25rem;
+  --text-title-s--letter-spacing: 0.00625rem;
+  --text-title-s--font-weight: 500;
+
+  --text-body-l: 1rem; /* 16/24 */
+  --text-body-l--line-height: 1.5rem;
+  --text-body-l--letter-spacing: 0.03125rem;
+  --text-body-l--font-weight: 400;
+  --text-body-m: 0.875rem; /* 14/20 */
+  --text-body-m--line-height: 1.25rem;
+  --text-body-m--letter-spacing: 0.015625rem;
+  --text-body-m--font-weight: 400;
+  --text-body-s: 0.75rem; /* 12/16 */
+  --text-body-s--line-height: 1rem;
+  --text-body-s--letter-spacing: 0.025rem;
+  --text-body-s--font-weight: 400;
+
+  --text-label-l: 0.875rem; /* 14/20 */
+  --text-label-l--line-height: 1.25rem;
+  --text-label-l--letter-spacing: 0.00625rem;
+  --text-label-l--font-weight: 500;
+  --text-label-m: 0.75rem; /* 12/16 */
+  --text-label-m--line-height: 1rem;
+  --text-label-m--letter-spacing: 0.03125rem;
+  --text-label-m--font-weight: 500;
+  --text-label-s: 0.6875rem; /* 11/16 */
+  --text-label-s--line-height: 1rem;
+  --text-label-s--letter-spacing: 0.03125rem;
+  --text-label-s--font-weight: 500;
+
+  /*
+   * Escala de forma M3 (corner tokens) → `rounded-shape-xs` … `rounded-shape-xl`; `rounded-full` para píldoras.
+   *   xs  4px  campos, selects, menús, snackbar
+   *   sm  8px  chips, etiquetas de código, mosaicos pequeños
+   *   md 12px  tarjetas, paneles internos, avisos, mosaicos de icono
+   *   lg 16px  selector de fechas, paneles flotantes grandes
+   *   xl 28px  diálogos, hojas inferiores, tarjeta de acceso
+   *   full     botones, botones de icono, controles segmentados, indicador del menú lateral
+   */
+  --radius-shape-xs: 4px;
+  --radius-shape-sm: 8px;
+  --radius-shape-md: 12px;
+  --radius-shape-lg: 16px;
+  --radius-shape-xl: 28px;
+
+  /* Movimiento M3: curvas para `ease-*` y transición por defecto de `transition`, `transition-colors`… */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --ease-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+
+  --animate-menu: menu-in 200ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+  /* Salidas M3: aceleración enfatizada, más cortas que la entrada (150 ms). */
+  --animate-fade-out: fade-out 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both;
+  --animate-pop-out: pop-out 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both;
+  --animate-rise-out: rise-out 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both;
+  --animate-menu-out: menu-out 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both;
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes pop-out {
+    to {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+  @keyframes rise-out {
+    to {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes menu-out {
+    to {
+      opacity: 0;
+      transform: scaleY(0.85);
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: scaleY(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+:root {
+  /* Duraciones M3 (short 1-4, medium 1-4). */
+  --duration-short-1: 50ms;
+  --duration-short-2: 100ms;
+  --duration-short-3: 150ms;
+  --duration-short-4: 200ms;
+  --duration-medium-1: 250ms;
+  --duration-medium-2: 300ms;
+  --duration-medium-4: 400ms;
+
+  /* Niveles de elevación M3 de los botones (sombras definidas junto a la paleta en `src/styles.css`). */
+  --elevation-0: none;
+  --elevation-1: var(--shadow-elevation-1);
+  --elevation-2: var(--shadow-elevation-2);
+  --elevation-3: var(--shadow-elevation-3);
+}
+
+/*
+ * Salida animada: `animate.leave="animate-leave"` (o `host: { 'animate.leave': 'animate-leave' }`) hace que Angular
+ * espere a esta animación antes de retirar el elemento. El elemento se desvanece y, dentro de él, cada entrada
+ * (`animate-pop`, `animate-in`, `animate-menu`) se reproduce al revés. Sin capa, para ganar a las utilidades.
+ */
+.animate-leave {
+  animation: var(--animate-fade-out);
+  pointer-events: none;
+}
+.animate-leave.animate-pop,
+.animate-leave .animate-pop {
+  animation: var(--animate-pop-out);
+}
+.animate-leave.animate-in,
+.animate-leave .animate-in {
+  animation: var(--animate-rise-out);
+}
+.animate-leave.animate-menu,
+.animate-leave .animate-menu {
+  animation: var(--animate-menu-out);
+}

@@ -32,6 +32,12 @@ export class SidebarComponent {
         item.children.some((child) => child.route && router.url.startsWith(child.route)),
       );
       if (current) this.openGroups.set(new Set([current.code]));
+      // Desde el rail se pidió abrir un grupo concreto.
+      const requested = this.layout.requestedGroup();
+      if (requested) {
+        this.openGroups.update((open) => new Set(open).add(requested));
+        this.layout.requestedGroup.set(null);
+      }
     });
   }
 

@@ -1,13 +1,18 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { FocusTrapDirective } from '../focus-trap/focus-trap.directive';
 import { IconComponent } from '../icon/icon.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
 
 /** Confirmación breve (activar / desactivar), con el botón principal en rojo si es destructiva. */
 @Component({
   selector: 'app-confirm-dialog',
-  imports: [IconComponent, SpinnerComponent],
+  imports: [FocusTrapDirective, IconComponent, SpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown.escape)': '!busy() && cancel.emit()' },
+  host: {
+    // Al cerrarse, Angular espera la salida animada (ver `.animate-leave` en src/styles/m3-tokens.css).
+    'animate.leave': 'animate-leave',
+    '(document:keydown.escape)': '!busy() && cancel.emit()',
+  },
   templateUrl: './confirm-dialog.component.html',
 })
 export class ConfirmDialogComponent {

@@ -1,13 +1,29 @@
 @if (toast.current(); as current) {
   <div
-    role="status"
-    class="animate-in fixed right-4 bottom-4 z-50 flex max-w-[calc(100vw-32px)] items-center gap-3 rounded-xl bg-ink px-[18px] py-3.5 text-sm font-medium text-white shadow-toast sm:right-10 sm:bottom-10"
+    [attr.role]="current.tone === 'error' ? 'alert' : 'status'"
+    animate.leave="animate-leave"
+    class="animate-in fixed inset-x-4 bottom-4 z-50 flex min-h-12 items-center gap-3 rounded-shape-xs bg-ink py-3 pr-2 pl-4 text-body-m text-white shadow-toast sm:inset-x-auto sm:right-10 sm:bottom-10 sm:max-w-[560px] sm:min-w-[344px]"
   >
     @if (current.busy) {
       <app-spinner [size]="18" tone="muted" />
     } @else {
-      <app-icon name="circle-check" [size]="18" [stroke]="2" class="text-[#7FD7A4]" />
+      <app-icon
+        [name]="icons[current.tone]"
+        [size]="18"
+        [stroke]="2"
+        class="shrink-0"
+        [class]="iconColors[current.tone]"
+      />
     }
-    {{ current.message }}
+    <span class="grow pr-2">{{ current.message }}</span>
+    @if (current.action; as action) {
+      <button
+        type="button"
+        class="ripple h-10 shrink-0 rounded-full px-3 text-label-l text-on-brand-accent hover:bg-white/10"
+        (click)="toast.runAction()"
+      >
+        {{ action.label }}
+      </button>
+    }
   </div>
 }

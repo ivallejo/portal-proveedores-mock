@@ -9,7 +9,7 @@ import { UserCounts } from '../../domain/models/user-counts';
 import { UserSummary } from '../../domain/models/user-summary';
 import { userToggleVerb } from '../catalog/user-toggle-verb.util';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 const NO_FILTER: UserFilter = { search: '', role: '', status: '' };
 
 /** Listado de Configuración › Usuarios: filtros, paginación del servidor, catálogo y activación. */
@@ -20,7 +20,7 @@ export class UserListFacade {
   private readonly changeStatus = inject(CHANGE_USER_STATUS);
   private readonly toast = inject(ToastService);
 
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
   readonly statusFilterOptions: SelectOption[] = [
     { value: '', label: 'Todos los estados' },
     { value: 'active', label: 'Activos' },
@@ -60,7 +60,7 @@ export class UserListFacade {
 
   load(): void {
     this.loading.set(true);
-    this.searchUsers.execute(this.applied(), this.page(), PAGE_SIZE).subscribe({
+    this.searchUsers.execute(this.applied(), this.page(), this.pageSize()).subscribe({
       next: (result) => {
         this.rows.set(result.items);
         this.total.set(result.total);
@@ -132,8 +132,16 @@ export class UserListFacade {
       error: (error) => {
         this.toggling.set(false);
         this.confirming.set(null);
-        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), 4000);
+        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), {
+          tone: 'error',
+        });
       },
     });
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.goToPage(1);
   }
 }

@@ -15,7 +15,7 @@
       (valueChange)="facade.setCompany($event)"
     />
     @if (facade.companyBillingEmail(); as email) {
-      <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+      <p class="m-0 -mt-2 flex items-center gap-1.5 text-body-m text-muted">
         <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
         <span class="font-medium text-body">{{ email }}</span>
       </p>
@@ -25,13 +25,13 @@
       <div
         role="radiogroup"
         aria-label="Tipo de orden"
-        class="grid grid-cols-2 gap-1 rounded-xl bg-[#EEF2F8] p-1"
+        class="grid grid-cols-2 gap-1 rounded-full bg-surface-segment p-1"
       >
         @for (type of ['Bien', 'Servicio']; track type) {
           <button
             type="button"
             role="radio"
-            class="flex h-[38px] items-center justify-center rounded-[9px] text-sm font-bold"
+            class="ripple flex h-10 items-center justify-center rounded-full text-title-s"
             [class]="
               facade.orderType() === type
                 ? 'bg-white text-primary shadow-segment'
@@ -61,7 +61,7 @@
         (input)="onOrderNumber($event)"
         (keyup.enter)="facade.validateOrder()"
       />
-      <span class="text-[12.5px] text-muted">
+      <span class="text-body-s text-muted">
         {{
           facade.orderType() === 'Bien'
             ? 'Para órdenes de bienes se valida el carrier de la entrega.'
@@ -94,21 +94,21 @@
     }
     @if (facade.order(); as validOrder) {
       <div
-        class="animate-in flex flex-col gap-2.5 rounded-[14px] border border-[#CDEBD8] bg-success-tint px-4 py-3.5"
+        class="animate-in flex flex-col gap-2.5 rounded-shape-md border border-success-line-alt bg-success-tint px-4 py-3.5"
       >
-        <span class="flex items-center gap-2 text-sm font-bold text-success-text">
+        <span class="flex items-center gap-2 text-title-s text-success-text">
           <app-icon name="circle-check" [size]="18" />Orden válida en SAP
         </span>
-        <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[13px]">
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-body-m">
           <span class="flex flex-col gap-0.5">
             <span class="text-muted">{{
               validOrder.type === 'Bien' ? 'N° de carrier' : 'N° de orden'
             }}</span>
-            <span class="font-bold tabular-nums">{{ validOrder.number }}</span>
+            <span class="font-medium tabular-nums">{{ validOrder.number }}</span>
           </span>
           <span class="flex flex-col gap-0.5">
             <span class="text-muted">Saldo por facturar</span>
-            <span class="font-bold tabular-nums">{{ money('PEN', validOrder.balance) }}</span>
+            <span class="font-medium tabular-nums">{{ money('PEN', validOrder.balance) }}</span>
           </span>
           <span class="col-span-2 flex flex-col gap-0.5">
             <span class="text-muted">Descripción</span
@@ -132,14 +132,14 @@
       (valueChange)="facade.setCompany($event)"
     />
     @if (facade.companyBillingEmail(); as email) {
-      <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
+      <p class="m-0 -mt-2 flex items-center gap-1.5 text-body-m text-muted">
         <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
         <span class="font-medium text-body">{{ email }}</span>
       </p>
     }
     @if (facade.canPettyCash()) {
       <label
-        class="flex cursor-pointer items-start gap-3 rounded-xl border-2 px-4 py-3.5 transition-colors"
+        class="ripple flex cursor-pointer items-start gap-3 rounded-shape-md border-2 px-4 py-3.5 transition-colors"
         [class]="facade.pettyCash() ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
       >
         <input
@@ -149,8 +149,8 @@
           (change)="facade.pettyCash.set($any($event.target).checked); facade.formError.set('')"
         />
         <span class="flex flex-col gap-0.5">
-          <span class="text-sm font-bold">Documento de Caja Chica</span>
-          <span class="text-[12.5px] leading-normal text-muted"
+          <span class="text-title-s">Documento de Caja Chica</span>
+          <span class="text-body-s leading-normal text-muted"
             >No requiere aprobación: se registra directamente como Pendiente de
             contabilización.</span
           >

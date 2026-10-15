@@ -1,34 +1,34 @@
 <div class="flex flex-col gap-3.5">
   <div class="flex flex-col gap-0.5">
-    <span class="text-base font-bold">Correos del usuario</span>
-    <span class="text-[13px] text-muted"
+    <span class="text-title-m">Correos del usuario</span>
+    <span class="text-body-m text-muted"
       >El correo principal recibe las notificaciones y los enlaces de recuperación.</span
     >
   </div>
   @for (email of editor.emails(); track email.email) {
     <div
-      class="grid grid-cols-[40px_minmax(0,1fr)] items-center gap-3 rounded-xl border px-3.5 py-3 sm:grid-cols-[40px_minmax(0,1fr)_auto]"
+      class="grid grid-cols-[40px_minmax(0,1fr)] items-center gap-3 rounded-shape-md border px-3.5 py-3 sm:grid-cols-[40px_minmax(0,1fr)_auto]"
       [class]="email.isPrimary ? 'border-primary-line bg-primary-tint' : 'border-line bg-white'"
     >
       <span
-        class="flex size-10 items-center justify-center rounded-[10px] border border-primary-line bg-white text-primary"
+        class="flex size-10 items-center justify-center rounded-shape-md border border-primary-line bg-white text-primary"
         ><app-icon name="mail" [size]="18"
       /></span>
       <span class="flex min-w-0 flex-col gap-1">
-        <span class="truncate text-sm font-bold">{{ email.email }}</span>
-        <span class="flex flex-wrap items-center gap-1.5 text-xs">
+        <span class="truncate text-title-s">{{ email.email }}</span>
+        <span class="flex flex-wrap items-center gap-1.5 text-body-s">
           <span
-            class="inline-flex h-[22px] items-center rounded-full bg-surface-muted px-2 font-bold text-body"
+            class="inline-flex h-[22px] items-center rounded-full bg-surface-muted px-2 font-medium text-body"
             >{{ emailTypeLabel(email.type) }}</span
           >
           @if (email.isPrimary) {
             <span
-              class="inline-flex h-[22px] items-center gap-1 rounded-full bg-warning-soft px-2 font-bold text-warning-text"
+              class="inline-flex h-[22px] items-center gap-1 rounded-full bg-warning-soft px-2 font-medium text-warning-text"
               ><app-icon name="star" [size]="12" />Principal</span
             >
           }
           <span
-            class="inline-flex h-[22px] items-center rounded-full px-2 font-bold"
+            class="inline-flex h-[22px] items-center rounded-full px-2 font-medium"
             [class]="
               email.isVerified
                 ? 'bg-success-soft text-success-text'
@@ -51,7 +51,7 @@
             type="button"
             class="btn btn-tint"
             [disabled]="!editor.canBePrimary(email)"
-            [title]="
+            [attr.data-tooltip]="
               editor.canBePrimary(email)
                 ? 'Usar como correo principal'
                 : 'Debe verificarse antes de ser principal'
@@ -63,11 +63,13 @@
         }
         <button
           type="button"
-          class="flex size-[38px] items-center justify-center rounded-[9px] border border-line bg-white hover:bg-surface-alt disabled:cursor-not-allowed"
+          class="ripple flex size-10 items-center justify-center rounded-full border border-line bg-white hover:bg-surface-alt disabled:cursor-not-allowed touch-target"
           [class]="email.isPrimary ? 'text-faint' : 'text-danger-text'"
           [disabled]="email.isPrimary"
           [attr.aria-label]="'Eliminar ' + email.email"
-          [title]="email.isPrimary ? 'El correo principal no se puede eliminar' : 'Eliminar correo'"
+          [attr.data-tooltip]="
+            email.isPrimary ? 'El correo principal no se puede eliminar' : 'Eliminar correo'
+          "
           (click)="editor.removeEmail(email)"
         >
           <app-icon name="trash" [size]="16" />
@@ -81,9 +83,9 @@
   }
 
   <div
-    class="flex flex-col gap-2.5 rounded-[14px] border-[1.5px] border-dashed border-primary-line bg-primary-tint/50 px-4 py-3.5"
+    class="flex flex-col gap-2.5 rounded-shape-md border-[1.5px] border-dashed border-primary-line bg-primary-tint/50 px-4 py-3.5"
   >
-    <label for="uf-mail" class="text-sm font-bold">Agregar correo</label>
+    <label for="uf-mail" class="text-title-s">Agregar correo</label>
     <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2.5">
       <input
         id="uf-mail"
@@ -106,7 +108,7 @@
           type="button"
           role="radio"
           [attr.aria-checked]="editor.newType() === type.value"
-          class="h-8 rounded-full border px-3 text-[13px] font-bold"
+          class="ripple h-8 rounded-full border px-3 text-title-s"
           [class]="
             editor.newType() === type.value
               ? 'border-primary bg-primary-soft text-primary'
@@ -119,7 +121,7 @@
       }
     </div>
     @if (editor.emailError()) {
-      <span role="alert" class="text-[12.5px] text-danger-text">{{ editor.emailError() }}</span>
+      <span role="alert" class="text-body-s text-danger-text">{{ editor.emailError() }}</span>
     }
   </div>
 </div>

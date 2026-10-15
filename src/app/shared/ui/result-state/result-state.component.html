@@ -10,9 +10,9 @@
       <app-icon [name]="style().icon" [size]="30" [stroke]="2.4" />
     </span>
   </span>
-  <h3 class="m-0 text-[26px] font-bold tracking-tight">{{ heading() }}</h3>
+  <h3 class="m-0 text-headline-s font-medium">{{ heading() }}</h3>
   @if (text()) {
-    <p class="m-0 max-w-[620px] text-[15px] leading-relaxed text-body">{{ text() }}</p>
+    <p class="m-0 max-w-[620px] text-body-l leading-relaxed text-body">{{ text() }}</p>
   }
   <ng-content />
 </div>

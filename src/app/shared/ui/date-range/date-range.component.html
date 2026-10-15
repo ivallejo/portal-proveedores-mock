@@ -1,14 +1,8 @@
 <span [id]="labelId" class="field-label">{{ label() }}</span>
 <button
   type="button"
-  class="flex h-11 w-full min-w-0 items-center gap-2.5 rounded-[10px] border bg-white pr-2.5 pl-3 text-left text-ink transition-[border-color,box-shadow]"
-  [class]="
-    open()
-      ? 'border-primary shadow-[0_0_0_3px_rgba(22,104,227,0.14)]'
-      : invalid()
-        ? 'border-[#E04848]'
-        : 'border-field'
-  "
+  class="flex h-12 w-full min-w-0 items-center gap-2.5 rounded-shape-xs border bg-white pr-2.5 pl-3 text-left text-ink transition-[border-color,box-shadow] focus-visible:field-focus-ring"
+  [class]="open() ? 'field-focus-ring' : invalid() ? 'border-danger-field' : 'border-field'"
   aria-haspopup="dialog"
   [attr.aria-expanded]="open()"
   [attr.aria-labelledby]="labelId"
@@ -16,40 +10,43 @@
 >
   <app-icon name="calendar" [size]="18" class="shrink-0 text-primary" />
   @if (hasValue()) {
-    <span
-      class="flex min-w-0 grow items-center gap-2 text-sm font-medium whitespace-nowrap tabular-nums"
-    >
+    <span class="flex min-w-0 grow items-center gap-2 text-title-s whitespace-nowrap tabular-nums">
       <span class="truncate">{{ fromLabel() }}</span>
       <app-icon name="arrow-right" [size]="15" [stroke]="2" class="shrink-0 text-faint" />
       <span class="truncate">{{ toLabel() }}</span>
     </span>
     <span
-      class="flex h-6 shrink-0 items-center rounded-full bg-primary-soft px-2 text-xs font-bold text-primary"
+      class="flex h-6 shrink-0 items-center rounded-full bg-primary-soft px-2 text-label-m text-primary"
       >{{ appliedDays() }}</span
     >
   } @else {
-    <span class="grow text-sm text-faint">{{ placeholder() }}</span>
+    <span class="grow text-body-m text-subtle">{{ placeholder() }}</span>
   }
 </button>
 
 @if (open()) {
   @if (layout() === 'mobile') {
     <!-- Móvil: hoja inferior con un mes -->
-    <div class="animate-fade fixed inset-0 z-50 bg-[rgba(14,42,92,0.45)]" (click)="cancel()"></div>
+    <div
+      class="animate-fade fixed inset-0 z-50 bg-scrim"
+      animate.leave="animate-leave"
+      (click)="cancel()"
+    ></div>
     <div
       role="dialog"
       aria-modal="true"
+      animate.leave="animate-leave"
       [attr.aria-labelledby]="labelId + '-sheet'"
-      class="animate-in fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col overflow-y-auto rounded-t-3xl bg-white shadow-pop-up"
+      class="animate-in fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col overflow-y-auto rounded-t-shape-xl bg-white shadow-pop-up"
     >
       <div class="flex justify-center pt-2">
         <span class="h-[5px] w-10 rounded-full bg-field"></span>
       </div>
       <div class="flex items-center justify-between px-4 pt-2 pb-1">
-        <span [id]="labelId + '-sheet'" class="text-lg font-bold">{{ label() }}</span>
+        <span [id]="labelId + '-sheet'" class="text-title-m">{{ label() }}</span>
         <button
           type="button"
-          class="flex size-10 items-center justify-center rounded-[10px] bg-[#F3F4F6] text-label"
+          class="ripple flex size-10 items-center justify-center rounded-full bg-surface-icon-button text-label"
           aria-label="Cerrar"
           (click)="cancel()"
         >
@@ -58,20 +55,20 @@
       </div>
       <div class="grid grid-cols-2 gap-2 px-4 py-2">
         <span
-          class="flex flex-col gap-0.5 rounded-xl border-[1.5px] bg-surface-alt px-3 py-2"
+          class="flex flex-col gap-0.5 rounded-shape-md border-[1.5px] bg-surface-alt px-3 py-2"
           [class]="!pending() ? 'border-primary' : 'border-transparent'"
         >
-          <span class="eyebrow text-[11px]">Desde</span>
-          <span class="text-sm font-bold tabular-nums" [class.text-faint]="!draft().from">{{
+          <span class="eyebrow text-body-s">Desde</span>
+          <span class="text-title-s tabular-nums" [class.text-subtle]="!draft().from">{{
             fromTile()
           }}</span>
         </span>
         <span
-          class="flex flex-col gap-0.5 rounded-xl border-[1.5px] bg-surface-alt px-3 py-2"
+          class="flex flex-col gap-0.5 rounded-shape-md border-[1.5px] bg-surface-alt px-3 py-2"
           [class]="pending() ? 'border-primary' : 'border-transparent'"
         >
-          <span class="eyebrow text-[11px]">Hasta</span>
-          <span class="text-sm font-bold tabular-nums" [class.text-faint]="!draft().to">{{
+          <span class="eyebrow text-body-s">Hasta</span>
+          <span class="text-title-s tabular-nums" [class.text-subtle]="!draft().to">{{
             toTile()
           }}</span>
         </span>
@@ -81,7 +78,7 @@
           @for (preset of presets(); track preset.label) {
             <button
               type="button"
-              class="h-[34px] shrink-0 rounded-full border px-3 text-[13px] whitespace-nowrap"
+              class="ripple h-10 shrink-0 rounded-full border px-3 text-body-m whitespace-nowrap"
               [class]="
                 preset.on
                   ? 'border-primary bg-primary-soft font-bold text-primary'
@@ -101,7 +98,7 @@
         />
       </div>
       @if (tooLong()) {
-        <p class="m-0 px-4 text-center text-[13px] text-danger-text">{{ draftHint() }}</p>
+        <p class="m-0 px-4 text-center text-body-m text-danger-text">{{ draftHint() }}</p>
       }
       <div class="flex gap-2.5 border-t border-line-soft px-4 pt-3 pb-6">
         <button type="button" class="btn btn-secondary flex-1" (click)="clear()">Limpiar</button>
@@ -113,7 +110,7 @@
         >
           Aplicar
           @if (draftDays() && !tooLong()) {
-            <span class="rounded-full bg-white/20 px-2 py-0.5 text-xs">{{ draftHint() }}</span>
+            <span class="rounded-full bg-white/20 px-2 py-0.5 text-body-s">{{ draftHint() }}</span>
           }
         </button>
       </div>
@@ -123,7 +120,8 @@
     <div
       role="dialog"
       aria-label="Elegir rango de fechas"
-      class="animate-in absolute top-full z-40 mt-2 overflow-hidden rounded-[18px] border border-line bg-white shadow-[0_24px_60px_rgba(14,42,92,0.18)]"
+      animate.leave="animate-leave"
+      class="animate-menu absolute top-full z-40 mt-2 origin-top overflow-hidden rounded-shape-lg border border-line bg-white shadow-picker"
       [class]="alignRight() ? 'right-0' : 'left-0'"
     >
       <div class="flex" [class.flex-col]="layout() === 'tablet'">
@@ -131,11 +129,11 @@
           <div
             class="flex w-[184px] shrink-0 flex-col gap-0.5 border-r border-line-soft bg-surface-alt px-2.5 py-4"
           >
-            <span class="eyebrow px-2.5 pb-2 text-[11px]">Atajos</span>
+            <span class="eyebrow px-2.5 pb-2 text-body-s">Atajos</span>
             @for (preset of presets(); track preset.label) {
               <button
                 type="button"
-                class="flex h-[38px] items-center justify-between rounded-[9px] px-2.5 text-left text-[13.5px] hover:bg-[#F1F5FB]"
+                class="ripple flex h-10 items-center justify-between rounded-shape-sm px-2.5 text-left text-body-m hover:bg-surface-blue-strong"
                 [class]="
                   preset.on ? 'bg-primary-soft font-bold text-primary' : 'font-medium text-label'
                 "
@@ -151,12 +149,12 @@
           </div>
         } @else {
           <div class="flex flex-col gap-2 px-5 pt-4 pb-1">
-            <span class="eyebrow text-[11px]">Atajos</span>
+            <span class="eyebrow text-body-s">Atajos</span>
             <div role="group" aria-label="Atajos" class="no-scrollbar flex gap-2 overflow-x-auto">
               @for (preset of presets(); track preset.label) {
                 <button
                   type="button"
-                  class="h-[34px] shrink-0 rounded-full border px-3 text-[13px] whitespace-nowrap"
+                  class="ripple h-10 shrink-0 rounded-full border px-3 text-body-m whitespace-nowrap"
                   [class]="
                     preset.on
                       ? 'border-primary bg-primary-soft font-bold text-primary'
@@ -183,12 +181,10 @@
             class="flex items-center justify-between gap-3.5 border-t border-line-soft px-5 py-3.5"
           >
             <div class="flex min-w-0 items-center gap-2.5">
-              <span class="text-[13.5px] font-bold whitespace-pre tabular-nums">{{
-                draftText()
-              }}</span>
+              <span class="text-title-s whitespace-pre tabular-nums">{{ draftText() }}</span>
               @if (draftHint()) {
                 <span
-                  class="flex h-6 items-center rounded-full px-2 text-xs font-bold whitespace-nowrap"
+                  class="flex h-6 items-center rounded-full px-2 text-label-m whitespace-nowrap"
                   [class]="
                     tooLong() ? 'bg-danger-tint text-danger-text' : 'bg-primary-soft text-primary'
                   "
@@ -199,7 +195,7 @@
             <div class="flex shrink-0 gap-2">
               <button
                 type="button"
-                class="h-10 rounded-[10px] px-3 text-sm text-muted hover:bg-page"
+                class="ripple h-10 rounded-shape-sm px-3 text-body-m text-muted hover:bg-page"
                 (click)="clear()"
               >
                 Limpiar
@@ -230,7 +226,7 @@
       @if (index === 0) {
         <button
           type="button"
-          class="flex size-[34px] items-center justify-center rounded-[10px] border border-line bg-white text-label hover:bg-[#EEF3FB]"
+          class="ripple flex size-10 items-center justify-center rounded-full border border-line bg-white text-label hover:bg-surface-blue-hover touch-target"
           aria-label="Mes anterior"
           (click)="previousMonth()"
         >
@@ -239,11 +235,11 @@
       } @else {
         <span class="w-[34px]"></span>
       }
-      <span class="text-[15px] font-bold">{{ month.title }}</span>
+      <span class="text-title-m">{{ month.title }}</span>
       @if (index === months().length - 1) {
         <button
           type="button"
-          class="flex size-[34px] items-center justify-center rounded-[10px] border border-line bg-white text-label hover:bg-[#EEF3FB] disabled:cursor-not-allowed disabled:opacity-40"
+          class="ripple flex size-10 items-center justify-center rounded-full border border-line bg-white text-label hover:bg-surface-blue-hover disabled:cursor-not-allowed disabled:opacity-40 touch-target"
           aria-label="Mes siguiente"
           [disabled]="!canGoNext()"
           (click)="nextMonth()"
@@ -262,8 +258,8 @@
     >
       @for (weekday of weekdays; track weekday.label) {
         <span
-          class="flex h-[30px] items-center justify-center text-xs font-bold"
-          [class]="weekday.weekend ? 'text-faint' : 'text-muted'"
+          class="flex h-[30px] items-center justify-center text-label-m"
+          [class]="weekday.weekend ? 'text-subtle' : 'text-muted'"
           >{{ weekday.label }}</span
         >
       }
@@ -280,20 +276,20 @@
             ></span>
             <button
               type="button"
-              class="relative rounded-full border-[1.5px] text-[13.5px] tabular-nums transition-colors enabled:hover:shadow-[inset_0_0_0_1.5px_#9DBDF3] disabled:cursor-not-allowed"
+              class="ripple relative rounded-full border-[1.5px] text-body-m tabular-nums transition-colors enabled:hover:inset-ring-[1.5px] enabled:hover:inset-ring-day-hover disabled:cursor-not-allowed"
               [style.width.px]="cell - 2"
               [style.height.px]="cell - 2"
               [class]="
                 day.isEnd
                   ? 'border-primary bg-primary font-bold text-white'
                   : day.disabled
-                    ? 'border-transparent text-[#B8C0CC]'
+                    ? 'border-transparent text-day-disabled'
                     : day.inRange
-                      ? 'border-transparent font-medium text-[#0E3E9E]'
+                      ? 'border-transparent font-medium text-primary-ink'
                       : day.isToday
                         ? 'border-primary font-bold text-ink'
                         : day.weekend
-                          ? 'border-transparent font-medium text-[#5A6A86]'
+                          ? 'border-transparent font-medium text-muted-auth'
                           : 'border-transparent font-medium text-ink'
               "
               [disabled]="day.disabled"

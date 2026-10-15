@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -11,12 +12,18 @@ import { API_BASE_URL } from './core/config/api-base-url.token';
 import { NAVIGATION_PROVIDERS, SessionMenuFacade } from './features/menus';
 import { AUTH_PROVIDERS, SESSION_LISTENERS, authInterceptor } from './features/auth';
 import { FEATURE_FLAGS } from './core/config/feature-flags.token';
+import { Ripple } from './shared/ui/ripple/ripple';
+import { Tooltip } from './shared/ui/tooltip/tooltip';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Onda de pulsación M3 en `.btn-*` y elementos con la clase `ripple`.
+    provideAppInitializer(() => inject(Ripple).listen()),
+    // Tooltips M3 en elementos con `data-tooltip` (reemplazan al atributo `title`).
+    provideAppInitializer(() => inject(Tooltip).listen()),
     provideRouter(
       routes,
       withComponentInputBinding(),

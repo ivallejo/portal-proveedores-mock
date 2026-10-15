@@ -5,7 +5,7 @@
 >
   @switch (state()) {
     @case ('loading') {
-      <div class="flex items-center gap-3 text-sm text-muted" role="status">
+      <div class="flex items-center gap-3 text-body-m text-muted" role="status">
         <app-spinner [size]="20" /> Verificando tu correo…
       </div>
     }
@@ -14,10 +14,7 @@
         <strong class="text-ink">{{ email() }}</strong> quedó verificado. Ya puedes usarlo como
         correo principal desde Mi perfil.
       </app-auth-heading>
-      <a
-        [routerLink]="auth.user() ? '/perfil' : '/login'"
-        class="btn btn-primary h-[52px] text-base"
-      >
+      <a [routerLink]="auth.user() ? '/perfil' : '/login'" class="btn btn-primary text-title-m">
         {{ auth.user() ? 'Ir a Mi perfil' : 'Ingresar al portal' }}
       </a>
     }
@@ -26,10 +23,7 @@
         El enlace es inválido o ya venció. Desde Mi perfil › Mis correos puedes pedir uno nuevo con
         «Reenviar verificación».
       </app-callout>
-      <a
-        [routerLink]="auth.user() ? '/perfil' : '/login'"
-        class="btn btn-primary h-[52px] text-base"
-      >
+      <a [routerLink]="auth.user() ? '/perfil' : '/login'" class="btn btn-primary text-title-m">
         {{ auth.user() ? 'Ir a Mi perfil' : 'Ingresar al portal' }}
       </a>
     }

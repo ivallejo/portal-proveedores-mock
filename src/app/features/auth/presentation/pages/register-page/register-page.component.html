@@ -17,7 +17,7 @@
           Ingresa el RUC de tu empresa para validar que estás registrado como proveedor.
         </app-auth-heading>
         <div class="flex flex-col gap-2">
-          <label for="rg-ruc" class="text-sm font-bold text-ink">RUC</label>
+          <label for="rg-ruc" class="text-title-s text-ink">RUC</label>
           <div class="relative flex">
             <app-icon
               name="building"
@@ -34,14 +34,14 @@
               (input)="onRuc($event)"
               [attr.aria-invalid]="rucInvalid()"
               aria-describedby="rg-ruc-help"
-              class="h-[50px] grow rounded-[10px] border bg-white pr-4 pl-12 text-[15px] tracking-[0.04em] text-ink tabular-nums outline-none focus:border-primary"
+              class="h-12 grow rounded-shape-xs border bg-white pr-4 pl-12 text-body-l tracking-[0.04em] text-ink tabular-nums outline-none focus:field-focus-ring"
               [class.border-field-auth]="!rucInvalid()"
-              [class.border-[#E04848]]="rucInvalid()"
+              [class.border-danger-field]="rucInvalid()"
             />
           </div>
           <span
             id="rg-ruc-help"
-            class="text-[13px]"
+            class="text-body-m"
             [class]="rucError() ? 'text-danger-text' : 'text-muted-auth'"
             >{{ rucError() || 'Debe tener 11 dígitos.' }}</span
           >
@@ -51,7 +51,7 @@
             failure.text
           }}</app-callout>
         }
-        <button type="submit" class="btn btn-primary h-[52px] text-base" [disabled]="busy()">
+        <button type="submit" class="btn btn-primary text-title-m" [disabled]="busy()">
           @if (busy()) {
             <app-spinner [size]="20" />Validando en SAP…
           } @else {
@@ -65,31 +65,31 @@
         <app-auth-heading icon="circle-check" heading="Confirma tus datos" [success]="true">
           Validamos tu RUC. Revisa que la información sea correcta antes de registrarte.
         </app-auth-heading>
-        <dl class="m-0 overflow-hidden rounded-[14px] border border-line-auth">
-          <div class="flex flex-col gap-1 border-b border-[#EEF2F8] px-[18px] py-3.5">
+        <dl class="m-0 overflow-hidden rounded-shape-md border border-line-auth">
+          <div class="flex flex-col gap-1 border-b border-surface-segment px-[18px] py-3.5">
             <dt class="eyebrow">RUC</dt>
             <dd
-              class="m-0 flex items-center gap-2.5 text-base font-medium tracking-[0.04em] text-ink tabular-nums"
+              class="m-0 flex items-center gap-2.5 text-title-m tracking-[0.04em] text-ink tabular-nums"
             >
               <span>{{ provider()?.ruc }}</span>
               <span
-                class="inline-flex h-6 items-center gap-[5px] rounded-full bg-success-soft px-[9px] text-xs font-bold tracking-normal text-success-text"
+                class="inline-flex h-6 items-center gap-[5px] rounded-full bg-success-soft px-[9px] text-label-m tracking-normal text-success-text"
                 ><app-icon name="check" [size]="13" [stroke]="2.6" />Validado</span
               >
             </dd>
           </div>
-          <div class="flex flex-col gap-1 border-b border-[#EEF2F8] px-[18px] py-3.5">
+          <div class="flex flex-col gap-1 border-b border-surface-segment px-[18px] py-3.5">
             <dt class="eyebrow">Razón social</dt>
-            <dd class="m-0 text-base font-medium text-ink">{{ provider()?.companyName }}</dd>
+            <dd class="m-0 text-title-m text-ink">{{ provider()?.companyName }}</dd>
           </div>
           <div class="flex flex-col gap-1 bg-surface-auth px-[18px] py-3.5">
             <dt class="eyebrow">Correo electrónico</dt>
-            <dd class="m-0 flex items-center gap-2 text-base font-medium text-ink">
+            <dd class="m-0 flex items-center gap-2 text-title-m text-ink">
               <app-icon name="mail" [size]="18" class="text-primary" />{{ provider()?.email }}
             </dd>
           </div>
         </dl>
-        <p class="-mt-1.5 mb-0 text-[13px] leading-normal text-muted-auth">
+        <p class="-mt-1.5 mb-0 text-body-m leading-normal text-muted-auth">
           Enviaremos a este correo un enlace para que crees tu contraseña. Al registrarte aceptas
           los términos y condiciones de uso del portal.
         </p>
@@ -101,7 +101,7 @@
         <div class="flex flex-col gap-2.5">
           <button
             type="button"
-            class="btn btn-primary h-[52px] text-base"
+            class="btn btn-primary text-title-m"
             [disabled]="busy()"
             (click)="register()"
           >
@@ -113,7 +113,7 @@
           </button>
           <button
             type="button"
-            class="h-11 text-sm font-medium text-primary hover:text-primary-hover"
+            class="h-12 text-title-s text-primary hover:text-primary-hover"
             (click)="restart()"
           >
             Usar otro RUC
@@ -132,20 +132,18 @@
             </span>
           </span>
           <div class="flex flex-col gap-2">
-            <h2 class="m-0 text-[30px] font-bold tracking-tight text-ink">¡Registro exitoso!</h2>
-            <p class="m-0 text-[15px] leading-relaxed text-body-auth">
+            <h2 class="m-0 text-headline-m font-medium text-ink">¡Registro exitoso!</h2>
+            <p class="m-0 text-body-l leading-relaxed text-body-auth">
               Te enviamos un correo a <strong class="text-ink">{{ sentTo() }}</strong> con un enlace
               para que registres tu contraseña.
             </p>
           </div>
-          <app-callout tone="info" icon="clock" class="w-full text-left text-[13px]">
+          <app-callout tone="info" icon="clock" class="w-full text-left text-body-m">
             El enlace vence en 24 horas. Si no ves el correo, revisa tu carpeta de spam o correo no
             deseado.
           </app-callout>
         </div>
-        <a routerLink="/login" class="btn btn-primary h-[52px] text-base"
-          >Volver al inicio de sesión</a
-        >
+        <a routerLink="/login" class="btn btn-primary text-title-m">Volver al inicio de sesión</a>
       </div>
     }
   }

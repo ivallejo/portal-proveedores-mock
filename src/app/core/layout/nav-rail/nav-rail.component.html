@@ -1,0 +1,54 @@
+<nav
+  aria-label="Menú principal"
+  class="bg-nav-gradient sticky top-0 z-30 flex h-screen w-20 shrink-0 flex-col items-center gap-5 overflow-y-auto py-4 print:hidden"
+>
+  <a routerLink="/inicio" class="flex size-12 items-center justify-center" aria-label="Inicio">
+    <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M24 3l18 10.4v21.2L24 45 6 34.6V13.4z" fill="#EAF2FF" />
+      <path d="M24 13l9 5.2v10.4L24 34l-9-5.4V18.2z" fill="#2F6BDB" />
+      <path d="M24 13l9 5.2-9 5.2-9-5.2z" fill="#9CC0FF" />
+    </svg>
+  </a>
+
+  <div class="flex w-full flex-col gap-3">
+    @for (item of items(); track item.code) {
+      @if (item.children.length) {
+        <button
+          type="button"
+          class="group flex w-full flex-col items-center gap-1 text-label-s text-nav-text"
+          [class.text-white]="isGroupActive(item)"
+          [attr.data-tooltip]="item.name"
+          [attr.aria-label]="item.name + ': abrir submenús'"
+          (click)="layout.openGroup(item.code)"
+        >
+          <span
+            class="ripple flex h-8 w-14 items-center justify-center rounded-full group-hover:bg-white/5"
+            [class]="isGroupActive(item) ? '!bg-nav-active shadow-nav-active' : ''"
+          >
+            <app-icon [name]="icon(item)" [size]="22" />
+          </span>
+          <span class="max-w-full truncate px-1">{{ item.name }}</span>
+        </button>
+      } @else if (item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="!text-white"
+          ariaCurrentWhenActive="page"
+          class="group flex w-full flex-col items-center gap-1 text-label-s text-nav-text no-underline"
+          [attr.data-tooltip]="item.name"
+        >
+          <span
+            class="ripple flex h-8 w-14 items-center justify-center rounded-full group-hover:bg-white/5 group-aria-[current=page]:bg-nav-active group-aria-[current=page]:shadow-nav-active"
+          >
+            <app-icon [name]="icon(item)" [size]="22" />
+          </span>
+          <span class="max-w-full truncate px-1">{{ item.name }}</span>
+        </a>
+      }
+    } @empty {
+      @for (row of [1, 2, 3, 4]; track row) {
+        <span class="mx-auto h-8 w-14 rounded-full bg-white/5" aria-hidden="true"></span>
+      }
+    }
+  </div>
+</nav>

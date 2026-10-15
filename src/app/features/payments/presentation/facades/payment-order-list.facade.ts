@@ -9,7 +9,7 @@ import { PaymentOrder } from '../../domain/models/payment-order';
 import { totalPaidIn, withheldTotal } from '../../domain/rules/payment-order-rules';
 import { SupplierScopeFacade } from './supplier-scope.facade';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 
 /** Estado de Orden de pago: filtros, resultados de SAP, paginación, indicadores y la orden abierta. */
 @Injectable()
@@ -28,7 +28,7 @@ export class PaymentOrderListFacade {
   /** Fecha y hora que se imprime en el detalle. */
   readonly printedAt = signal('');
 
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
   readonly companyOptions = this.scope.companyOptions(
     'Todas las sociedades',
     'Mostrar pagos de todas',
@@ -37,7 +37,7 @@ export class PaymentOrderListFacade {
   readonly range = computed<DateRange>(() => ({ from: this.draft().from, to: this.draft().to }));
 
   readonly pageRows = computed(() =>
-    this.orders().slice((this.page() - 1) * PAGE_SIZE, this.page() * PAGE_SIZE),
+    this.orders().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()),
   );
 
   readonly kpis = computed(() => ({
@@ -125,5 +125,11 @@ export class PaymentOrderListFacade {
 
   private defaults(): PaymentOrderFilter {
     return { ruc: '', company: '', ...this.scope.defaultPeriod() };
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.page.set(1);
   }
 }

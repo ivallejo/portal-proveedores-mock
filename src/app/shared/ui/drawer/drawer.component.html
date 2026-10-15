@@ -1,34 +1,32 @@
-<div
-  class="animate-fade fixed inset-0 z-40 flex justify-end bg-[rgba(14,42,92,0.45)]"
-  (click)="onBackdrop($event)"
->
+<div class="animate-fade fixed inset-0 z-40 flex justify-end bg-scrim" (click)="onBackdrop($event)">
   <aside
     role="dialog"
     aria-modal="true"
+    appFocusTrap
     [attr.aria-labelledby]="titleId"
-    class="animate-in flex h-full w-full max-w-[640px] flex-col bg-white shadow-[-24px_0_60px_rgba(14,42,92,0.25)]"
+    class="animate-in flex h-full w-full outline-none max-w-[640px] flex-col bg-white shadow-sheet"
   >
     <div
       class="flex items-start justify-between gap-4 border-b border-line-soft px-5 pt-6 pb-[18px] sm:px-7"
     >
       <div class="flex min-w-0 items-center gap-3.5">
         <span
-          class="flex size-[46px] shrink-0 items-center justify-center rounded-xl bg-primary-tint text-primary"
+          class="flex size-[46px] shrink-0 items-center justify-center rounded-shape-md bg-primary-tint text-primary"
         >
           <app-icon [name]="icon()" [size]="22" />
         </span>
         <div class="flex min-w-0 flex-col gap-[3px]">
-          <h2 [id]="titleId" class="m-0 text-[22px] font-bold tracking-tight">
+          <h2 [id]="titleId" class="m-0 text-title-l font-medium">
             {{ heading() }}
           </h2>
           @if (subtitle()) {
-            <span class="truncate text-[13.5px] text-body">{{ subtitle() }}</span>
+            <span class="truncate text-body-m text-body">{{ subtitle() }}</span>
           }
         </div>
       </div>
       <button
         type="button"
-        class="flex size-[42px] shrink-0 items-center justify-center rounded-[10px] bg-[#F3F4F6] text-label hover:bg-line"
+        class="ripple flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-icon-button text-label hover:bg-line touch-target"
         aria-label="Cerrar"
         (click)="closed.emit()"
       >

@@ -33,19 +33,19 @@
         (input)="facade.setField('name', $any($event.target).value)"
       />
       @if (facade.showErrors() && facade.errors().name; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
     <div class="flex flex-col gap-2">
       <span class="field-label">Estado</span>
-      <span role="radiogroup" class="flex h-11 rounded-[10px] bg-surface-muted p-1">
+      <span role="radiogroup" class="flex h-12 rounded-full bg-surface-muted p-1">
         @for (option of [true, false]; track option) {
           <button
             type="button"
             role="radio"
             [attr.aria-checked]="facade.form().isActive === option"
             [disabled]="!option && !!facade.current() && isProtected($any(facade.current()))"
-            class="grow rounded-lg text-[13px] font-bold disabled:opacity-40"
+            class="ripple grow rounded-full text-title-s disabled:opacity-40"
             [class]="
               facade.form().isActive === option ? 'bg-white text-primary shadow-sm' : 'text-muted'
             "
@@ -66,7 +66,7 @@
         (valueChange)="facade.setField('parentId', $event)"
       />
       <span
-        class="text-[12.5px]"
+        class="text-body-s"
         [class]="
           facade.showErrors() && facade.errors().parentId ? 'text-danger-text' : 'text-muted'
         "
@@ -99,7 +99,7 @@
         />
       }
       <span
-        class="text-[12.5px]"
+        class="text-body-s"
         [class]="facade.showErrors() && facade.errors().route ? 'text-danger-text' : 'text-muted'"
         >{{
           (facade.showErrors() && facade.errors().route) ||
@@ -117,15 +117,15 @@
         (valueChange)="facade.setField('icon', $event)"
       />
       @if (facade.form().icon) {
-        <span class="flex items-center gap-2 text-[12.5px] text-muted">
+        <span class="flex items-center gap-2 text-body-s text-muted">
           <span
-            class="flex size-7 items-center justify-center rounded-lg bg-primary-soft text-primary"
+            class="flex size-7 items-center justify-center rounded-shape-sm bg-primary-soft text-primary"
             ><app-icon [name]="icon(facade.form().icon)" [size]="16"
           /></span>
           Vista previa
         </span>
       } @else if (facade.showErrors() && facade.errors().icon; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
     <div class="flex flex-col gap-2">
@@ -141,7 +141,7 @@
         (input)="facade.setField('order', $any($event.target).value)"
       />
       <span
-        class="text-[12.5px]"
+        class="text-body-s"
         [class]="facade.showErrors() && facade.errors().order ? 'text-danger-text' : 'text-muted'"
         >{{
           (facade.showErrors() && facade.errors().order) || 'Posición dentro de su nivel.'
@@ -161,11 +161,11 @@
     class="flex items-center justify-between gap-3 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
   >
     @if (facade.saveError()) {
-      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+      <span role="alert" class="flex items-center gap-1.5 text-body-m text-danger-text">
         <app-icon name="alert-circle" [size]="16" />{{ facade.saveError() }}
       </span>
     } @else {
-      <span class="text-[13px] text-muted">Los campos con * son obligatorios.</span>
+      <span class="text-body-m text-muted">Los campos con * son obligatorios.</span>
     }
     <div class="flex gap-2.5">
       <button type="button" class="btn btn-secondary" (click)="facade.closeDrawer()">

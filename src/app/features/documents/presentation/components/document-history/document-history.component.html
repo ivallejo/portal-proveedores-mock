@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between">
-  <span class="text-base font-bold">{{ heading() }}</span>
-  <span class="text-[12.5px] text-muted">{{ events().length }} eventos</span>
+  <span class="text-title-m">{{ heading() }}</span>
+  <span class="text-body-s text-muted">{{ events().length }} eventos</span>
 </div>
 <ol
   [attr.aria-label]="heading()"
@@ -29,7 +29,7 @@
               <app-icon name="x" [size]="12" [stroke]="3" />
             }
             @case ('warn') {
-              <span class="text-xs leading-none font-bold">!</span>
+              <span class="text-label-m leading-none">!</span>
             }
             @default {
               <span class="size-2 rounded-full bg-warning"></span>
@@ -39,27 +39,27 @@
         @if (!last) {
           <span
             class="my-[3px] min-h-3.5 w-0.5 grow"
-            [class]="event.kind === 'current' ? 'bg-line' : 'bg-[#BCD3F7]'"
+            [class]="event.kind === 'current' ? 'bg-line' : 'bg-timeline-line'"
           ></span>
         }
       </div>
       <div class="flex min-w-0 flex-col gap-[3px] pb-4">
         <span
-          class="text-sm font-bold"
+          class="text-title-s"
           [class]="
             event.kind === 'bad'
-              ? 'text-[#A51E1E]'
+              ? 'text-danger-text-alt'
               : event.kind === 'current' || event.kind === 'warn'
                 ? 'text-warning-text'
                 : 'text-ink'
           "
           >{{ event.title }}</span
         >
-        <span class="text-[12.5px] text-body">{{ event.who }}</span>
-        <span class="text-xs text-subtle tabular-nums">{{ event.when }}</span>
+        <span class="text-body-s text-body">{{ event.who }}</span>
+        <span class="text-body-s text-subtle tabular-nums">{{ event.when }}</span>
         @if (event.note) {
           <span
-            class="mt-1 rounded-lg border border-line bg-white px-2.5 py-2 text-[12.5px] leading-normal text-label"
+            class="mt-1 rounded-shape-sm border border-line bg-white px-2.5 py-2 text-body-s leading-normal text-label"
             >“{{ event.note }}”</span
           >
         }

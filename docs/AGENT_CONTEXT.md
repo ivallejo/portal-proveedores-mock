@@ -14,7 +14,7 @@ Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del l
 
 - Angular 20 standalone, signals, `ChangeDetectionStrategy.OnPush`, control flow `@if/@for/@switch/@let`.
 - Tailwind CSS 4 vía `@tailwindcss/postcss` (`.postcssrc.json`). No hay SCSS.
-- Tipografía Google Sans (cargada en `src/index.html`). Íconos SVG propios en `shared/ui/icon/icons.ts`.
+- Tipografía Roboto autoalojada (`@fontsource-variable/roboto`, declarada en `angular.json`); escala M3 en `src/styles/m3-tokens.css` (ver `docs/DESIGN_SYSTEM.md`). Íconos SVG propios en `shared/ui/icon/icons.ts`.
 - Pruebas con Karma + Jasmine; reglas de arquitectura con `dependency-cruiser` y un script propio.
 
 ```bash
@@ -155,7 +155,7 @@ Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda q
 
 ## Estilos
 
-- Tokens de color, sombras y animaciones en `src/styles.css` (`@theme`): `bg-page`, `text-ink`, `bg-primary`, `border-line`, `text-muted`, `bg-success`, `animate-in`, `animate-pop`, etc. Usar los tokens antes que hexadecimales sueltos.
+- Tokens de color, sombras y animaciones en `src/styles.css` (`@theme`): `bg-page`, `text-ink`, `bg-primary`, `border-line`, `text-muted`, `bg-success`, `animate-in`, `animate-pop`, etc. Usar los tokens antes que hexadecimales sueltos. Tipografía (`text-title-m`, `text-body-s`…), forma (`rounded-shape-md`…) y movimiento M3 en `src/styles/m3-tokens.css`.
 - Componentes CSS en `@layer components`: `.btn` + `.btn-primary|secondary|outline|success|danger|tint|outline-danger`, `.field`, `.field-label`, `.card`, `.eyebrow`, `.skeleton`, `.row-hover`, `.bg-brand-gradient`, `.bg-nav-gradient`.
 - Tonos de estado en `shared/ui/tone/` (`TONE_CLASSES`, `currencyTone`).
 - No usar como clase propia un nombre que ya sea utilidad de Tailwind (por ejemplo `table-row` cambia el `display`).

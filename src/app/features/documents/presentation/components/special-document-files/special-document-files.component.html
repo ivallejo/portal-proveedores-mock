@@ -47,7 +47,7 @@
         <div
           role="radiogroup"
           aria-label="Moneda"
-          class="flex shrink-0 gap-[3px] rounded-[10px] bg-[#EEF2F8] p-[3px]"
+          class="flex shrink-0 gap-[3px] rounded-full bg-surface-segment p-[3px]"
         >
           @for (
             option of [
@@ -59,7 +59,7 @@
             <button
               type="button"
               role="radio"
-              class="h-[38px] rounded-lg px-2.5 text-[13px] font-bold"
+              class="ripple h-10 rounded-full px-2.5 text-title-s"
               [class]="
                 facade.special().currency === option.value
                   ? 'bg-white text-primary shadow-segment'

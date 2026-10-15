@@ -7,7 +7,7 @@
   >
     <div dialog-tags class="flex items-center gap-2.5">
       <app-badge size="sm" [tone]="entryTone[doc.entryType]">{{ doc.entryType }}</app-badge>
-      <span class="text-[13px] text-muted">{{ doc.documentType }}</span>
+      <span class="text-body-m text-muted">{{ doc.documentType }}</span>
     </div>
     <app-badge dialog-status size="lg" [dot]="true" [tone]="statusTone[doc.status]">{{
       doc.status
@@ -18,7 +18,7 @@
     } @else if (facade.result(); as res) {
       <app-result-state [kind]="res.kind" [heading]="res.title" [text]="res.text">
         <div
-          class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
+          class="flex items-center gap-2.5 rounded-shape-md bg-primary-tint px-4 py-3 text-body-m text-ink-soft"
         >
           <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
         </div>
@@ -46,36 +46,36 @@
               track field[0]
             ) {
               <div class="flex min-w-0 flex-col gap-[3px]">
-                <span class="text-xs text-muted">{{ field[0] }}</span>
-                <span class="text-[14.5px] font-bold tabular-nums">{{ field[1] }}</span>
+                <span class="text-body-s text-muted">{{ field[0] }}</span>
+                <span class="text-title-s tabular-nums">{{ field[1] }}</span>
               </div>
             }
           </div>
           <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-[1fr_1fr_1.3fr]">
-            <div class="flex flex-col gap-1 rounded-[14px] border border-line px-4 py-3.5">
-              <span class="text-xs text-muted">Subtotal</span>
-              <span class="text-lg font-bold tabular-nums">{{
-                money(doc.currency, doc.subtotal)
-              }}</span>
+            <div class="flex flex-col gap-1 rounded-shape-md border border-line px-4 py-3.5">
+              <span class="text-body-s text-muted">Subtotal</span>
+              <span class="text-title-m tabular-nums">{{ money(doc.currency, doc.subtotal) }}</span>
             </div>
-            <div class="flex flex-col gap-1 rounded-[14px] border border-line px-4 py-3.5">
-              <span class="text-xs text-muted">{{ doc.igv === null ? 'IGV' : 'IGV (18%)' }}</span>
-              <span class="text-lg font-bold tabular-nums">{{
+            <div class="flex flex-col gap-1 rounded-shape-md border border-line px-4 py-3.5">
+              <span class="text-body-s text-muted">{{
+                doc.igv === null ? 'IGV' : 'IGV (18%)'
+              }}</span>
+              <span class="text-title-m tabular-nums">{{
                 doc.igv === null ? 'No aplica' : money(doc.currency, doc.igv)
               }}</span>
             </div>
             <div
-              class="bg-brand-gradient flex flex-col gap-1 rounded-[14px] px-[18px] py-3.5 text-white"
+              class="bg-brand-gradient flex flex-col gap-1 rounded-shape-md px-[18px] py-3.5 text-white"
             >
-              <span class="text-xs text-[#CFE0FF]">Importe total</span>
-              <span class="text-[22px] font-bold tabular-nums">{{
+              <span class="text-body-s text-on-brand-soft">Importe total</span>
+              <span class="text-title-l font-bold tabular-nums">{{
                 money(doc.currency, doc.amount)
               }}</span>
             </div>
           </div>
           <div class="flex flex-col gap-2">
             <span class="eyebrow">Concepto</span>
-            <p class="m-0 text-[14.5px] leading-relaxed text-[#2A3A55]">{{ doc.concept }}</p>
+            <p class="m-0 text-body-m leading-relaxed text-ink-strong">{{ doc.concept }}</p>
           </div>
           <div class="flex flex-col gap-2">
             <span class="eyebrow">Archivos del documento</span>
@@ -83,7 +83,7 @@
               @for (file of doc.attachments; track file.name) {
                 <button
                   type="button"
-                  class="btn btn-tint h-10 border-line-auth text-[13px]"
+                  class="btn btn-tint h-10 border-line-auth text-body-m"
                   [attr.aria-label]="'Descargar ' + file.name"
                   (click)="facade.download(doc, file)"
                 >
@@ -116,7 +116,7 @@
       dialog-footer
       class="flex flex-wrap items-center justify-between gap-2.5 border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-8"
     >
-      <span class="text-[13px] text-muted">{{ facade.footNote() }}</span>
+      <span class="text-body-m text-muted">{{ facade.footNote() }}</span>
       @if (!facade.detailLoading() && !facade.result() && facade.isPending() && !facade.panel()) {
         <div class="flex flex-wrap gap-2.5">
           <button type="button" class="btn btn-outline-danger" (click)="facade.openPanel('reject')">

@@ -5,7 +5,7 @@ import { ResultKind } from './result-kind';
 
 const RESULT_STYLES: Record<ResultKind, { ring: string; fill: string; icon: IconName }> = {
   ok: { ring: 'bg-success-soft', fill: 'bg-success-bright', icon: 'check' },
-  bad: { ring: 'bg-[#FDE8E8]', fill: 'bg-danger', icon: 'x' },
+  bad: { ring: 'bg-danger-soft-alt', fill: 'bg-danger', icon: 'x' },
   swap: { ring: 'bg-primary-soft', fill: 'bg-primary', icon: 'swap' },
   warn: { ring: 'bg-warning-soft', fill: 'bg-warning', icon: 'alert-triangle' },
 };

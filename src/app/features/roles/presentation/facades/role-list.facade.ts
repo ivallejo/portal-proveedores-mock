@@ -22,7 +22,7 @@ import {
 import { RoleForm } from './role-form';
 import { RoleFormErrors } from './role-form-errors';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 const EMPTY_FORM: RoleForm = { name: '', description: '', isActive: true };
 
 /** Estado de Configuración › Roles y permisos: listado, panel con el árbol de permisos y activación. */
@@ -36,7 +36,7 @@ export class RoleListFacade {
   private readonly toast = inject(ToastService);
 
   readonly statusOptions = statusOptions(false);
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
 
   readonly roles = signal<AccessRole[]>([]);
   readonly menus = signal<PermissionOption[]>([]);
@@ -67,7 +67,7 @@ export class RoleListFacade {
     );
   });
   readonly pageRows = computed(() =>
-    this.rows().slice((this.page() - 1) * PAGE_SIZE, this.page() * PAGE_SIZE),
+    this.rows().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()),
   );
   readonly kpis = computed(() => ({
     total: String(this.roles().length),
@@ -224,7 +224,9 @@ export class RoleListFacade {
       error: (error) => {
         this.toggling.set(false);
         this.confirming.set(null);
-        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), 4000);
+        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), {
+          tone: 'error',
+        });
       },
     });
   }
@@ -242,5 +244,11 @@ export class RoleListFacade {
     if (name) errors.name = name;
     if (!this.selected().size) errors.menus = 'Selecciona al menos una opción del menú.';
     return errors;
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.page.set(1);
   }
 }

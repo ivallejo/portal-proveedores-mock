@@ -1,11 +1,11 @@
 @switch (facade.panel()) {
   @case ('reject') {
     <div
-      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-[14px] border border-danger-line bg-danger-tint px-5 py-[18px] sm:mx-8"
+      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-shape-md border border-danger-line bg-danger-tint px-5 py-[18px] sm:mx-8"
     >
-      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-danger-deep">
+      <div class="flex flex-wrap items-center gap-2.5 text-title-m text-danger-deep">
         <app-icon name="x" [size]="20" [stroke]="2.2" />Rechazar documento
-        <span class="text-[13px] font-normal text-[#7F1D1D]"
+        <span class="text-body-m font-normal text-danger-darkest"
           >· notificaremos por correo al proveedor</span
         >
       </div>
@@ -16,7 +16,7 @@
         id="ct-motivo-rj"
         rows="2"
         class="field h-auto resize-y py-2.5 leading-normal"
-        [class.!border-[#E8B4B4]]="!facade.reasonInvalid()"
+        [class.!border-danger-line-strong]="!facade.reasonInvalid()"
         placeholder="Ej. El documento no corresponde a un servicio prestado a la sociedad."
         [value]="facade.reason()"
         (input)="
@@ -27,7 +27,7 @@
         [attr.aria-invalid]="facade.reasonInvalid()"
       ></textarea>
       <div class="flex flex-wrap items-center justify-between gap-2.5">
-        <span role="alert" class="text-[13px] text-danger-text">{{ facade.panelError() }}</span>
+        <span role="alert" class="text-body-m text-danger-text">{{ facade.panelError() }}</span>
         <div class="flex gap-2.5">
           <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
             Cancelar
@@ -51,11 +51,11 @@
   }
   @case ('observe') {
     <div
-      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-[14px] border border-warning-line bg-warning-tint px-5 py-[18px] sm:mx-8"
+      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-shape-md border border-warning-line bg-warning-tint px-5 py-[18px] sm:mx-8"
     >
-      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-warning-text">
+      <div class="flex flex-wrap items-center gap-2.5 text-title-m text-warning-text">
         <app-icon name="alert-triangle" [size]="20" [stroke]="2" />Observar documento
-        <span class="text-[13px] font-normal text-[#7A4A00]"
+        <span class="text-body-m font-normal text-warning-ink"
           >· enviaremos la observación al correo que indiques</span
         >
       </div>
@@ -105,7 +105,7 @@
           </div>
           <span
             id="ct-correo-help"
-            class="text-xs"
+            class="text-body-s"
             [class]="facade.emailInvalid() ? 'text-danger-text' : 'text-muted'"
           >
             {{
@@ -117,14 +117,14 @@
         </div>
       </div>
       <div class="flex flex-wrap items-center justify-between gap-2.5">
-        <span role="alert" class="text-[13px] text-danger-text">{{ facade.panelError() }}</span>
+        <span role="alert" class="text-body-m text-danger-text">{{ facade.panelError() }}</span>
         <div class="flex gap-2.5">
           <button type="button" class="btn btn-secondary" (click)="facade.closePanel()">
             Cancelar
           </button>
           <button
             type="button"
-            class="btn min-w-[180px] bg-[#C26A0A] text-white hover:bg-[#A85B08]"
+            class="btn min-w-[180px] bg-warning-deep text-white hover:bg-warning-hover"
             [attr.aria-busy]="facade.busy()"
             (click)="facade.observe()"
           >

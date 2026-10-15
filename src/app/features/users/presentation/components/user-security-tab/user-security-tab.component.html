@@ -1,20 +1,20 @@
 <div class="flex flex-col gap-5">
   <div
-    class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line px-4 py-3.5"
+    class="flex flex-wrap items-center justify-between gap-3 rounded-shape-md border border-line px-4 py-3.5"
   >
     <span class="flex min-w-0 flex-col gap-0.5">
-      <span class="text-sm font-bold">Solicitar cambio de contraseña en el próximo inicio</span>
-      <span class="text-[12.5px] text-muted"
+      <span class="text-title-s">Solicitar cambio de contraseña en el próximo inicio</span>
+      <span class="text-body-s text-muted"
         >El usuario deberá definir una nueva contraseña al ingresar.</span
       >
     </span>
-    <span role="radiogroup" class="flex rounded-[10px] bg-surface-muted p-1">
+    <span role="radiogroup" class="flex rounded-full bg-surface-muted p-1">
       @for (option of [false, true]; track option) {
         <button
           type="button"
           role="radio"
           [attr.aria-checked]="editor.form().mustChangePassword === option"
-          class="h-8 rounded-lg px-4 text-[13px] font-bold"
+          class="ripple h-8 rounded-full px-4 text-title-s"
           [class]="
             editor.form().mustChangePassword === option
               ? 'bg-white text-primary shadow-sm'
@@ -28,12 +28,12 @@
     </span>
   </div>
 
-  <div class="flex flex-col gap-3 rounded-xl border border-line px-4 py-3.5">
+  <div class="flex flex-col gap-3 rounded-shape-md border border-line px-4 py-3.5">
     <span class="flex flex-col gap-0.5">
-      <span class="text-sm font-bold">{{
+      <span class="text-title-s">{{
         editor.detail()!.isActivated ? 'Recuperación de contraseña' : 'Activación de la cuenta'
       }}</span>
-      <span class="text-[12.5px] text-muted"
+      <span class="text-body-s text-muted"
         >{{ editor.detail()!.isActivated ? '' : 'El usuario aún no activa su cuenta.' }} El enlace
         se envía a <strong class="text-ink">{{ editor.primaryEmail() }}</strong> y vence en 24
         horas.</span
@@ -59,25 +59,25 @@
   </div>
 
   <div class="flex flex-col gap-2.5">
-    <span class="text-sm font-bold">Historial de enlaces</span>
-    <div class="overflow-hidden rounded-xl border border-line">
+    <span class="text-title-s">Historial de enlaces</span>
+    <div class="overflow-hidden rounded-shape-md border border-line">
       <div
-        class="grid grid-cols-[1.2fr_1fr_1fr_0.9fr] gap-3 bg-surface-muted px-4 py-2.5 text-[11.5px] font-bold tracking-[0.04em] text-body uppercase"
+        class="grid grid-cols-[1.2fr_1fr_1fr_0.9fr] gap-3 bg-surface-muted px-4 py-2.5 text-label-s tracking-[0.04em] text-body uppercase"
       >
         <span>Token</span><span>Creado</span><span>Expira</span><span>Estado</span>
       </div>
       @if (editor.linksLoading()) {
-        <div class="flex items-center gap-2 px-4 py-3 text-[13px] text-muted">
+        <div class="flex items-center gap-2 px-4 py-3 text-body-m text-muted">
           <app-spinner [size]="16" /> Cargando…
         </div>
       } @else {
         @for (link of editor.links(); track link.fingerprint + link.createdAtUtc) {
           <div
-            class="grid grid-cols-[1.2fr_1fr_1fr_0.9fr] items-center gap-3 border-t border-line-soft px-4 py-2.5 text-[13px] tabular-nums"
+            class="grid grid-cols-[1.2fr_1fr_1fr_0.9fr] items-center gap-3 border-t border-line-soft px-4 py-2.5 text-body-m tabular-nums"
           >
             <span class="flex flex-col">
-              <span class="font-mono text-[12.5px]">{{ link.fingerprint }}</span>
-              <span class="text-[11.5px] text-muted">{{
+              <span class="font-mono text-body-s">{{ link.fingerprint }}</span>
+              <span class="text-body-s text-muted">{{
                 link.kind === 'activation' ? 'Activación' : 'Recuperación'
               }}</span>
             </span>
@@ -90,7 +90,7 @@
             >
           </div>
         } @empty {
-          <div class="border-t border-line-soft px-4 py-3 text-[13px] text-muted">
+          <div class="border-t border-line-soft px-4 py-3 text-body-m text-muted">
             Aún no se han generado enlaces.
           </div>
         }

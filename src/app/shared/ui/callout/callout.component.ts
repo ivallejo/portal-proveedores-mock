@@ -10,11 +10,11 @@ const CALLOUT_STYLES: Record<CalloutTone, { box: string; icon: IconName }> = {
     icon: 'alert-circle',
   },
   success: {
-    box: 'border border-[#CDEBD8] bg-success-tint text-success-text',
+    box: 'border border-success-line-alt bg-success-tint text-success-text',
     icon: 'circle-check',
   },
-  warn: { box: 'bg-[#FFF6E8] text-[#7A4A00]', icon: 'alert-triangle' },
-  neutral: { box: 'bg-[#F1F4F9] text-[#3B4A66]', icon: 'lock-simple' },
+  warn: { box: 'bg-warning-tint-alt text-warning-ink', icon: 'alert-triangle' },
+  neutral: { box: 'bg-neutral-tint text-neutral-ink', icon: 'lock-simple' },
 };
 
 /** Recuadro de aviso (información, error, éxito). */

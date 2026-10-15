@@ -98,7 +98,8 @@
     loadingText="Cargando roles…"
     [total]="facade.rows().length"
     [page]="facade.page()"
-    [pageSize]="facade.pageSize"
+    [pageSize]="facade.pageSize()"
+    (pageSizeChange)="facade.setPageSize($event)"
     noun="roles"
     (pageChange)="facade.page.set($event)"
   />

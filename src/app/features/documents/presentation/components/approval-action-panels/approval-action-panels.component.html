@@ -1,11 +1,11 @@
 @switch (facade.panel()) {
   @case ('approve') {
     <div
-      class="animate-in mx-5 mb-5 flex flex-col gap-3.5 rounded-[14px] border border-success-line bg-success-tint px-5 py-[18px] sm:mx-8"
+      class="animate-in mx-5 mb-5 flex flex-col gap-3.5 rounded-shape-md border border-success-line bg-success-tint px-5 py-[18px] sm:mx-8"
     >
-      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-success-text">
+      <div class="flex flex-wrap items-center gap-2.5 text-title-m text-success-text">
         <app-icon name="circle-check" [size]="20" />Aprobar documento
-        <span class="text-[13px] font-normal text-[#2F6B47]"
+        <span class="text-body-m font-normal text-success-ink"
           >· se enviará a contabilización como Pendiente de contabilización</span
         >
       </div>
@@ -15,7 +15,7 @@
           <div
             role="radiogroup"
             aria-label="Tipo de referencia"
-            class="flex gap-1 rounded-xl bg-[#E2F1E7] p-1"
+            class="flex gap-1 rounded-full bg-success-mint p-1"
           >
             @for (
               option of [
@@ -27,11 +27,11 @@
               <button
                 type="button"
                 role="radio"
-                class="h-9 rounded-[9px] px-4 text-sm font-bold"
+                class="ripple h-10 rounded-full px-4 text-title-s"
                 [class]="
                   facade.referenceType() === option.value
                     ? 'bg-white text-success-text shadow-segment'
-                    : 'bg-transparent text-[#3B5A47]'
+                    : 'bg-transparent text-success-ink-alt'
                 "
                 [attr.aria-checked]="facade.referenceType() === option.value"
                 (click)="
@@ -83,9 +83,9 @@
       </div>
       <span
         id="dc-apnro-help"
-        class="text-[13px]"
+        class="text-body-m"
         [attr.role]="facade.referenceError() ? 'alert' : null"
-        [class]="facade.referenceError() ? 'text-danger-text' : 'text-[#3B5A47]'"
+        [class]="facade.referenceError() ? 'text-danger-text' : 'text-success-ink-alt'"
       >
         {{
           facade.referenceError()
@@ -99,11 +99,11 @@
   }
   @case ('reassign') {
     <div
-      class="animate-in mx-5 mb-5 flex flex-col gap-3.5 rounded-[14px] border border-primary-line bg-primary-tint px-5 py-[18px] sm:mx-8"
+      class="animate-in mx-5 mb-5 flex flex-col gap-3.5 rounded-shape-md border border-primary-line bg-primary-tint px-5 py-[18px] sm:mx-8"
     >
-      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold">
+      <div class="flex flex-wrap items-center gap-2.5 text-title-m">
         <app-icon name="swap" [size]="20" [stroke]="2.2" class="text-primary" />Reasignar documento
-        <span class="text-[13px] font-normal text-muted"
+        <span class="text-body-m font-normal text-muted"
           >· enviaremos un correo al nuevo aprobador</span
         >
       </div>
@@ -140,7 +140,7 @@
           id="dc-motivo-re"
           rows="2"
           class="field h-auto resize-y py-2.5 leading-normal"
-          [class.!border-[#E04848]]="facade.reassignError() && !facade.reassignReason().trim()"
+          [class.!border-danger-field]="facade.reassignError() && !facade.reassignReason().trim()"
           placeholder="Ej. El servicio corresponde al centro de costo de Finanzas."
           [value]="facade.reassignReason()"
           (input)="
@@ -151,7 +151,7 @@
       </div>
       <div class="flex flex-wrap items-center justify-between gap-2.5">
         @if (facade.reassignError()) {
-          <span role="alert" class="text-[13px] text-danger-text"
+          <span role="alert" class="text-body-m text-danger-text"
             >Selecciona el área y el aprobador e indica el motivo para reasignar.</span
           >
         } @else {
@@ -181,11 +181,11 @@
   }
   @case ('reject') {
     <div
-      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-[14px] border border-danger-line bg-danger-tint px-5 py-[18px] sm:mx-8"
+      class="animate-in mx-5 mb-5 flex flex-col gap-3 rounded-shape-md border border-danger-line bg-danger-tint px-5 py-[18px] sm:mx-8"
     >
-      <div class="flex flex-wrap items-center gap-2.5 text-[15px] font-bold text-danger-deep">
+      <div class="flex flex-wrap items-center gap-2.5 text-title-m text-danger-deep">
         <app-icon name="x" [size]="20" [stroke]="2.2" />Rechazar documento
-        <span class="text-[13px] font-normal text-[#7F1D1D]"
+        <span class="text-body-m font-normal text-danger-darkest"
           >· notificaremos por correo al proveedor</span
         >
       </div>
@@ -197,14 +197,14 @@
         id="dc-motivo"
         rows="2"
         class="field h-auto resize-y py-2.5 leading-normal"
-        [class.!border-[#E8B4B4]]="!facade.reasonError()"
+        [class.!border-danger-line-strong]="!facade.reasonError()"
         placeholder="Ej. El importe no coincide con el servicio prestado."
         [value]="facade.reason()"
         (input)="facade.reason.set($any($event.target).value); facade.reasonError.set(false)"
         [attr.aria-invalid]="facade.reasonError()"
       ></textarea>
       <div class="flex flex-wrap items-center justify-between gap-2.5">
-        <span role="alert" class="text-[13px] text-danger-text">{{
+        <span role="alert" class="text-body-m text-danger-text">{{
           facade.reasonError() ? 'Ingresa el motivo del rechazo.' : ''
         }}</span>
         <div class="flex gap-2.5">

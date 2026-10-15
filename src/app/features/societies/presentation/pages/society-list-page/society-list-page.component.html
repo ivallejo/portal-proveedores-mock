@@ -97,7 +97,8 @@
     loadingText="Cargando sociedades…"
     [total]="facade.rows().length"
     [page]="facade.page()"
-    [pageSize]="facade.pageSize"
+    [pageSize]="facade.pageSize()"
+    (pageSizeChange)="facade.setPageSize($event)"
     noun="sociedades"
     (pageChange)="facade.page.set($event)"
   />

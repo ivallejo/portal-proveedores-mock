@@ -1,13 +1,14 @@
 <div
-  class="animate-fade fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[rgba(14,42,92,0.55)] px-3 py-6 sm:px-6 sm:pt-16 print:static print:block print:overflow-visible print:bg-transparent print:p-0"
+  class="animate-fade fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-scrim px-3 py-6 sm:px-6 sm:pt-16 print:static print:block print:overflow-visible print:bg-transparent print:p-0"
   (click)="onBackdrop($event)"
 >
   <div
     role="dialog"
     aria-modal="true"
+    appFocusTrap
     [attr.aria-labelledby]="titleId"
     [attr.aria-busy]="busy()"
-    class="animate-pop flex w-full flex-col overflow-hidden rounded-[20px] bg-white shadow-dialog print:max-w-none! print:animate-none print:rounded-none print:shadow-none"
+    class="animate-pop flex w-full flex-col outline-none overflow-hidden rounded-shape-xl bg-white shadow-dialog print:max-w-none! print:animate-none print:rounded-none print:shadow-none"
     [style.max-width.px]="width()"
   >
     <div
@@ -15,27 +16,24 @@
     >
       <div class="flex min-w-0 flex-col gap-2">
         @if (eyebrow()) {
-          <div class="text-xs font-bold tracking-widest text-primary uppercase">
+          <div class="text-label-m tracking-widest text-primary uppercase">
             {{ eyebrow() }}
           </div>
         }
         <ng-content select="[dialog-tags]" />
         <div class="flex flex-wrap items-center gap-3.5">
-          <h2
-            [id]="titleId"
-            class="m-0 text-[22px] font-bold tracking-tight tabular-nums sm:text-[26px]"
-          >
+          <h2 [id]="titleId" class="m-0 text-title-l font-medium tabular-nums sm:text-headline-s">
             {{ heading() }}
           </h2>
           <ng-content select="[dialog-status]" />
         </div>
         @if (subtitle()) {
-          <div class="text-sm text-body">{{ subtitle() }}</div>
+          <div class="text-body-m text-body">{{ subtitle() }}</div>
         }
       </div>
       <button
         type="button"
-        class="flex size-11 shrink-0 items-center justify-center rounded-[10px] bg-[#F3F4F6] text-label hover:bg-line print:hidden"
+        class="ripple flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-icon-button text-label hover:bg-line print:hidden touch-target"
         [attr.aria-label]="closeLabel()"
         (click)="closed.emit()"
       >

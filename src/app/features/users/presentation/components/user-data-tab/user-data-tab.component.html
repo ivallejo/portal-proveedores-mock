@@ -20,7 +20,7 @@
     <div class="flex flex-col gap-2 sm:col-span-2">
       <span class="field-label">Documento</span>
       <span class="readonly-field">Elige primero el rol para completar los datos</span>
-      <span class="text-[12.5px] text-muted"
+      <span class="text-body-s text-muted"
         >Proveedor: RUC y razón social. Usuario interno: DNI, nombres y área.</span
       >
     </div>
@@ -41,7 +41,7 @@
         <span class="readonly-field tabular-nums">{{ editor.form().document }}</span>
       }
       <span
-        class="text-[12.5px]"
+        class="text-body-s"
         [class]="
           editor.showErrors() && editor.errors().document ? 'text-danger-text' : 'text-muted'
         "
@@ -71,7 +71,7 @@
         (input)="editor.setField('businessName', $any($event.target).value)"
       />
       @if (editor.showErrors() && editor.errors().businessName; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
   } @else {
@@ -94,7 +94,7 @@
         <span class="readonly-field tabular-nums">{{ editor.form().document }}</span>
       }
       <span
-        class="text-[12.5px]"
+        class="text-body-s"
         [class]="
           editor.showErrors() && editor.errors().document ? 'text-danger-text' : 'text-muted'
         "
@@ -114,7 +114,7 @@
         (valueChange)="editor.setField('areaId', $event)"
       />
       @if (editor.showErrors() && editor.errors().areaId; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
     <div class="flex flex-col gap-2">
@@ -131,7 +131,7 @@
         (input)="editor.setField('firstName', $any($event.target).value)"
       />
       @if (editor.showErrors() && editor.errors().firstName; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
     <div class="flex flex-col gap-2">
@@ -148,7 +148,7 @@
         (input)="editor.setField('lastName', $any($event.target).value)"
       />
       @if (editor.showErrors() && editor.errors().lastName; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        <span class="text-body-s text-danger-text">{{ error }}</span>
       }
     </div>
   }
@@ -157,24 +157,29 @@
     <div class="flex flex-col gap-2 sm:col-span-2">
       <span class="field-label">Contraseña</span>
       <span class="readonly-field">Se enviará un enlace para crearla al correo principal</span>
-      <span class="text-[12.5px] text-muted"
-        >El enlace vence en 24 horas y solo puede usarse una vez.</span
-      >
+      <app-callout class="mt-1" tone="info" icon="clock">
+        El enlace vence en <strong class="font-medium text-ink">24 horas</strong> y solo puede
+        usarse una vez.
+      </app-callout>
     </div>
   }
 </div>
 
 @if (!editor.isNew()) {
-  <div
-    class="flex flex-wrap gap-6 rounded-xl bg-[#F7F9FC] px-3.5 py-3 text-[12.5px] text-body tabular-nums"
-  >
-    <span
-      >Creado:
-      <strong class="font-medium text-ink">{{ stamp(editor.detail()!.createdAtUtc) }}</strong></span
-    >
-    <span
-      >Modificado:
-      <strong class="font-medium text-ink">{{ stamp(editor.detail()!.updatedAtUtc) }}</strong></span
-    >
-  </div>
+  <app-callout tone="info" icon="clock" heading="Historial del registro">
+    <span class="flex flex-wrap gap-x-6 gap-y-1 tabular-nums">
+      <span
+        >Creado:
+        <strong class="font-medium text-ink">{{
+          stamp(editor.detail()!.createdAtUtc)
+        }}</strong></span
+      >
+      <span
+        >Modificado:
+        <strong class="font-medium text-ink">{{
+          stamp(editor.detail()!.updatedAtUtc)
+        }}</strong></span
+      >
+    </span>
+  </app-callout>
 }

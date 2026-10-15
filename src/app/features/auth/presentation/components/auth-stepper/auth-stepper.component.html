@@ -6,16 +6,16 @@
       [attr.aria-current]="step.current ? 'step' : null"
     >
       <span
-        class="flex size-7 shrink-0 items-center justify-center rounded-full border-[1.5px] text-[13px] font-bold"
+        class="flex size-7 shrink-0 items-center justify-center rounded-full border-[1.5px] text-title-s"
         [class]="
           step.reached
             ? 'border-primary bg-primary text-white'
-            : 'border-[#C9D6EA] bg-white text-muted-auth'
+            : 'border-step-line bg-white text-muted-auth'
         "
         >{{ step.done ? '✓' : step.index + 1 }}</span
       >
       <span
-        class="text-[13px] whitespace-nowrap"
+        class="text-body-s whitespace-nowrap sm:text-body-m"
         [class]="step.reached ? 'text-ink' : 'text-muted-auth'"
         [class.font-bold]="step.current"
         >{{ step.label }}</span

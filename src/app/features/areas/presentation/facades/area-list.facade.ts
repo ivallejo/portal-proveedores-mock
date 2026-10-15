@@ -22,7 +22,7 @@ import {
 import { AreaFilters } from './area-filters';
 import { AreaFormErrors } from './area-form-errors';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 const NO_FILTERS: AreaFilters = { search: '', status: '', societyId: '' };
 const EMPTY_FORM: SaveAreaCommand = { societyId: '', name: '', description: '' };
 
@@ -37,7 +37,7 @@ export class AreaListFacade {
   private readonly toast = inject(ToastService);
 
   readonly statusOptions = statusOptions(true);
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
 
   readonly areas = signal<Area[]>([]);
   readonly societies = signal<AreaSociety[]>([]);
@@ -89,7 +89,7 @@ export class AreaListFacade {
     );
   });
   readonly pageRows = computed(() =>
-    this.rows().slice((this.page() - 1) * PAGE_SIZE, this.page() * PAGE_SIZE),
+    this.rows().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()),
   );
   readonly kpis = computed(() => {
     const all = this.areas();
@@ -210,7 +210,9 @@ export class AreaListFacade {
       error: (error) => {
         this.toggling.set(false);
         this.confirming.set(null);
-        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'));
+        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), {
+          tone: 'error',
+        });
       },
     });
   }
@@ -232,5 +234,11 @@ export class AreaListFacade {
     return Object.fromEntries(
       Object.entries(errors).filter(([, message]) => message),
     ) as AreaFormErrors;
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.page.set(1);
   }
 }

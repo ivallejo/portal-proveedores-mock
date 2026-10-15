@@ -103,15 +103,18 @@
     loadingText="Cargando usuarios…"
     [total]="list.total()"
     [page]="list.page()"
-    [pageSize]="list.pageSize"
+    [pageSize]="list.pageSize()"
+    (pageSizeChange)="list.setPageSize($event)"
     noun="usuarios"
     (pageChange)="list.goToPage($event)"
   />
 </section>
 
 @if (editor.detailLoading()) {
-  <div class="fixed inset-0 z-40 flex items-center justify-center bg-[rgba(14,42,92,0.25)]">
-    <span class="flex items-center gap-3 rounded-xl bg-white px-5 py-4 text-sm shadow-toast">
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-scrim-light">
+    <span
+      class="flex items-center gap-3 rounded-shape-xs bg-white px-5 py-4 text-body-m shadow-toast"
+    >
       <app-spinner [size]="18" /> Abriendo usuario…
     </span>
   </div>

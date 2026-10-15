@@ -298,7 +298,9 @@ export class ProfileFacade {
       },
       error: (error) => {
         this.busyEmail.set('');
-        this.toast.show(userFacingMessage(error, 'No pudimos completar la acción.'), 4000);
+        this.toast.show(userFacingMessage(error, 'No pudimos completar la acción.'), {
+          tone: 'error',
+        });
       },
     });
   }

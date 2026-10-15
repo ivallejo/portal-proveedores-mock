@@ -6,7 +6,7 @@
 @if (facade.loadError()) {
   <app-callout tone="danger" heading="No pudimos cargar tu perfil">
     {{ facade.loadError() }}
-    <button type="button" class="ml-1 font-bold text-primary underline" (click)="facade.load()">
+    <button type="button" class="ml-1 font-medium text-primary underline" (click)="facade.load()">
       Reintentar
     </button>
   </app-callout>
@@ -29,7 +29,7 @@
           type="button"
           role="tab"
           [attr.aria-selected]="facade.tab() === item.key"
-          class="flex h-[54px] shrink-0 items-center gap-2 border-b-[3px] px-3 text-[14.5px] whitespace-nowrap transition-colors hover:text-primary"
+          class="ripple flex h-[54px] shrink-0 items-center gap-2 border-b-[3px] px-3 text-body-m whitespace-nowrap transition-colors hover:text-primary"
           [class]="
             facade.tab() === item.key
               ? 'border-primary font-bold text-primary'
@@ -40,7 +40,7 @@
           {{ item.label }}
           @if (item.key === 'emails' && facade.profile()?.emails?.length) {
             <span
-              class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold"
+              class="flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-label-s"
               [class]="
                 facade.tab() === 'emails' ? 'bg-primary text-white' : 'bg-surface-muted text-body'
               "

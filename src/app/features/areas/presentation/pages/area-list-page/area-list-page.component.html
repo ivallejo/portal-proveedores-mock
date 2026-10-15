@@ -103,7 +103,8 @@
     loadingText="Cargando áreas…"
     [total]="facade.rows().length"
     [page]="facade.page()"
-    [pageSize]="facade.pageSize"
+    [pageSize]="facade.pageSize()"
+    (pageSizeChange)="facade.setPageSize($event)"
     noun="áreas"
     (pageChange)="facade.page.set($event)"
   />

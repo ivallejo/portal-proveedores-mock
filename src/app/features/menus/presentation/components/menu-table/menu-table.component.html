@@ -1,7 +1,7 @@
-<div class="overflow-x-auto">
+<div class="table-scroll">
   <div class="min-w-[960px]">
     <div
-      class="grid h-12 grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line bg-surface-muted px-6 text-xs font-bold tracking-[0.04em] text-body uppercase"
+      class="table-head grid h-12 grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line bg-surface-muted px-6 text-label-m tracking-[0.04em] text-body uppercase"
     >
       <div>Menú</div>
       <div>Ruta</div>
@@ -9,13 +9,13 @@
       <div class="text-center">Orden</div>
       <div class="text-center">Roles</div>
       <div>Estado</div>
-      <div class="text-right">Acciones</div>
+      <div class="table-actions text-right">Acciones</div>
     </div>
     @if (loading()) {
       @for (row of [70, 55, 80, 62]; track $index) {
         <div
           aria-hidden="true"
-          class="grid h-[58px] grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line-soft px-6"
+          class="grid h-13 grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line-soft px-6"
         >
           <span class="skeleton h-3" [style.width.%]="row"></span>
           <span class="skeleton h-3 w-[70%]"></span>
@@ -23,13 +23,13 @@
           <span class="skeleton mx-auto h-3 w-6"></span>
           <span class="skeleton mx-auto h-3 w-6"></span>
           <span class="skeleton h-6 w-[78px] rounded-full"></span>
-          <span class="skeleton ml-auto size-[38px] rounded-[9px]"></span>
+          <span class="skeleton ml-auto size-10 rounded-full"></span>
         </div>
       }
     } @else {
       @for (menu of rows(); track menu.id; let i = $index) {
         <div
-          class="row-hover animate-in grid min-h-[58px] grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          class="row-hover animate-in grid min-h-13 grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line-soft px-6 py-2 text-body-m"
           [class.opacity-70]="!menu.isActive"
           [style.animation-delay.ms]="i * 30"
         >
@@ -38,27 +38,27 @@
               <span class="h-px w-3 shrink-0 bg-line" aria-hidden="true"></span>
             }
             <span
-              class="flex size-9 shrink-0 items-center justify-center rounded-[10px] text-primary"
-              [class]="menu.parentId ? 'bg-[#F1F5FB]' : 'bg-primary-soft'"
+              class="flex size-9 shrink-0 items-center justify-center rounded-shape-md text-primary"
+              [class]="menu.parentId ? 'bg-surface-blue-strong' : 'bg-primary-soft'"
               ><app-icon [name]="icon(menu.icon)" [size]="18"
             /></span>
             <div class="flex min-w-0 flex-col gap-0.5">
               <span class="truncate" [class.font-bold]="!menu.parentId">{{ menu.name }}</span>
               @if (!menu.parentId && childCount(menu)) {
-                <span class="text-xs text-muted">{{ childCount(menu) }} submenús</span>
+                <span class="text-body-s text-muted">{{ childCount(menu) }} submenús</span>
               }
             </div>
           </div>
           <div>
             <span
-              class="rounded-md bg-[#F1F4F9] px-2 py-1 font-mono text-[12.5px] text-[#2A3A55]"
+              class="rounded-shape-sm bg-neutral-tint px-2 py-1 font-mono text-body-s text-ink-strong"
               >{{ menu.route ?? '—' }}</span
             >
           </div>
           <div class="text-muted">
             {{ menu.parentId ? 'Submenú' : 'Menú principal' }}
             @if (menu.isSystem) {
-              <span class="block text-[11px]">Del sistema</span>
+              <span class="block text-body-s">Del sistema</span>
             }
           </div>
           <div class="text-center tabular-nums">{{ menu.order }}</div>
@@ -68,12 +68,12 @@
               menu.isActive ? 'Activo' : 'Inactivo'
             }}</app-badge>
           </div>
-          <div class="flex justify-end gap-1.5">
+          <div class="table-actions flex justify-end gap-1.5">
             @if (!menu.parentId) {
               <button
                 type="button"
-                class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth text-primary hover:bg-primary-tint"
-                [title]="'Agregar submenú a ' + menu.name"
+                class="ripple flex size-10 items-center justify-center rounded-full border border-line-auth text-primary hover:bg-primary-tint touch-target"
+                [attr.data-tooltip]="'Agregar submenú a ' + menu.name"
                 [attr.aria-label]="'Agregar submenú a ' + menu.name"
                 (click)="addChild.emit(menu)"
               >
@@ -82,8 +82,8 @@
             }
             <button
               type="button"
-              class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth text-primary hover:bg-primary-tint"
-              title="Editar"
+              class="ripple flex size-10 items-center justify-center rounded-full border border-line-auth text-primary hover:bg-primary-tint touch-target"
+              data-tooltip="Editar"
               [attr.aria-label]="'Editar ' + menu.name"
               (click)="edit.emit(menu)"
             >
@@ -91,10 +91,10 @@
             </button>
             <button
               type="button"
-              class="flex size-[38px] items-center justify-center rounded-[9px] border border-line-auth hover:bg-page disabled:cursor-not-allowed disabled:opacity-40"
-              [class]="menu.isActive ? 'text-[#B42318]' : 'text-[#13653A]'"
+              class="ripple flex size-10 items-center justify-center rounded-full border border-line-auth hover:bg-page disabled:cursor-not-allowed disabled:opacity-40 touch-target"
+              [class]="menu.isActive ? 'text-danger-text' : 'text-success-text'"
               [disabled]="isProtected(menu)"
-              [title]="
+              [attr.data-tooltip]="
                 isProtected(menu)
                   ? 'Necesaria para administrar roles y menús'
                   : (menu.isActive ? 'Desactivar ' : 'Activar ') + menu.name

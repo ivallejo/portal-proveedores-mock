@@ -18,7 +18,7 @@ import {
 } from '../../domain/rules/society-rules';
 import { SocietyFormErrors } from './society-form-errors';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 const EMPTY_FORM: SaveSocietyCommand = { code: '', name: '', ruc: '', billingEmail: '' };
 
 /** Estado de Configuración › Sociedades: listado con filtros, panel de edición y activación. */
@@ -31,7 +31,7 @@ export class SocietyListFacade {
   private readonly toast = inject(ToastService);
 
   readonly statusOptions = statusOptions(true);
-  readonly pageSize = PAGE_SIZE;
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
 
   readonly societies = signal<Society[]>([]);
   readonly loading = signal(true);
@@ -60,7 +60,7 @@ export class SocietyListFacade {
     );
   });
   readonly pageRows = computed(() =>
-    this.rows().slice((this.page() - 1) * PAGE_SIZE, this.page() * PAGE_SIZE),
+    this.rows().slice((this.page() - 1) * this.pageSize(), this.page() * this.pageSize()),
   );
   readonly kpis = computed(() => {
     const all = this.societies();
@@ -190,7 +190,9 @@ export class SocietyListFacade {
       error: (error) => {
         this.toggling.set(false);
         this.confirming.set(null);
-        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'));
+        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), {
+          tone: 'error',
+        });
       },
     });
   }
@@ -214,5 +216,11 @@ export class SocietyListFacade {
     return Object.fromEntries(
       Object.entries(errors).filter(([, message]) => message),
     ) as SocietyFormErrors;
+  }
+
+  /** Filas por página (10, 25 o 50); vuelve a la primera página. */
+  setPageSize(size: number): void {
+    this.pageSize.set(size);
+    this.page.set(1);
   }
 }

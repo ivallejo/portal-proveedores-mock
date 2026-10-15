@@ -1,14 +1,19 @@
 <div class="flex min-h-screen bg-page text-ink print:block print:min-h-0 print:bg-white">
   @if (layout.navOpen() && !layout.isDesktop()) {
     <div
-      class="animate-fade fixed inset-0 z-40 bg-[rgba(9,22,52,0.5)] lg:hidden print:hidden"
+      class="animate-fade fixed inset-0 z-40 bg-scrim xl:hidden print:hidden"
       aria-hidden="true"
+      animate.leave="animate-leave"
       (click)="layout.navOpen.set(false)"
     ></div>
   }
 
+  @if (layout.isRail()) {
+    <app-nav-rail />
+  }
+
   @if (layout.navOpen()) {
-    <app-sidebar />
+    <app-sidebar animate.leave="animate-leave" />
   }
 
   <div class="flex min-w-0 grow flex-col">

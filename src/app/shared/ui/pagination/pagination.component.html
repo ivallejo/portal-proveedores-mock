@@ -1,9 +1,24 @@
-<span>{{ summary() }}</span>
+<div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+  <span>{{ summary() }}</span>
+  @if (!loading() && total() > pageSizeOptions()[0]) {
+    <div class="flex items-center gap-2.5">
+      <span class="text-body-s text-muted" aria-hidden="true">Filas por página</span>
+      <app-select
+        class="relative w-[88px]"
+        placeholder="Filas por página"
+        [dropUp]="true"
+        [options]="sizeOptions()"
+        [value]="'' + pageSize()"
+        (valueChange)="pageSizeChange.emit(+$event)"
+      />
+    </div>
+  }
+</div>
 @if (!loading() && total() > 0) {
   <div class="flex items-center gap-1.5">
     <button
       type="button"
-      class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+      class="ripple flex size-10 items-center justify-center rounded-full border border-control-soft bg-white text-muted disabled:opacity-40 touch-target"
       aria-label="Página anterior"
       [disabled]="page() === 1"
       (click)="pageChange.emit(page() - 1)"
@@ -13,11 +28,11 @@
     @for (item of pages(); track item) {
       <button
         type="button"
-        class="size-9 rounded-lg text-[13px] font-bold"
+        class="ripple size-10 rounded-full text-title-s touch-target"
         [class.bg-primary]="item === page()"
         [class.text-white]="item === page()"
         [class.border]="item !== page()"
-        [class.border-[#DDE1E7]]="item !== page()"
+        [class.border-control-soft]="item !== page()"
         [class.bg-white]="item !== page()"
         [class.text-muted]="item !== page()"
         [attr.aria-current]="item === page() ? 'page' : null"
@@ -28,7 +43,7 @@
     }
     <button
       type="button"
-      class="flex size-9 items-center justify-center rounded-lg border border-[#DDE1E7] bg-white text-muted disabled:opacity-40"
+      class="ripple flex size-10 items-center justify-center rounded-full border border-control-soft bg-white text-muted disabled:opacity-40 touch-target"
       aria-label="Página siguiente"
       [disabled]="page() === pageCount()"
       (click)="pageChange.emit(page() + 1)"

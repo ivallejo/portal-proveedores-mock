@@ -46,8 +46,8 @@
 
     <div class="flex flex-col gap-3">
       <div class="flex flex-col gap-0.5">
-        <h3 class="m-0 text-sm font-bold">Aprobadores *</h3>
-        <p class="m-0 text-[13px] text-muted">
+        <h3 class="m-0 text-title-s">Aprobadores *</h3>
+        <p class="m-0 text-body-m text-muted">
           Los niveles se ejecutan en orden. Puedes definir uno o varios aprobadores por nivel.
         </p>
       </div>
@@ -57,17 +57,17 @@
         let i = $index;
         let last = $last
       ) {
-        <article class="flex flex-col gap-3 rounded-[14px] border border-line bg-surface-alt p-4">
+        <article class="flex flex-col gap-3 rounded-shape-md border border-line bg-surface-alt p-4">
           <div class="flex items-center justify-between gap-3">
             <div class="flex flex-col">
-              <span class="text-sm font-bold">Nivel {{ i + 1 }}</span>
-              <span class="text-xs text-muted">Se notifica después del nivel anterior</span>
+              <span class="text-title-s">Nivel {{ i + 1 }}</span>
+              <span class="text-body-s text-muted">Se notifica después del nivel anterior</span>
             </div>
             <div class="flex gap-1.5">
               <button
                 type="button"
-                class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted disabled:opacity-40"
-                title="Subir nivel"
+                class="ripple flex size-10 items-center justify-center rounded-full border border-line bg-white text-muted disabled:opacity-40 touch-target"
+                data-tooltip="Subir nivel"
                 aria-label="Subir nivel"
                 [disabled]="i === 0"
                 (click)="editor.moveWorkflowLevel(i, -1)"
@@ -76,8 +76,8 @@
               </button>
               <button
                 type="button"
-                class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted disabled:opacity-40"
-                title="Bajar nivel"
+                class="ripple flex size-10 items-center justify-center rounded-full border border-line bg-white text-muted disabled:opacity-40 touch-target"
+                data-tooltip="Bajar nivel"
                 aria-label="Bajar nivel"
                 [disabled]="last"
                 (click)="editor.moveWorkflowLevel(i, 1)"
@@ -86,8 +86,8 @@
               </button>
               <button
                 type="button"
-                class="flex size-9 items-center justify-center rounded-lg border border-line bg-white text-muted hover:text-danger-text"
-                title="Eliminar nivel"
+                class="ripple flex size-10 items-center justify-center rounded-full border border-line bg-white text-muted hover:text-danger-text touch-target"
+                data-tooltip="Eliminar nivel"
                 aria-label="Eliminar nivel"
                 (click)="editor.removeWorkflowLevel(i)"
               >
@@ -109,7 +109,7 @@
           <div class="flex flex-wrap gap-1.5">
             @for (approver of level.approvers; track approver) {
               <span
-                class="inline-flex h-7 items-center gap-1 rounded-full bg-primary-soft pr-1 pl-2.5 text-xs font-bold text-[#1E3FA8]"
+                class="inline-flex h-7 items-center gap-1 rounded-full bg-primary-soft pr-1 pl-2.5 text-label-m text-indigo-text"
               >
                 {{ approver }}
                 <button
@@ -122,7 +122,7 @@
                 </button>
               </span>
             } @empty {
-              <span class="text-[13px] text-muted">Aún no has seleccionado aprobadores.</span>
+              <span class="text-body-m text-muted">Aún no has seleccionado aprobadores.</span>
             }
           </div>
           <div class="relative flex">
@@ -143,13 +143,13 @@
             @for (approver of editor.filteredWorkflowApprovers(i); track approver) {
               <button
                 type="button"
-                class="btn btn-tint h-9 px-3 text-[13px]"
+                class="btn btn-tint h-9 px-3 text-body-m"
                 (click)="editor.toggleWorkflowApprover(i, approver)"
               >
                 <app-icon name="plus" [size]="15" [stroke]="2.2" />{{ roleLabel(approver) }}
               </button>
             } @empty {
-              <span class="text-[13px] text-muted">
+              <span class="text-body-m text-muted">
                 {{
                   editor.workflowApproverSearches[i]?.trim()
                     ? 'No hay resultados disponibles.'

@@ -8,17 +8,17 @@
             <span class="skeleton h-11"></span>
           }
         </div>
-        <span class="skeleton h-[150px] rounded-xl"></span>
-        <span class="skeleton h-[60px] w-1/2 self-end rounded-xl"></span>
+        <span class="skeleton h-[150px] rounded-shape-md"></span>
+        <span class="skeleton h-[60px] w-1/2 self-end rounded-shape-md"></span>
       </div>
     } @else if (facade.xmlDocument(); as doc) {
       <div class="animate-fade flex flex-col gap-[18px]">
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-bold tracking-[0.08em] text-muted-auth uppercase"
+          <span class="text-label-m tracking-[0.08em] text-muted-auth uppercase"
             >Detalle del documento electrónico · leído del XML</span
           >
           <span class="flex flex-wrap items-center gap-3">
-            <span class="text-2xl font-bold tabular-nums">{{ doc.number }}</span>
+            <span class="text-headline-s font-bold tabular-nums">{{ doc.number }}</span>
             <app-badge tone="primary">{{ doc.documentType }}</app-badge>
           </span>
         </div>
@@ -30,27 +30,29 @@
         }
         <div class="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-3">
           <div class="flex min-w-0 flex-col gap-[3px]">
-            <span class="text-xs text-muted">Emisor</span>
-            <span class="text-sm font-bold">{{ doc.issuerName || '—' }}</span>
-            <span class="text-xs text-muted tabular-nums">RUC {{ doc.issuerRuc || '—' }}</span>
+            <span class="text-body-s text-muted">Emisor</span>
+            <span class="text-title-s">{{ doc.issuerName || '—' }}</span>
+            <span class="text-body-s text-muted tabular-nums">RUC {{ doc.issuerRuc || '—' }}</span>
           </div>
           <div class="flex min-w-0 flex-col gap-[3px]">
-            <span class="text-xs text-muted">Receptor</span>
-            <span class="text-sm font-bold">{{ doc.receiverName || '—' }}</span>
-            <span class="text-xs text-muted tabular-nums">RUC {{ doc.receiverRuc || '—' }}</span>
+            <span class="text-body-s text-muted">Receptor</span>
+            <span class="text-title-s">{{ doc.receiverName || '—' }}</span>
+            <span class="text-body-s text-muted tabular-nums"
+              >RUC {{ doc.receiverRuc || '—' }}</span
+            >
           </div>
           <div class="flex flex-col gap-[3px]">
-            <span class="text-xs text-muted">Fecha de emisión</span>
-            <span class="text-sm font-bold tabular-nums">{{ formatDate(doc.issuedAt) }}</span>
-            <span class="text-xs text-muted"
+            <span class="text-body-s text-muted">Fecha de emisión</span>
+            <span class="text-title-s tabular-nums">{{ formatDate(doc.issuedAt) }}</span>
+            <span class="text-body-s text-muted"
               >{{ currencyName(doc.currency) }} · {{ doc.paymentTerms }}</span
             >
           </div>
         </div>
-        <div class="overflow-x-auto rounded-[14px] border border-line">
+        <div class="overflow-x-auto rounded-shape-md border border-line">
           <div class="min-w-[520px]">
             <div
-              class="grid grid-cols-[minmax(0,3fr)_0.6fr_1fr_1fr] gap-3 border-b border-line bg-surface-muted px-4 py-2.5 text-[11.5px] font-bold tracking-[0.04em] text-body uppercase"
+              class="grid grid-cols-[minmax(0,3fr)_0.6fr_1fr_1fr] gap-3 border-b border-line bg-surface-muted px-4 py-2.5 text-label-s tracking-[0.04em] text-body uppercase"
             >
               <div>Descripción</div>
               <div class="text-right">Cant.</div>
@@ -59,30 +61,32 @@
             </div>
             @for (item of doc.items; track $index) {
               <div
-                class="grid grid-cols-[minmax(0,3fr)_0.6fr_1fr_1fr] gap-3 border-b border-line-soft px-4 py-3 text-[13.5px] tabular-nums"
+                class="grid grid-cols-[minmax(0,3fr)_0.6fr_1fr_1fr] gap-3 border-b border-line-soft px-4 py-3 text-body-m tabular-nums"
               >
                 <div>{{ item.description }}</div>
                 <div class="text-right">{{ item.quantity }}</div>
                 <div class="text-right">{{ money(doc.currency, item.unitPrice) }}</div>
-                <div class="text-right font-bold">
+                <div class="text-right font-medium">
                   {{ money(doc.currency, item.quantity * item.unitPrice) }}
                 </div>
               </div>
             }
-            <div class="flex justify-end gap-7 bg-surface-alt px-4 py-3 text-[13.5px] tabular-nums">
+            <div class="flex justify-end gap-7 bg-surface-alt px-4 py-3 text-body-m tabular-nums">
               <span class="flex flex-col items-end gap-0.5"
-                ><span class="text-xs text-muted">Subtotal</span
-                ><span class="font-bold">{{ money(doc.currency, doc.subtotal) }}</span></span
+                ><span class="text-body-s text-muted">Subtotal</span
+                ><span class="font-medium">{{ money(doc.currency, doc.subtotal) }}</span></span
               >
               <span class="flex flex-col items-end gap-0.5">
-                <span class="text-xs text-muted">{{ doc.igv === null ? 'IGV' : 'IGV (18%)' }}</span>
-                <span class="font-bold">{{
+                <span class="text-body-s text-muted">{{
+                  doc.igv === null ? 'IGV' : 'IGV (18%)'
+                }}</span>
+                <span class="font-medium">{{
                   doc.igv === null ? 'No aplica' : money(doc.currency, doc.igv)
                 }}</span>
               </span>
               <span class="flex flex-col items-end gap-0.5"
-                ><span class="text-xs text-muted">Total</span
-                ><span class="text-lg font-bold text-primary">{{
+                ><span class="text-body-s text-muted">Total</span
+                ><span class="text-title-m text-primary">{{
                   money(doc.currency, doc.total)
                 }}</span></span
               >
@@ -92,44 +96,40 @@
       </div>
     }
   </div>
-  <div class="flex flex-col gap-[18px] rounded-br-[18px] bg-surface-alt px-5 py-6 sm:px-7">
-    <span class="text-xs font-bold tracking-[0.08em] text-muted-auth uppercase"
-      >Archivos adjuntos</span
-    >
+  <div class="flex flex-col gap-[18px] rounded-br-shape-md bg-surface-alt px-5 py-6 sm:px-7">
+    <span class="text-label-m tracking-[0.08em] text-muted-auth uppercase">Archivos adjuntos</span>
     <div class="flex flex-col gap-2">
       @for (file of facade.reviewAttachments(); track file.tag + file.name) {
         <div
-          class="grid grid-cols-[38px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-line bg-white px-3 py-2.5"
+          class="grid grid-cols-[38px_minmax(0,1fr)_auto] items-center gap-3 rounded-shape-md border border-line bg-white px-3 py-2.5"
         >
           <span
-            class="flex size-[38px] items-center justify-center rounded-[9px] text-[11px] font-bold"
-            [class]="file.extra ? 'bg-[#EDE7FB] text-[#5B3AA8]' : attachmentTone[file.tag]"
+            class="flex size-[38px] items-center justify-center rounded-shape-md text-label-s"
+            [class]="file.extra ? 'bg-violet-soft text-violet-text' : attachmentTone[file.tag]"
             >{{ file.tag }}</span
           >
           <span class="flex min-w-0 flex-col gap-0.5">
-            <span class="truncate text-[13.5px] font-bold">{{ file.name }}</span>
-            <span class="text-xs text-muted">{{ file.detail }}</span>
+            <span class="truncate text-title-s">{{ file.name }}</span>
+            <span class="text-body-s text-muted">{{ file.detail }}</span>
           </span>
-          <span class="text-xs font-bold" [class]="file.na ? 'text-subtle' : 'text-success-text'">{{
+          <span class="text-label-m" [class]="file.na ? 'text-subtle' : 'text-success-text'">{{
             file.status
           }}</span>
         </div>
       }
     </div>
-    <span class="text-xs font-bold tracking-[0.08em] text-muted-auth uppercase"
-      >Datos del registro</span
-    >
+    <span class="text-label-m tracking-[0.08em] text-muted-auth uppercase">Datos del registro</span>
     <div
-      class="flex flex-col gap-2.5 rounded-xl border border-line bg-white px-4 py-3.5 text-[13.5px]"
+      class="flex flex-col gap-2.5 rounded-shape-md border border-line bg-white px-4 py-3.5 text-body-m"
     >
       @for (row of facade.registrationRows(); track row.label) {
         <div class="flex justify-between gap-3">
           <span class="text-muted">{{ row.label }}</span
-          ><span class="text-right font-bold">{{ row.value }}</span>
+          ><span class="text-right font-medium">{{ row.value }}</span>
         </div>
       }
       <div
-        class="flex items-center justify-between gap-3 border-t border-dashed border-[#DCE3EE] pt-2.5"
+        class="flex items-center justify-between gap-3 border-t border-dashed border-line-blue pt-2.5"
       >
         <span class="text-muted">Estado al registrar</span>
         <app-badge size="lg" [dot]="true" [tone]="facade.statusTone()">{{

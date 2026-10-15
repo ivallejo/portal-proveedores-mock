@@ -6,10 +6,10 @@ import { FileState } from './file-state';
 import { FileTag } from './file-tag';
 
 const TAGS: Record<FileTag, { label: string; classes: string }> = {
-  XML: { label: 'XML', classes: 'bg-[#E8F0FE] text-[#1E3FA8]' },
-  PDF: { label: 'PDF', classes: 'bg-[#FDE8E8] text-[#A51E1E]' },
-  CDR: { label: 'CDR', classes: 'bg-[#DFF4F4] text-[#0B5E61]' },
-  EXTRA: { label: 'PDF', classes: 'bg-[#EDE7FB] text-[#5B3AA8]' },
+  XML: { label: 'XML', classes: 'bg-primary-soft text-indigo-text' },
+  PDF: { label: 'PDF', classes: 'bg-danger-soft-alt text-danger-text-alt' },
+  CDR: { label: 'CDR', classes: 'bg-teal-soft text-teal-text' },
+  EXTRA: { label: 'PDF', classes: 'bg-violet-soft text-violet-text' },
 };
 
 /** Fila de carga de un archivo del comprobante (arrastrar o seleccionar). */
@@ -50,14 +50,15 @@ export class FileDropComponent {
     () => !this.notApplicable() && (this.state() === 'ok' || this.extras().length > 0),
   );
   readonly frameClass = computed(() => {
-    if (this.dragging()) return 'border-solid border-primary bg-[#EAF2FF] px-3.5 py-5';
-    if (this.notApplicable()) return 'border-dashed border-primary-line bg-[#FAFBFC] px-3.5 py-3';
+    if (this.dragging()) return 'border-solid border-primary bg-primary-selected px-3.5 py-5';
+    if (this.notApplicable())
+      return 'border-dashed border-primary-line bg-surface-file px-3.5 py-3';
     if (this.state() === 'ok')
       return 'border-solid border-success-line bg-success-tint px-3.5 py-3';
-    if (this.extras().length) return 'border-solid border-[#D9CCF5] bg-[#FAF8FF] px-3.5 py-3';
+    if (this.extras().length) return 'border-solid border-violet-line bg-violet-tint px-3.5 py-3';
     if (this.error() || (this.highlightMissing() && this.requirement() === 'Requerido'))
-      return 'border-dashed border-[#E8A0A0] bg-[#F9FBFE] px-3.5 py-3';
-    return 'border-dashed border-primary-line bg-[#F9FBFE] px-3.5 py-3';
+      return 'border-dashed border-danger-line-alt bg-surface-drop px-3.5 py-3';
+    return 'border-dashed border-primary-line bg-surface-drop px-3.5 py-3';
   });
 
   onDragOver(event: DragEvent): void {

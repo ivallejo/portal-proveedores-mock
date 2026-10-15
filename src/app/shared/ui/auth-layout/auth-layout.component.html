@@ -1,6 +1,8 @@
 <div class="relative flex h-dvh overflow-hidden bg-page text-ink">
-  <div class="absolute -top-[220px] -right-[180px] size-[560px] rounded-full bg-[#E1ECFC]"></div>
-  <div class="absolute -right-[120px] -bottom-[260px] size-[480px] rounded-full bg-[#E4EEFD]"></div>
+  <div class="absolute -top-[220px] -right-[180px] size-[560px] rounded-full bg-brand-circle"></div>
+  <div
+    class="absolute -right-[120px] -bottom-[260px] size-[480px] rounded-full bg-brand-circle-alt"
+  ></div>
 
   <div class="relative flex h-full w-full overflow-hidden bg-surface-auth">
     <aside
@@ -12,10 +14,10 @@
         class="absolute bottom-0 left-0 h-[420px] w-full object-cover object-bottom"
       />
       <div
-        class="absolute bottom-[330px] left-0 h-[90px] w-full bg-linear-to-b from-[#1459CC] to-[rgba(20,89,204,0)]"
+        class="absolute bottom-[330px] left-0 h-[90px] w-full bg-linear-to-b from-brand-glow to-brand-glow-clear"
       ></div>
       <div
-        class="absolute bottom-0 left-0 h-[110px] w-full bg-linear-to-t from-[rgba(6,30,80,0.75)] to-[rgba(6,30,80,0)]"
+        class="absolute bottom-0 left-0 h-[110px] w-full bg-linear-to-t from-brand-shade to-brand-shade-clear"
       ></div>
       <svg
         width="520"
@@ -35,36 +37,36 @@
             <path d="M24 13l9 5.2v10.4L24 34l-9-5.4V18.2z" fill="#1A66DB" />
             <path d="M24 13l9 5.2-9 5.2-9-5.2z" fill="#6FA5F5" />
           </svg>
-          <span class="text-[22px] font-bold">Portal de Proveedores</span>
+          <span class="text-title-l font-medium">Portal de Proveedores</span>
         </a>
         <div class="flex flex-col gap-4">
-          <h1 class="m-0 text-[42px] leading-[1.12] font-bold tracking-tight">
-            {{ heading() }}<br /><span class="text-[#A9CBFF]">{{ accent() }}</span>
+          <h1 class="m-0 text-display-m leading-[1.12] font-medium">
+            {{ heading() }}<br /><span class="text-on-brand-accent">{{ accent() }}</span>
           </h1>
-          <p class="m-0 max-w-[460px] text-[17px] leading-relaxed text-[#E3EDFF]">
+          <p class="m-0 max-w-[460px] text-body-l leading-relaxed text-on-brand">
             {{ description() }}
           </p>
         </div>
         <div class="flex flex-wrap gap-[26px]">
           @for (item of highlights; track item.label) {
-            <div class="flex items-center gap-[9px] text-[15px] font-medium">
+            <div class="flex items-center gap-[9px] text-title-m">
               <app-icon [name]="item.icon" [size]="22" />{{ item.label }}
             </div>
           }
         </div>
       </div>
 
-      <div class="absolute bottom-9 left-14 flex items-center gap-2.5 text-sm font-medium">
+      <div class="absolute bottom-9 left-14 flex items-center gap-2.5 text-title-s">
         <app-icon name="shield-check" [size]="20" />Tu proveedor, nuestro aliado
       </div>
     </aside>
 
     <div class="flex grow items-center justify-center overflow-y-auto px-4 py-4 sm:px-8">
       <div
-        class="flex w-full max-w-[500px] flex-col gap-5 rounded-[20px] bg-white px-6 pt-9 pb-[30px] shadow-auth-card sm:px-[52px]"
+        class="flex w-full max-w-[500px] flex-col gap-5 rounded-shape-xl bg-white px-6 pt-9 pb-[30px] shadow-auth-card sm:px-[52px]"
       >
         <ng-content />
-        <div class="flex items-center justify-center gap-2 pt-0.5 text-[13px] text-muted-auth">
+        <div class="flex items-center justify-center gap-2 pt-0.5 text-body-m text-muted-auth">
           <app-icon name="shield-check" [size]="16" />Protegemos tu información
         </div>
       </div>

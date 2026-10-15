@@ -230,7 +230,9 @@ export class MenuListFacade {
       error: (error) => {
         this.toggling.set(false);
         this.confirming.set(null);
-        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), 4000);
+        this.toast.show(userFacingMessage(error, 'No pudimos cambiar el estado.'), {
+          tone: 'error',
+        });
       },
     });
   }

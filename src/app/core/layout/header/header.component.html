@@ -4,14 +4,14 @@
   <div class="flex min-w-0 items-center gap-3.5">
     <button
       type="button"
-      class="flex size-11 shrink-0 items-center justify-center rounded-[10px] border border-line-auth bg-white text-ink hover:bg-page"
+      class="ripple flex size-10 shrink-0 items-center justify-center rounded-full border border-line-auth bg-white text-ink hover:bg-page touch-target"
       [attr.aria-label]="layout.navOpen() ? 'Ocultar menú' : 'Mostrar menú'"
       [attr.aria-expanded]="layout.navOpen()"
       (click)="layout.toggleNav()"
     >
       <app-icon name="menu" [size]="20" [stroke]="2" />
     </button>
-    <div class="hidden truncate text-sm text-muted sm:block">
+    <div class="hidden truncate text-body-m text-muted sm:block">
       Portal <span class="mx-1.5 text-faint">/</span>
       <span class="font-medium text-ink">{{ pageTitle() }}</span>
     </div>
@@ -20,18 +20,18 @@
   <div class="flex items-center gap-1 sm:gap-2">
     <button
       type="button"
-      class="relative hidden size-11 items-center justify-center rounded-[10px] text-label hover:bg-page sm:flex"
+      class="ripple relative hidden size-10 items-center justify-center rounded-full text-label hover:bg-page sm:flex touch-target"
       aria-label="Notificaciones"
       (click)="notImplemented('Las notificaciones')"
     >
       <app-icon name="bell" [size]="20" />
       <span
-        class="absolute top-2.5 right-[11px] size-2 rounded-full border-2 border-white bg-[#E0602E]"
+        class="absolute top-2.5 right-[11px] size-2 rounded-full border-2 border-white bg-notify-dot"
       ></span>
     </button>
     <button
       type="button"
-      class="hidden size-11 items-center justify-center rounded-[10px] text-label hover:bg-page sm:flex"
+      class="ripple hidden size-10 items-center justify-center rounded-full text-label hover:bg-page sm:flex touch-target"
       aria-label="Ayuda"
       (click)="notImplemented('La guía de uso')"
     >
@@ -41,25 +41,25 @@
     <div class="flex items-center gap-2.5">
       <a
         routerLink="/perfil"
-        class="flex min-w-0 items-center gap-2.5 rounded-[10px] py-1 pr-1.5 text-ink no-underline hover:bg-page"
-        title="Mi perfil"
+        class="ripple flex min-w-0 items-center gap-2.5 rounded-full py-1 pr-1.5 text-ink no-underline hover:bg-page"
+        data-tooltip="Mi perfil"
       >
         <span
-          class="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-primary text-[13px] font-bold text-white"
+          class="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-primary text-title-s text-white"
           >{{ userInitials() }}</span
         >
         <span class="hidden min-w-0 flex-col md:flex">
-          <span class="max-w-[220px] truncate text-sm font-bold">{{ session.user()?.name }}</span>
-          <span class="truncate text-xs tracking-[0.01em] text-muted tabular-nums">{{
+          <span class="max-w-[220px] truncate text-title-s">{{ session.user()?.name }}</span>
+          <span class="truncate text-body-s tracking-[0.01em] text-muted tabular-nums">{{
             userCaption()
           }}</span>
         </span>
       </a>
       <button
         type="button"
-        class="flex size-10 items-center justify-center rounded-[10px] text-muted hover:bg-page"
+        class="ripple flex size-10 items-center justify-center rounded-full text-muted hover:bg-page touch-target"
         aria-label="Cerrar sesión"
-        title="Cerrar sesión"
+        data-tooltip="Cerrar sesión"
         (click)="logout()"
       >
         <app-icon name="logout" [size]="18" />
