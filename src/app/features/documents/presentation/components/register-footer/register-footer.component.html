@@ -1,44 +1,52 @@
 <div
   class="flex flex-wrap items-center justify-between gap-4 rounded-b-[18px] border-t border-line-soft bg-surface-muted px-5 py-4 sm:px-7"
 >
-  <div class="flex flex-wrap items-center gap-3">
-    <button
-      type="button"
-      class="btn btn-secondary btn-lg"
-      [disabled]="facade.registering()"
-      (click)="facade.back()"
+  <div class="flex min-w-0 flex-col gap-1">
+    <span
+      class="flex items-center gap-2.5 text-sm font-bold"
+      [class]="facade.ready() ? 'text-success-text' : 'text-[#5A6477]'"
     >
-      <app-icon name="arrow-left" [size]="18" [stroke]="2" />
-      {{ facade.entry() === 'esp' ? 'Limpiar' : facade.step() === 1 ? 'Cancelar' : 'Atrás' }}
-    </button>
+      <span class="flex gap-1" aria-hidden="true">
+        @for (check of facade.checks(); track check.label) {
+          <span
+            class="h-1.5 w-[22px] rounded-full"
+            [class]="check.ok ? 'bg-[#22A05A]' : 'bg-control'"
+            [title]="check.label"
+          ></span>
+        }
+      </span>
+      <span aria-live="polite">{{ facade.statusText() }}</span>
+    </span>
     @if (facade.formError()) {
-      <span role="alert" class="flex items-center gap-1.5 text-[13px] text-danger-text">
+      <span role="alert" class="animate-in flex items-center gap-1.5 text-[13px] text-danger-text">
         <app-icon name="alert-circle" [size]="16" [stroke]="2" />{{ facade.formError() }}
       </span>
     }
   </div>
-  @if (facade.entry() === 'esp' || facade.step() === 2) {
+  <div class="flex items-center gap-2.5">
+    <a routerLink="/inicio" class="btn btn-secondary h-12 font-medium">Cancelar</a>
     <button
       type="button"
-      class="btn btn-lg min-w-[168px] text-white"
-      [class]="facade.registering() ? 'bg-success-busy' : 'btn-success'"
+      class="btn h-12 min-w-[210px] text-white shadow-[0_8px_18px_rgba(22,104,227,0.22)]"
+      [class]="
+        facade.registering()
+          ? 'bg-primary-busy'
+          : facade.ready()
+            ? 'btn-primary'
+            : 'bg-[#9DB8E6] hover:bg-[#8AA9DE]'
+      "
       [attr.aria-busy]="facade.registering()"
-      [disabled]="facade.reviewLoading()"
-      (click)="facade.next()"
+      (click)="facade.register()"
     >
       @if (facade.registering()) {
         <app-spinner [size]="18" />{{
           facade.entry() === 'esp' && facade.isSettlement()
             ? 'Validando en SAP y SUNAT…'
-            : 'Validando en SAP…'
+            : 'Registrando…'
         }}
       } @else {
-        Registrar<app-icon name="arrow-right" [size]="18" [stroke]="2.2" />
+        <app-icon name="check" [size]="18" [stroke]="2.4" />Registrar documento
       }
     </button>
-  } @else {
-    <button type="button" class="btn btn-primary btn-lg min-w-[168px]" (click)="facade.next()">
-      Siguiente<app-icon name="arrow-right" [size]="18" [stroke]="2.2" />
-    </button>
-  }
+  </div>
 </div>

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { CalloutComponent } from '../../../../../shared/ui/callout/callout.component';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { RegisterSectionTitleComponent } from '../register-section-title/register-section-title.component';
 import { SelectComponent } from '../../../../../shared/ui/select/select.component';
@@ -7,16 +6,10 @@ import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.compo
 import { money } from '../../../../../shared/utils/money-format.util';
 import { RegisterDocumentFacade } from '../../facades/register-document.facade';
 
-/** Paso 1: sociedad y orden validada en SAP (Con OC), o área y aprobador (Sin OC). */
+/** Columna «1 Datos del documento»: sociedad y orden validada en SAP (Con OC), o área y aprobador (Sin OC). */
 @Component({
   selector: 'app-register-order-data',
-  imports: [
-    CalloutComponent,
-    IconComponent,
-    RegisterSectionTitleComponent,
-    SelectComponent,
-    SpinnerComponent,
-  ],
+  imports: [IconComponent, RegisterSectionTitleComponent, SelectComponent, SpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'contents' },
   templateUrl: './register-order-data.component.html',

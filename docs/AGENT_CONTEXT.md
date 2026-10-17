@@ -112,21 +112,21 @@ Si una regla falla, no se desactiva: se mueve el código a la capa correcta.
 
 ## Dónde va cada cosa
 
-| Necesito… | Va en… |
-|---|---|
-| Una entidad o tipo del negocio | `features/<f>/domain/models/<nombre>.ts` (uno por archivo) |
-| Una validación o cálculo del negocio | `features/<f>/domain/rules/<tema>-rules.ts` + `.spec.ts` |
-| Un filtro o command que recibe un caso de uso | `features/<f>/application/models/` |
-| Una operación nueva (listar, guardar, aprobar…) | `ports/in/<accion>.port.ts` + `use-cases/<accion>.use-case.ts` + token en `di/` + provider |
-| Hablar con la API | `ports/out/<x>.port.ts` + `infrastructure/http/<x>-http.adapter.ts` + `dto/` + `mappers/` |
-| Datos de otra feature | Puerto de salida propio + adaptador que usa el token público de esa feature |
-| `localStorage`, XML, memoria u otra tecnología | Un adaptador en `infrastructure/<tecnologia>/` |
-| Estado y acciones de una pantalla | `presentation/facades/<pantalla>.facade.ts` (signals) |
-| Una ruta nueva | `presentation/pages/` + `<feature>.routes.ts` + montarla en `app.routes.ts` con `loadChildren: gatedRoutes(flag, …)` |
-| Textos, tonos u opciones de la interfaz | `presentation/catalog/` |
-| Un componente usado por varias features | `shared/ui/<componente>/` (no puede importar core ni features) |
-| Un formateador genérico | `shared/utils/` |
-| Algo del armado de la app (shell, configuración) | `core/` |
+| Necesito…                                        | Va en…                                                                                                               |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Una entidad o tipo del negocio                   | `features/<f>/domain/models/<nombre>.ts` (uno por archivo)                                                           |
+| Una validación o cálculo del negocio             | `features/<f>/domain/rules/<tema>-rules.ts` + `.spec.ts`                                                             |
+| Un filtro o command que recibe un caso de uso    | `features/<f>/application/models/`                                                                                   |
+| Una operación nueva (listar, guardar, aprobar…)  | `ports/in/<accion>.port.ts` + `use-cases/<accion>.use-case.ts` + token en `di/` + provider                           |
+| Hablar con la API                                | `ports/out/<x>.port.ts` + `infrastructure/http/<x>-http.adapter.ts` + `dto/` + `mappers/`                            |
+| Datos de otra feature                            | Puerto de salida propio + adaptador que usa el token público de esa feature                                          |
+| `localStorage`, XML, memoria u otra tecnología   | Un adaptador en `infrastructure/<tecnologia>/`                                                                       |
+| Estado y acciones de una pantalla                | `presentation/facades/<pantalla>.facade.ts` (signals)                                                                |
+| Una ruta nueva                                   | `presentation/pages/` + `<feature>.routes.ts` + montarla en `app.routes.ts` con `loadChildren: gatedRoutes(flag, …)` |
+| Textos, tonos u opciones de la interfaz          | `presentation/catalog/`                                                                                              |
+| Un componente usado por varias features          | `shared/ui/<componente>/` (no puede importar core ni features)                                                       |
+| Un formateador genérico                          | `shared/utils/`                                                                                                      |
+| Algo del armado de la app (shell, configuración) | `core/`                                                                                                              |
 
 ### Receta: conectar Workflows (o cualquier mock) a la API
 
@@ -136,20 +136,20 @@ Si una regla falla, no se desactiva: se mueve el código a la capa correcta.
 
 ## Features
 
-| Feature | Pantallas (URL) | API | API pública (`index.ts`) |
-|---|---|---|---|
-| `auth` | `/login`, `/registro`, `/recuperar-contrasena`, `/crear-contrasena`, `/cambiar-contrasena`, `/contrasena-temporal` | `auth` | `SessionFacade`, guards, `authInterceptor`, `SESSION_LISTENERS`, `AUTH_PROVIDERS`, `Role`, `normalizeRole`, `roleLabel`, `passwordRules`, `AUTH_ROUTES` |
-| `menus` | menú de la sesión; `/configuracion/menus` | `navigation`, `admin/menus` | `SessionMenuFacade`, `menuGuard`, `MODULES`, `isRouteLive`, `isLinkLive`, `GET_MENUS`, `NAVIGATION_PROVIDERS`, `MENUS_ROUTES` |
-| `home` | `/inicio` | — | `HOME_ROUTES` |
-| `profile` | `/perfil`, `/verificar-correo` | `profile` | `PROFILE_ROUTES`, `EMAIL_VERIFICATION_ROUTES` |
-| `catalog` | — (sociedades, áreas y aprobadores del usuario) | `catalog` | `CatalogFacade` |
-| `payments` | `/orden-pago`, `/estado-factura` | `payment-orders`, `invoices` | rutas |
-| `documents` | `/documentos`, `/contabilizacion`, `/registrar-documento` | `documents`, `documents/orders/validate` | rutas |
-| `societies` | `/configuracion/sociedades` | `admin/companies` | `GET_SOCIETIES`, `SOCIETIES_PROVIDERS`, rutas |
-| `areas` | `/configuracion/areas` | `admin/areas` | rutas |
-| `users` | `/configuracion/usuarios` | `admin/users` | rutas |
-| `roles` | `/configuracion/roles` | `admin/roles` | rutas |
-| `workflows` | `/configuracion/workflows` | en memoria | rutas |
+| Feature     | Pantallas (URL)                                                                                                    | API                                      | API pública (`index.ts`)                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`      | `/login`, `/registro`, `/recuperar-contrasena`, `/crear-contrasena`, `/cambiar-contrasena`, `/contrasena-temporal` | `auth`                                   | `SessionFacade`, guards, `authInterceptor`, `SESSION_LISTENERS`, `AUTH_PROVIDERS`, `Role`, `normalizeRole`, `roleLabel`, `passwordRules`, `AUTH_ROUTES` |
+| `menus`     | menú de la sesión; `/configuracion/menus`                                                                          | `navigation`, `admin/menus`              | `SessionMenuFacade`, `menuGuard`, `MODULES`, `isRouteLive`, `isLinkLive`, `GET_MENUS`, `NAVIGATION_PROVIDERS`, `MENUS_ROUTES`                           |
+| `home`      | `/inicio`                                                                                                          | —                                        | `HOME_ROUTES`                                                                                                                                           |
+| `profile`   | `/perfil`, `/verificar-correo`                                                                                     | `profile`                                | `PROFILE_ROUTES`, `EMAIL_VERIFICATION_ROUTES`                                                                                                           |
+| `catalog`   | — (sociedades, áreas y aprobadores del usuario)                                                                    | `catalog`                                | `CatalogFacade`                                                                                                                                         |
+| `payments`  | `/orden-pago`, `/estado-factura`                                                                                   | `payment-orders`, `invoices`             | rutas                                                                                                                                                   |
+| `documents` | `/documentos`, `/contabilizacion`, `/registrar-documento`                                                          | `documents`, `documents/orders/validate` | rutas                                                                                                                                                   |
+| `societies` | `/configuracion/sociedades`                                                                                        | `admin/companies`                        | `GET_SOCIETIES`, `SOCIETIES_PROVIDERS`, rutas                                                                                                           |
+| `areas`     | `/configuracion/areas`                                                                                             | `admin/areas`                            | rutas                                                                                                                                                   |
+| `users`     | `/configuracion/usuarios`                                                                                          | `admin/users`                            | rutas                                                                                                                                                   |
+| `roles`     | `/configuracion/roles`                                                                                             | `admin/roles`                            | rutas                                                                                                                                                   |
+| `workflows` | `/configuracion/workflows`                                                                                         | en memoria                               | rutas                                                                                                                                                   |
 
 Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda que ejecuta el caso de uso, `loading` enlazado a la barra superior con `PageLoadingService.bind`, skeletons, estado vacío y paginación de 10 filas.
 
@@ -166,12 +166,12 @@ Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda q
 
 ## Rutas y roles
 
-| Ruta | Roles | Pantalla |
-|---|---|---|
-| `/login`, `/registro`, `/recuperar-contrasena` | Sin sesión | Acceso |
-| `/crear-contrasena?ruc&token`, `/cambiar-contrasena?ruc&token`, `/verificar-correo?token` | Todos | Enlaces de los correos |
-| `/inicio`, `/perfil` | Con sesión | Inicio y perfil |
-| Resto de pantallas | Según el menú del rol | `menuGuard`: la ruta debe estar en `api/navigation` |
+| Ruta                                                                                      | Roles                 | Pantalla                                            |
+| ----------------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------- |
+| `/login`, `/registro`, `/recuperar-contrasena`                                            | Sin sesión            | Acceso                                              |
+| `/crear-contrasena?ruc&token`, `/cambiar-contrasena?ruc&token`, `/verificar-correo?token` | Todos                 | Enlaces de los correos                              |
+| `/inicio`, `/perfil`                                                                      | Con sesión            | Inicio y perfil                                     |
+| Resto de pantallas                                                                        | Según el menú del rol | `menuGuard`: la ruta debe estar en `api/navigation` |
 
 **Menú dinámico:** `SessionMenuFacade` carga `api/navigation` (opciones del rol, definidas en Configuración › Roles y permisos y Menús); el menú lateral, las tarjetas de Inicio y `menuGuard` salen de ahí. El catálogo `MODULES` solo guarda la tarjeta de Inicio y el flag de cada pantalla (`isRouteLive`); una opción creada en Menús sin pantalla muestra «en construcción». Una ruta que no está en el menú del rol redirige a Inicio. Al guardar roles o menús, el menú se vuelve a cargar.
 
@@ -184,16 +184,17 @@ Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda q
 
 Las reglas viven en `domain/rules/` de cada feature (con pruebas); el backend vuelve a validar todo.
 
-- **Con OC** (`documents`): la orden se valida en SAP (`documents/orders/validate`; hoy el backend simula los servicios 01 y 02 de SAP) antes de habilitar los archivos. Registra como *Pendiente de contabilización*.
-- **Sin OC**: proveedor y usuario interno eligen área y aprobador → *Pendiente de aprobación*. Solo el usuario interno (o el administrador) puede marcar **Caja Chica**: sin aprobador → *Pendiente de contabilización* (`canRegisterPettyCash`).
+- **Con OC** (`documents`): la orden se valida en SAP (`documents/orders/validate`; hoy el backend simula los servicios 01 y 02 de SAP) antes de habilitar los archivos. Registra como _Pendiente de contabilización_.
+- **Sin OC**: proveedor y usuario interno eligen área y aprobador → _Pendiente de aprobación_. Solo el usuario interno (o el administrador) puede marcar **Caja Chica**: sin aprobador → _Pendiente de contabilización_ (`canRegisterPettyCash`).
 - **Extras PDF**: en Con OC y Sin OC se consolidan en un solo adjunto `Anexos_{número}.pdf`.
-- **Documentos especiales**: solo usuarios internos y administradores (`canRegisterSpecialDocuments`). PDF + datos manuales; la liquidación de cobranzas se valida en SUNAT y SAP, el resto solo duplicidad. Registra como *Pendiente de contabilización*.
+- **Documentos especiales**: solo usuarios internos y administradores (`canRegisterSpecialDocuments`). PDF + datos manuales; la liquidación de cobranzas se valida en SUNAT y SAP, el resto solo duplicidad. Registra como _Pendiente de contabilización_.
 - **CDR**: requerido salvo que la serie empiece con «E» (`isCdrRequired`).
-- **XML**: `infrastructure/xml/ubl-document-parser.ts` lee UBL 2.1 (factura, boleta, notas). Si el archivo no es UBL, `ReadElectronicDocumentUseCase` usa un comprobante de ejemplo (`sample-document.ts`) y la revisión lo avisa. Si el usuario es proveedor, el RUC emisor debe ser el suyo (`issuerMismatchError`).
+- **Registrar documentos** (diseño de la Propuesta 4): una sola tarjeta con «1 Datos del documento» y «2 Archivos»; el pie muestra los requisitos como segmentos («Faltan N pasos») y «Registrar documento» registra directo (sin paso de revisión). Si falta algo, dice qué. El resultado reemplaza al formulario; ante un rechazo, «Corregir y reintentar» vuelve con los mismos datos.
+- **XML**: `infrastructure/xml/ubl-document-parser.ts` lee UBL 2.1 (factura, boleta, notas). Si el archivo no es UBL, `ReadElectronicDocumentUseCase` devuelve un comprobante de ejemplo (`sample-document.ts`, `fromXml: false`) y la fila del XML muestra el error, que bloquea el registro. Si el usuario es proveedor, el RUC emisor debe ser el suyo (`issuerMismatchError`).
 - **Archivos**: extensión permitida y máximo 5 MB (`attachmentError`).
 - Duplicidad, validación SAP/SUNAT y permisos los decide el backend; el front muestra su `message` (422 = documento no válido, otros códigos = aviso en el formulario).
 - **Aprobaciones**: aprobar exige N° de pedido o de viaje; rechazar exige motivo; reasignar exige área, aprobador y motivo (queda en el historial).
-- **Contabilización**: rechazar exige motivo; observar exige motivo y correo válido (estado *Observado*). Estado *Contabilizado*: sin uso en los flujos actuales (Servicio 03 queda para una fase posterior).
+- **Contabilización**: rechazar exige motivo; observar exige motivo y correo válido (estado _Observado_). Estado _Contabilizado_: sin uso en los flujos actuales (Servicio 03 queda para una fase posterior).
 - **Orden de pago y Estado de factura** (`payments`): el proveedor consulta siempre su RUC; Cuentas por pagar y el administrador lo ingresan (11 dígitos). Rango por defecto: últimos tres meses; máximo 3 años (`supplier-rules.ts`).
 - **PDF de la orden de pago**: vista previa A4 (`payment-order-pdf-viewer` + `payment-order-pdf-sheet`, diseño «PDF Orden de pago · Corporativa» del prototipo), desde la fila del listado o el detalle. Imprimir y «Descargar PDF» abren la impresión del navegador («Guardar como PDF», con el nombre `OP-<número>`); el visor se monta en `<body>` y `@media print` en `styles.css` deja solo la hoja. Solo muestra datos de SAP: sin dirección de la sociedad, hora, CCI, operación por comprobante ni QR de verificación (se agregan cuando SAP los entregue). El importe en letras sale de `amount-in-words.ts`.
 - **Contraseña temporal** (`auth`): los usuarios sembrados o creados por el administrador entran con una clave temporal. El login devuelve `mustChangePassword`; la sesión queda limitada a `/contrasena-temporal` (guards e interceptor ante 403 `PASSWORD_CHANGE_REQUIRED`) hasta cambiarla. La política es mínimo 8 caracteres con mayúscula, minúscula y número (`passwordRules`).

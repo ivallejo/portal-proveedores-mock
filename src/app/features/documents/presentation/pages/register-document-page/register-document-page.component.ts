@@ -6,10 +6,7 @@ import { RegisterFilesComponent } from '../../components/register-files/register
 import { RegisterFooterComponent } from '../../components/register-footer/register-footer.component';
 import { RegisterOrderDataComponent } from '../../components/register-order-data/register-order-data.component';
 import { RegisterResultComponent } from '../../components/register-result/register-result.component';
-import { RegisterReviewComponent } from '../../components/register-review/register-review.component';
-import { RegisterStepperComponent } from '../../components/register-stepper/register-stepper.component';
 import { SpecialDocumentDataComponent } from '../../components/special-document-data/special-document-data.component';
-import { SpecialDocumentFilesComponent } from '../../components/special-document-files/special-document-files.component';
 import { RegisterDocumentFacade } from '../../facades/register-document.facade';
 
 /** Registrar documentos: con orden de compra, sin orden de compra o documento especial. */
@@ -18,11 +15,8 @@ import { RegisterDocumentFacade } from '../../facades/register-document.facade';
   imports: [
     PageHeaderComponent,
     RegisterEntryPickerComponent,
-    RegisterStepperComponent,
     RegisterResultComponent,
-    RegisterReviewComponent,
     SpecialDocumentDataComponent,
-    SpecialDocumentFilesComponent,
     RegisterOrderDataComponent,
     RegisterFilesComponent,
     RegisterFooterComponent,

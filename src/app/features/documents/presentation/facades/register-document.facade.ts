@@ -37,7 +37,7 @@ import { ExtraFile } from '../components/file-drop/extra-file';
 import { AttachmentSlot } from './attachment-slot';
 import { RegisterEntry } from './register-entry';
 import { RegisterResult } from './register-result';
-import { ReviewAttachment } from './review-attachment';
+import { RegisterCheck } from './register-check';
 import { SlotState } from './slot-state';
 import { SpecialForm } from './special-form';
 
@@ -52,7 +52,7 @@ const EMPTY_SPECIAL: SpecialForm = {
   currency: 'PEN',
 };
 
-/** Estado de Registrar documentos: tipo de ingreso, datos, archivos, revisión y registro. */
+/** Estado de Registrar documentos: tipo de ingreso, datos, archivos y registro (un solo paso). */
 @Injectable()
 export class RegisterDocumentFacade {
   private readonly session = inject(SessionFacade);
@@ -64,7 +64,6 @@ export class RegisterDocumentFacade {
   private readonly timers = new Set<ReturnType<typeof setTimeout>>();
 
   readonly entry = signal<RegisterEntry>('oc');
-  readonly step = signal<1 | 2 | 3>(1);
   readonly company = signal('');
   readonly orderType = signal<OrderType>('Servicio');
   readonly orderNumber = signal('');
@@ -82,7 +81,6 @@ export class RegisterDocumentFacade {
   readonly xmlDocument = signal<ElectronicDocument | null>(null);
   readonly special = signal<SpecialForm>({ ...EMPTY_SPECIAL });
   readonly formError = signal('');
-  readonly reviewLoading = signal(false);
   readonly registering = signal(false);
   readonly result = signal<RegisterResult | null>(null);
   readonly pettyCash = signal(false);
@@ -111,24 +109,7 @@ export class RegisterDocumentFacade {
   );
   /** Solo el personal interno (o el administrador) puede registrar Caja Chica. */
   readonly canPettyCash = computed(() => canRegisterPettyCash(this.roles()));
-  readonly locked = computed(
-    () => this.step() > 1 || this.orderState() === 'busy' || this.registering(),
-  );
-  readonly steps = computed(() => {
-    const labels =
-      this.entry() === 'esp'
-        ? ['Datos y archivo', 'Registro']
-        : ['Datos y archivos', 'Revisión', 'Registro'];
-    const current = this.entry() === 'esp' ? (this.result() ? 1 : 0) : this.step() - 1;
-    const failed = this.result() && !this.result()!.ok;
-    return labels.map((label, index) => ({
-      label,
-      current: index === current,
-      done: index < current || (!!this.result()?.ok && index === current),
-      failed: !!failed && index === current,
-    }));
-  });
-
+  readonly locked = computed(() => this.orderState() === 'busy' || this.registering());
   readonly series = computed(
     () => this.xmlDocument()?.series || seriesFromFileName(this.slots().xml.name) || '',
   );
@@ -147,88 +128,51 @@ export class RegisterDocumentFacade {
   readonly statusTone = computed(() => STATUS_TONE[this.statusOnRegister()]);
   readonly isSettlement = computed(() => this.special().type === 'Liquidación de cobranzas');
 
-  readonly reviewAttachments = computed(() => {
-    const doc = this.xmlDocument();
-    const number = doc?.number ?? 'documento';
-    const slots = this.slots();
-    const list: ReviewAttachment[] = [
-      {
-        tag: 'XML',
-        name: slots.xml.name,
-        detail: `Documento electrónico · ${slots.xml.size}`,
-        status: 'Adjunto',
-      },
-      {
-        tag: 'PDF',
-        name: slots.pdf.name,
-        detail: `Representación impresa · ${slots.pdf.size}`,
-        status: 'Adjunto',
-      },
-      this.cdrRequired()
-        ? {
-            tag: 'CDR',
-            name: slots.cdr.name,
-            detail: `Constancia de recepción · ${slots.cdr.size}`,
-            status: 'Adjunto',
-          }
-        : {
-            tag: 'CDR',
-            name: 'CDR no requerido',
-            detail: `Serie ${this.series()} (comienza con E)`,
-            status: 'No aplica',
-            na: true,
-          },
-    ];
-    const extras = this.extras();
-    if (extras.length) {
-      list.push({
-        tag: 'PDF',
-        name: `Anexos_${number}.pdf`,
-        detail: `Consolidado de ${extras.length} ${extras.length === 1 ? 'archivo' : 'archivos'} · ${extras.map((extra) => extra.name).join(', ')}`,
-        status: 'Adjunto',
-        extra: true,
-      });
-    }
-    return list;
-  });
-
-  readonly registrationRows = computed(() => {
-    const rows = [
-      {
-        label: 'Tipo de ingreso',
-        value: this.entry() === 'oc' ? 'Con orden de compra' : 'Sin orden de compra',
-      },
-      { label: 'Sociedad', value: this.catalog.company(this.company())?.name ?? '—' },
-    ];
-    const billingEmail = this.companyBillingEmail();
-    if (billingEmail) rows.push({ label: 'Correo de facturación', value: billingEmail });
-    if (this.entry() === 'oc') {
-      rows.push({
-        label: this.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra',
-        value: this.order()?.number ?? '',
-      });
-    }
-    if (this.entry() === 'sin' && this.pettyCash()) {
-      rows.push({ label: 'Caja Chica', value: 'Sí · sin aprobación' });
-    }
-    if (this.pendingApproval()) {
-      rows.push({ label: 'Área', value: this.area() || '—' });
-      const approver = this.catalog
-        .approvers(this.area(), this.company())
-        .find((item) => item.id === this.approver());
-      rows.push({
-        label: 'Aprobador',
-        value: approver ? `${approver.name} · ${approver.email}` : '—',
-      });
-    }
-    return rows;
-  });
-
   readonly progressLabel = computed(() => {
     if (this.orderState() === 'busy') return 'Validando orden en SAP';
-    if (this.registering()) return 'Validando documento';
-    if (this.reviewLoading()) return 'Leyendo documento electrónico';
+    if (this.registering()) return 'Registrando documento';
     return '';
+  });
+
+  /** Requisitos para registrar: el pie los muestra como segmentos («Faltan N pasos»). */
+  readonly checks = computed<RegisterCheck[]>(() => {
+    const slots = this.slots();
+    const entry = this.entry();
+    const checks: RegisterCheck[] = [{ label: 'Sociedad', ok: !!this.company() }];
+    if (entry === 'oc') checks.push({ label: 'Orden validada', ok: this.orderState() === 'ok' });
+    if (this.pendingApproval())
+      checks.push({ label: 'Área y aprobador', ok: !!(this.area() && this.approver()) });
+    if (entry === 'esp') {
+      const form = this.special();
+      checks.push({
+        label: 'Datos del documento',
+        ok:
+          form.ruc.length === 11 &&
+          !!form.date &&
+          !!form.number.trim() &&
+          parseAmount(form.amount) > 0,
+      });
+      checks.push({ label: 'PDF', ok: slots.pdf.state === 'ok' });
+      return checks;
+    }
+    checks.push({ label: 'XML', ok: slots.xml.state === 'ok' && !slots.xml.error });
+    checks.push({ label: 'PDF', ok: slots.pdf.state === 'ok' });
+    if (this.cdrRequired()) checks.push({ label: 'CDR de SUNAT', ok: slots.cdr.state === 'ok' });
+    return checks;
+  });
+  readonly missing = computed(() => this.checks().filter((check) => !check.ok));
+  readonly ready = computed(() => !this.missing().length && !this.uploading());
+  readonly statusText = computed(() => {
+    const count = this.missing().length;
+    if (!count) return this.uploading() ? 'Subiendo archivos…' : 'Todo listo para registrar';
+    return count === 1 ? 'Falta 1 paso' : `Faltan ${count} pasos`;
+  });
+  /** Archivos requeridos cargados («2 de 3»). */
+  readonly filesProgress = computed(() => {
+    const files = this.checks().filter((check) =>
+      ['XML', 'PDF', 'CDR de SUNAT'].includes(check.label),
+    );
+    return `${files.filter((check) => check.ok).length} de ${files.length}`;
   });
 
   constructor() {
@@ -340,15 +284,20 @@ export class RegisterDocumentFacade {
       return;
     }
     this.extrasError.set('');
-    const added = files.map((file) => ({ name: file.name, uploading: true, file }));
+    const added = files.map((file) => ({
+      name: file.name,
+      size: fileSize(file.size),
+      uploading: true,
+      file,
+    }));
     this.extras.update((list) => [...list, ...added]);
     this.later(1150, () =>
       this.extras.update((list) => list.map((extra) => ({ ...extra, uploading: false }))),
     );
   }
 
-  clearExtras(): void {
-    this.extras.set([]);
+  removeExtra(index: number): void {
+    this.extras.update((list) => list.filter((_, i) => i !== index));
     this.extrasError.set('');
   }
 
@@ -359,57 +308,37 @@ export class RegisterDocumentFacade {
     this.formError.set('');
   }
 
-  // ——— Navegación ———
+  // ——— Registro ———
 
-  back(): void {
-    if (this.entry() === 'esp') {
-      this.special.update((form) => ({ ...EMPTY_SPECIAL, type: form.type }));
-      this.patchSlot('pdf', { ...EMPTY_SLOT });
-      this.formError.set('');
-    } else if (this.step() === 1) {
-      this.resetForm();
-    } else if (!this.registering()) {
-      this.step.set(1);
+  /** Registra si están todos los requisitos; si no, dice qué falta. */
+  register(): void {
+    if (this.registering()) return;
+    if (this.uploading()) {
+      this.formError.set('Espera a que terminen de subir los archivos.');
+      return;
     }
+    const missing = this.missing();
+    if (missing.length) {
+      const names = missing.map((check) =>
+        /^[A-Z]{3}/.test(check.label) ? check.label : check.label.toLowerCase(),
+      );
+      this.formError.set(`Falta completar: ${names.join(', ')}.`);
+      return;
+    }
+    this.submit();
   }
 
-  next(): void {
-    if (this.entry() === 'esp' || this.step() === 2) this.register();
-    else this.goToReview();
+  /** Tras un rechazo de SAP/SUNAT: vuelve al formulario con los mismos datos para corregirlos. */
+  retry(): void {
+    this.result.set(null);
+    this.formError.set('');
   }
 
   reset(): void {
     this.resetForm();
   }
 
-  private goToReview(): void {
-    const missing: string[] = [];
-    if (!this.company()) missing.push('sociedad');
-    if (this.entry() === 'oc' && this.orderState() !== 'ok') missing.push('orden validada');
-    if (this.pendingApproval() && (!this.area() || !this.approver()))
-      missing.push('área y aprobador');
-    const slots = this.slots();
-    const filesReady =
-      slots.xml.state === 'ok' &&
-      slots.pdf.state === 'ok' &&
-      (!this.cdrRequired() || slots.cdr.state === 'ok');
-    if (!filesReady || this.uploading()) missing.push('archivos requeridos');
-    if (missing.length) {
-      this.formError.set(`Falta: ${missing.join(', ')}.`);
-      return;
-    }
-    if (slots.xml.error) {
-      this.formError.set('Revisa el archivo XML antes de continuar.');
-      return;
-    }
-    this.formError.set('');
-    this.step.set(2);
-    this.reviewLoading.set(true);
-    this.later(850, () => this.reviewLoading.set(false));
-  }
-
-  private register(): void {
-    if (this.registering()) return;
+  private submit(): void {
     const isSpecial = this.entry() === 'esp';
     const request = isSpecial ? this.specialCommand() : this.electronicCommand();
     if (!request) return;
@@ -423,14 +352,12 @@ export class RegisterDocumentFacade {
       next: (saved) => {
         this.registering.set(false);
         this.result.set(this.successResult(saved));
-        if (!isSpecial) this.step.set(3);
       },
       error: (error) => {
         this.registering.set(false);
         const fallback = 'No fue posible registrar el documento.';
         if (error instanceof DocumentRejectedError) {
           this.result.set(this.failureResult(error.message || fallback));
-          if (!isSpecial) this.step.set(3);
         } else {
           this.formError.set(userFacingMessage(error, fallback));
         }
@@ -573,6 +500,12 @@ export class RegisterDocumentFacade {
     });
     if (this.slots().xml.file !== file) return;
     this.xmlDocument.set(doc);
+    if (!doc.fromXml) {
+      this.patchSlot('xml', {
+        error: 'No pudimos leer el XML. Verifica que sea la factura electrónica (UBL 2.1).',
+      });
+      return;
+    }
     const providerRuc = user?.roles.includes('Proveedor') ? user.providerId : undefined;
     const mismatch = issuerMismatchError(doc, providerRuc);
     if (mismatch) this.patchSlot('xml', { error: mismatch });
@@ -591,7 +524,6 @@ export class RegisterDocumentFacade {
   }
 
   private resetForm(): void {
-    this.step.set(1);
     this.company.set('');
     this.orderType.set('Servicio');
     this.orderNumber.set('');
@@ -605,7 +537,6 @@ export class RegisterDocumentFacade {
     this.xmlDocument.set(null);
     this.special.update((form) => ({ ...EMPTY_SPECIAL, type: form.type }));
     this.formError.set('');
-    this.reviewLoading.set(false);
     this.pettyCash.set(false);
     this.result.set(null);
   }

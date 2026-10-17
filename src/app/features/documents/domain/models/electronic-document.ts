@@ -1,7 +1,7 @@
 import { Currency } from './currency';
 import { DocumentItem } from './document-item';
 
-/** Datos que se muestran en la revisión, leídos del XML del comprobante (UBL 2.1). */
+/** Datos leídos del XML del comprobante (UBL 2.1). */
 export interface ElectronicDocument {
   number: string;
   series: string;

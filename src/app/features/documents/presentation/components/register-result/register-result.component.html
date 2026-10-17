@@ -1,47 +1,61 @@
 @if (facade.result(); as res) {
-  <app-result-state [kind]="res.ok ? 'ok' : 'bad'" [heading]="res.title" [text]="res.text">
-    <div class="mt-1 flex flex-wrap justify-center gap-3">
-      @for (chip of res.chips; track chip.label) {
+  <section
+    class="animate-pop card rounded-[18px] shadow-card"
+    [attr.aria-label]="res.ok ? 'Documento registrado' : 'Documento no registrado'"
+  >
+    <app-result-state [kind]="res.ok ? 'ok' : 'bad'" [heading]="res.title" [text]="res.text">
+      @if (res.chips.length) {
         <div
-          class="flex min-w-[170px] flex-col items-start gap-[3px] rounded-xl border border-line bg-surface-alt px-4 py-3 text-left"
+          class="grid w-full max-w-[900px] grid-cols-1 gap-3 sm:grid-cols-2"
+          [class.lg:grid-cols-4]="res.chips.length >= 4"
+          [class.lg:grid-cols-3]="res.chips.length === 3"
         >
-          <span class="text-xs text-muted">{{ chip.label }}</span>
-          <span
-            class="text-[14.5px] font-bold tabular-nums"
-            [class]="
-              chip.tone === 'danger'
-                ? 'text-[#A51E1E]'
-                : chip.tone === 'warn'
-                  ? 'text-warning-text'
-                  : chip.tone === 'info'
-                    ? 'text-[#1E3FA8]'
-                    : 'text-ink'
-            "
-            >{{ chip.value }}</span
-          >
+          @for (chip of res.chips; track chip.label) {
+            <div class="flex flex-col gap-[3px] rounded-xl bg-[#F7F9FC] px-3.5 py-3 text-left">
+              <span class="text-xs text-[#6B7588]">{{ chip.label }}</span>
+              <span
+                class="text-sm font-bold tabular-nums"
+                [class]="
+                  chip.tone === 'danger'
+                    ? 'text-[#A51E1E]'
+                    : chip.tone === 'warn'
+                      ? 'text-warning-text'
+                      : chip.tone === 'info'
+                        ? 'text-[#1E3FA8]'
+                        : 'text-ink'
+                "
+                >{{ chip.value }}</span
+              >
+            </div>
+          }
         </div>
       }
-    </div>
-    @if (res.mail) {
-      <div
-        class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
-      >
-        <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
-      </div>
-    }
-    <div class="mt-2 flex flex-wrap justify-center gap-3">
-      <button type="button" class="btn btn-outline btn-lg" (click)="facade.reset()">
-        <app-icon name="plus" [size]="18" [stroke]="2.2" />Registrar otro documento
-      </button>
-      @if (facade.isInternal()) {
-        <a routerLink="/inicio" class="btn btn-primary btn-lg"
-          >Ir al inicio<app-icon name="arrow-right" [size]="18" [stroke]="2.2"
-        /></a>
-      } @else {
-        <a routerLink="/estado-factura" class="btn btn-primary btn-lg"
-          >Ver estado de mis facturas<app-icon name="arrow-right" [size]="18" [stroke]="2.2"
-        /></a>
+      @if (res.mail) {
+        <div
+          class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-4 py-3 text-[13.5px] text-ink-soft"
+        >
+          <app-icon name="mail" [size]="18" [stroke]="1.9" />{{ res.mail }}
+        </div>
       }
-    </div>
-  </app-result-state>
+      <div class="mt-1.5 flex flex-wrap justify-center gap-2.5">
+        @if (res.ok) {
+          @if (facade.isInternal()) {
+            <a routerLink="/inicio" class="btn btn-secondary font-medium">Ir al inicio</a>
+          } @else {
+            <a routerLink="/estado-factura" class="btn btn-secondary font-medium"
+              >Ver estado de factura</a
+            >
+          }
+          <button type="button" class="btn btn-primary" (click)="facade.reset()">
+            <app-icon name="plus" [size]="18" [stroke]="2.2" />Registrar otro documento
+          </button>
+        } @else {
+          <a routerLink="/inicio" class="btn btn-secondary font-medium">Ir al inicio</a>
+          <button type="button" class="btn btn-primary" (click)="facade.retry()">
+            Corregir y reintentar
+          </button>
+        }
+      </div>
+    </app-result-state>
+  </section>
 }

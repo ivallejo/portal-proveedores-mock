@@ -1,0 +1,70 @@
+<div
+  class="flex flex-col gap-2.5 rounded-[14px] border-[1.5px] border-dashed px-3.5 py-3 transition-[background,border-color] duration-150"
+  [class]="dragging() ? 'border-primary bg-[#EAF2FF]' : 'border-control bg-surface-muted'"
+  (dragenter)="onDragOver($event)"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <div class="grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3.5">
+    <span
+      class="flex size-[42px] items-center justify-center rounded-[10px] bg-[#EDE7FB] text-[#5B3AA8]"
+    >
+      <app-icon name="layers" [size]="20" />
+    </span>
+    <span class="flex min-w-0 flex-col gap-[3px]">
+      <span class="text-sm font-bold"
+        >Archivos extras <span class="font-normal text-[#6B7588]">· {{ note() }}</span></span
+      >
+      @if (dragging()) {
+        <span class="text-[12.5px] font-bold text-primary">Suelta para agregar</span>
+      } @else {
+        <span class="text-[12.5px] text-[#8A94A6]">Arrastra uno o varios PDF</span>
+      }
+    </span>
+    <label
+      class="relative flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-[9px] border border-primary-line bg-white px-3.5 text-[13px] font-bold text-primary hover:bg-primary-tint focus-within:outline-3 focus-within:outline-primary/35"
+    >
+      <app-icon name="plus" [size]="16" [stroke]="2.2" />Agregar
+      <input
+        type="file"
+        multiple
+        class="absolute inset-0 size-full cursor-pointer opacity-0"
+        aria-label="Agregar archivos extras"
+        [accept]="accept().join(',')"
+        (change)="onPick($event)"
+      />
+    </label>
+  </div>
+  @if (error()) {
+    <span role="alert" class="flex items-center gap-1.5 text-[12.5px] text-danger-text">
+      <app-icon name="alert-circle" [size]="15" [stroke]="2" />{{ error() }}
+    </span>
+  }
+  @if (extras().length) {
+    <div class="flex flex-wrap gap-2">
+      @for (extra of extras(); track extra.name + $index; let i = $index) {
+        <span
+          class="animate-in inline-flex h-[34px] items-center gap-2 rounded-full border border-line bg-[#F4F6FA] pr-1 pl-3 text-[12.5px]"
+        >
+          @if (extra.uploading) {
+            <app-spinner [size]="14" tone="primary" />
+          } @else {
+            <span class="flex text-[#A51E1E]"><app-icon name="file" [size]="15" /></span>
+          }
+          <span class="max-w-[220px] truncate font-medium">{{ extra.name }}</span>
+          <span class="text-[#6B7588]">{{ extra.size }}</span>
+          <button
+            type="button"
+            class="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#F1F3F6] text-[#5A6477] hover:bg-[#FDECEC] hover:text-danger-text"
+            title="Quitar"
+            [attr.aria-label]="'Quitar ' + extra.name"
+            (click)="removed.emit(i)"
+          >
+            <app-icon name="x" [size]="14" [stroke]="2.2" />
+          </button>
+        </span>
+      }
+    </div>
+  }
+</div>

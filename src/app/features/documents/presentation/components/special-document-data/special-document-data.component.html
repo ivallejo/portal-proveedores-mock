@@ -1,58 +1,127 @@
 <div class="flex flex-col gap-[18px] border-line-soft px-5 py-6 sm:px-7 lg:border-r">
-  <app-register-section-title
-    [n]="1"
-    heading="Tipo de documento"
-    sub="Elige la sociedad y el tipo"
-  />
-  <app-select
-    label="Sociedad"
-    placeholder="Selecciona la sociedad"
-    [options]="facade.companyOptions()"
-    [invalid]="!!facade.formError() && !facade.company()"
-    [value]="facade.company()"
-    (valueChange)="facade.setCompany($event)"
-  />
+  <app-register-section-title [n]="1" heading="Datos del documento" />
+
+  <div class="grid grid-cols-1 items-start gap-x-[18px] gap-y-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-2 sm:col-span-2">
+      <span class="field-label">Tipo de documento</span>
+      <div role="radiogroup" aria-label="Tipo de documento" class="flex flex-wrap gap-2">
+        @for (type of facade.specialTypes; track type) {
+          @let on = facade.special().type === type;
+          <button
+            type="button"
+            role="radio"
+            class="h-9 rounded-full border-[1.5px] px-3.5 text-[13.5px] font-bold"
+            [class]="
+              on
+                ? 'border-primary bg-primary-soft text-primary'
+                : 'border-control bg-white text-[#3B4658] hover:border-primary'
+            "
+            [attr.aria-checked]="on"
+            (click)="facade.setSpecial('type', type)"
+          >
+            {{ type }}
+          </button>
+        }
+      </div>
+      <span class="text-[12.5px] text-muted">{{
+        facade.isSettlement()
+          ? 'Las liquidaciones de cobranza se validan en SAP y en SUNAT.'
+          : 'Validaremos en SAP que no esté registrado previamente.'
+      }}</span>
+    </div>
+    <app-select
+      label="Sociedad"
+      placeholder="Selecciona la sociedad"
+      [options]="facade.companyOptions()"
+      [invalid]="!!facade.formError() && !facade.company()"
+      [value]="facade.company()"
+      (valueChange)="facade.setCompany($event)"
+    />
+    <div class="flex flex-col gap-2">
+      <label for="es-ruc" class="field-label">RUC del emisor</label>
+      <input
+        id="es-ruc"
+        type="text"
+        inputmode="numeric"
+        placeholder="11 dígitos"
+        class="field tracking-[0.02em] tabular-nums"
+        [attr.aria-invalid]="!!facade.formError() && facade.special().ruc.length !== 11"
+        [value]="facade.special().ruc"
+        (input)="onRuc($event)"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="es-fecha" class="field-label">Fecha de emisión</label>
+      <input
+        id="es-fecha"
+        type="date"
+        class="field"
+        [attr.aria-invalid]="!!facade.formError() && !facade.special().date"
+        [value]="facade.special().date"
+        (change)="facade.setSpecial('date', $any($event.target).value)"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="es-nro" class="field-label">N° de documento</label>
+      <input
+        id="es-nro"
+        type="text"
+        placeholder="Ej. L001-00012876"
+        class="field uppercase tabular-nums"
+        [attr.aria-invalid]="!!facade.formError() && !facade.special().number"
+        [value]="facade.special().number"
+        (input)="onNumber($event)"
+      />
+    </div>
+    <div class="flex flex-col gap-2 sm:col-span-2">
+      <label for="es-imp" class="field-label">Importe total</label>
+      <div class="flex gap-2">
+        <div
+          role="radiogroup"
+          aria-label="Moneda"
+          class="grid w-28 shrink-0 grid-cols-2 gap-1 rounded-xl bg-[#EEF2F8] p-[3px]"
+        >
+          @for (
+            option of [
+              { value: 'PEN', label: 'S/' },
+              { value: 'USD', label: 'US$' },
+            ];
+            track option.value
+          ) {
+            <button
+              type="button"
+              role="radio"
+              class="h-9 rounded-[9px] text-sm font-bold"
+              [class]="
+                facade.special().currency === option.value
+                  ? 'bg-white text-primary shadow-segment'
+                  : 'bg-transparent text-body'
+              "
+              [attr.aria-checked]="facade.special().currency === option.value"
+              (click)="facade.setSpecial('currency', $any(option.value))"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+        <input
+          id="es-imp"
+          type="text"
+          inputmode="decimal"
+          placeholder="0.00"
+          class="field min-w-0 flex-1 text-right tabular-nums"
+          [attr.aria-invalid]="!!facade.formError() && !facade.special().amount"
+          [value]="facade.special().amount"
+          (input)="onAmount($event)"
+        />
+      </div>
+    </div>
+  </div>
+
   @if (facade.companyBillingEmail(); as email) {
-    <p class="m-0 -mt-2 flex items-center gap-1.5 text-[13px] text-muted">
-      <app-icon name="mail" [size]="15" />Recibe comprobantes electrónicos en
+    <p class="m-0 flex items-center gap-1.5 text-[13px] text-muted">
+      <app-icon name="mail" [size]="15" />La sociedad recibe comprobantes electrónicos en
       <span class="font-medium text-body">{{ email }}</span>
     </p>
   }
-  <div class="flex flex-col gap-2">
-    <span class="field-label">Tipo de documento</span>
-    <div
-      role="radiogroup"
-      aria-label="Tipo de documento"
-      class="grid grid-cols-1 gap-2.5 sm:grid-cols-2"
-    >
-      @for (type of facade.specialTypes; track type) {
-        @let on = facade.special().type === type;
-        <button
-          type="button"
-          role="radio"
-          class="option-card flex min-h-14 items-center justify-between gap-2 rounded-xl border-2 px-3.5 py-2.5 text-left text-sm font-bold text-ink"
-          [class]="on ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
-          [attr.aria-checked]="on"
-          (click)="facade.setSpecial('type', type)"
-        >
-          {{ type }}
-          <span
-            class="size-[18px] shrink-0 rounded-full border-2"
-            [class]="
-              on
-                ? 'border-primary bg-primary shadow-[inset_0_0_0_3px_#fff]'
-                : 'border-control bg-white'
-            "
-          ></span>
-        </button>
-      }
-    </div>
-  </div>
-  <app-callout [tone]="facade.isSettlement() ? 'warn' : 'info'">
-    {{
-      facade.isSettlement()
-        ? 'Las liquidaciones de cobranza se validan en SAP y en SUNAT (validez del documento y duplicidad).'
-        : 'Validaremos en SAP que el documento no esté registrado previamente (duplicidad).'
-    }}
-  </app-callout>
 </div>

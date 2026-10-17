@@ -70,18 +70,30 @@ describe('RegisterDocumentFacade', () => {
     expect(facade.orderState()).toBe('bad');
   });
 
-  it('no deja avanzar sin los datos y archivos requeridos', () => {
+  it('no registra sin los datos y archivos requeridos y dice qué falta', () => {
     const facade = setup(['Proveedor']);
-    facade.next();
-    expect(facade.formError()).toBe('Falta: sociedad, orden validada, archivos requeridos.');
-    expect(facade.step()).toBe(1);
+    expect(facade.statusText()).toBe('Faltan 5 pasos');
+    expect(facade.filesProgress()).toBe('0 de 3');
+    facade.register();
+    expect(facade.formError()).toBe(
+      'Falta completar: sociedad, orden validada, XML, PDF, CDR de SUNAT.',
+    );
+    expect(facade.result()).toBeNull();
+  });
+
+  it('Sin OC pide área y aprobador salvo en Caja Chica', () => {
+    const facade = setup(['Colaborador interno']);
+    facade.pickEntry('sin');
+    expect(facade.checks().map((check) => check.label)).toContain('Área y aprobador');
+    facade.pettyCash.set(true);
+    expect(facade.checks().map((check) => check.label)).not.toContain('Área y aprobador');
   });
 
   it('muestra el rechazo de SAP como resultado del documento especial', () => {
     const facade = setup(['Colaborador interno']);
     facade.pickEntry('esp');
-    facade.next();
-    expect(facade.formError()).toContain('Completa la sociedad');
+    facade.register();
+    expect(facade.formError()).toBe('Falta completar: sociedad, datos del documento, PDF.');
     expect(registerSpecial).not.toHaveBeenCalled();
 
     facade.setCompany('1001');
@@ -102,11 +114,17 @@ describe('RegisterDocumentFacade', () => {
     registerSpecial.and.returnValue(
       throwError(() => new DocumentRejectedError('El documento ya está registrado en SAP.')),
     );
-    facade.next();
+    expect(facade.ready()).toBeTrue();
+    facade.register();
     expect(registerSpecial.calls.mostRecent().args[0]).toEqual(
       jasmine.objectContaining({ number: 'bt-1', amount: 1250.5, type: 'Boleto aéreo' }),
     );
     expect(facade.result()?.ok).toBeFalse();
     expect(facade.result()?.text).toBe('El documento ya está registrado en SAP.');
+
+    // «Corregir y reintentar» vuelve al formulario con los mismos datos.
+    facade.retry();
+    expect(facade.result()).toBeNull();
+    expect(facade.special().number).toBe('bt-1');
   });
 });

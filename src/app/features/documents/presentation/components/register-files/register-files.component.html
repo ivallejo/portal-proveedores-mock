@@ -1,78 +1,88 @@
-<div class="flex flex-col gap-[18px] px-5 py-6 sm:px-7">
-  <app-register-section-title
-    [n]="2"
-    heading="Archivos del documento"
-    sub="XML, PDF, CDR y extras (se consolidan)"
-  />
+<div class="flex flex-col gap-3.5 px-5 py-6 sm:px-7">
+  <div class="flex items-center justify-between gap-3">
+    <app-register-section-title [n]="2" heading="Archivos" />
+    <span
+      class="inline-flex h-[26px] items-center gap-1.5 rounded-full bg-[#F1F4F9] px-2.5 text-[12.5px] font-bold text-[#3B4A66] tabular-nums"
+    >
+      <app-icon name="file" [size]="14" [stroke]="2" />{{ facade.filesProgress() }}
+    </span>
+  </div>
   @if (facade.filesLocked()) {
-    <app-callout tone="neutral">Valida la orden para habilitar la carga de archivos.</app-callout>
+    <span
+      class="inline-flex h-[30px] items-center gap-2 self-start rounded-full bg-[#F1F4F9] px-3 text-[12.5px] font-medium text-[#3B4A66]"
+    >
+      <app-icon name="lock" [size]="14" [stroke]="2" />Valida la orden para habilitar la carga
+    </span>
   }
   <div
     class="flex flex-col gap-2.5"
     [class.pointer-events-none]="facade.filesLocked()"
-    [class.opacity-50]="facade.filesLocked()"
+    [class.opacity-45]="facade.filesLocked()"
     [attr.inert]="facade.filesLocked() ? '' : null"
   >
-    <app-file-drop
-      tag="XML"
-      title="Documento electrónico (XML)"
-      description="Archivo XML emitido a SUNAT"
-      [accept]="facade.accept.xml"
-      [state]="facade.slots().xml.state"
-      [fileName]="facade.slots().xml.name"
-      [fileSize]="facade.slots().xml.size"
-      [error]="facade.slots().xml.error"
-      [highlightMissing]="!!facade.formError()"
-      (files)="facade.addFile('xml', $event)"
-      (removed)="facade.removeFile('xml')"
-    />
-    <app-file-drop
-      tag="PDF"
-      title="Representación impresa (PDF)"
-      description="PDF del comprobante"
-      [accept]="facade.accept.pdf"
-      [state]="facade.slots().pdf.state"
-      [fileName]="facade.slots().pdf.name"
-      [fileSize]="facade.slots().pdf.size"
-      [error]="facade.slots().pdf.error"
-      [highlightMissing]="!!facade.formError()"
-      (files)="facade.addFile('pdf', $event)"
-      (removed)="facade.removeFile('pdf')"
-    />
-    <app-file-drop
-      tag="CDR"
-      title="Constancia de recepción (CDR)"
-      description="ZIP o XML de respuesta de SUNAT"
-      [accept]="facade.accept.cdr"
-      [requirement]="facade.cdrRequired() ? 'Requerido' : 'No requerido'"
-      [notApplicable]="
-        facade.cdrRequired()
-          ? ''
-          : 'No se requiere CDR porque la serie ' + facade.series() + ' comienza con E.'
-      "
-      [state]="facade.slots().cdr.state"
-      [fileName]="facade.slots().cdr.name"
-      [fileSize]="facade.slots().cdr.size"
-      [error]="facade.slots().cdr.error"
-      [highlightMissing]="!!facade.formError()"
-      (files)="facade.addFile('cdr', $event)"
-      (removed)="facade.removeFile('cdr')"
-    />
-    <app-file-drop
-      tag="EXTRA"
-      title="Archivos extras"
-      [description]="
-        facade.entry() === 'sin'
-          ? 'Varios PDFs · se consolidan en un solo archivo'
-          : 'Varios PDFs de sustento'
-      "
-      requirement="Opcional"
-      [accept]="facade.accept.extra"
-      [multiple]="true"
-      [extras]="facade.extras()"
-      [error]="facade.extrasError()"
-      (files)="facade.addExtras($event)"
-      (removed)="facade.clearExtras()"
-    />
+    @if (facade.entry() === 'esp') {
+      <app-file-drop
+        tag="PDF"
+        title="PDF del documento"
+        [accept]="facade.accept.pdf"
+        [state]="facade.slots().pdf.state"
+        [fileName]="facade.slots().pdf.name"
+        [fileSize]="facade.slots().pdf.size"
+        [error]="facade.slots().pdf.error"
+        [highlightMissing]="!!facade.formError()"
+        (files)="facade.addFile('pdf', $event)"
+        (removed)="facade.removeFile('pdf')"
+      />
+    } @else {
+      <app-file-drop
+        tag="XML"
+        title="Factura electrónica"
+        [accept]="facade.accept.xml"
+        [state]="facade.slots().xml.state"
+        [fileName]="facade.slots().xml.name"
+        [fileSize]="facade.slots().xml.size"
+        [error]="facade.slots().xml.error"
+        [highlightMissing]="!!facade.formError()"
+        (files)="facade.addFile('xml', $event)"
+        (removed)="facade.removeFile('xml')"
+      />
+      <app-file-drop
+        tag="PDF"
+        title="Representación impresa"
+        [accept]="facade.accept.pdf"
+        [state]="facade.slots().pdf.state"
+        [fileName]="facade.slots().pdf.name"
+        [fileSize]="facade.slots().pdf.size"
+        [error]="facade.slots().pdf.error"
+        [highlightMissing]="!!facade.formError()"
+        (files)="facade.addFile('pdf', $event)"
+        (removed)="facade.removeFile('pdf')"
+      />
+      <app-file-drop
+        tag="CDR"
+        title="Constancia SUNAT"
+        [accept]="facade.accept.cdr"
+        [notApplicable]="facade.cdrRequired() ? '' : 'No requerido · serie ' + facade.series()"
+        [state]="facade.slots().cdr.state"
+        [fileName]="facade.slots().cdr.name"
+        [fileSize]="facade.slots().cdr.size"
+        [error]="facade.slots().cdr.error"
+        [highlightMissing]="!!facade.formError()"
+        (files)="facade.addFile('cdr', $event)"
+        (removed)="facade.removeFile('cdr')"
+      />
+      <app-extra-files-drop
+        [note]="facade.entry() === 'sin' ? 'Se unirán en un solo PDF' : 'Opcional'"
+        [accept]="facade.accept.extra"
+        [extras]="facade.extras()"
+        [error]="facade.extrasError()"
+        (files)="facade.addExtras($event)"
+        (removed)="facade.removeExtra($event)"
+      />
+    }
+    <span class="flex items-center gap-2 text-[12.5px] text-[#6B7588]">
+      <app-icon name="info" [size]="15" [stroke]="2" />Arrastra cada archivo a su fila o usa
+      Seleccionar · máx. 5 MB
+    </span>
   </div>
 </div>
