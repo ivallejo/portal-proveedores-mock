@@ -1,19 +1,19 @@
 # Spec 001 · Flujos documentales v2 · Diseño
 
-Cómo se implementa cada requisito de [requisitos.md](requisitos.md). Supone **D1 = a** (se elimina Caja Chica) y **D2 = a** (Con OC solo proveedor y administrador); si cambian, se ajusta este documento antes de implementar.
+Cómo se implementa cada requisito de [requisitos.md](requisitos.md). Decisiones cerradas: **D1** se elimina Caja Chica; **D2** Con OC solo proveedor y administrador.
 
 ## R1 · Sin OC del usuario interno
 
 **Backend** (`WebProveedores.Application/Documents/DocumentRegistrationService.cs`):
 - `needsApproval = EntryType == WithoutPurchaseOrder && actor.IsProvider && !actor.IsAdmin`. El aprobador solo se exige y se valida en ese caso.
 - Un usuario interno que envía `ApproverId` → se ignora (no es error), así un front antiguo no rompe.
-- Con D1 = a: se quita `IsPettyCash` del command, del request (`Api/Contracts/Documents`), de la entidad (`SupplierDocument.IsPettyCash` + migración que elimina la columna) y de las respuestas. Si se prefiere conservar el histórico, la columna queda y solo deja de usarse (decidir en la revisión).
+- Se quita `IsPettyCash` del command, del request (`Api/Contracts/Documents`), de la entidad (`SupplierDocument.IsPettyCash` + migración que elimina la columna) y de las respuestas. El historial de cada documento conserva la nota de cómo se registró.
 - Pruebas: interno Sin OC → Pendiente de contabilización sin aprobador ni correo; proveedor Sin OC sin aprobador → 400.
 
 **Front** (`features/documents`):
 - `RegisterDocumentFacade.pendingApproval = entry === 'sin' && !isInternal()`.
 - `register-order-data`: si es interno, no se muestran Área ni Aprobador; aviso «Como usuario interno se registra directo como Pendiente de contabilización» (texto del prototipo Propuesta 4).
-- Con D1 = a: se quitan `pettyCash`, `canPettyCash`, `canRegisterPettyCash` y `isPettyCash` del command y del adaptador HTTP.
+- Se quitan `pettyCash`, `canPettyCash`, `canRegisterPettyCash` y `isPettyCash` del command y del adaptador HTTP.
 - Requisito del pie: «Área y aprobador» solo para proveedores.
 
 ## R2 · Detalle del documento electrónico

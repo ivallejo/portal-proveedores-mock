@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Borrador** · esperando decisiones D1 y D2 |
+| Estado | **En curso** · aprobada el 2026-10-18 (D1 y D2 cerradas) |
 | Fecha | 2026-10-17 |
 | Origen | Flujos actualizados entregados por negocio (`docs/flujos/01`–`05`) |
 | Repos | Front (`portal-proveedores-mock`) y backend (`portal-proveedores-backend`) |
@@ -31,7 +31,7 @@ Criterios de aceptación:
 - [ ] Al registrar, el documento queda en **Pendiente de contabilización** sin aprobador y no se envía correo de aprobación.
 - [ ] Un proveedor en Sin OC sigue eligiendo área y aprobador; el documento queda en **Pendiente de aprobación** y se envía el correo al aprobador.
 - [ ] El backend aplica la regla según el rol de quien registra (no según un dato del formulario).
-- [ ] Depende de **D1** (qué pasa con Caja Chica).
+- [ ] Se elimina «Documento de Caja Chica» (D1).
 
 ### R2 · Con OC y Sin OC: mostrar el detalle del documento electrónico antes de registrar
 
@@ -59,7 +59,7 @@ Criterios de aceptación:
 **Flujo 01:** el actor es el **usuario proveedor**.
 
 Criterios de aceptación:
-- [ ] Depende de **D2**. Si se confirma: el usuario interno no ve la tarjeta «Con orden de compra» y el backend rechaza (403) un registro Con OC de alguien que no es proveedor ni administrador.
+- [ ] (D2) El usuario interno no ve la tarjeta «Con orden de compra» y el backend rechaza (403) un registro Con OC de alguien que no es proveedor ni administrador.
 
 ### R5 · Con OC: texto del número de orden
 
@@ -69,12 +69,12 @@ Criterios de aceptación:
 Criterios de aceptación:
 - [ ] La etiqueta para Servicio es «N° de orden de compra».
 
-## Decisiones abiertas
+## Decisiones
 
-| ID | Pregunta | Opciones | Decide |
-|---|---|---|---|
-| **D1** | ¿Qué pasa con **Caja Chica**? El flujo 02 no la menciona: si todo documento Sin OC de un interno va directo a contabilización, la casilla deja de tener sentido. | a) Se elimina (recomendado: el flujo la cubre) · b) Se mantiene para algún otro caso (¿cuál?) | Negocio |
-| **D2** | ¿**Con OC** es solo para proveedores? ¿El administrador puede registrarlo en nombre de un proveedor? | a) Solo proveedor (y administrador) · b) Se mantiene también para internos | Negocio |
+| ID | Pregunta | Decisión (2026-10-18) |
+|---|---|---|
+| **D1** | ¿Qué pasa con **Caja Chica**? | **Se elimina.** Todo documento Sin OC de un usuario interno va directo a Pendiente de contabilización. |
+| **D2** | ¿**Con OC** es solo para proveedores? | **Proveedor y administrador** (el administrador la conserva para soporte). Los usuarios internos no la ven y el backend responde 403. |
 
 ## Fuera de alcance
 

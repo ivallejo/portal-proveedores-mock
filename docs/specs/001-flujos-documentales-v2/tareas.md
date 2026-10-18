@@ -2,12 +2,12 @@
 
 Cada tarea es un commit verificado (build, pruebas y `npm run quality` / `dotnet test`). Al cerrarla se marca y se anota el commit.
 
-**Bloqueadas hasta cerrar D1 y D2:** T1–T4 y T9–T10. T5–T8 y T11 se pueden hacer ya.
+Decisiones D1 y D2 cerradas el 2026-10-18: todas las tareas habilitadas.
 
 ## Backend
 
 - [ ] **T1** · Sin OC: aprobación solo para proveedores (`needsApproval` por rol) + pruebas. *(R1)*
-- [ ] **T2** · Quitar Caja Chica: command, request, entidad (migración o columna en desuso, según la revisión) y respuestas. *(R1 · D1)*
+- [ ] **T2** · Quitar Caja Chica: command, request, entidad (migración que elimina la columna) y respuestas. *(R1 · D1)*
 - [ ] **T3** · Con OC solo proveedor o administrador (403) + prueba. *(R4 · D2)*
 - [ ] **T5** · `EmailAttachment` y adjuntos en `IEmailSender` y sus adaptadores (SMTP, Redirect, Log) + pruebas. *(R3)*
 - [ ] **T6** · Observar en Contabilización envía los archivos del documento, con límite de tamaño + pruebas. *(R3)*
