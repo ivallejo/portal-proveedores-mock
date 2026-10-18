@@ -71,6 +71,11 @@
         (files)="facade.addFile('cdr', $event)"
         (removed)="facade.removeFile('cdr')"
       />
+      @if (facade.xmlDocument(); as doc) {
+        @if (doc.fromXml && !facade.slots().xml.error) {
+          <app-electronic-document-summary [document]="doc" />
+        }
+      }
       <app-extra-files-drop
         [note]="facade.entry() === 'sin' ? 'Se unirán en un solo PDF' : 'Opcional'"
         [accept]="facade.accept.extra"

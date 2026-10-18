@@ -1,0 +1,35 @@
+<section
+  aria-label="Detalle del documento electrónico"
+  class="animate-in flex flex-col gap-3 rounded-[14px] border border-primary-line bg-primary-tint px-4 py-3.5"
+>
+  <span class="flex items-center gap-2 text-[13px] font-bold text-[#1E3FA8]">
+    <app-icon name="file-text" [size]="16" [stroke]="2" />Detalle del documento electrónico
+  </span>
+  <dl class="m-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[13px]">
+    <div class="flex min-w-0 flex-col gap-0.5">
+      <dt class="text-muted">{{ document().documentType }}</dt>
+      <dd class="m-0 font-bold tabular-nums">{{ document().number }}</dd>
+    </div>
+    <div class="flex min-w-0 flex-col gap-0.5">
+      <dt class="text-muted">Fecha de emisión</dt>
+      <dd class="m-0 font-bold tabular-nums">{{ formatDate(document().issuedAt) }}</dd>
+    </div>
+    <div class="col-span-2 flex min-w-0 flex-col gap-0.5">
+      <dt class="text-muted">Emisor</dt>
+      <dd class="m-0 truncate font-bold">
+        {{ document().issuerName || '—' }}
+        <span class="font-normal text-muted tabular-nums">· RUC {{ document().issuerRuc }}</span>
+      </dd>
+    </div>
+    <div class="flex min-w-0 flex-col gap-0.5">
+      <dt class="text-muted">Moneda</dt>
+      <dd class="m-0 font-bold">{{ document().currency }}</dd>
+    </div>
+    <div class="flex min-w-0 flex-col gap-0.5">
+      <dt class="text-muted">Importe total</dt>
+      <dd class="m-0 font-bold tabular-nums">
+        {{ money(document().currency, document().total) }}
+      </dd>
+    </div>
+  </dl>
+</section>

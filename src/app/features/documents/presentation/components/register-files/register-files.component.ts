@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
+import { ElectronicDocumentSummaryComponent } from '../electronic-document-summary/electronic-document-summary.component';
 import { ExtraFilesDropComponent } from '../extra-files-drop/extra-files-drop.component';
 import { FileDropComponent } from '../file-drop/file-drop.component';
 import { RegisterSectionTitleComponent } from '../register-section-title/register-section-title.component';
@@ -12,6 +13,7 @@ import { RegisterDocumentFacade } from '../../facades/register-document.facade';
     IconComponent,
     FileDropComponent,
     ExtraFilesDropComponent,
+    ElectronicDocumentSummaryComponent,
     RegisterSectionTitleComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

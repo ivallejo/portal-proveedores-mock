@@ -107,7 +107,7 @@ export class AccountingInboxFacade extends DocumentInboxFacade<AccountingActionR
       title: 'Documento observado',
       text: `El documento ${updated.number} de ${updated.providerName} pasó a estado Observado.`,
       reason,
-      mail: `Enviamos la observación a ${email}.`,
+      mail: `Enviamos la observación y los archivos del documento a ${email}.`,
     }));
   }
 

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **En curso** · aprobada el 2026-10-18 (D1 y D2 cerradas) |
+| Estado | **Implementada** · 2026-10-18 (aprobada el mismo día; D1 y D2 cerradas) |
 | Fecha | 2026-10-17 |
 | Origen | Flujos actualizados entregados por negocio (`docs/flujos/01`–`05`) |
 | Repos | Front (`portal-proveedores-mock`) y backend (`portal-proveedores-backend`) |
@@ -27,11 +27,11 @@ Negocio entregó la versión actualizada de los cinco flujos documentales. Se co
 **Flujo 02:** el usuario interno **no** elige área ni aprobador; su documento queda en **Pendiente de contabilización**. El proveedor sigue eligiendo área y aprobador.
 
 Criterios de aceptación:
-- [ ] Un usuario interno en Sin OC no ve Área ni Aprobador; un aviso indica que se registra directo como Pendiente de contabilización.
-- [ ] Al registrar, el documento queda en **Pendiente de contabilización** sin aprobador y no se envía correo de aprobación.
-- [ ] Un proveedor en Sin OC sigue eligiendo área y aprobador; el documento queda en **Pendiente de aprobación** y se envía el correo al aprobador.
-- [ ] El backend aplica la regla según el rol de quien registra (no según un dato del formulario).
-- [ ] Se elimina «Documento de Caja Chica» (D1).
+- [x] Un usuario interno en Sin OC no ve Área ni Aprobador; un aviso indica que se registra directo como Pendiente de contabilización.
+- [x] Al registrar, el documento queda en **Pendiente de contabilización** sin aprobador y no se envía correo de aprobación.
+- [x] Un proveedor en Sin OC sigue eligiendo área y aprobador; el documento queda en **Pendiente de aprobación** y se envía el correo al aprobador.
+- [x] El backend aplica la regla según el rol de quien registra (no según un dato del formulario).
+- [x] Se elimina «Documento de Caja Chica» (D1).
 
 ### R2 · Con OC y Sin OC: mostrar el detalle del documento electrónico antes de registrar
 
@@ -39,9 +39,9 @@ Criterios de aceptación:
 **Flujos 01 y 02:** después de adjuntar los archivos se muestra el **detalle del documento electrónico** y luego se valida en SAP/SUNAT.
 
 Criterios de aceptación:
-- [ ] Al terminar de leer el XML se muestra un resumen en la columna «Archivos»: tipo y N° de documento, emisor (razón social y RUC), fecha de emisión, moneda y total.
-- [ ] Se mantiene el diseño de la Propuesta 4 (una sola tarjeta, sin volver al asistente de pasos).
-- [ ] Si el XML no se puede leer, se mantiene el error en la fila del XML y no se registra.
+- [x] Al terminar de leer el XML se muestra un resumen en la columna «Archivos»: tipo y N° de documento, emisor (razón social y RUC), fecha de emisión, moneda y total.
+- [x] Se mantiene el diseño de la Propuesta 4 (una sola tarjeta, sin volver al asistente de pasos).
+- [x] Si el XML no se puede leer, se mantiene el error en la fila del XML y no se registra.
 
 ### R3 · Contabilización: el correo de «Observar» lleva los documentos adjuntos
 
@@ -49,9 +49,9 @@ Criterios de aceptación:
 **Flujo 05:** se envía al usuario interno indicado **con el motivo y los documentos adjuntos**.
 
 Criterios de aceptación:
-- [ ] El correo de observación adjunta los archivos del documento: XML, PDF, CDR (si existe) y el PDF de extras consolidado (si existe); en documentos especiales, el PDF.
-- [ ] Si los adjuntos superan el límite del servidor de correo, se envía el correo sin adjuntos con un aviso de que se revisen en el portal (y queda en el log).
-- [ ] La pantalla de Contabilización indica que el correo incluye los adjuntos.
+- [x] El correo de observación adjunta los archivos del documento: XML, PDF, CDR (si existe) y el PDF de extras consolidado (si existe); en documentos especiales, el PDF.
+- [x] Si los adjuntos superan el límite del servidor de correo, se envía el correo sin adjuntos con un aviso de que se revisen en el portal (y queda en el log).
+- [x] La pantalla de Contabilización indica que el correo incluye los adjuntos.
 
 ### R4 · Con OC: solo lo registra el proveedor
 
@@ -59,7 +59,7 @@ Criterios de aceptación:
 **Flujo 01:** el actor es el **usuario proveedor**.
 
 Criterios de aceptación:
-- [ ] (D2) El usuario interno no ve la tarjeta «Con orden de compra» y el backend rechaza (403) un registro Con OC de alguien que no es proveedor ni administrador.
+- [x] (D2) El usuario interno no ve la tarjeta «Con orden de compra» y el backend rechaza (403) un registro Con OC de alguien que no es proveedor ni administrador.
 
 ### R5 · Con OC: texto del número de orden
 
@@ -67,7 +67,7 @@ Criterios de aceptación:
 **Flujo 01:** «N° de orden de compra» para el tipo Servicio («N° de carrier» para Bien no cambia).
 
 Criterios de aceptación:
-- [ ] La etiqueta para Servicio es «N° de orden de compra».
+- [x] La etiqueta para Servicio es «N° de orden de compra».
 
 ## Decisiones
 

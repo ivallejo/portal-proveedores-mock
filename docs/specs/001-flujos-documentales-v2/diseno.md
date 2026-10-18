@@ -29,7 +29,7 @@ Cómo se implementa cada requisito de [requisitos.md](requisitos.md). Decisiones
 - `IEmailSender.SendAsync` gana un parámetro opcional `IReadOnlyList<EmailAttachment>? attachments` (record nuevo en `Ports/Outbound/Notifications/Models`: `FileName`, `ContentType`, `Content`).
 - `SmtpEmailSender` (System.Net.Mail) agrega los adjuntos al `MailMessage`; `RedirectingEmailSender` y `LogEmailSender` los propagan o los registran (nombre y tamaño).
 - `DocumentNotifier.ObservedAsync` recibe los adjuntos; `DocumentAccountingService.ObserveAsync` los arma con `IFileStorage.OpenReadAsync` a partir de los `DocumentAttachment` del documento.
-- Límite: si la suma supera `Email:MaxAttachmentBytes` (por defecto 20 MB), se envía sin adjuntos y el cuerpo indica que se revisen en el portal.
+- Límite: si la suma supera `DocumentFiles.MaxEmailAttachmentBytes` (18 MB, por el tope de 25 MB de Gmail con la codificación) o no se pueden leer, se envía sin adjuntos y el cuerpo indica que se revisen en el portal.
 - Pruebas: el correo de observación lleva los adjuntos; con adjuntos sobre el límite se envía sin ellos.
 
 **Front**: en el panel «Observar» de Contabilización, una línea: «El correo incluye los archivos del documento».

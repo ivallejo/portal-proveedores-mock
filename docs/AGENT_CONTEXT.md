@@ -186,8 +186,9 @@ Patrón de las pantallas de consulta: filtros en borrador (`draft`), búsqueda q
 
 Las reglas viven en `domain/rules/` de cada feature (con pruebas); el backend vuelve a validar todo.
 
-- **Con OC** (`documents`): la orden se valida en SAP (`documents/orders/validate`; hoy el backend simula los servicios 01 y 02 de SAP) antes de habilitar los archivos. Registra como _Pendiente de contabilización_.
-- **Sin OC**: proveedor y usuario interno eligen área y aprobador → _Pendiente de aprobación_. Solo el usuario interno (o el administrador) puede marcar **Caja Chica**: sin aprobador → _Pendiente de contabilización_ (`canRegisterPettyCash`).
+- **Con OC** (`documents`, [flujo 01](flujos/01-registro-con-oc.md)): solo proveedor o administrador (`canRegisterWithPurchaseOrder`; el interno empieza en Sin OC). La orden se valida en SAP (`documents/orders/validate`; hoy el backend simula los servicios 01 y 02 de SAP) antes de habilitar los archivos. Registra como _Pendiente de contabilización_.
+- **Sin OC** ([flujo 02](flujos/02-registro-sin-oc.md)): el proveedor elige área y aprobador → _Pendiente de aprobación_; el usuario interno y el administrador registran directo → _Pendiente de contabilización_ (`needsApprover`). Caja Chica se eliminó (spec 001).
+- **Detalle del documento electrónico**: al leer el XML, la columna «Archivos» muestra tipo y N°, emisor, fecha, moneda y total (`electronic-document-summary`).
 - **Extras PDF**: en Con OC y Sin OC se consolidan en un solo adjunto `Anexos_{número}.pdf`.
 - **Documentos especiales**: solo usuarios internos y administradores (`canRegisterSpecialDocuments`). PDF + datos manuales; la liquidación de cobranzas se valida en SUNAT y SAP, el resto solo duplicidad. Registra como _Pendiente de contabilización_.
 - **CDR**: requerido salvo que la serie empiece con «E» (`isCdrRequired`).

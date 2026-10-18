@@ -24,4 +24,4 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 
 | Spec | Estado | Resumen |
 |---|---|---|
-| [001 · Flujos documentales v2](001-flujos-documentales-v2/requisitos.md) | En curso | Ajustes de Con OC, Sin OC y Contabilización a los flujos de negocio del 2026-10-17 |
+| [001 · Flujos documentales v2](001-flujos-documentales-v2/requisitos.md) | Implementada | Ajustes de Con OC, Sin OC y Contabilización a los flujos de negocio del 2026-10-17 |

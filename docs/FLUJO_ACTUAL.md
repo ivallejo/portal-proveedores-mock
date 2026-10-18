@@ -7,7 +7,7 @@ Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pend
 | Rol | Código | Qué hace |
 |---|---|---|
 | Proveedor | `PROVIDER` | Registra sus propios documentos (Con OC / Sin OC) y consulta su estado. |
-| Usuario interno | `INTERNAL_USER` | Registra documentos Sin OC (incluida Caja Chica) y documentos especiales. |
+| Usuario interno | `INTERNAL_USER` | Registra documentos Sin OC (directo a contabilización) y documentos especiales. |
 | Aprobador de área | `AREA_APPROVER` | Aprueba, rechaza o reasigna los documentos de su bandeja. |
 | Cuentas por pagar | `ACCOUNTS_PAYABLE` | Contabiliza: rechaza u observa los documentos pendientes. |
 | Administrador | `ADMINISTRATOR` | Ve todo, administra usuarios; puede actuar como cualquiera de los anteriores. |
@@ -52,13 +52,13 @@ Validaciones comunes:
 - Se consulta SAP (servicio 01 y 02, hoy **simulados**) para validar duplicidad y, en comprobantes, SUNAT.
 
 ### 2.1 Con orden de compra
+- Solo el **proveedor** (o el administrador).
 - Se indica tipo (Bien / Servicio) y número de orden; SAP debe devolverla con saldo disponible.
 - **No pasa por aprobación**: queda en **Pendiente de contabilización**.
 
 ### 2.2 Sin orden de compra
-- Se elige el área y el aprobador.
-- Queda en **Pendiente de aprobación**.
-- **Caja Chica** (casilla del formulario): solo personal interno o administrador, solo Sin OC. **Omite la aprobación** y queda en **Pendiente de contabilización**.
+- El **proveedor** elige el área y el aprobador: queda en **Pendiente de aprobación** y se avisa por correo al aprobador.
+- El **usuario interno** (o el administrador) no elige área ni aprobador: su documento queda directo en **Pendiente de contabilización**. *(Caja Chica se eliminó: spec 001.)*
 
 ### 2.3 Documentos especiales
 - Boleto aéreo, recibo público, no domiciliado y liquidación de cobranzas.
@@ -77,7 +77,7 @@ El aprobador ve su bandeja (el administrador ve todas) y puede:
 
 La bandeja muestra los documentos en **Pendiente de contabilización**. CxP puede:
 - **Rechazar** con motivo → **Rechazado** (rechazado por contabilidad).
-- **Observar** con motivo y correo → **Observado**; se notifica al proveedor para que corrija.
+- **Observar** con motivo y correo → **Observado**; se envía al correo indicado el motivo y los archivos del documento (XML, PDF, CDR y extras; sin adjuntos si superan 18 MB).
 
 **Pendiente:** el estado **Contabilizado** (servicio 03, proceso diario con SAP) aún no se genera.
 
@@ -85,8 +85,8 @@ La bandeja muestra los documentos en **Pendiente de contabilización**. CxP pued
 
 ```mermaid
 stateDiagram-v2
-    [*] --> PendienteAprobacion: Sin OC (no Caja Chica)
-    [*] --> PendienteContabilizacion: Con OC, Caja Chica o Especial
+    [*] --> PendienteAprobacion: Sin OC del proveedor
+    [*] --> PendienteContabilizacion: Con OC, Sin OC del interno o Especial
     PendienteAprobacion --> PendienteContabilizacion: Aprobar
     PendienteAprobacion --> PendienteAprobacion: Reasignar
     PendienteAprobacion --> Rechazado: Rechazar (aprobador)
