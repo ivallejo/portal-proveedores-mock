@@ -12,7 +12,6 @@ describe('document.mapper', () => {
     const form = toRegistrationForm({
       entryType: 'Con OC',
       companyCode: '1001',
-      isPettyCash: false,
       order: { type: 'Bien', number: 'C-1' },
       xml: file('F001-1.xml'),
       pdf: file('F001-1.pdf'),
@@ -20,7 +19,6 @@ describe('document.mapper', () => {
     });
     expect(form.get('EntryType')).toBe('WithPurchaseOrder');
     expect(form.get('OrderType')).toBe('Goods');
-    expect(form.get('IsPettyCash')).toBeNull();
     expect(form.get('ApproverId')).toBeNull();
     expect(form.get('Cdr')).toBeNull();
     expect(form.getAll('Extras').length).toBe(2);

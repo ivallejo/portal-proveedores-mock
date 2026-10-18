@@ -53,8 +53,9 @@ export class AccountingInboxFacade extends DocumentInboxFacade<AccountingActionR
   override rowCaption(doc: PortalDocument): string {
     if (doc.entryType === 'Con OC') return `${doc.providerName} · OC ${doc.orderNumber}`;
     if (doc.entryType === 'Documento especial') return `${doc.documentType} · ${doc.providerName}`;
-    if (doc.isPettyCash) return `${doc.providerName} · Caja Chica`;
-    return `${doc.providerName} · Aprobó ${doc.approver ?? '—'}`;
+    // Sin OC del usuario interno: va directo a contabilización, sin aprobador (flujo 02).
+    if (!doc.approver) return `${doc.providerName} · Registro interno`;
+    return `${doc.providerName} · Aprobó ${doc.approver}`;
   }
 
   openPanel(panel: AccountingPanel): void {

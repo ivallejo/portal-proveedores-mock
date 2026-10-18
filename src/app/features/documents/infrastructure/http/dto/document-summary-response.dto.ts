@@ -11,7 +11,6 @@ export interface DocumentSummaryResponseDto {
   currency: 'PEN' | 'USD';
   amount: number;
   status: ApiDocumentStatus;
-  isPettyCash: boolean;
   issuedAt: string;
   registeredAtUtc: string;
   approverName: string | null;

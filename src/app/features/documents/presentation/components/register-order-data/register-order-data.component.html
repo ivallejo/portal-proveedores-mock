@@ -39,7 +39,7 @@
       </div>
       <div class="flex flex-col gap-2 sm:col-span-2">
         <label for="rg-nro" class="field-label">{{
-          facade.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de servicio'
+          facade.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra'
         }}</label>
         <div class="flex flex-col gap-2.5 sm:flex-row">
           <input
@@ -79,7 +79,7 @@
             <app-icon name="alert-circle" [size]="16" [stroke]="2" class="mt-px shrink-0" />
             <span
               >SAP no encontró la
-              {{ facade.orderType() === 'Bien' ? 'entrega con carrier' : 'orden de servicio' }}
+              {{ facade.orderType() === 'Bien' ? 'entrega con carrier' : 'orden de compra' }}
               {{ facade.orderNumber() }} para la sociedad, o ya no tiene saldo por facturar.</span
             >
           </span>
@@ -124,31 +124,12 @@
           (valueChange)="facade.setApprover($event)"
         />
       }
-      @if (facade.canPettyCash()) {
-        <label
-          class="flex cursor-pointer items-start gap-3 rounded-xl border-2 px-4 py-3 transition-colors sm:col-span-2"
-          [class]="facade.pettyCash() ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
-        >
-          <input
-            type="checkbox"
-            class="mt-0.5 size-[18px] shrink-0 accent-primary"
-            [checked]="facade.pettyCash()"
-            (change)="facade.pettyCash.set($any($event.target).checked); facade.formError.set('')"
-          />
-          <span class="flex flex-col gap-0.5">
-            <span class="text-sm font-bold">Documento de Caja Chica</span>
-            <span class="text-[12.5px] leading-normal text-muted"
-              >No requiere aprobación de un área.</span
-            >
-          </span>
-        </label>
-      }
-      @if (facade.pettyCash()) {
+      @if (!facade.pendingApproval()) {
         <span
           class="flex items-center gap-2.5 rounded-xl bg-primary-tint px-3.5 py-3 text-[13px] text-[#1E3FA8] sm:col-span-2"
         >
-          <app-icon name="info" [size]="18" [stroke]="2" class="shrink-0" />Como documento de Caja
-          Chica se registra directo como Pendiente de contabilización.
+          <app-icon name="info" [size]="18" [stroke]="2" class="shrink-0" />Como usuario interno se
+          registra directo como Pendiente de contabilización.
         </span>
       }
     </div>

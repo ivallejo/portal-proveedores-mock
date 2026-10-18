@@ -1,7 +1,8 @@
 import { ElectronicDocument } from '../models/electronic-document';
 import {
-  canRegisterPettyCash,
   canRegisterSpecialDocuments,
+  canRegisterWithPurchaseOrder,
+  needsApprover,
   isValidObservationEmail,
 } from './document-rules';
 import {
@@ -60,12 +61,16 @@ describe('registration rules', () => {
     expect(invoice.total).toBe(7080);
   });
 
-  it('decide quién registra documentos especiales y Caja Chica', () => {
+  it('decide quién registra cada tipo de ingreso y quién necesita aprobador', () => {
     expect(canRegisterSpecialDocuments(['Colaborador interno'], false)).toBeTrue();
     expect(canRegisterSpecialDocuments(['Proveedor', 'Colaborador interno'], false)).toBeFalse();
     expect(canRegisterSpecialDocuments(['Proveedor'], true)).toBeTrue();
-    expect(canRegisterPettyCash(['Administrador'])).toBeTrue();
-    expect(canRegisterPettyCash(['Proveedor'])).toBeFalse();
+    expect(canRegisterWithPurchaseOrder(['Proveedor'], false)).toBeTrue();
+    expect(canRegisterWithPurchaseOrder(['Colaborador interno'], false)).toBeFalse();
+    expect(canRegisterWithPurchaseOrder(['Administrador'], true)).toBeTrue();
+    expect(needsApprover(['Proveedor'], false)).toBeTrue();
+    expect(needsApprover(['Colaborador interno'], false)).toBeFalse();
+    expect(needsApprover(['Administrador'], true)).toBeFalse();
     expect(isValidObservationEmail('cxp@empresa.pe')).toBeTrue();
     expect(isValidObservationEmail('cxp@empresa')).toBeFalse();
   });

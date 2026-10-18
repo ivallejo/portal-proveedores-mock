@@ -91,7 +91,6 @@ export function toDocumentSummary(item: DocumentSummaryResponseDto): PortalDocum
     companyName: '',
     companyRuc: '',
     status: STATUS[item.status],
-    isPettyCash: item.isPettyCash,
     approver: item.approverName ?? undefined,
     orderNumber: item.orderNumber ?? undefined,
     attachments: [],
@@ -125,7 +124,6 @@ export function toPortalDocument(item: DocumentDetailResponseDto): PortalDocumen
     companyName: item.company.name,
     companyRuc: item.company.ruc ?? '',
     status: STATUS[item.status],
-    isPettyCash: item.isPettyCash,
     rejectedBy:
       item.rejectedBy === 'Accounting' ? 'contabilidad' : item.rejectedBy ? 'aprobador' : undefined,
     area: item.areaName ?? undefined,
@@ -169,7 +167,6 @@ export function toRegistrationForm(command: RegisterElectronicDocumentCommand): 
     command.entryType === 'Con OC' ? 'WithPurchaseOrder' : 'WithoutPurchaseOrder',
   );
   form.append('CompanyCode', command.companyCode);
-  if (command.isPettyCash) form.append('IsPettyCash', 'true');
   if (command.order) {
     form.append('OrderType', toApiOrderType(command.order.type));
     form.append('OrderNumber', command.order.number);

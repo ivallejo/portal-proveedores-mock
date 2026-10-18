@@ -49,7 +49,15 @@ export function canRegisterSpecialDocuments(roles: readonly string[], isAdmin: b
   return isInternalCollaborator(roles) || isAdmin;
 }
 
-/** Solo el personal interno (o el administrador) puede registrar Caja Chica. */
-export function canRegisterPettyCash(roles: readonly string[]): boolean {
-  return roles.includes('Colaborador interno') || roles.includes('Administrador');
+/** Con orden de compra lo registra el proveedor (flujo 01); el administrador también, para soporte. */
+export function canRegisterWithPurchaseOrder(roles: readonly string[], isAdmin: boolean): boolean {
+  return roles.includes('Proveedor') || isAdmin;
+}
+
+/**
+ * Sin orden de compra (flujo 02): solo el proveedor elige área y aprobador; el usuario interno (y el administrador)
+ * registran directo como Pendiente de contabilización.
+ */
+export function needsApprover(roles: readonly string[], isAdmin: boolean): boolean {
+  return roles.includes('Proveedor') && !isAdmin;
 }

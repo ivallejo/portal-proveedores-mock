@@ -47,7 +47,7 @@ describe('RegisterDocumentFacade', () => {
     return TestBed.inject(RegisterDocumentFacade);
   }
 
-  it('solo el personal interno ve los documentos especiales y la Caja Chica', () => {
+  it('Con OC es del proveedor y los especiales del personal interno (flujos 01 y 03)', () => {
     expect(
       setup(['Proveedor'])
         .entryCards()
@@ -55,8 +55,9 @@ describe('RegisterDocumentFacade', () => {
     ).toEqual(['oc', 'sin']);
     TestBed.resetTestingModule();
     const internal = setup(['Colaborador interno']);
-    expect(internal.entryCards().length).toBe(3);
-    expect(internal.canPettyCash()).toBeTrue();
+    expect(internal.entryCards().map((card) => card.value)).toEqual(['sin', 'esp']);
+    internal.start();
+    expect(internal.entry()).toBe('sin');
   });
 
   it('una orden que SAP no reconoce queda marcada', () => {
@@ -81,12 +82,16 @@ describe('RegisterDocumentFacade', () => {
     expect(facade.result()).toBeNull();
   });
 
-  it('Sin OC pide área y aprobador salvo en Caja Chica', () => {
-    const facade = setup(['Colaborador interno']);
-    facade.pickEntry('sin');
-    expect(facade.checks().map((check) => check.label)).toContain('Área y aprobador');
-    facade.pettyCash.set(true);
-    expect(facade.checks().map((check) => check.label)).not.toContain('Área y aprobador');
+  it('Sin OC: el proveedor elige aprobador y el interno va directo a contabilización (flujo 02)', () => {
+    const provider = setup(['Proveedor']);
+    provider.pickEntry('sin');
+    expect(provider.checks().map((check) => check.label)).toContain('Área y aprobador');
+    expect(provider.statusOnRegister()).toBe('Pendiente de aprobación');
+    TestBed.resetTestingModule();
+    const internal = setup(['Colaborador interno']);
+    internal.pickEntry('sin');
+    expect(internal.checks().map((check) => check.label)).not.toContain('Área y aprobador');
+    expect(internal.statusOnRegister()).toBe('Pendiente de contabilización');
   });
 
   it('muestra el rechazo de SAP como resultado del documento especial', () => {

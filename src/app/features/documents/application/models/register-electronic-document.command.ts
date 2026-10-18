@@ -4,7 +4,6 @@ import { OrderType } from '../../domain/models/order-type';
 export interface RegisterElectronicDocumentCommand {
   entryType: 'Con OC' | 'Sin OC';
   companyCode: string;
-  isPettyCash: boolean;
   order?: { type: OrderType; number: string };
   /** Solo si el documento pasa por aprobación. */
   approverId?: string;

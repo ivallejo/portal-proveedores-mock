@@ -47,7 +47,7 @@ describe('AccountingInboxFacade', () => {
     const facade = setup();
     expect(search).toHaveBeenCalledWith('Accounting', { ruc: '', status: '' });
     expect(facade.kpis().pending).toBe('1');
-    expect(facade.rowCaption(doc)).toBe('Andes · Aprobó —');
+    expect(facade.rowCaption(doc)).toBe('Andes · Registro interno');
   });
 
   it('observa con el correo del proveedor y muestra el resultado', () => {

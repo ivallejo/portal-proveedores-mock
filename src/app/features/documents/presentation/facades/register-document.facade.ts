@@ -19,9 +19,10 @@ import { PortalDocument } from '../../domain/models/portal-document';
 import { PurchaseOrder } from '../../domain/models/purchase-order';
 import {
   SPECIAL_DOCUMENT_TYPES,
-  canRegisterPettyCash,
   canRegisterSpecialDocuments,
+  canRegisterWithPurchaseOrder,
   isInternalCollaborator,
+  needsApprover,
 } from '../../domain/rules/document-rules';
 import {
   attachmentError,
@@ -83,7 +84,6 @@ export class RegisterDocumentFacade {
   readonly formError = signal('');
   readonly registering = signal(false);
   readonly result = signal<RegisterResult | null>(null);
-  readonly pettyCash = signal(false);
 
   readonly specialTypes = SPECIAL_DOCUMENT_TYPES;
   readonly accept = ACCEPT;
@@ -100,15 +100,18 @@ export class RegisterDocumentFacade {
 
   private readonly roles = computed(() => this.session.user()?.roles ?? []);
   readonly isInternal = computed(() => isInternalCollaborator(this.roles()));
-  /** Los documentos especiales los registra personal interno, no el proveedor. */
-  readonly entryCards = computed(() =>
-    ENTRY_CARDS.filter(
-      (card) =>
-        card.value !== 'esp' || canRegisterSpecialDocuments(this.roles(), this.session.isAdmin()),
-    ),
-  );
-  /** Solo el personal interno (o el administrador) puede registrar Caja Chica. */
-  readonly canPettyCash = computed(() => canRegisterPettyCash(this.roles()));
+  /** Con OC: proveedor (flujo 01); especiales: personal interno (flujo 03); el administrador, todos. */
+  readonly entryCards = computed(() => {
+    const roles = this.roles();
+    const isAdmin = this.session.isAdmin();
+    return ENTRY_CARDS.filter((card) =>
+      card.value === 'oc'
+        ? canRegisterWithPurchaseOrder(roles, isAdmin)
+        : card.value === 'esp'
+          ? canRegisterSpecialDocuments(roles, isAdmin)
+          : true,
+    );
+  });
   readonly locked = computed(() => this.orderState() === 'busy' || this.registering());
   readonly series = computed(
     () => this.xmlDocument()?.series || seriesFromFileName(this.slots().xml.name) || '',
@@ -120,8 +123,10 @@ export class RegisterDocumentFacade {
       Object.values(this.slots()).some((slot) => slot.state === 'uploading') ||
       this.extras().some((extra) => extra.uploading),
   );
-  /** Sin OC pasa por aprobación, salvo que sea de Caja Chica. */
-  readonly pendingApproval = computed(() => this.entry() === 'sin' && !this.pettyCash());
+  /** Sin OC del proveedor pasa por aprobación; el del usuario interno va directo a contabilización (flujo 02). */
+  readonly pendingApproval = computed(
+    () => this.entry() === 'sin' && needsApprover(this.roles(), this.session.isAdmin()),
+  );
   readonly statusOnRegister = computed(() =>
     this.pendingApproval() ? 'Pendiente de aprobación' : 'Pendiente de contabilización',
   );
@@ -181,6 +186,10 @@ export class RegisterDocumentFacade {
 
   start(): void {
     this.catalog.load();
+    // El usuario interno no registra Con OC: empieza en el primer tipo que puede usar.
+    const cards = this.entryCards();
+    if (cards.length && !cards.some((card) => card.value === this.entry()))
+      this.entry.set(cards[0].value);
   }
 
   // ——— Tipo de ingreso y datos ———
@@ -379,7 +388,6 @@ export class RegisterDocumentFacade {
     return {
       entryType: this.entry() === 'oc' ? 'Con OC' : 'Sin OC',
       companyCode: this.company(),
-      isPettyCash: this.entry() === 'sin' && this.pettyCash(),
       order:
         this.entry() === 'oc' && order ? { type: order.type, number: order.number } : undefined,
       approverId: this.pendingApproval() ? this.approver() : undefined,
@@ -537,7 +545,6 @@ export class RegisterDocumentFacade {
     this.xmlDocument.set(null);
     this.special.update((form) => ({ ...EMPTY_SPECIAL, type: form.type }));
     this.formError.set('');
-    this.pettyCash.set(false);
     this.result.set(null);
   }
 }

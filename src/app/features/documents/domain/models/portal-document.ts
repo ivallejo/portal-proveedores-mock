@@ -30,8 +30,6 @@ export interface PortalDocument {
   companyName: string;
   companyRuc: string;
   status: DocumentStatus;
-  /** Documento de Caja Chica: se registra sin pasar por aprobación. */
-  isPettyCash?: boolean;
   /** Quién rechazó el documento: el aprobador o Cuentas por pagar. */
   rejectedBy?: RejectionStage;
   area?: string;

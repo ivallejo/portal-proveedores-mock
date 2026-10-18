@@ -19,7 +19,6 @@ export interface DocumentDetailResponseDto {
   registeredBy: string;
   company: { code: string; name: string; ruc: string | null };
   status: ApiDocumentStatus;
-  isPettyCash: boolean;
   rejectedBy: 'Approver' | 'Accounting' | null;
   areaName: string | null;
   approverName: string | null;
