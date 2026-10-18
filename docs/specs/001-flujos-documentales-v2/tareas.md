@@ -15,12 +15,12 @@ Decisiones D1 y D2 cerradas el 2026-10-18: todas las tareas habilitadas.
 ## Front
 
 - [x] **T4** · Sin OC: el interno no elige área ni aprobador (aviso del prototipo); quitar Caja Chica (facade, command, adaptador, pruebas). *(R1 · D1)* — `616b814`
-- [x] **T7** · Resumen del documento electrónico bajo los archivos (componente + prueba). *(R2)* — `este commit`
-- [x] **T8** · Contabilización › Observar: aviso de que el correo lleva los archivos. *(R3)* — `este commit`
+- [x] **T7** · Resumen del documento electrónico bajo los archivos (componente + prueba). *(R2)* — `76a48ae`
+- [x] **T8** · Contabilización › Observar: aviso de que el correo lleva los archivos. *(R3)* — `76a48ae`
 - [x] **T9** · «Con orden de compra» solo para proveedor o administrador (regla + prueba). *(R4 · D2)* — `616b814`
 - [x] **T11** · Etiqueta «N° de orden de compra» para Servicio. *(R5)* — `616b814`
 
 ## Cierre
 
-- [x] **T10** · Actualizar `FLUJO_ACTUAL.md` y los `AGENT_CONTEXT.md` de ambos repos; marcar la spec como **Implementada**. — `este commit`
+- [x] **T10** · Actualizar `FLUJO_ACTUAL.md` y los `AGENT_CONTEXT.md` de ambos repos; marcar la spec como **Implementada**. — `76a48ae`
 - [x] Prueba en el navegador contra el backend local: el interno solo ve Sin OC y Especiales, el aviso de registro directo y el detalle del XML. (Registro real y correo con adjuntos: pendiente con un XML válido y SAP.)
