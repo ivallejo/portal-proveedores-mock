@@ -1,5 +1,7 @@
 # Contexto técnico para agentes — Frontend
 
+> **Flujos y specs:** los flujos de negocio aprobados están en [`docs/flujos/`](flujos/README.md) y los cambios se especifican antes de implementarlos en [`docs/specs/`](specs/README.md).
+
 Guía del estado real del frontend del Portal de Proveedores. Leer antes de modificar código o conectar endpoints. El historial de cómo se llegó a esta estructura está en [`PLAN_HEXAGONAL.md`](PLAN_HEXAGONAL.md); el flujo funcional, en [`FLUJO_ACTUAL.md`](FLUJO_ACTUAL.md).
 
 ## Alcance actual

@@ -1,0 +1,26 @@
+# Spec 001 · Flujos documentales v2 · Tareas
+
+Cada tarea es un commit verificado (build, pruebas y `npm run quality` / `dotnet test`). Al cerrarla se marca y se anota el commit.
+
+**Bloqueadas hasta cerrar D1 y D2:** T1–T4 y T9–T10. T5–T8 y T11 se pueden hacer ya.
+
+## Backend
+
+- [ ] **T1** · Sin OC: aprobación solo para proveedores (`needsApproval` por rol) + pruebas. *(R1)*
+- [ ] **T2** · Quitar Caja Chica: command, request, entidad (migración o columna en desuso, según la revisión) y respuestas. *(R1 · D1)*
+- [ ] **T3** · Con OC solo proveedor o administrador (403) + prueba. *(R4 · D2)*
+- [ ] **T5** · `EmailAttachment` y adjuntos en `IEmailSender` y sus adaptadores (SMTP, Redirect, Log) + pruebas. *(R3)*
+- [ ] **T6** · Observar en Contabilización envía los archivos del documento, con límite de tamaño + pruebas. *(R3)*
+
+## Front
+
+- [ ] **T4** · Sin OC: el interno no elige área ni aprobador (aviso del prototipo); quitar Caja Chica (facade, command, adaptador, pruebas). *(R1 · D1)*
+- [ ] **T7** · Resumen del documento electrónico bajo los archivos (componente + prueba). *(R2)*
+- [ ] **T8** · Contabilización › Observar: aviso de que el correo lleva los archivos. *(R3)*
+- [ ] **T9** · «Con orden de compra» solo para proveedor o administrador (regla + prueba). *(R4 · D2)*
+- [ ] **T11** · Etiqueta «N° de orden de compra» para Servicio. *(R5)*
+
+## Cierre
+
+- [ ] **T10** · Actualizar `FLUJO_ACTUAL.md` y los `AGENT_CONTEXT.md` de ambos repos; marcar la spec como **Implementada**.
+- [ ] Prueba en el navegador de los flujos 01, 02 y 05 contra el backend local.

@@ -7,4 +7,5 @@ Leer primero [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md): arquitectura, «d
 - Angular 20 standalone + signals + `OnPush`; Tailwind CSS 4 con tokens en `src/styles.css`. No agregar SCSS.
 - Reutilizar `shared/ui` (botones `.btn-*`, `app-select`, `app-dialog`, `app-drawer`, `app-badge`, `app-callout`, `app-pagination`…) antes de crear componentes nuevos.
 - Antes de terminar: `npm run quality` (formato, tipos y reglas de arquitectura), `npm test` y `npm run build`. Si una regla de arquitectura falla, mover el código a su capa; no desactivar la regla.
+- Cambios de comportamiento: primero la spec en `docs/specs/` (proceso en `docs/specs/README.md`) a partir de los flujos de negocio de `docs/flujos/`; no implementar sin spec aprobada.
 - El diseño de referencia es la Propuesta 1 del lienzo «Portal de Proveedores» en claude.ai.

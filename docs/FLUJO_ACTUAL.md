@@ -1,6 +1,6 @@
 # Flujo actual del Portal de Proveedores
 
-Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pendiente** aún no está implementado.
+Describe cómo funciona hoy el sistema (front + backend). Lo marcado como **pendiente** aún no está implementado. Los flujos de negocio aprobados (lo que debe hacer) están en [`flujos/`](flujos/README.md); las diferencias en curso, en [`specs/`](specs/README.md).
 
 ## Roles
 
