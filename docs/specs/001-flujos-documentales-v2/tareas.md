@@ -20,6 +20,8 @@ Decisiones D1 y D2 cerradas el 2026-10-18: todas las tareas habilitadas.
 - [x] **T9** · «Con orden de compra» solo para proveedor o administrador (regla + prueba). *(R4 · D2)* — `616b814`
 - [x] **T11** · Etiqueta «N° de orden de compra» para Servicio. *(R5)* — `616b814`
 
+- [x] **T12** · La tarjeta «Sin orden de compra» dice «se registra directo como Pendiente de contabilización» para el usuario interno y el administrador; el proveedor sigue viendo «requiere aprobación de un área». *(R1, ajuste posterior)*
+
 ## Cierre
 
 - [x] **T10** · Actualizar `FLUJO_ACTUAL.md` y los `AGENT_CONTEXT.md` de ambos repos; marcar la spec como **Implementada**. — `76a48ae`

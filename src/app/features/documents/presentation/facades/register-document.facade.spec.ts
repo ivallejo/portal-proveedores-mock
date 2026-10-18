@@ -53,9 +53,17 @@ describe('RegisterDocumentFacade', () => {
         .entryCards()
         .map((card) => card.value),
     ).toEqual(['oc', 'sin']);
+    expect(
+      TestBed.inject(RegisterDocumentFacade)
+        .entryCards()
+        .find((card) => card.value === 'sin')?.description,
+    ).toContain('requiere aprobación de un área');
     TestBed.resetTestingModule();
     const internal = setup(['Colaborador interno']);
     expect(internal.entryCards().map((card) => card.value)).toEqual(['sin', 'esp']);
+    expect(internal.entryCards()[0].description).toContain(
+      'directo como Pendiente de contabilización',
+    );
     internal.start();
     expect(internal.entry()).toBe('sin');
   });

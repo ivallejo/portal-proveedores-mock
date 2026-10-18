@@ -104,12 +104,15 @@ export class RegisterDocumentFacade {
   readonly entryCards = computed(() => {
     const roles = this.roles();
     const isAdmin = this.session.isAdmin();
+    const direct = !needsApprover(roles, isAdmin);
     return ENTRY_CARDS.filter((card) =>
       card.value === 'oc'
         ? canRegisterWithPurchaseOrder(roles, isAdmin)
         : card.value === 'esp'
           ? canRegisterSpecialDocuments(roles, isAdmin)
           : true,
+    ).map((card) =>
+      direct && card.directDescription ? { ...card, description: card.directDescription } : card,
     );
   });
   readonly locked = computed(() => this.orderState() === 'busy' || this.registering());

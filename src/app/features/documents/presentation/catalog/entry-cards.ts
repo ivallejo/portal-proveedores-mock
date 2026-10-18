@@ -5,6 +5,8 @@ export const ENTRY_CARDS: {
   value: RegisterEntry;
   label: string;
   description: string;
+  /** Texto para quien registra sin aprobación (usuario interno o administrador, flujo 02). */
+  directDescription?: string;
   icon: IconName;
 }[] = [
   {
@@ -17,6 +19,8 @@ export const ENTRY_CARDS: {
     value: 'sin',
     label: 'Sin orden de compra',
     description: 'Factura o recibo sin OC que requiere aprobación de un área.',
+    directDescription:
+      'Factura o recibo sin OC. Se registra directo como Pendiente de contabilización.',
     icon: 'file-text',
   },
   {
