@@ -6,6 +6,7 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 
 - [`docs/flujos/`](../flujos/README.md): los flujos de negocio aprobados (diagrama Mermaid + reglas). Son la fuente de verdad del «qué».
 - `docs/specs/NNN-nombre/`: un cambio por carpeta, numerado.
+- [`docs/consultas-negocio.md`](../consultas-negocio.md): huecos y dudas que el usuario debe definir antes de abrir una spec.
 
 ## Proceso
 
