@@ -26,3 +26,4 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 | Spec | Estado | Resumen |
 |---|---|---|
 | [001 · Flujos documentales v2](001-flujos-documentales-v2/requisitos.md) | Implementada | Ajustes de Con OC, Sin OC y Contabilización a los flujos de negocio del 2026-10-17 |
+| [002 · Archivos en Blob Storage](002-archivos-en-blob-storage/requisitos.md) | Implementada | Adjuntos en Azure Blob Storage (Azurite en desarrollo) |
