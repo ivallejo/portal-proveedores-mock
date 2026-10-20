@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Borrador** |
+| Estado | **En curso** (T2 y T10) |
 | Fecha | 2026-10-20 |
 | Origen | Lineamientos Técnicos - Web de Proveedores (`LIN-WEB-PROV-001`, rev. 1.0, 24/09/2026), emitidos por TI de Naviera Transoceánica |
 | Repos | Frontend y backend (nuestros y, después, los del cliente) |
