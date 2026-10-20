@@ -1,46 +1,67 @@
 # Portal de Proveedores · Frontend
 
-Frontend Angular 20 + Tailwind CSS 4 del Portal de Proveedores de Naviera Transoceánica S.A. Implementa la Propuesta 1 del diseño: autenticación, registro de proveedores, consultas, registro de documentos, aprobaciones, contabilización y administración.
+Frontend del Portal de Proveedores de Naviera Transoceánica S.A. Implementa la Propuesta 1 del diseño: autenticación, registro de proveedores, consultas, registro de documentos, aprobaciones, contabilización y administración.
 
-## Requisitos
+## Stack y versiones
 
-- Node.js 20 o superior.
-- npm 10 o superior.
+| Componente | Versión |
+|---|---|
+| Angular (standalone, signals, `OnPush`) | 22.2 |
+| TypeScript | 6.0 |
+| Tailwind CSS (PostCSS) | 4.3 |
+| Node.js | 24 LTS (≥ 24.15, ver `.nvmrc`) |
+| npm | 11 |
+| Pruebas unitarias | Karma + Jasmine |
+| Reglas de arquitectura | dependency-cruiser + `scripts/check-source-layout.mjs` |
 
-## Levantar todo (backend + frontend)
-
-Desde el repo del backend, clonado al lado de este: `scripts/dev-up.sh` (SQL Server, API y este frontend con un solo comando).
-
-## Instalación y arranque
+## Ejecución local
 
 ```bash
-npm install
+nvm use               # Node de .nvmrc
+npm ci
 npm start
 ```
 
-Abrir [http://localhost:4200](http://localhost:4200).
+Abrir [http://localhost:4200](http://localhost:4200). Todo el portal usa el backend (`http://localhost:5080/api`): levanta la API antes de iniciar sesión. El administrador inicial se configura en el `.env` del backend. Workflows de aprobación todavía no tiene API y guarda sus cambios en memoria mientras la pestaña esté abierta.
 
-> Consulta [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md) antes de continuar el desarrollo: describe la arquitectura, las rutas, los roles y qué partes siguen en memoria.
+Para levantar todo junto (SQL Server, Azurite, API y este frontend), desde el repo del backend clonado al lado de este: `scripts/dev-up.sh`.
 
-## Acceso
-
-Todo el portal usa el backend (`http://localhost:5080/api`): levanta la API antes de iniciar sesión. El administrador inicial se configura en el `.env` del backend. Workflows de aprobación todavía no tiene API y guarda sus cambios en memoria mientras la pestaña esté abierta.
-
-## Comandos útiles
+## Comandos
 
 ```bash
+npm ci                # Instalación reproducible (usa package-lock.json)
 npm start             # Servidor de desarrollo
-npm run build         # Compilación de producción (también valida las plantillas)
+npm run build         # Build de producción (también valida las plantillas)
+npm test              # Pruebas unitarias (Karma, Chrome)
 npm run quality       # Formato, tipos y reglas de arquitectura
 npm run format        # Formatear TypeScript, HTML y CSS
-npm test              # Ejecutar pruebas (Karma)
 ```
 
-## Configuración de producción
+Para CI: `npm ci && npm run quality && npx ng test --watch=false --browsers=ChromeHeadless && npm run build`.
 
-En producción la aplicación llama a `/api` (ver `src/environments/environment.production.ts`); el servidor que la publique debe enrutar esa ruta al backend.
+**Artefacto:** `npm run build` genera el sitio estático en `dist/SAD-frontend-mock/browser/` (es lo que se publica).
 
-## Estructura principal
+## Configuración
+
+La configuración por ambiente está en `src/environments/` y se elige al compilar (`environment.production.ts` reemplaza a `environment.ts` en el build de producción). No contiene secretos.
+
+| Variable | Desarrollo | Producción | Uso |
+|---|---|---|---|
+| `apiBaseUrl` | `http://localhost:5080/api` | `/api` | URL base de la API |
+| `features` | todas activas | todas apagadas | Funcionalidades visibles; las apagadas muestran «en construcción» |
+
+## Integraciones
+
+El frontend solo se comunica con la API del backend (`apiBaseUrl`), con JWT en la cabecera `Authorization`. SAP, SUNAT, correo y Blob Storage se consumen siempre a través del backend.
+
+## Despliegue
+
+- Sitio estático: copiar el contenido de `dist/SAD-frontend-mock/browser/` al sitio de IIS.
+- Al ser una SPA, IIS debe reescribir las rutas internas a `index.html` (módulo URL Rewrite), sin reescribir `/api`.
+- En producción la aplicación llama a `/api` en el mismo dominio: el servidor debe enrutar esa ruta al backend (o publicarlo en esa ruta).
+- `index.html` no debe quedar en caché; los demás archivos llevan hash en el nombre.
+
+## Estructura
 
 Arquitectura hexagonal por feature; las reglas entre capas las verifica `npm run quality`.
 
@@ -56,9 +77,12 @@ src/app/
     ├── presentation/               # Páginas, componentes y facades
     ├── di/                         # Tokens y providers
     └── index.ts                    # API pública de la feature
+src/environments/                   # Configuración por ambiente
 src/styles.css                      # Tailwind y tokens de diseño (@theme)
 ```
 
-## Documentación para agentes
+## Documentación
 
-La guía de arquitectura («dónde va cada cosa», reglas, inyección, comunicación entre features), rutas, reglas de negocio y pendientes está en [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md). El plan con el que se migró a esta estructura está en [`docs/PLAN_HEXAGONAL.md`](docs/PLAN_HEXAGONAL.md).
+- [`docs/AGENT_CONTEXT.md`](docs/AGENT_CONTEXT.md): arquitectura («dónde va cada cosa», reglas, inyección, comunicación entre features), rutas, reglas de negocio y pendientes.
+- [`docs/flujos/`](docs/flujos/README.md) y [`docs/specs/`](docs/specs/README.md): flujos de negocio y specs de cada cambio.
+- [`docs/PLAN_HEXAGONAL.md`](docs/PLAN_HEXAGONAL.md): plan con el que se migró a esta estructura.

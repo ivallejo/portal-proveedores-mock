@@ -135,5 +135,11 @@ module.exports = {
     exclude: { path: '\\.spec\\.ts$' },
     tsConfig: { fileName: 'tsconfig.app.json' },
     tsPreCompilationDeps: true,
+    // Los paquetes de Angular 22 solo se resuelven por el campo «exports».
+    enhancedResolveOptions: {
+      exportsFields: ['exports'],
+      conditionNames: ['import', 'require', 'node', 'default', 'types'],
+      mainFields: ['module', 'main', 'types', 'typings'],
+    },
   },
 };

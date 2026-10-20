@@ -6,7 +6,7 @@ Guía del estado real del frontend del Portal de Proveedores. Leer antes de modi
 
 ## Alcance actual
 
-Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
+Frontend Angular 22 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del lienzo de diseño «Portal de Proveedores» (claude.ai/artifact/LokkKhVT2i2bgXEAaHzxSL).
 
 - **Con backend real** (`http://localhost:5080/api` en desarrollo, `/api` en producción): acceso (login JWT, registro con validación de RUC en SAP, recuperación y creación de contraseña por enlace, contraseña temporal), menú por rol, Mi perfil, todo el flujo documental (registro, aprobaciones, contabilización), Orden de pago y Estado de factura (consultas en línea a SAP) y la configuración (sociedades, áreas, usuarios, roles y menús).
 - **En memoria** (detrás de un puerto, listo para cambiarse por HTTP): Workflows de aprobación. Los cambios duran mientras la pestaña esté abierta.
@@ -14,7 +14,7 @@ Frontend Angular 20 + Tailwind CSS 4. La interfaz sigue la **Propuesta 1** del l
 
 ## Stack y comandos
 
-- Angular 20 standalone, signals, `ChangeDetectionStrategy.OnPush`, control flow `@if/@for/@switch/@let`.
+- Angular 22 standalone, signals, `ChangeDetectionStrategy.OnPush`, control flow `@if/@for/@switch/@let`.
 - Tailwind CSS 4 vía `@tailwindcss/postcss` (`.postcssrc.json`). No hay SCSS.
 - Tipografía Google Sans (cargada en `src/index.html`). Íconos SVG propios en `shared/ui/icon/icons.ts`.
 - Pruebas con Karma + Jasmine; reglas de arquitectura con `dependency-cruiser` y un script propio.
