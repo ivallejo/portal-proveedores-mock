@@ -107,8 +107,8 @@ describe('ProfileFacade', () => {
 
   it('pide la contraseña actual y muestra el error del servidor', () => {
     const facade = setup();
-    facade.password.set('Clave2026');
-    facade.confirmation.set('Clave2026');
+    facade.password.set('Lunes#Brisa2027');
+    facade.confirmation.set('Lunes#Brisa2027');
     facade.changePassword();
     expect(facade.passwordErrors().current).toBe('Ingresa tu contraseña actual.');
     expect(session.changePassword).not.toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe('ProfileFacade', () => {
     );
     facade.current.set('Anterior1');
     facade.changePassword();
-    expect(session.changePassword).toHaveBeenCalledWith('Clave2026', 'Anterior1');
+    expect(session.changePassword).toHaveBeenCalledWith('Lunes#Brisa2027', 'Anterior1');
     expect(facade.passwordErrors().current).toBe('La contraseña actual no es correcta.');
   });
 });

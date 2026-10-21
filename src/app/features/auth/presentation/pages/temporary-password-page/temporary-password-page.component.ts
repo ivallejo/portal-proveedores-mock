@@ -10,7 +10,7 @@ import { AuthLayoutComponent } from '../../../../../shared/ui/auth-layout/auth-l
 import { AuthHeadingComponent } from '../../../../../shared/ui/auth-heading/auth-heading.component';
 import { PasswordFieldComponent } from '../../../../../shared/ui/password-field/password-field.component';
 
-/** Cambio obligatorio de la contraseña temporal entregada por el administrador. */
+/** Cambio obligatorio de la contraseña: temporal (entregada por el administrador) o vencida (90 días). */
 @Component({
   selector: 'app-temporary-password-page',
   imports: [
@@ -34,7 +34,12 @@ export class TemporaryPasswordPageComponent {
   readonly serverError = signal('');
   readonly busy = signal(false);
 
-  readonly rules = computed(() => passwordRules(this.password()));
+  readonly rules = computed(() => {
+    const user = this.session.user();
+    return passwordRules(this.password(), [user?.username, user?.name, user?.providerId]);
+  });
+  /** Venció (90 días) en vez de ser temporal: cambia el texto de la pantalla. */
+  readonly expired = computed(() => !!this.session.user()?.passwordExpired);
 
   submit(event: Event): void {
     event.preventDefault();

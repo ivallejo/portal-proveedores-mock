@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Aprobada** · 2026-10-21 |
+| Estado | **Implementada** en nuestros repos · 2026-10-21 (backend `9c273be`); pendiente T7 (repos del cliente) |
 | Fecha | 2026-10-21 |
 | Origen | Política de la compañía, punto 3.1 «Lineamientos para la elaboración de contraseñas» |
 | Repos | Backend y frontend (nuestros y del cliente) |
@@ -23,26 +23,26 @@ Hoy la contraseña exige mínimo 8 caracteres con mayúscula, minúscula y núme
 ## Requisitos
 
 ### R1 · Regla de composición (backend)
-- [ ] `PasswordPolicy` exige mínimo 12 caracteres y al menos 3 de los 4 tipos (especial = cualquier carácter que no sea letra ni número).
-- [ ] Rechaza contraseñas que contengan el usuario o sus datos personales (D2) y las palabras comunes (D1).
-- [ ] El error indica **qué regla** no se cumple.
-- [ ] Se aplica en activación, recuperación, cambio de contraseña, contraseña temporal del administrador y seed.
+- [x] `PasswordPolicy` exige mínimo 12 caracteres y al menos 3 de los 4 tipos (especial = cualquier carácter que no sea letra ni número).
+- [x] Rechaza contraseñas que contengan el usuario o sus datos personales (D2) y las palabras comunes (D1).
+- [x] El error indica **qué regla** no se cumple.
+- [x] Se aplica en activación, recuperación, cambio de contraseña, contraseña temporal del administrador y seed.
 
 ### R2 · Historial de las últimas 5 (backend)
-- [ ] Al cambiar la contraseña se guarda el hash anterior; no se acepta una nueva igual a la actual ni a las 4 anteriores.
-- [ ] El historial guarda solo hashes y conserva únicamente los últimos 5 por usuario.
+- [x] Al cambiar la contraseña se guarda el hash anterior; no se acepta una nueva igual a la actual ni a las 4 anteriores.
+- [x] El historial guarda solo hashes y conserva únicamente los últimos 5 por usuario.
 
 ### R3 · Vigencia de 90 días (backend)
-- [ ] Si la contraseña tiene más de 90 días (`PasswordSetAtUtc`), el login exige cambiarla antes de entrar, con el mismo flujo de la contraseña temporal.
-- [ ] Al cambiarla se reinicia la vigencia.
+- [x] Si la contraseña tiene más de 90 días (`PasswordSetAtUtc`), el login exige cambiarla antes de entrar, con el mismo flujo de la contraseña temporal.
+- [x] Al cambiarla se reinicia la vigencia.
 
 ### R4 · Frontend
-- [ ] Las pantallas de crear, recuperar y cambiar contraseña muestran las reglas nuevas y su cumplimiento mientras se escribe (12 caracteres, 3 de 4 tipos, sin el usuario).
-- [ ] Las reglas que solo puede validar el backend (palabra común, historial) se muestran como mensaje de error al enviar.
-- [ ] La pantalla de cambio obligatorio indica si es por contraseña temporal o por vencimiento.
+- [x] Las pantallas de crear, recuperar y cambiar contraseña muestran las reglas nuevas y su cumplimiento mientras se escribe (12 caracteres, 3 de 4 tipos, sin el usuario).
+- [x] Las reglas que solo puede validar el backend (palabra común, historial) se muestran como mensaje de error al enviar.
+- [x] La pantalla de cambio obligatorio indica si es por contraseña temporal o por vencimiento.
 
 ### R5 · Pruebas
-- [ ] Pruebas unitarias de cada regla, del historial y del vencimiento (backend) y de las reglas del front.
+- [x] Pruebas unitarias de cada regla, del historial y del vencimiento (backend) y de las reglas del front.
 
 ## Decisiones
 

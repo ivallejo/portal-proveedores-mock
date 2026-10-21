@@ -26,6 +26,7 @@ describe('toAuthSession', () => {
       providerId: undefined,
       area: undefined,
       mustChangePassword: undefined,
+      passwordExpired: undefined,
     });
   });
 

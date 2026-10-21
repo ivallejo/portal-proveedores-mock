@@ -13,4 +13,6 @@ export interface AuthenticatedUser {
   area?: string;
   /** La contraseña actual es temporal: debe cambiarla antes de usar el portal. */
   mustChangePassword?: boolean;
+  /** El cambio obligatorio es porque la contraseña venció (90 días), no porque sea temporal. */
+  passwordExpired?: boolean;
 }

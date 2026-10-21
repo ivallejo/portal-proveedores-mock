@@ -76,7 +76,8 @@ describe('profile-rules', () => {
   it('calcula la fuerza de la contraseña', () => {
     expect(passwordStrength('', 0)).toBe(0);
     expect(passwordStrength('abc', 1)).toBe(1);
-    expect(passwordStrength('Clave2026', 4)).toBe(3);
-    expect(passwordStrength('ClaveSegura2026', 4)).toBe(4);
+    expect(passwordStrength('Clave2026', 2)).toBe(2);
+    expect(passwordStrength('Lunes#Brisa2027', 3)).toBe(3);
+    expect(passwordStrength('Lunes#Brisa#Marina2027', 3)).toBe(4);
   });
 });

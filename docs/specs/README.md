@@ -28,4 +28,4 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 | [001 · Flujos documentales v2](001-flujos-documentales-v2/requisitos.md) | Implementada | Ajustes de Con OC, Sin OC y Contabilización a los flujos de negocio del 2026-10-17 |
 | [002 · Archivos en Blob Storage](002-archivos-en-blob-storage/requisitos.md) | Implementada | Adjuntos en Azure Blob Storage (Azurite en desarrollo) |
 | [003 · Lineamientos técnicos](003-lineamientos-tecnicos/requisitos.md) | En curso | Cumplir `LIN-WEB-PROV-001` de TI: Angular 22, ambientes QAS, IIS, sin mocks en producción, scripts SQL, README |
-| [004 · Política de contraseñas](004-politica-contrasenas/requisitos.md) | Aprobada | Política 3.1 de la compañía: 12 caracteres, 3 de 4 tipos, sin nombre ni palabras comunes, vigencia de 90 días e historial de 5 |
+| [004 · Política de contraseñas](004-politica-contrasenas/requisitos.md) | En curso (falta cliente) | Política 3.1 de la compañía: 12 caracteres, 3 de 4 tipos, sin nombre ni palabras comunes, vigencia de 90 días e historial de 5 |

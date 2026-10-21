@@ -24,6 +24,7 @@ export function toAuthSession(response: AuthResponseDto): AuthSession {
       providerId: response.user.ruc || undefined,
       area: response.user.area || undefined,
       mustChangePassword: response.user.mustChangePassword || undefined,
+      passwordExpired: response.user.passwordExpired || undefined,
     },
   };
 }

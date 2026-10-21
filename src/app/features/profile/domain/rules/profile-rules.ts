@@ -74,9 +74,9 @@ export function newProfileEmailError(
   return undefined;
 }
 
-/** Fuerza según los requisitos cumplidos (de 4) y un punto extra desde 12 caracteres. */
+/** Fuerza según los requisitos cumplidos (de 3) y un punto extra desde 16 caracteres. */
 export function passwordStrength(value: string, metRules: number): PasswordStrength {
   if (!value) return 0;
-  const score = metRules + (value.length >= 12 ? 1 : 0);
-  return score <= 2 ? 1 : score === 3 ? 2 : score === 4 ? 3 : 4;
+  const score = metRules + (value.length >= 16 ? 1 : 0);
+  return score <= 1 ? 1 : score === 2 ? 2 : score === 3 ? 3 : 4;
 }

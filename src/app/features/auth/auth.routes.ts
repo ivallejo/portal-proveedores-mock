@@ -42,7 +42,7 @@ export const AUTH_ROUTES: Routes = [
   },
   {
     path: 'contrasena-temporal',
-    title: 'Cambiar contraseña temporal · Portal de Proveedores',
+    title: 'Cambiar contraseña · Portal de Proveedores',
     canActivate: [temporaryPasswordGuard],
     loadComponent: () =>
       import('./presentation/pages/temporary-password-page/temporary-password-page.component').then(

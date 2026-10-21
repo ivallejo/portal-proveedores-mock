@@ -119,7 +119,10 @@ export class ProfileFacade {
 
   readonly errorCount = computed(() => Object.keys(this.errors()).length);
 
-  readonly rules = computed(() => passwordRules(this.password()));
+  readonly rules = computed(() => {
+    const user = this.session.user();
+    return passwordRules(this.password(), [user?.username, user?.name, user?.providerId]);
+  });
 
   readonly strength = computed(() =>
     passwordStrength(this.password(), this.rules().filter((rule) => rule.ok).length),

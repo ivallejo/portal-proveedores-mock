@@ -9,6 +9,7 @@ export interface AuthResponseDto {
     ruc: string;
     area?: string | null;
     mustChangePassword?: boolean;
+    passwordExpired?: boolean;
     role: string;
     roles?: string[];
   };

@@ -83,7 +83,7 @@ export class SetPasswordPageComponent {
   readonly busy = signal(false);
   readonly done = signal(false);
 
-  readonly rules = computed(() => passwordRules(this.password()));
+  readonly rules = computed(() => passwordRules(this.password(), [this.ruc, this.user]));
 
   submit(event: Event): void {
     event.preventDefault();
