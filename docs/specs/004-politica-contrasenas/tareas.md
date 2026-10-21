@@ -12,4 +12,4 @@ Diseño:
 - [x] **T4** · Vencimiento de 90 días en el login con el flujo de cambio obligatorio y pruebas. *(R3, D3, D4)* — `9c273be` (backend)
 - [x] **T5** · Front: reglas nuevas, mensajes del backend y motivo del cambio obligatorio, con pruebas. *(R4)* — front
 - [x] **T6** · Documentación (README, AGENT_CONTEXT, `.env.example` y seed con contraseñas temporales que cumplan) y prueba en el navegador: palabra común, nombre, vencimiento e historial verificados. — `9c273be` (backend), front
-- [ ] **T7** · Llevar los cambios a los repos del cliente en un solo PR por repo contra `master`.
+- [x] **T7** · Llevar los cambios a los repos del cliente en un solo PR por repo contra `master`. — backend PR #10, front PR #7 (`feature/politica-contrasenas`)

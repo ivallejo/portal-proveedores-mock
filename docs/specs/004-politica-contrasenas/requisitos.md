@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Implementada** en nuestros repos · 2026-10-21 (backend `9c273be`); pendiente T7 (repos del cliente) |
+| Estado | **Implementada** · 2026-10-21 (backend `9c273be`, `30e5ca1`; front `5fd5c3a`). Cliente: PR backend #10 y front #7 |
 | Fecha | 2026-10-21 |
 | Origen | Política de la compañía, punto 3.1 «Lineamientos para la elaboración de contraseñas» |
 | Repos | Backend y frontend (nuestros y del cliente) |
