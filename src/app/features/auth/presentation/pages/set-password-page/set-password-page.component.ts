@@ -15,8 +15,6 @@ import { SetPasswordMode } from './set-password-mode';
 const COPY: Record<
   SetPasswordMode,
   {
-    heading: string;
-    accent: string;
     description: string;
     title: string;
     button: string;
@@ -25,8 +23,6 @@ const COPY: Record<
   }
 > = {
   activation: {
-    heading: 'Protege tu',
-    accent: 'acceso al portal',
     description:
       'Crea una contraseña segura para ingresar al portal y consultar la información de tu empresa.',
     title: 'Crea tu contraseña',
@@ -36,8 +32,6 @@ const COPY: Record<
       'Tu cuenta quedó activa. Ya puedes ingresar al portal con tu usuario y tu contraseña.',
   },
   reset: {
-    heading: 'Actualiza tu',
-    accent: 'contraseña',
     description: 'Elige una nueva contraseña segura para seguir ingresando al portal.',
     title: 'Cambia tu contraseña',
     button: 'Cambiar',
