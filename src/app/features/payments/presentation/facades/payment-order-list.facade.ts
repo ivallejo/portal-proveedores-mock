@@ -1,11 +1,13 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { userFacingMessage } from '../../../../shared/errors/user-facing-message';
+import { saveBlob } from '../../../../shared/utils/save-blob.util';
 import { DateRange } from '../../../../shared/ui/date-range/date-range';
 import { money } from '../../../../shared/utils/money-format.util';
 import { PaymentOrderFilter } from '../../application/models/payment-order-filter';
-import { SEARCH_PAYMENT_ORDERS } from '../../di/payments.tokens';
+import { EXPORT_PAYMENT_ORDERS, SEARCH_PAYMENT_ORDERS } from '../../di/payments.tokens';
 import { PaymentOrder } from '../../domain/models/payment-order';
 import { totalPaidIn, withheldTotal } from '../../domain/rules/payment-order-rules';
+import { exportFileName } from '../../domain/rules/supplier-rules';
 import { SupplierScopeFacade } from './supplier-scope.facade';
 
 const PAGE_SIZE = 10;
@@ -14,6 +16,7 @@ const PAGE_SIZE = 10;
 @Injectable()
 export class PaymentOrderListFacade {
   private readonly searchPaymentOrders = inject(SEARCH_PAYMENT_ORDERS);
+  private readonly exportPaymentOrders = inject(EXPORT_PAYMENT_ORDERS);
   readonly scope = inject(SupplierScopeFacade);
 
   readonly draft = signal<PaymentOrderFilter>(this.defaults());
@@ -23,6 +26,12 @@ export class PaymentOrderListFacade {
   readonly error = signal('');
   readonly orders = signal<PaymentOrder[]>([]);
   readonly page = signal(1);
+  /** Filtros de la última búsqueda con resultados: el Excel descarga eso, no lo que se está editando. */
+  private readonly applied = signal<PaymentOrderFilter | null>(null);
+  readonly downloading = signal(false);
+  readonly canDownload = computed(
+    () => !this.loading() && this.applied() !== null && this.orders().length > 0,
+  );
   readonly detail = signal<PaymentOrder | null>(null);
   /** Orden abierta en la vista previa del PDF. */
   readonly pdf = signal<PaymentOrder | null>(null);
@@ -77,12 +86,14 @@ export class PaymentOrderListFacade {
     this.searchPaymentOrders.execute(filter).subscribe({
       next: (orders) => {
         this.orders.set(orders);
+        this.applied.set(filter);
         this.page.set(1);
         this.searched.set(true);
         this.loading.set(false);
       },
       error: (error) => {
         this.orders.set([]);
+        this.applied.set(null);
         this.searched.set(true);
         this.loading.set(false);
         this.error.set(
@@ -95,6 +106,7 @@ export class PaymentOrderListFacade {
   clear(): void {
     this.draft.set(this.defaults());
     this.orders.set([]);
+    this.applied.set(null);
     this.searched.set(false);
     this.error.set('');
     this.start();
@@ -115,6 +127,30 @@ export class PaymentOrderListFacade {
 
   closePdf(): void {
     this.pdf.set(null);
+  }
+
+  /** Descarga en Excel la última búsqueda. */
+  download(): void {
+    const filter = this.applied();
+    if (!filter || this.downloading()) return;
+    this.downloading.set(true);
+    this.error.set('');
+    const name = exportFileName('ordenes-de-pago', filter.ruc || this.scope.ownRuc(), filter);
+    this.exportPaymentOrders.execute(filter).subscribe({
+      next: (blob) => {
+        saveBlob(blob, name);
+        this.downloading.set(false);
+      },
+      error: (error) => {
+        this.downloading.set(false);
+        this.error.set(
+          userFacingMessage(
+            error,
+            'No pudimos descargar el Excel de los pagos. Inténtalo en unos minutos.',
+          ),
+        );
+      },
+    });
   }
 
   private defaults(): PaymentOrderFilter {

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, throwError } from 'rxjs';
 import { API_BASE_URL } from '../../../../core/config/api-base-url.token';
+import { toUserFacingBlobError } from '../../../../core/http/to-user-facing-blob-error';
 import { toUserFacingError } from '../../../../core/http/to-user-facing-error';
 import { PaymentOrderFilter } from '../../application/models/payment-order-filter';
 import { PaymentOrderQueryPort } from '../../application/ports/out/payment-order-query.port';
@@ -16,12 +17,22 @@ export class PaymentOrderHttpAdapter implements PaymentOrderQueryPort {
   private readonly url = `${inject(API_BASE_URL)}/payment-orders`;
 
   search(filter: PaymentOrderFilter): Observable<PaymentOrder[]> {
-    let params = new HttpParams().set('from', filter.from).set('to', filter.to);
-    if (filter.ruc) params = params.set('ruc', filter.ruc);
-    if (filter.company) params = params.set('company', filter.company);
-    return this.http.get<PaymentOrderResponseDto[]>(this.url, { params }).pipe(
+    return this.http.get<PaymentOrderResponseDto[]>(this.url, { params: this.params(filter) }).pipe(
       map((orders) => orders.map(toPaymentOrder)),
       catchError((error: unknown) => throwError(() => toUserFacingError(error))),
     );
+  }
+
+  export(filter: PaymentOrderFilter): Observable<Blob> {
+    return this.http
+      .get(`${this.url}/export`, { params: this.params(filter), responseType: 'blob' })
+      .pipe(catchError(toUserFacingBlobError));
+  }
+
+  private params(filter: PaymentOrderFilter): HttpParams {
+    let params = new HttpParams().set('from', filter.from).set('to', filter.to);
+    if (filter.ruc) params = params.set('ruc', filter.ruc);
+    if (filter.company) params = params.set('company', filter.company);
+    return params;
   }
 }

@@ -17,7 +17,7 @@ import { PaymentOrderListFacade } from '../../facades/payment-order-list.facade'
 })
 export class PaymentOrderFiltersComponent {
   readonly facade = inject(PaymentOrderListFacade);
-  /** Rango máximo de la consulta a SAP (3 años, como valida el backend). */
+  /** Rango máximo de la consulta a SAP (1 mes, como valida el backend). */
   readonly maxDays = MAX_QUERY_DAYS;
 
   onRuc(event: Event): void {

@@ -1,10 +1,12 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { userFacingMessage } from '../../../../shared/errors/user-facing-message';
+import { saveBlob } from '../../../../shared/utils/save-blob.util';
 import { DateRange } from '../../../../shared/ui/date-range/date-range';
 import { InvoiceFilter } from '../../application/models/invoice-filter';
-import { SEARCH_INVOICES } from '../../di/payments.tokens';
+import { EXPORT_INVOICES, SEARCH_INVOICES } from '../../di/payments.tokens';
 import { Invoice } from '../../domain/models/invoice';
 import { countInStage } from '../../domain/rules/invoice-rules';
+import { exportFileName } from '../../domain/rules/supplier-rules';
 import { SupplierScopeFacade } from './supplier-scope.facade';
 
 const PAGE_SIZE = 10;
@@ -13,6 +15,7 @@ const PAGE_SIZE = 10;
 @Injectable()
 export class InvoiceStatusFacade {
   private readonly searchInvoices = inject(SEARCH_INVOICES);
+  private readonly exportInvoices = inject(EXPORT_INVOICES);
   readonly scope = inject(SupplierScopeFacade);
 
   readonly draft = signal<InvoiceFilter>(this.defaults());
@@ -22,6 +25,12 @@ export class InvoiceStatusFacade {
   readonly error = signal('');
   readonly invoices = signal<Invoice[]>([]);
   readonly page = signal(1);
+  /** Filtros de la última búsqueda con resultados: el Excel descarga eso, no lo que se está editando. */
+  private readonly applied = signal<InvoiceFilter | null>(null);
+  readonly downloading = signal(false);
+  readonly canDownload = computed(
+    () => !this.loading() && this.applied() !== null && this.invoices().length > 0,
+  );
 
   readonly pageSize = PAGE_SIZE;
   readonly companyOptions = this.scope.companyOptions(
@@ -67,12 +76,14 @@ export class InvoiceStatusFacade {
     this.searchInvoices.execute(filter).subscribe({
       next: (invoices) => {
         this.invoices.set(invoices);
+        this.applied.set(filter);
         this.page.set(1);
         this.searched.set(true);
         this.loading.set(false);
       },
       error: (error) => {
         this.invoices.set([]);
+        this.applied.set(null);
         this.searched.set(true);
         this.loading.set(false);
         this.error.set(
@@ -85,9 +96,34 @@ export class InvoiceStatusFacade {
   clear(): void {
     this.draft.set(this.defaults());
     this.invoices.set([]);
+    this.applied.set(null);
     this.searched.set(false);
     this.error.set('');
     this.start();
+  }
+
+  /** Descarga en Excel la última búsqueda. */
+  download(): void {
+    const filter = this.applied();
+    if (!filter || this.downloading()) return;
+    this.downloading.set(true);
+    this.error.set('');
+    const name = exportFileName('estado-de-facturas', filter.ruc || this.scope.ownRuc(), filter);
+    this.exportInvoices.execute(filter).subscribe({
+      next: (blob) => {
+        saveBlob(blob, name);
+        this.downloading.set(false);
+      },
+      error: (error) => {
+        this.downloading.set(false);
+        this.error.set(
+          userFacingMessage(
+            error,
+            'No pudimos descargar el Excel de las facturas. Inténtalo en unos minutos.',
+          ),
+        );
+      },
+    });
   }
 
   private defaults(): InvoiceFilter {

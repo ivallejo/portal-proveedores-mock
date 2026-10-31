@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { UserFacingError } from '../../../../shared/errors/user-facing-error';
-import { SEARCH_PAYMENT_ORDERS } from '../../di/payments.tokens';
+import { EXPORT_PAYMENT_ORDERS, SEARCH_PAYMENT_ORDERS } from '../../di/payments.tokens';
 import { PaymentOrder } from '../../domain/models/payment-order';
 import { PaymentOrderListFacade } from './payment-order-list.facade';
 import { SupplierScopeFacade } from './supplier-scope.facade';
 
 describe('PaymentOrderListFacade', () => {
   let search: jasmine.Spy;
+  let exportOrders: jasmine.Spy;
 
   function setup(isProvider: boolean): PaymentOrderListFacade {
     search = jasmine
@@ -15,14 +16,17 @@ describe('PaymentOrderListFacade', () => {
       .and.returnValue(
         of([{ currency: 'PEN', total: 150, documents: [] } as unknown as PaymentOrder]),
       );
+    exportOrders = jasmine.createSpy('export').and.returnValue(of(new Blob(['xlsx'])));
     TestBed.configureTestingModule({
       providers: [
         PaymentOrderListFacade,
         { provide: SEARCH_PAYMENT_ORDERS, useValue: { execute: search } },
+        { provide: EXPORT_PAYMENT_ORDERS, useValue: { execute: exportOrders } },
         {
           provide: SupplierScopeFacade,
           useValue: {
             isProvider: () => isProvider,
+            ownRuc: () => '20100000001',
             companyOptions: () => () => [],
             defaultPeriod: () => ({ from: '2026-07-09', to: '2026-10-09' }),
             missingRuc: (ruc: string) =>
@@ -65,5 +69,23 @@ describe('PaymentOrderListFacade', () => {
     facade.search();
     expect(facade.error()).toBe('SAP no responde.');
     expect(facade.orders()).toEqual([]);
+  });
+
+  it('descarga el Excel de la última búsqueda, no de los filtros en edición', () => {
+    const facade = setup(true);
+    expect(facade.canDownload()).toBeFalse();
+    facade.search();
+    facade.setRange({ from: '2026-01-01', to: '2026-01-31' });
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:excel');
+    const click = spyOn(HTMLAnchorElement.prototype, 'click');
+    facade.download();
+    expect(exportOrders).toHaveBeenCalledWith({
+      ruc: '',
+      company: '',
+      from: '2026-07-09',
+      to: '2026-10-09',
+    });
+    expect(click).toHaveBeenCalled();
+    expect(facade.downloading()).toBeFalse();
   });
 });

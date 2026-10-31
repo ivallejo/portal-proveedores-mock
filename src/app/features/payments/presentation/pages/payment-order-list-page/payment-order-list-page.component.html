@@ -2,7 +2,21 @@
   class="print:hidden"
   heading="Orden de pago"
   description="Consulta los pagos realizados a tu empresa por cada sociedad, con el detalle de los comprobantes cancelados, retenciones y detracciones."
-/>
+>
+  <button
+    type="button"
+    class="btn btn-secondary"
+    [disabled]="!facade.canDownload() || facade.downloading()"
+    [attr.aria-busy]="facade.downloading()"
+    (click)="facade.download()"
+  >
+    @if (facade.downloading()) {
+      <app-spinner [size]="18" />Descargando…
+    } @else {
+      <app-icon name="download" [size]="18" [stroke]="2" />Descargar Excel
+    }
+  </button>
+</app-page-header>
 
 @if (facade.error()) {
   <app-callout class="print:hidden" tone="danger">{{ facade.error() }}</app-callout>

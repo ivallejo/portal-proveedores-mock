@@ -1,7 +1,7 @@
 import { QueryPeriod } from '../models/query-period';
 
-/** Rango máximo de una consulta a SAP: 3 años, igual que el backend (PaymentQueryService.MaxRangeDays). */
-export const MAX_QUERY_DAYS = 3 * 366;
+/** Rango máximo de una consulta a SAP: 1 mes (31 días con ambos extremos), igual que el backend (PaymentQueryService.MaxRangeDays). */
+export const MAX_QUERY_DAYS = 31;
 
 /** El proveedor consulta siempre su propio RUC; Cuentas por pagar y el administrador indican el RUC. */
 export function isSupplierUser(roles: readonly string[]): boolean {
@@ -23,10 +23,19 @@ export function normalizeDocumentNumber(value: string): string {
   return value.toUpperCase().slice(0, 13);
 }
 
-/** Últimos tres meses hasta hoy. */
+/** Últimos 31 días hasta hoy (el rango máximo). */
 export function defaultQueryPeriod(today = new Date()): QueryPeriod {
-  const from = new Date(today.getFullYear(), today.getMonth() - 3, today.getDate());
+  const from = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - (MAX_QUERY_DAYS - 1),
+  );
   return { from: isoDate(from), to: isoDate(today) };
+}
+
+/** Nombre del Excel descargado, igual al que arma el backend: `prefijo_RUC_desde_hasta.xlsx`. */
+export function exportFileName(prefix: string, ruc: string, period: QueryPeriod): string {
+  return `${prefix}_${ruc}_${period.from}_${period.to}.xlsx`;
 }
 
 function isoDate(date: Date): string {

@@ -12,7 +12,7 @@ import {
 } from '../../di/documents.tokens';
 import { Attachment } from '../../domain/models/attachment';
 import { PortalDocument } from '../../domain/models/portal-document';
-import { saveBlob } from '../browser/save-blob';
+import { saveBlob } from '../../../../shared/utils/save-blob.util';
 
 const DEFAULT_FILTER: InboxFilter = { ruc: '', status: '' };
 

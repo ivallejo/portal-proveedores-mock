@@ -5,4 +5,6 @@ import { PaymentOrderFilter } from '../../models/payment-order-filter';
 /** Órdenes de pago del proveedor en SAP (hoy, `api/payment-orders`). */
 export interface PaymentOrderQueryPort {
   search(filter: PaymentOrderFilter): Observable<PaymentOrder[]>;
+  /** Excel de la misma búsqueda (hoy, `api/payment-orders/export`). */
+  export(filter: PaymentOrderFilter): Observable<Blob>;
 }

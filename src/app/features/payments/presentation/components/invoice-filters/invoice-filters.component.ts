@@ -17,7 +17,7 @@ import { InvoiceStatusFacade } from '../../facades/invoice-status.facade';
 })
 export class InvoiceFiltersComponent {
   readonly facade = inject(InvoiceStatusFacade);
-  /** Rango máximo de la consulta a SAP (3 años, como valida el backend). */
+  /** Rango máximo de la consulta a SAP (1 mes, como valida el backend). */
   readonly maxDays = MAX_QUERY_DAYS;
 
   onRuc(event: Event): void {

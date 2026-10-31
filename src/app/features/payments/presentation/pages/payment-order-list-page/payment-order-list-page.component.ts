@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { PageLoadingService } from '../../../../../core/layout/page-loading.service';
 import { CalloutComponent } from '../../../../../shared/ui/callout/callout.component';
+import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { KpiCardComponent } from '../../../../../shared/ui/kpi-card/kpi-card.component';
 import { PageHeaderComponent } from '../../../../../shared/ui/page-header/page-header.component';
+import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
 import { PaymentOrderDetailDialogComponent } from '../../components/payment-order-detail-dialog/payment-order-detail-dialog.component';
 import { PaymentOrderPdfViewerComponent } from '../../components/payment-order-pdf-viewer/payment-order-pdf-viewer.component';
 import { PaymentOrderFiltersComponent } from '../../components/payment-order-filters/payment-order-filters.component';
@@ -16,6 +18,8 @@ import { PaymentOrderListFacade } from '../../facades/payment-order-list.facade'
     PageHeaderComponent,
     CalloutComponent,
     KpiCardComponent,
+    IconComponent,
+    SpinnerComponent,
     PaymentOrderFiltersComponent,
     PaymentOrderTableComponent,
     PaymentOrderDetailDialogComponent,

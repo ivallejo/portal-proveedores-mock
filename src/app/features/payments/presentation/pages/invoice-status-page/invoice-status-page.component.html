@@ -1,7 +1,21 @@
 <app-page-header
   heading="Estado de factura"
   description="Sigue cada factura desde su registro hasta el pago: revisión, observaciones, aprobación y si aplica detracción o retención."
-/>
+>
+  <button
+    type="button"
+    class="btn btn-secondary"
+    [disabled]="!facade.canDownload() || facade.downloading()"
+    [attr.aria-busy]="facade.downloading()"
+    (click)="facade.download()"
+  >
+    @if (facade.downloading()) {
+      <app-spinner [size]="18" />Descargando…
+    } @else {
+      <app-icon name="download" [size]="18" [stroke]="2" />Descargar Excel
+    }
+  </button>
+</app-page-header>
 
 @if (facade.error()) {
   <app-callout tone="danger">{{ facade.error() }}</app-callout>
