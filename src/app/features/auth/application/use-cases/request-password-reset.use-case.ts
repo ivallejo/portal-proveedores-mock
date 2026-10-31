@@ -6,7 +6,7 @@ import { AuthenticationGatewayPort } from '../ports/out/authentication-gateway.p
 export class RequestPasswordResetUseCase implements RequestPasswordResetPort {
   constructor(private readonly gateway: AuthenticationGatewayPort) {}
 
-  execute(ruc: string): Observable<PasswordResetResult> {
-    return this.gateway.requestPasswordReset(ruc);
+  execute(identifier: string): Observable<PasswordResetResult> {
+    return this.gateway.requestPasswordReset(identifier);
   }
 }
