@@ -39,9 +39,9 @@ export class AuthHttpAdapter implements AuthenticationGatewayPort {
       .pipe(map(toAuthSession), catchError(this.fail));
   }
 
-  /** No se revela si el RUC existe: un 404 se trata como un envío genérico. */
-  requestPasswordReset(ruc: string): Observable<PasswordResetResult> {
-    const body: PasswordResetRequestDto = { ruc };
+  /** No se revela si la cuenta existe: un 404 se trata como un envío genérico. */
+  requestPasswordReset(identifier: string): Observable<PasswordResetResult> {
+    const body: PasswordResetRequestDto = { identifier };
     return this.http
       .post<PasswordResetResponseDto>(`${this.base}/password-reset/request`, body)
       .pipe(

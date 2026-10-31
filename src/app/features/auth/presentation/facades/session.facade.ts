@@ -45,8 +45,9 @@ export class SessionFacade {
       .pipe(tap((user) => this.user.set(user)));
   }
 
-  requestPasswordReset(ruc: string): Observable<PasswordResetResult> {
-    return this.requestReset.execute(ruc);
+  /** RUC del proveedor o usuario del personal interno. */
+  requestPasswordReset(identifier: string): Observable<PasswordResetResult> {
+    return this.requestReset.execute(identifier);
   }
 
   /** La cuenta del enlace: `ruc` (proveedor) o `user` (personal interno). */

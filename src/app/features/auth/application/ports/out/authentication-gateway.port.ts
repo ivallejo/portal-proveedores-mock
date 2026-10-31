@@ -9,6 +9,6 @@ import { PasswordResetResult } from '../../models/password-reset-result';
 export interface AuthenticationGatewayPort {
   login(command: LoginCommand): Observable<AuthSession>;
   changePassword(command: ChangePasswordCommand): Observable<AuthSession>;
-  requestPasswordReset(ruc: string): Observable<PasswordResetResult>;
+  requestPasswordReset(identifier: string): Observable<PasswordResetResult>;
   confirmPasswordLink(command: ConfirmPasswordLinkCommand): Observable<void>;
 }
