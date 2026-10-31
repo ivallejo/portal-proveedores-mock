@@ -10,8 +10,7 @@ export interface UserCatalogResponseDto {
   areas: {
     id: string;
     name: string;
-    companyCode: string;
-    companyName: string;
+    companyCodes: string[];
     isActive: boolean;
   }[];
   companies: { code: string; name: string; ruc: string | null; isActive: boolean }[];

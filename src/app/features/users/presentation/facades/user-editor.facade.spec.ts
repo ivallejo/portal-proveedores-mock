@@ -25,9 +25,7 @@ const catalog: UserCatalog = {
       isActive: true,
     },
   ],
-  areas: [
-    { id: 'a1', name: 'Compras', companyCode: '1001', companyName: 'Naviera', isActive: true },
-  ],
+  areas: [{ id: 'a1', name: 'Compras', companyCodes: ['1001'], isActive: true }],
   companies: [{ code: '1001', name: 'Naviera', ruc: null, isActive: true }],
 };
 

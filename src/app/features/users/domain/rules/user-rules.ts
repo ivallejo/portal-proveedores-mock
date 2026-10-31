@@ -66,15 +66,15 @@ export function personNameError(value: string, missing: string): string | undefi
   return PERSON_NAME.test(value.trim()) ? undefined : 'Usa solo letras.';
 }
 
-/** El área es obligatoria (salvo para el administrador) y debe ser de una de las sociedades del usuario. */
+/** El área es obligatoria (salvo para el administrador) y debe compartir al menos una sociedad con el usuario. */
 export function userAreaError(
   areaId: string,
   role: string,
   area: CatalogArea | undefined,
   companyCodes: readonly string[],
 ): string | undefined {
-  if (area && !companyCodes.includes(area.companyCode) && companyCodes.length)
-    return `El área es de ${area.companyName}: asígnale también esa sociedad.`;
+  if (area && companyCodes.length && !area.companyCodes.some((code) => companyCodes.includes(code)))
+    return `El área está en ${area.companyCodes.join(', ')}: asígnale alguna de esas sociedades.`;
   if (!areaId && role !== 'ADMINISTRATOR') return 'Selecciona el área.';
   return undefined;
 }

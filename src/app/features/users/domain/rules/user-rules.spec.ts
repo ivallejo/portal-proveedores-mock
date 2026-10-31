@@ -23,8 +23,7 @@ const email = (value: string, isVerified = true): UserEmail => ({
 const compras: CatalogArea = {
   id: 'a1',
   name: 'Compras',
-  companyCode: '1001',
-  companyName: 'Naviera',
+  companyCodes: ['1001', '1003'],
   isActive: true,
 };
 
@@ -60,9 +59,9 @@ describe('user rules', () => {
     expect(userAreaError('', 'AREA_APPROVER', undefined, ['1001'])).toBe('Selecciona el área.');
     expect(userAreaError('', 'ADMINISTRATOR', undefined, ['1001'])).toBeUndefined();
     expect(userAreaError('a1', 'AREA_APPROVER', compras, ['1002'])).toBe(
-      'El área es de Naviera: asígnale también esa sociedad.',
+      'El área está en 1001, 1003: asígnale alguna de esas sociedades.',
     );
-    expect(userAreaError('a1', 'AREA_APPROVER', compras, ['1001'])).toBeUndefined();
+    expect(userAreaError('a1', 'AREA_APPROVER', compras, ['1002', '1003'])).toBeUndefined();
   });
 
   it('checks new emails and who can be primary', () => {
