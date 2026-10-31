@@ -16,7 +16,7 @@ Estos son los roles base. En **Configuración › Roles y permisos** se crean ot
 
 ## 1. Acceso
 
-1. **Login** con RUC/usuario o correo y contraseña. JWT de sesión.
+1. **Login** con el usuario (el del proveedor es su RUC) y contraseña; el correo y el documento no sirven para ingresar (spec 006). JWT de sesión.
    - 5 intentos fallidos bloquean la cuenta 15 minutos (HTTP 429). Límite de 10 solicitudes por minuto por IP.
 2. **Registro online** (proveedores): se valida el RUC contra SAP y se envía un enlace de activación al correo para crear la contraseña. Si el RUC existe en SAP pero no tiene correo, se le pide comunicarse con el área de Compras para actualizarlo.
 3. **Recuperar contraseña**: la respuesta es siempre genérica (no revela si el usuario existe); se envía un enlace por correo.

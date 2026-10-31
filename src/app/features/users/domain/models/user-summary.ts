@@ -4,6 +4,7 @@ import { UserStatus } from './user-status';
 /** Fila del listado de usuarios. */
 export interface UserSummary {
   id: string;
+  username: string;
   displayName: string;
   primaryEmail: string;
   isProvider: boolean;

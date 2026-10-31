@@ -4,7 +4,7 @@ import { formatDateTime } from '../../../../../shared/utils/date-format.util';
 import { UserEditorFacade } from '../../facades/user-editor.facade';
 import { UserListFacade } from '../../facades/user-list.facade';
 
-/** Pestaña Datos: rol, identidad (RUC o DNI), nombres, área, estado y fechas. */
+/** Pestaña Datos: rol, identidad (RUC, o documento y usuario), nombres, área, estado y fechas. */
 @Component({
   selector: 'app-user-data-tab',
   imports: [SelectComponent],

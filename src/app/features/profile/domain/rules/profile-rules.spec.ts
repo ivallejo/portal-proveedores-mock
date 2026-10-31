@@ -1,6 +1,7 @@
 import { Profile } from '../models/profile';
 import {
   accessIdOf,
+  documentOf,
   isPersonalDataDirty,
   newProfileEmailError,
   passwordStrength,
@@ -10,9 +11,11 @@ import {
 } from './profile-rules';
 
 const base: Profile = {
-  username: '45678123',
+  username: 'aperez',
   isProvider: false,
   ruc: null,
+  documentType: 'DNI',
+  document: '45678123',
   displayName: 'Ana Pérez',
   businessName: null,
   firstName: 'Ana',
@@ -40,8 +43,12 @@ const base: Profile = {
 describe('profile-rules', () => {
   it('muestra el usuario de acceso como RUC, DNI o el usuario', () => {
     expect(accessIdOf({ ...base, isProvider: true, ruc: '20123456789' })).toBe('RUC 20123456789');
-    expect(accessIdOf(base)).toBe('DNI 45678123');
-    expect(accessIdOf({ ...base, username: 'prueba.admin' })).toBe('prueba.admin');
+    expect(accessIdOf(base)).toBe('aperez');
+    expect(documentOf(base)).toBe('DNI 45678123');
+    expect(documentOf({ ...base, documentType: 'CE', document: 'X0012345' })).toBe(
+      'Carné de extranjería X0012345',
+    );
+    expect(documentOf({ ...base, documentType: 'Usuario', document: 'aperez' })).toBe('');
   });
 
   it('distingue persona natural con negocio de persona jurídica', () => {

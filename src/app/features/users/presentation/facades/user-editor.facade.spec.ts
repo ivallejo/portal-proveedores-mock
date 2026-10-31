@@ -101,7 +101,9 @@ describe('UserEditorFacade', () => {
       null,
       jasmine.objectContaining({
         role: 'AREA_APPROVER',
+        documentType: 'DNI',
         document: '40000001',
+        username: 'aperez',
         businessName: undefined,
         firstName: 'Ana',
         areaId: 'a1',
@@ -119,5 +121,28 @@ describe('UserEditorFacade', () => {
     editor.setField('businessName', 'Petrolera');
     editor.setField('role', 'AREA_APPROVER');
     expect(editor.form()).toEqual(jasmine.objectContaining({ document: '', businessName: '' }));
+  });
+
+  it('proposes the username from the name until the administrator types one', () => {
+    const editor = setup();
+    editor.openNew();
+    editor.setField('role', 'AREA_APPROVER');
+    editor.setField('firstName', 'María José');
+    editor.setField('lastName', 'Núñez Vega');
+    expect(editor.form().username).toBe('mnunez');
+    editor.setField('username', 'm nunez.v');
+    editor.setField('lastName', 'Otro');
+    expect(editor.form().username).toBe('mnunez.v');
+  });
+
+  it('changing the document type clears the number and keeps letters for the passport', () => {
+    const editor = setup();
+    editor.openNew();
+    editor.setField('role', 'AREA_APPROVER');
+    editor.setField('document', '40000001');
+    editor.setField('documentType', 'PASAPORTE');
+    expect(editor.form().document).toBe('');
+    editor.setField('document', 'ab-123456');
+    expect(editor.form().document).toBe('AB123456');
   });
 });

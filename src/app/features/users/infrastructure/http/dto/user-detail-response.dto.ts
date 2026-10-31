@@ -6,7 +6,7 @@ export interface UserDetailResponseDto {
   username: string;
   isProvider: boolean;
   document: string;
-  documentType: 'RUC' | 'DNI' | 'Usuario';
+  documentType: 'RUC' | 'DNI' | 'CE' | 'PASAPORTE' | 'Usuario';
   displayName: string;
   businessName: string | null;
   firstName: string | null;

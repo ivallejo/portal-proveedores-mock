@@ -18,6 +18,8 @@ const profile: Profile = {
   username: 'prueba.admin',
   isProvider: false,
   ruc: null,
+  documentType: 'DNI',
+  document: '40000001',
   displayName: 'Ana Pérez',
   businessName: null,
   firstName: 'Ana',

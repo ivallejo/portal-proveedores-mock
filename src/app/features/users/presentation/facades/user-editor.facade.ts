@@ -10,13 +10,16 @@ import { UserEmailType } from '../../domain/models/user-email-type';
 import { UserSummary } from '../../domain/models/user-summary';
 import {
   canBePrimaryEmail,
-  internalDniError,
+  identityDocumentError,
   newUserEmailError,
   normalizeUserDocument,
   personNameError,
   providerRucError,
+  suggestUsername,
   userAreaError,
+  usernameError,
 } from '../../domain/rules/user-rules';
+import { DOCUMENT_TYPE_LABELS } from '../catalog/document-type-labels';
 import { UserEditorTab } from './user-editor-tab';
 import { UserForm } from './user-form';
 import { UserFormErrors } from './user-form-errors';
@@ -24,7 +27,9 @@ import { UserListFacade } from './user-list.facade';
 
 const EMPTY_FORM: UserForm = {
   role: '',
+  documentType: 'DNI',
   document: '',
+  username: '',
   businessName: '',
   firstName: '',
   lastName: '',
@@ -35,6 +40,7 @@ const EMPTY_FORM: UserForm = {
 const DATA_FIELDS = [
   'role',
   'document',
+  'username',
   'businessName',
   'firstName',
   'lastName',
@@ -56,6 +62,8 @@ export class UserEditorFacade {
   readonly detailLoading = signal(false);
   readonly tab = signal<UserEditorTab>('datos');
   readonly form = signal<UserForm>({ ...EMPTY_FORM });
+  /** El administrador escribió el usuario: deja de proponerse a partir del nombre. */
+  private readonly usernameEdited = signal(false);
   readonly emails = signal<UserEmail[]>([]);
   readonly companies = signal<string[]>([]);
   readonly newEmail = signal('');
@@ -98,6 +106,10 @@ export class UserEditorFacade {
         sub: `${area.companyName}${area.isActive ? '' : ' · Inactiva'}`,
       })),
   );
+  readonly documentTypeOptions: SelectOption[] = (['DNI', 'CE', 'PASAPORTE'] as const).map(
+    (type) => ({ value: type, label: DOCUMENT_TYPE_LABELS[type] }),
+  );
+  readonly documentLabels = DOCUMENT_TYPE_LABELS;
   readonly statusOptions = computed<SelectOption[]>(() => [
     { value: 'active', label: 'Activo' },
     { value: 'inactive', label: 'Inactivo' },
@@ -180,9 +192,21 @@ export class UserEditorFacade {
   setField<K extends keyof UserForm>(key: K, raw: UserForm[K]): void {
     let value = raw;
     if (key === 'document')
-      value = normalizeUserDocument(String(raw), this.isProvider()) as UserForm[K];
+      value = normalizeUserDocument(
+        String(raw),
+        this.isProvider() ? 'RUC' : this.form().documentType,
+      ) as UserForm[K];
+    if (key === 'username') {
+      value = String(raw).replace(/\s/g, '') as UserForm[K];
+      this.usernameEdited.set(String(value).length > 0);
+    }
     this.form.update((form) => {
       const next = { ...form, [key]: value };
+      // Otro tipo de documento: el número se vuelve a validar desde cero.
+      if (key === 'documentType' && value !== form.documentType) next.document = '';
+      // En el alta se propone el usuario con el nombre, hasta que el administrador lo escriba.
+      if ((key === 'firstName' || key === 'lastName') && this.isNew() && !this.usernameEdited())
+        next.username = suggestUsername(next.firstName, next.lastName);
       // Cambiar entre proveedor y personal interno limpia los datos de identidad.
       if (key === 'role') {
         const roles = this.list.catalog().roles;
@@ -191,6 +215,7 @@ export class UserEditorFacade {
         if (form.role && wasProvider !== isProvider)
           Object.assign(next, {
             document: '',
+            username: '',
             businessName: '',
             firstName: '',
             lastName: '',
@@ -293,7 +318,9 @@ export class UserEditorFacade {
     this.saveUser
       .execute(detail?.id ?? null, {
         role: form.role,
+        documentType: detail || provider ? undefined : form.documentType,
         document: detail ? undefined : form.document,
+        username: provider ? undefined : form.username.trim(),
         businessName: provider ? form.businessName.trim() : undefined,
         firstName: provider ? undefined : form.firstName.trim(),
         lastName: provider ? undefined : form.lastName.trim(),
@@ -331,6 +358,7 @@ export class UserEditorFacade {
 
   private resetDrawer(): void {
     this.tab.set('datos');
+    this.usernameEdited.set(false);
     this.errors.set({});
     this.showErrors.set(false);
     this.saveError.set('');
@@ -343,7 +371,12 @@ export class UserEditorFacade {
   private fill(detail: UserDetail): void {
     this.form.set({
       role: detail.role ?? '',
+      documentType:
+        detail.documentType === 'CE' || detail.documentType === 'PASAPORTE'
+          ? detail.documentType
+          : 'DNI',
       document: detail.document,
+      username: detail.username,
       businessName: detail.businessName ?? '',
       firstName: detail.firstName ?? '',
       lastName: detail.lastName ?? '',
@@ -379,7 +412,8 @@ export class UserEditorFacade {
       if (isNew) set('document', providerRucError(form.document));
       if (!form.businessName.trim()) errors.businessName = 'Ingresa la razón social.';
     } else {
-      if (isNew) set('document', internalDniError(form.document));
+      if (isNew) set('document', identityDocumentError(form.documentType, form.document));
+      set('username', usernameError(form.username));
       set('firstName', personNameError(form.firstName, 'Ingresa los nombres.'));
       set('lastName', personNameError(form.lastName, 'Ingresa los apellidos.'));
       const area = this.list.catalog().areas.find((item) => item.id === form.areaId);

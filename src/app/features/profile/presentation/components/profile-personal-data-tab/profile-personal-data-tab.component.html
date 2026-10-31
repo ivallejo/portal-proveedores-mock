@@ -33,13 +33,15 @@
       </div>
     } @else {
       <div class="flex flex-col gap-2">
-        <span class="field-label">{{
-          facade.accessId().startsWith('DNI') ? 'DNI' : 'Usuario'
-        }}</span>
-        <span class="readonly-field tabular-nums">{{ me().username }}</span>
+        <span class="field-label">Usuario</span>
+        <span class="readonly-field">{{ me().username }}</span>
         <span class="text-[12.5px] text-muted"
-          >Es tu usuario de acceso; no se puede modificar.</span
+          >Es tu usuario de acceso; solo el administrador lo puede cambiar.</span
         >
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="field-label">Documento</span>
+        <span class="readonly-field tabular-nums">{{ facade.document() || '—' }}</span>
       </div>
       <div class="flex flex-col gap-2">
         <span class="field-label">Área</span>

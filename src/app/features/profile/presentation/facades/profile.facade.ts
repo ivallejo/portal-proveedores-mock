@@ -20,6 +20,7 @@ import { ProfileEmail } from '../../domain/models/profile-email';
 import { ProfileEmailType } from '../../domain/models/profile-email-type';
 import {
   accessIdOf,
+  documentOf,
   isPersonalDataDirty,
   newProfileEmailError,
   passwordStrength,
@@ -103,6 +104,10 @@ export class ProfileFacade {
   readonly accessId = computed(() => {
     const profile = this.profile();
     return profile ? accessIdOf(profile) : '';
+  });
+  readonly document = computed(() => {
+    const profile = this.profile();
+    return profile ? documentOf(profile) : '';
   });
 
   readonly taxpayerType = computed(() => taxpayerTypeOf(this.profile()?.ruc ?? null));

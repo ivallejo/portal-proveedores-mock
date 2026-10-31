@@ -21,7 +21,7 @@
           id="uf-q"
           type="search"
           class="field pl-[38px]"
-          placeholder="Nombre, RUC / DNI o correo"
+          placeholder="Nombre, usuario, documento o correo"
           [value]="list.draft().search"
           (input)="list.setDraft({ search: $any($event.target).value })"
           (keyup.enter)="list.search()"

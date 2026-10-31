@@ -3,6 +3,7 @@ import { BadgeComponent } from '../../../../../shared/ui/badge/badge.component';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { initials } from '../../../../../shared/utils/text-format.util';
 import { UserSummary } from '../../../domain/models/user-summary';
+import { DOCUMENT_TYPE_LABELS } from '../../catalog/document-type-labels';
 import { USER_STATUS_LABELS } from '../../catalog/user-status-labels';
 import { userRoleTone } from '../../catalog/user-role-tone.util';
 import { userToggleVerb } from '../../catalog/user-toggle-verb.util';
@@ -21,6 +22,7 @@ export class UserTableComponent {
   readonly toggle = output<UserSummary>();
 
   readonly statusLabels = USER_STATUS_LABELS;
+  readonly documentLabels = DOCUMENT_TYPE_LABELS;
   readonly initials = initials;
   readonly roleTone = userRoleTone;
   readonly toggleVerb = userToggleVerb;

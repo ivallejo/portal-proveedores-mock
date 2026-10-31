@@ -6,6 +6,9 @@ export interface Profile {
   username: string;
   isProvider: boolean;
   ruc: string | null;
+  /** RUC, DNI, CE o PASAPORTE; «Usuario» si una cuenta interna antigua no tiene documento. */
+  documentType: string;
+  document: string;
   displayName: string;
   businessName: string | null;
   firstName: string | null;

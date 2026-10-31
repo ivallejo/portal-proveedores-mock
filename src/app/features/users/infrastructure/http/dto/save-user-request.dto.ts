@@ -1,7 +1,9 @@
 /** Cuerpo de `POST` y `PUT api/admin/users`. */
 export interface SaveUserRequestDto {
   role: string;
+  documentType?: string;
   document?: string;
+  username?: string;
   businessName?: string;
   firstName?: string;
   lastName?: string;

@@ -6,6 +6,8 @@ export interface ProfileResponseDto {
   username: string;
   isProvider: boolean;
   ruc: string | null;
+  documentType: string;
+  document: string;
   displayName: string;
   businessName: string | null;
   firstName: string | null;

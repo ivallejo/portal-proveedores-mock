@@ -7,10 +7,23 @@ import { ProfileEmail } from '../models/profile-email';
 const EMAIL = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
 const PERSON_NAME = /^[\p{L}' .-]+$/u;
 
-/** «DNI 45678123», «RUC 20…» o el usuario si no es un documento. */
+const DOCUMENT_LABELS: Record<string, string> = {
+  RUC: 'RUC',
+  DNI: 'DNI',
+  CE: 'Carné de extranjería',
+  PASAPORTE: 'Pasaporte',
+};
+
+/** Con qué ingresa: «RUC 20…» para el proveedor; su usuario para el personal interno. */
 export function accessIdOf(profile: Profile): string {
   if (profile.isProvider && profile.ruc) return `RUC ${profile.ruc}`;
-  return /^\d{8}$/.test(profile.username) ? `DNI ${profile.username}` : profile.username;
+  return profile.username;
+}
+
+/** «DNI 45678123», «Pasaporte X123…»; vacío si la cuenta no tiene documento. */
+export function documentOf(profile: Profile): string {
+  const label = DOCUMENT_LABELS[profile.documentType];
+  return label ? `${label} ${profile.document}` : '';
 }
 
 /** Un RUC que empieza con 10 es de una persona natural con negocio. */

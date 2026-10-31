@@ -2,12 +2,14 @@ import { CatalogArea } from '../models/catalog-area';
 import { UserEmail } from '../models/user-email';
 import {
   canBePrimaryEmail,
-  internalDniError,
+  identityDocumentError,
   newUserEmailError,
   normalizeUserDocument,
   personNameError,
   providerRucError,
+  suggestUsername,
   userAreaError,
+  usernameError,
 } from './user-rules';
 
 const email = (value: string, isVerified = true): UserEmail => ({
@@ -27,13 +29,25 @@ const compras: CatalogArea = {
 };
 
 describe('user rules', () => {
-  it('validates the provider RUC and the internal DNI', () => {
-    expect(normalizeUserDocument('20-1001 26606 99', true)).toBe('20100126606');
-    expect(normalizeUserDocument('4000000123', false)).toBe('40000001');
+  it('validates the provider RUC and the internal document', () => {
+    expect(normalizeUserDocument('20-1001 26606 99', 'RUC')).toBe('20100126606');
+    expect(normalizeUserDocument('4000000123', 'DNI')).toBe('40000001');
+    expect(normalizeUserDocument('x-001 234567890', 'CE')).toBe('X00123456789');
     expect(providerRucError('2010012660')).toBe('El RUC debe tener 11 dígitos.');
     expect(providerRucError('30100126606')).toBe('El RUC debe empezar con 10 o 20.');
     expect(providerRucError('10456789012')).toBeUndefined();
-    expect(internalDniError('4000000')).toBe('El DNI debe tener 8 dígitos.');
+    expect(identityDocumentError('DNI', '4000000')).toBe('El DNI debe tener 8 dígitos.');
+    expect(identityDocumentError('CE', 'X0012345')).toBeUndefined();
+    expect(identityDocumentError('PASAPORTE', '')).toContain('pasaporte');
+  });
+
+  it('validates and suggests the internal username', () => {
+    expect(usernameError('mt')).toContain('entre 4 y 50');
+    expect(usernameError('maria torres')).toContain('sin espacios');
+    expect(usernameError('maría')).toContain('tildes');
+    expect(usernameError('20100126606')).toContain('RUC');
+    expect(usernameError('m.torres_2')).toBeUndefined();
+    expect(suggestUsername('María José', 'Núñez Vega')).toBe('mnunez');
   });
 
   it('accepts only letters in person names', () => {

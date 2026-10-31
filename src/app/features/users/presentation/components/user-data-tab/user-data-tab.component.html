@@ -21,7 +21,8 @@
       <span class="field-label">Documento</span>
       <span class="readonly-field">Elige primero el rol para completar los datos</span>
       <span class="text-[12.5px] text-muted"
-        >Proveedor: RUC y razón social. Usuario interno: DNI, nombres y área.</span
+        >Proveedor: RUC (es su usuario) y razón social. Usuario interno: documento, nombres, usuario
+        y área.</span
       >
     </div>
   } @else if (editor.isProvider()) {
@@ -75,48 +76,41 @@
       }
     </div>
   } @else {
-    <div class="flex flex-col gap-2">
-      <label for="uf-doc" class="field-label"
-        >{{ editor.isNew() || editor.detail()!.documentType === 'DNI' ? 'DNI' : 'Usuario' }}
-        <span class="text-danger-text">*</span></label
-      >
-      @if (editor.isNew()) {
+    @if (editor.isNew()) {
+      <app-select
+        label="Tipo de documento *"
+        [options]="editor.documentTypeOptions"
+        [value]="editor.form().documentType"
+        (valueChange)="editor.setField('documentType', $any($event))"
+      />
+      <div class="flex flex-col gap-2">
+        <label for="uf-doc" class="field-label"
+          >N° de documento <span class="text-danger-text">*</span></label
+        >
         <input
           id="uf-doc"
           class="field tabular-nums"
-          inputmode="numeric"
-          placeholder="8 dígitos"
+          [attr.inputmode]="editor.form().documentType === 'DNI' ? 'numeric' : null"
+          [placeholder]="editor.form().documentType === 'DNI' ? '8 dígitos' : 'Letras y números'"
           [attr.aria-invalid]="editor.showErrors() && !!editor.errors().document"
           [value]="editor.form().document"
           (input)="editor.setField('document', $any($event.target).value)"
         />
-      } @else {
-        <span class="readonly-field tabular-nums">{{ editor.form().document }}</span>
-      }
-      <span
-        class="text-[12.5px]"
-        [class]="
-          editor.showErrors() && editor.errors().document ? 'text-danger-text' : 'text-muted'
-        "
-        >{{
-          (editor.showErrors() && editor.errors().document) ||
-            (editor.isNew() ? 'Será su usuario de acceso.' : 'Es su usuario de acceso.')
-        }}</span
-      >
-    </div>
-    <div class="flex flex-col gap-2">
-      <app-select
-        [label]="editor.form().role === 'ADMINISTRATOR' ? 'Área' : 'Área *'"
-        placeholder="Selecciona el área"
-        [options]="editor.areaOptions()"
-        [value]="editor.form().areaId"
-        [invalid]="editor.showErrors() && !!editor.errors().areaId"
-        (valueChange)="editor.setField('areaId', $event)"
-      />
-      @if (editor.showErrors() && editor.errors().areaId; as error) {
-        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
-      }
-    </div>
+        @if (editor.showErrors() && editor.errors().document; as error) {
+          <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+        }
+      </div>
+    } @else {
+      <div class="flex flex-col gap-2 sm:col-span-2">
+        <span class="field-label">Documento</span>
+        <span class="readonly-field tabular-nums"
+          >{{ editor.documentLabels[editor.detail()!.documentType] }}
+          @if (editor.detail()!.documentType !== 'Usuario') {
+            · {{ editor.form().document }}
+          }
+        </span>
+      </div>
+    }
     <div class="flex flex-col gap-2">
       <label for="uf-nom" class="field-label"
         >Nombres <span class="text-danger-text">*</span></label
@@ -148,6 +142,47 @@
         (input)="editor.setField('lastName', $any($event.target).value)"
       />
       @if (editor.showErrors() && editor.errors().lastName; as error) {
+        <span class="text-[12.5px] text-danger-text">{{ error }}</span>
+      }
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="uf-user" class="field-label"
+        >Usuario <span class="text-danger-text">*</span></label
+      >
+      <input
+        id="uf-user"
+        class="field"
+        placeholder="Ej. mtorres"
+        maxlength="50"
+        autocomplete="off"
+        spellcheck="false"
+        [attr.aria-invalid]="editor.showErrors() && !!editor.errors().username"
+        [value]="editor.form().username"
+        (input)="editor.setField('username', $any($event.target).value)"
+      />
+      <span
+        class="text-[12.5px]"
+        [class]="
+          editor.showErrors() && editor.errors().username ? 'text-danger-text' : 'text-muted'
+        "
+        >{{
+          (editor.showErrors() && editor.errors().username) ||
+            (editor.isNew()
+              ? 'Con este usuario ingresará al portal.'
+              : 'Si lo cambias, le avisaremos por correo.')
+        }}</span
+      >
+    </div>
+    <div class="flex flex-col gap-2">
+      <app-select
+        [label]="editor.form().role === 'ADMINISTRATOR' ? 'Área' : 'Área *'"
+        placeholder="Selecciona el área"
+        [options]="editor.areaOptions()"
+        [value]="editor.form().areaId"
+        [invalid]="editor.showErrors() && !!editor.errors().areaId"
+        (valueChange)="editor.setField('areaId', $event)"
+      />
+      @if (editor.showErrors() && editor.errors().areaId; as error) {
         <span class="text-[12.5px] text-danger-text">{{ error }}</span>
       }
     </div>
