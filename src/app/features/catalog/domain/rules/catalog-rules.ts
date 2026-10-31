@@ -3,7 +3,7 @@ import { CatalogArea } from '../models/catalog-area';
 
 /** Áreas de una sociedad; cada sociedad tiene sus propias áreas. */
 export function areasOfCompany(areas: readonly CatalogArea[], companyCode: string): CatalogArea[] {
-  return areas.filter((area) => area.companyCode === companyCode);
+  return areas.filter((area) => area.companyCodes.includes(companyCode));
 }
 
 /**
@@ -17,7 +17,7 @@ export function approversOf(
   excludeName = '',
 ): CatalogApprover[] {
   const area = areas.find(
-    (item) => item.name === areaName && (!companyCode || item.companyCode === companyCode),
+    (item) => item.name === areaName && (!companyCode || item.companyCodes.includes(companyCode)),
   );
   return (area?.approvers ?? []).filter(
     (approver) =>

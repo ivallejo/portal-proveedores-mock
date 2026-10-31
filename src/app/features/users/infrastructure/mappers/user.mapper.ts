@@ -34,7 +34,7 @@ export function toUserDetail(dto: UserDetailResponseDto): UserDetail {
 export function toUserCatalog(dto: UserCatalogResponseDto): UserCatalog {
   return {
     roles: dto.roles.map((role) => ({ ...role })),
-    areas: dto.areas.map((area) => ({ ...area })),
+    areas: dto.areas.map((area) => ({ ...area, companyCodes: [...area.companyCodes] })),
     companies: dto.companies.map((company) => ({ ...company })),
   };
 }

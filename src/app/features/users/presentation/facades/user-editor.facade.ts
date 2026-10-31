@@ -96,16 +96,24 @@ export class UserEditorFacade {
       .filter((role) => !detail || role.isProvider === detail.isProvider)
       .map((role) => ({ value: role.code, label: role.name, sub: role.description ?? undefined }));
   });
-  readonly areaOptions = computed<SelectOption[]>(() =>
-    this.list
+  /** Áreas activas (más la actual) que comparten alguna sociedad con las marcadas; sin sociedades, todas. */
+  readonly areaOptions = computed<SelectOption[]>(() => {
+    const companies = this.companies();
+    return this.list
       .catalog()
       .areas.filter((area) => area.isActive || area.id === this.detail()?.areaId)
+      .filter(
+        (area) =>
+          !companies.length ||
+          area.id === this.form().areaId ||
+          area.companyCodes.some((code) => companies.includes(code)),
+      )
       .map((area) => ({
         value: area.id,
         label: area.name,
-        sub: `${area.companyName}${area.isActive ? '' : ' · Inactiva'}`,
-      })),
-  );
+        sub: `${area.companyCodes.join(' · ')}${area.isActive ? '' : ' · Inactiva'}`,
+      }));
+  });
   readonly documentTypeOptions: SelectOption[] = (['DNI', 'CE', 'PASAPORTE'] as const).map(
     (type) => ({ value: type, label: DOCUMENT_TYPE_LABELS[type] }),
   );

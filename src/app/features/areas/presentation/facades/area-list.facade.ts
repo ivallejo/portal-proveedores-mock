@@ -17,14 +17,14 @@ import { AreaSociety } from '../../domain/models/area-society';
 import {
   areaDescriptionError,
   areaNameError,
-  areaSocietyError,
+  areaSocietiesError,
 } from '../../domain/rules/area-rules';
 import { AreaFilters } from './area-filters';
 import { AreaFormErrors } from './area-form-errors';
 
 const PAGE_SIZE = 10;
 const NO_FILTERS: AreaFilters = { search: '', status: '', societyId: '' };
-const EMPTY_FORM: SaveAreaCommand = { societyId: '', name: '', description: '' };
+const EMPTY_FORM: SaveAreaCommand = { societyIds: [], name: '', description: '' };
 
 /** Estado de Configuración › Áreas: listado con filtros, panel de edición y activación. */
 @Injectable()
@@ -66,17 +66,14 @@ export class AreaListFacade {
       sub: society.code,
     })),
   ]);
-  /** En el formulario solo sociedades activas (más la actual si el área ya pertenece a una inactiva). */
-  readonly societyFormOptions = computed<SelectOption[]>(() => {
+  /** Casillas del formulario: sociedades activas, más las inactivas que el área ya tiene. */
+  readonly societyCards = computed(() => {
     const editing = this.editing();
-    const currentId = editing && editing !== 'new' ? editing.societyId : '';
+    const current = editing && editing !== 'new' ? editing.societies.map((item) => item.id) : [];
+    const selected = this.form().societyIds;
     return this.societies()
-      .filter((society) => society.isActive || society.id === currentId)
-      .map((society) => ({
-        value: society.id,
-        label: society.name,
-        sub: `${society.code} · RUC ${society.ruc ?? '—'}${society.isActive ? '' : ' · Inactiva'}`,
-      }));
+      .filter((society) => society.isActive || current.includes(society.id))
+      .map((society) => ({ ...society, on: selected.includes(society.id) }));
   });
 
   readonly rows = computed(() => {
@@ -84,8 +81,13 @@ export class AreaListFacade {
     return this.areas().filter(
       (area) =>
         matchesStatus(area.isActive, status) &&
-        (!societyId || area.societyId === societyId) &&
-        includesTerm(search, area.name, area.description, area.societyName),
+        (!societyId || area.societies.some((society) => society.id === societyId)) &&
+        includesTerm(
+          search,
+          area.name,
+          area.description,
+          ...area.societies.flatMap((society) => [society.name, society.code]),
+        ),
     );
   });
   readonly pageRows = computed(() =>
@@ -144,7 +146,7 @@ export class AreaListFacade {
 
   openEdit(area: Area): void {
     this.form.set({
-      societyId: area.societyId,
+      societyIds: area.societies.map((society) => society.id),
       name: area.name,
       description: area.description ?? '',
     });
@@ -155,8 +157,18 @@ export class AreaListFacade {
     if (!this.saving()) this.editing.set(null);
   }
 
-  setField(key: keyof SaveAreaCommand, value: string): void {
+  setField(key: 'name' | 'description', value: string): void {
     this.form.update((form) => ({ ...form, [key]: value }));
+    if (this.showErrors()) this.errors.set(this.validate());
+  }
+
+  toggleSociety(id: string): void {
+    this.form.update((form) => ({
+      ...form,
+      societyIds: form.societyIds.includes(id)
+        ? form.societyIds.filter((item) => item !== id)
+        : [...form.societyIds, id],
+    }));
     if (this.showErrors()) this.errors.set(this.validate());
   }
 
@@ -223,9 +235,9 @@ export class AreaListFacade {
   }
 
   private validate(): AreaFormErrors {
-    const { societyId, name, description } = this.form();
+    const { societyIds, name, description } = this.form();
     const errors: AreaFormErrors = {
-      societyId: areaSocietyError(societyId),
+      societyIds: areaSocietiesError(societyIds),
       name: areaNameError(name),
       description: areaDescriptionError(description),
     };

@@ -31,3 +31,4 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 | [004 · Política de contraseñas](004-politica-contrasenas/requisitos.md) | Implementada | Política 3.1 de la compañía: 12 caracteres, 3 de 4 tipos, sin nombre ni palabras comunes, vigencia de 90 días e historial de 5 |
 | [005 · Rango de 1 mes y Excel](005-rango-y-excel-pagos/requisitos.md) | En curso | Orden de pago y Estado de factura: rango máximo de 1 mes (front y back) y descarga en Excel |
 | [006 · Usuario libre y documento](006-usuario-y-documento/requisitos.md) | En curso | Usuario de texto libre para el personal interno, documento (DNI, CE, pasaporte) aparte; se ingresa solo con el usuario |
+| [007 · Áreas en varias sociedades](007-areas-multisociedad/requisitos.md) | En curso | Un área pertenece a una o más sociedades; nombre único; migración que une áreas repetidas |
