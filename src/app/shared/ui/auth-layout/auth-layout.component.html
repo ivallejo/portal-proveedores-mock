@@ -4,7 +4,7 @@
 
   <div class="relative flex h-full w-full overflow-hidden bg-surface-auth">
     <aside
-      class="bg-brand-gradient relative hidden w-[46%] max-w-[640px] shrink-0 overflow-hidden text-white lg:block"
+      class="bg-brand-gradient relative hidden w-[46%] max-w-[640px] shrink-0 flex-col overflow-hidden text-white lg:flex"
     >
       <svg
         width="640"
@@ -48,7 +48,7 @@
         <circle cx="260" cy="260" r="258" fill="#2A78EA" fill-opacity="0.35" />
       </svg>
 
-      <div class="relative flex flex-col items-center gap-7 px-12 pt-9 text-center">
+      <div class="relative flex justify-center px-12 pt-9">
         <div
           role="group"
           aria-label="Empresas del grupo"
@@ -61,6 +61,11 @@
             }
           }
         </div>
+      </div>
+      <!-- Del emblema a los beneficios: centrado en el alto que queda bajo los logos. -->
+      <div
+        class="relative flex grow flex-col items-center justify-center gap-7 px-12 pb-24 text-center"
+      >
         <div class="flex flex-col items-center gap-3">
           <img src="images/grupo/emblema.png" alt="" class="block h-auto w-[150px]" />
           <h1 class="m-0 text-[40px] leading-[1.1] font-bold tracking-tight">
@@ -72,10 +77,10 @@
             </p>
           }
         </div>
-        <ul aria-label="Beneficios" class="m-0 flex w-full list-none flex-col gap-3 p-0 text-left">
+        <ul aria-label="Beneficios" class="m-0 flex w-full list-none flex-col gap-3 p-0">
           @for (benefit of benefits; track benefit) {
             <li
-              class="flex h-[62px] items-center gap-4 rounded-[14px] border border-white/16 bg-white/10 px-[22px] text-[17px] font-medium backdrop-blur-[6px]"
+              class="flex h-[62px] items-center justify-center gap-4 rounded-[14px] border border-white/16 bg-white/10 px-[22px] text-[17px] font-medium backdrop-blur-[6px]"
             >
               <span
                 class="size-3 shrink-0 rounded-full bg-[#6FB1FF] shadow-[0_0_0_4px_rgba(111,177,255,0.28)]"
