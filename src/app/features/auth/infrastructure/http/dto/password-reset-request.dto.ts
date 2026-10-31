@@ -1,3 +1,4 @@
 export interface PasswordResetRequestDto {
-  ruc: string;
+  /** RUC del proveedor o usuario del personal interno. */
+  identifier: string;
 }
