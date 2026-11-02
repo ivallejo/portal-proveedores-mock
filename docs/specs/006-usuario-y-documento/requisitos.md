@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **En curso** · aprobada el 2026-10-30 (D1 y D3 como se propusieron; D2: se ingresa solo con el usuario) |
+| Estado | **Implementada** · 2026-11-02 (backend #13 y front #10 del cliente) |
 | Fecha | 2026-10-30 |
 | Origen | Pedido del cliente: el usuario del personal interno hoy es su DNI; debe ser un texto libre, con el documento en un campo aparte |
 | Repos | Backend y frontend (nuestros y del cliente) |

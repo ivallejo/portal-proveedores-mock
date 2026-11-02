@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **En curso** · aprobada el 2026-10-30 (D1 y D2 como se propusieron) |
+| Estado | **Implementada** · 2026-11-02 (nuestros PR #3/#4; cliente backend #13 y front #10) |
 | Fecha | 2026-10-30 |
 | Origen | Pedido del cliente: al crear un área se indican las sociedades a las que pertenece, en lugar de elegir una sociedad primero |
 | Repos | Backend y frontend (nuestros, en la rama `feature/areas-multisociedad` con PR para revisión; luego los del cliente) |

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **En curso** · pedido directo del usuario el 2026-10-30 |
+| Estado | **Implementada** · 2026-11-02 (nuestros PR #4/#5; cliente backend #13 y front #10) |
 | Fecha | 2026-10-30 |
 | Origen | «¿Olvidaste tu contraseña?» solo acepta un RUC de 11 dígitos; desde la spec 006 el personal interno ingresa con un usuario libre |
 | Repos | Backend y frontend (nuestros, en `feature/recuperar-con-usuario` con PR; luego los del cliente) |

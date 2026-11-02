@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **En curso** · aprobada el 2026-10-30 (D1–D4 según la propuesta) |
+| Estado | **Implementada** · 2026-11-02 (backend #13 y front #10 del cliente) |
 | Fecha | 2026-10-30 |
 | Origen | Pedido del cliente: en Orden de pago y Estado de factura, rango máximo de 1 mes (validado en front y back) y botón para descargar en Excel |
 | Repos | Backend y frontend (nuestros y del cliente) |
