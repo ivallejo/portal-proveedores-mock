@@ -1,21 +1,12 @@
 <app-drawer
   icon="layers"
   [heading]="facade.isNew() ? 'Nueva área' : 'Editar área'"
-  [subtitle]="facade.isNew() ? 'Crea una unidad interna de una sociedad.' : facade.form().name"
+  [subtitle]="
+    facade.isNew() ? 'Crea una unidad interna y marca sus sociedades.' : facade.form().name
+  "
   (closed)="facade.closeDrawer()"
 >
   <div class="grid grid-cols-1 gap-y-4">
-    <app-select
-      label="Sociedad *"
-      placeholder="Selecciona la sociedad"
-      [options]="facade.societyFormOptions()"
-      [invalid]="!!facade.errors().societyId"
-      [value]="facade.form().societyId"
-      (valueChange)="facade.setField('societyId', $event)"
-    />
-    @if (facade.errors().societyId; as error) {
-      <span class="-mt-2 text-[12.5px] text-danger-text">{{ error }}</span>
-    }
     <div class="flex flex-col gap-2">
       <label for="fld-name" class="field-label"
         >Nombre <span class="text-danger-text">*</span></label
@@ -31,7 +22,52 @@
       <span
         class="text-[12.5px]"
         [class]="facade.errors().name ? 'text-danger-text' : 'text-muted'"
-        >{{ facade.errors().name ?? 'Único dentro de la sociedad.' }}</span
+        >{{
+          facade.errors().name ??
+            'Único en el portal: una misma área puede estar en varias sociedades.'
+        }}</span
+      >
+    </div>
+    <div role="group" aria-labelledby="fld-societies" class="flex flex-col gap-2">
+      <span id="fld-societies" class="field-label"
+        >Sociedades <span class="text-danger-text">*</span></span
+      >
+      <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        @for (society of facade.societyCards(); track society.id) {
+          <button
+            type="button"
+            role="checkbox"
+            [attr.aria-checked]="society.on"
+            class="flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left"
+            [class]="society.on ? 'border-primary bg-primary-tint' : 'border-line bg-white'"
+            (click)="facade.toggleSociety(society.id)"
+          >
+            <span
+              class="flex size-5 shrink-0 items-center justify-center rounded-[5px] border-2 text-white"
+              [class]="society.on ? 'border-primary bg-primary' : 'border-[#B8C2D3] bg-white'"
+            >
+              @if (society.on) {
+                <app-icon name="check" [size]="13" [stroke]="3" />
+              }
+            </span>
+            <span class="flex min-w-0 flex-col">
+              <span class="truncate text-[13.5px] font-bold">{{ society.name }}</span>
+              <span class="text-xs text-muted tabular-nums"
+                >{{ society.code }}{{ society.ruc ? ' · RUC ' + society.ruc : '' }}</span
+              >
+              @if (!society.isActive) {
+                <span class="text-xs font-bold text-warning-text">Sociedad inactiva</span>
+              }
+            </span>
+          </button>
+        }
+      </div>
+      <span
+        class="text-[12.5px]"
+        [class]="facade.errors().societyIds ? 'text-danger-text' : 'text-muted'"
+        >{{
+          facade.errors().societyIds ?? 'Marca todas las sociedades en las que existe el área.'
+        }}</span
       >
     </div>
     <div class="flex flex-col gap-2">

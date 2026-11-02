@@ -8,9 +8,7 @@ export function toArea(dto: AreaResponseDto): Area {
     id: dto.id,
     name: dto.name,
     description: dto.description,
-    societyId: dto.companyId,
-    societyCode: dto.companyCode,
-    societyName: dto.companyName,
+    societies: dto.companies.map((company) => ({ ...company })),
     isActive: dto.isActive,
     userCount: dto.userCount,
   };
@@ -18,7 +16,7 @@ export function toArea(dto: AreaResponseDto): Area {
 
 export function toSaveAreaRequest(command: SaveAreaCommand): SaveAreaRequestDto {
   return {
-    companyId: command.societyId,
+    companyIds: [...command.societyIds],
     name: command.name,
     description: command.description,
   };

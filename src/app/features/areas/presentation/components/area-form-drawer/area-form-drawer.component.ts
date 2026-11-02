@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DrawerComponent } from '../../../../../shared/ui/drawer/drawer.component';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
-import { SelectComponent } from '../../../../../shared/ui/select/select.component';
 import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.component';
 import { AreaListFacade } from '../../facades/area-list.facade';
 
 /** Panel lateral para crear o editar un área. */
 @Component({
   selector: 'app-area-form-drawer',
-  imports: [DrawerComponent, IconComponent, SelectComponent, SpinnerComponent],
+  imports: [DrawerComponent, IconComponent, SpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './area-form-drawer.component.html',
 })

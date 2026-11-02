@@ -3,9 +3,7 @@ export interface AreaResponseDto {
   id: string;
   name: string;
   description: string | null;
-  companyId: string;
-  companyCode: string;
-  companyName: string;
+  companies: { id: string; code: string; name: string; isActive: boolean }[];
   isActive: boolean;
   userCount: number;
 }

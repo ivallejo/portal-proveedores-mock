@@ -10,6 +10,7 @@ export function toCatalogCompany(dto: CatalogCompanyResponseDto): CatalogCompany
 export function toCatalogArea(dto: CatalogAreaResponseDto): CatalogArea {
   return {
     ...dto,
+    companyCodes: [...dto.companyCodes],
     approvers: dto.approvers.map((approver) => ({
       ...approver,
       companyCodes: [...approver.companyCodes],

@@ -16,9 +16,7 @@ const compras: Area = {
   id: 'a1',
   name: 'Compras',
   description: null,
-  societyId: 's1',
-  societyCode: '1001',
-  societyName: 'Naviera',
+  societies: [{ id: 's1', code: '1001', name: 'Naviera', isActive: true }],
   isActive: true,
   userCount: 0,
 };
@@ -26,8 +24,10 @@ const finanzas: Area = {
   ...compras,
   id: 'a2',
   name: 'Finanzas',
-  societyId: 's2',
-  societyName: 'Petral',
+  societies: [
+    { id: 's1', code: '1001', name: 'Naviera', isActive: true },
+    { id: 's2', code: '1003', name: 'Petral', isActive: false },
+  ],
 };
 const naviera: AreaSociety = { id: 's1', code: '1001', name: 'Naviera', ruc: null, isActive: true };
 const petral: AreaSociety = { id: 's2', code: '1003', name: 'Petral', ruc: null, isActive: false };
@@ -54,28 +54,46 @@ describe('AreaListFacade', () => {
     return facade;
   }
 
-  it('filters the areas by society', () => {
+  it('filters the areas that include the society', () => {
     const facade = setup();
     facade.setDraft({ societyId: 's2' });
     facade.search();
     expect(facade.rows().map((area) => area.name)).toEqual(['Finanzas']);
+    facade.setDraft({ societyId: 's1' });
+    facade.search();
+    expect(facade.rows().map((area) => area.name)).toEqual(['Compras', 'Finanzas']);
   });
 
-  it('offers only active societies, plus the current one of the area being edited', () => {
+  it('offers only active societies, plus the inactive ones the area already has', () => {
     const facade = setup();
     facade.openNew();
-    expect(facade.societyFormOptions().map((option) => option.value)).toEqual(['s1']);
+    expect(facade.societyCards().map((card) => card.id)).toEqual(['s1']);
     facade.openEdit(finanzas);
-    expect(facade.societyFormOptions().map((option) => option.value)).toEqual(['s1', 's2']);
+    expect(facade.societyCards().map((card) => [card.id, card.on])).toEqual([
+      ['s1', true],
+      ['s2', true],
+    ]);
   });
 
-  it('requires the society and the name before saving', () => {
+  it('sends every selected society', () => {
+    const facade = setup();
+    facade.openEdit(finanzas);
+    facade.toggleSociety('s2');
+    facade.save();
+    expect(save).toHaveBeenCalledOnceWith('a2', {
+      societyIds: ['s1'],
+      name: 'Finanzas',
+      description: '',
+    });
+  });
+
+  it('requires at least one society and the name before saving', () => {
     const facade = setup();
     facade.openNew();
     facade.save();
     expect(save).not.toHaveBeenCalled();
     expect(facade.errors()).toEqual({
-      societyId: 'Selecciona la sociedad.',
+      societyIds: 'Selecciona al menos una sociedad.',
       name: 'Ingresa el nombre del área.',
     });
   });

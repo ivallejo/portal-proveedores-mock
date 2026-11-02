@@ -1,5 +1,5 @@
-export function areaSocietyError(societyId: string): string | undefined {
-  return societyId ? undefined : 'Selecciona la sociedad.';
+export function areaSocietiesError(societyIds: readonly string[]): string | undefined {
+  return societyIds.length ? undefined : 'Selecciona al menos una sociedad.';
 }
 
 export function areaNameError(name: string): string | undefined {

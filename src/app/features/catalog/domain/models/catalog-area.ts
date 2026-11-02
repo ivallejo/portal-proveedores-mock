@@ -1,10 +1,10 @@
 import { CatalogApprover } from './catalog-approver';
 
-/** Área de una sociedad, con sus aprobadores. */
+/** Área con sus aprobadores; puede estar en varias sociedades. */
 export interface CatalogArea {
   id: string;
   name: string;
-  /** Sociedad a la que pertenece el área. */
-  companyCode: string;
+  /** Sociedades en las que existe el área. */
+  companyCodes: string[];
   approvers: CatalogApprover[];
 }
