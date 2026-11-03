@@ -17,6 +17,10 @@ export class MenuTableComponent {
   /** Todas las opciones, para contar los submenús de cada menú principal. */
   readonly menus = input.required<MenuOption[]>();
   readonly loading = input(false);
+  /** Fila que se está editando o consultando (panel o diálogo abiertos). */
+  readonly selectedId = input<string | null>(null);
+  /** Fila que se acaba de guardar: se ilumina un momento. */
+  readonly flashId = input<string | null>(null);
   readonly addChild = output<MenuOption>();
   readonly edit = output<MenuOption>();
   readonly toggle = output<MenuOption>();

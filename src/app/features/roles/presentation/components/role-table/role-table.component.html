@@ -29,6 +29,8 @@
       @for (role of rows(); track role.id; let i = $index) {
         <div
           class="row-hover animate-in grid min-h-[66px] grid-cols-[2.6fr_1.3fr_0.8fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.row-selected]="role.id === selectedId()"
+          [class.row-flash]="role.id === flashId()"
           [class.opacity-70]="!role.isActive"
           [style.animation-delay.ms]="i * 40"
         >

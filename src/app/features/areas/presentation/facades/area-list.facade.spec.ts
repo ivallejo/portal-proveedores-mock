@@ -97,4 +97,18 @@ describe('AreaListFacade', () => {
       name: 'Ingresa el nombre del área.',
     });
   });
+
+  it('marks the row being edited or confirmed and flashes the saved one', () => {
+    const facade = setup();
+    facade.openEdit(finanzas);
+    expect(facade.selectedId()).toBe('a2');
+    facade.closeDrawer();
+    facade.confirming.set(compras);
+    expect(facade.selectedId()).toBe('a1');
+    facade.confirming.set(null);
+    facade.openEdit(compras);
+    facade.save();
+    expect(facade.flashedId()).toBe('a1');
+    expect(facade.selectedId()).toBeNull();
+  });
 });

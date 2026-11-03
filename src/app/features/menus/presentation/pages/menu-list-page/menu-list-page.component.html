@@ -80,6 +80,8 @@
     [rows]="facade.rows()"
     [menus]="facade.menus()"
     [loading]="facade.loading()"
+    [selectedId]="facade.selectedId()"
+    [flashId]="facade.flashedId()"
     (addChild)="facade.openNew($event)"
     (edit)="facade.openEdit($event)"
     (toggle)="facade.confirming.set($event)"

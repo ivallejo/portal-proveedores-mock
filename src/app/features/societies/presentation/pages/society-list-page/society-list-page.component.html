@@ -79,6 +79,8 @@
   <app-society-table
     [rows]="facade.pageRows()"
     [loading]="facade.loading()"
+    [selectedId]="facade.selectedId()"
+    [flashId]="facade.flashedId()"
     (edit)="facade.openEdit($event)"
     (toggle)="facade.askToggle($event)"
   />

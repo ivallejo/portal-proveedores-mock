@@ -85,6 +85,8 @@
   <app-area-table
     [rows]="facade.pageRows()"
     [loading]="facade.loading()"
+    [selectedId]="facade.selectedId()"
+    [flashId]="facade.flashedId()"
     (edit)="facade.openEdit($event)"
     (toggle)="facade.confirming.set($event)"
   />
