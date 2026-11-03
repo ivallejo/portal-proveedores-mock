@@ -28,7 +28,12 @@ function toUserEmail(dto: UserEmailResponseDto): UserEmail {
 }
 
 export function toUserDetail(dto: UserDetailResponseDto): UserDetail {
-  return { ...dto, companyCodes: [...dto.companyCodes], emails: dto.emails.map(toUserEmail) };
+  return {
+    ...dto,
+    companyCodes: [...dto.companyCodes],
+    emails: dto.emails.map(toUserEmail),
+    emailsSent: dto.emailsSent ?? true,
+  };
 }
 
 export function toUserCatalog(dto: UserCatalogResponseDto): UserCatalog {

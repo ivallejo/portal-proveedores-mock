@@ -17,7 +17,9 @@ describe('authInterceptor', () => {
       'logout',
       'markPasswordChangeRequired',
     ]);
-    router = jasmine.createSpyObj<Router>('router', ['navigate', 'navigateByUrl']);
+    router = jasmine.createSpyObj<Router>('router', ['navigate', 'navigateByUrl'], {
+      url: '/configuracion/usuarios',
+    });
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
@@ -37,7 +39,9 @@ describe('authInterceptor', () => {
     expect(request.request.headers.get('Authorization')).toBe('Bearer jwt');
     request.flush(null, { status: 401, statusText: 'Unauthorized' });
     expect(session.logout).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    expect(router.navigate).toHaveBeenCalledWith(['/login'], {
+      queryParams: { sesion: 'vencida', returnUrl: '/configuracion/usuarios' },
+    });
   });
 
   it('goes to change the temporary password on 403 PASSWORD_CHANGE_REQUIRED', () => {

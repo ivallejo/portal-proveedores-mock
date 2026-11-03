@@ -29,6 +29,12 @@ export class AuthHttpAdapter implements AuthenticationGatewayPort {
       .pipe(map(toAuthSession), catchError(this.fail));
   }
 
+  renewSession(): Observable<AuthSession> {
+    return this.http
+      .post<AuthResponseDto>(`${this.base}/renew`, {})
+      .pipe(map(toAuthSession), catchError(this.fail));
+  }
+
   changePassword(command: ChangePasswordCommand): Observable<AuthSession> {
     const body: ChangePasswordRequestDto = {
       currentPassword: command.currentPassword,

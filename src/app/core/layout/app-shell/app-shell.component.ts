@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SessionKeeperFacade } from '../../../features/auth';
 import { SessionMenuFacade } from '../../../features/menus';
 import { ProgressBarComponent } from '../../../shared/ui/progress-bar/progress-bar.component';
 import { HeaderComponent } from '../header/header.component';
@@ -21,6 +22,8 @@ export class AppShellComponent {
   private readonly menu = inject(SessionMenuFacade);
 
   constructor() {
+    // Renueva la sesión mientras haya actividad y la cierra con aviso cuando vence o por inactividad.
+    inject(SessionKeeperFacade).start();
     // El menú alimenta Inicio y los permisos aunque el menú lateral esté cerrado (pantallas angostas).
     effect(() => {
       if (this.menu.items() === null) this.menu.load().subscribe();

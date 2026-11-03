@@ -33,3 +33,4 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 | [006 · Usuario libre y documento](006-usuario-y-documento/requisitos.md) | Implementada | Usuario de texto libre para el personal interno, documento (DNI, CE, pasaporte) aparte; se ingresa solo con el usuario |
 | [007 · Áreas en varias sociedades](007-areas-multisociedad/requisitos.md) | Implementada | Un área pertenece a una o más sociedades; nombre único; migración que une áreas repetidas |
 | [008 · Recuperar con RUC o usuario](008-recuperar-con-usuario/requisitos.md) | Implementada | ¿Olvidaste tu contraseña? acepta el usuario del personal interno además del RUC |
+| [009 · Sesión y correos](009-sesion-y-correos/requisitos.md) | En curso | Renovación automática de la sesión, aviso de sesión vencida y alta de usuario aunque falle el correo |
