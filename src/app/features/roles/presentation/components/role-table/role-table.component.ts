@@ -18,6 +18,10 @@ export class RoleTableComponent {
   /** Todas las opciones del menú, para el resumen «N de M». */
   readonly menus = input.required<PermissionOption[]>();
   readonly loading = input(false);
+  /** Fila que se está editando o consultando (panel o diálogo abiertos). */
+  readonly selectedId = input<string | null>(null);
+  /** Fila que se acaba de guardar: se ilumina un momento. */
+  readonly flashId = input<string | null>(null);
   readonly edit = output<AccessRole>();
   readonly toggle = output<AccessRole>();
 

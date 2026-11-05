@@ -33,6 +33,8 @@
       @for (society of rows(); track society.id; let i = $index) {
         <div
           class="row-hover animate-in grid min-h-[62px] grid-cols-[0.7fr_2.4fr_1.1fr_0.6fr_0.7fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.row-selected]="society.id === selectedId()"
+          [class.row-flash]="society.id === flashId()"
           [class.opacity-70]="!society.isActive"
           [style.animation-delay.ms]="i * 40"
         >

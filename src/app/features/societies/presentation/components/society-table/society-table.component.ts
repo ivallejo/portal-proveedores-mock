@@ -13,6 +13,10 @@ import { Society } from '../../../domain/models/society';
 export class SocietyTableComponent {
   readonly rows = input.required<Society[]>();
   readonly loading = input(false);
+  /** Fila que se está editando o consultando (panel o diálogo abiertos). */
+  readonly selectedId = input<string | null>(null);
+  /** Fila que se acaba de guardar: se ilumina un momento. */
+  readonly flashId = input<string | null>(null);
   readonly edit = output<Society>();
   readonly toggle = output<Society>();
 }

@@ -29,6 +29,8 @@
       @for (area of rows(); track area.id; let i = $index) {
         <div
           class="row-hover animate-in grid min-h-[62px] grid-cols-[2.4fr_2fr_0.7fr_0.9fr_90px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.row-selected]="area.id === selectedId()"
+          [class.row-flash]="area.id === flashId()"
           [class.opacity-70]="!area.isActive"
           [style.animation-delay.ms]="i * 40"
         >

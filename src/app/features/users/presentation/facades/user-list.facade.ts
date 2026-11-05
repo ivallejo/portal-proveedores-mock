@@ -8,6 +8,7 @@ import { UserCatalog } from '../../domain/models/user-catalog';
 import { UserCounts } from '../../domain/models/user-counts';
 import { UserSummary } from '../../domain/models/user-summary';
 import { userToggleVerb } from '../catalog/user-toggle-verb.util';
+import { flashRow } from '../../../../shared/utils/flash-row.util';
 
 const PAGE_SIZE = 10;
 const NO_FILTER: UserFilter = { search: '', role: '', status: '' };
@@ -40,6 +41,8 @@ export class UserListFacade {
 
   readonly confirming = signal<UserSummary | null>(null);
   readonly toggling = signal(false);
+  /** Fila que se acaba de activar o desactivar: se ilumina un momento en la tabla. */
+  readonly flashedId = signal<string | null>(null);
 
   readonly roleFilterOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Todos los roles' },
@@ -124,6 +127,7 @@ export class UserListFacade {
       next: (saved) => {
         this.toggling.set(false);
         this.confirming.set(null);
+        flashRow(this.flashedId, saved.id);
         this.toast.show(
           `${saved.displayName} ${activate ? 'está activo nuevamente.' : 'quedó inactivo.'}`,
         );

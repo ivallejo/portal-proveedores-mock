@@ -34,6 +34,8 @@
       @for (user of rows(); track user.id; let i = $index) {
         <div
           class="row-hover animate-in grid min-h-[66px] grid-cols-[2.3fr_1.1fr_1.3fr_1.6fr_1fr_90px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.row-selected]="user.id === selectedId()"
+          [class.row-flash]="user.id === flashId()"
           [class.opacity-70]="user.status === 'inactive'"
           [style.animation-delay.ms]="i * 40"
         >

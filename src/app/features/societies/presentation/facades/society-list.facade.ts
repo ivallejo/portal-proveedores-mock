@@ -17,6 +17,7 @@ import {
   societyRucError,
 } from '../../domain/rules/society-rules';
 import { SocietyFormErrors } from './society-form-errors';
+import { flashRow } from '../../../../shared/utils/flash-row.util';
 
 const PAGE_SIZE = 10;
 const EMPTY_FORM: SaveSocietyCommand = { code: '', name: '', ruc: '', billingEmail: '' };
@@ -72,6 +73,13 @@ export class SocietyListFacade {
     };
   });
   readonly isNew = computed(() => this.editing() === 'new');
+  /** Fila marcada en la tabla: la que se edita o la que se va a activar/desactivar. */
+  readonly selectedId = computed(() => {
+    const editing = this.editing();
+    return (editing && editing !== 'new' ? editing.id : null) ?? this.confirming()?.id ?? null;
+  });
+  /** Fila que se acaba de guardar: se ilumina un momento en la tabla. */
+  readonly flashedId = signal<string | null>(null);
 
   load(): void {
     this.loading.set(true);
@@ -144,6 +152,7 @@ export class SocietyListFacade {
     this.saving.set(true);
     this.saveSociety.execute(id, this.form()).subscribe({
       next: (society) => {
+        flashRow(this.flashedId, society.id);
         this.saving.set(false);
         this.editing.set(null);
         this.toast.show(
@@ -177,6 +186,7 @@ export class SocietyListFacade {
     this.toggling.set(true);
     this.changeStatus.execute(society.id, !society.isActive).subscribe({
       next: (updated) => {
+        flashRow(this.flashedId, updated.id);
         this.toggling.set(false);
         this.confirming.set(null);
         this.societies.update((list) =>

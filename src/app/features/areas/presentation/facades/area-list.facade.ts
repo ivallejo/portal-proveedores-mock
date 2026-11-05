@@ -21,6 +21,7 @@ import {
 } from '../../domain/rules/area-rules';
 import { AreaFilters } from './area-filters';
 import { AreaFormErrors } from './area-form-errors';
+import { flashRow } from '../../../../shared/utils/flash-row.util';
 
 const PAGE_SIZE = 10;
 const NO_FILTERS: AreaFilters = { search: '', status: '', societyId: '' };
@@ -103,6 +104,13 @@ export class AreaListFacade {
     };
   });
   readonly isNew = computed(() => this.editing() === 'new');
+  /** Fila marcada en la tabla: la que se edita o la que se va a activar/desactivar. */
+  readonly selectedId = computed(() => {
+    const editing = this.editing();
+    return (editing && editing !== 'new' ? editing.id : null) ?? this.confirming()?.id ?? null;
+  });
+  /** Fila que se acaba de guardar: se ilumina un momento en la tabla. */
+  readonly flashedId = signal<string | null>(null);
 
   load(): void {
     this.loading.set(true);
@@ -186,6 +194,7 @@ export class AreaListFacade {
     this.saving.set(true);
     this.saveArea.execute(id, this.form()).subscribe({
       next: (area) => {
+        flashRow(this.flashedId, area.id);
         this.saving.set(false);
         this.editing.set(null);
         this.toast.show(id ? `Área ${area.name} actualizada` : `Área ${area.name} creada`);
@@ -213,6 +222,7 @@ export class AreaListFacade {
     this.toggling.set(true);
     this.changeStatus.execute(area.id, !area.isActive).subscribe({
       next: (updated) => {
+        flashRow(this.flashedId, updated.id);
         this.toggling.set(false);
         this.confirming.set(null);
         this.areas.update((list) => list.map((item) => (item.id === updated.id ? updated : item)));

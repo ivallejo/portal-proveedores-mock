@@ -39,6 +39,7 @@
         @for (doc of facade.pageRows(); track doc.number; let i = $index) {
           <div
             class="row-hover animate-in grid h-[60px] grid-cols-[1.05fr_2fr_0.75fr_1.05fr_1.35fr_136px] items-center gap-4 border-b border-line-soft px-6 text-sm"
+            [class.row-selected]="doc.id === facade.detail()?.id"
             [style.animation-delay.ms]="i * 45"
           >
             <div>

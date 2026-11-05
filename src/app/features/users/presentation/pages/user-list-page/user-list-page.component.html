@@ -85,6 +85,8 @@
   <app-user-table
     [rows]="list.rows()"
     [loading]="list.loading()"
+    [selectedId]="editor.selectedId() ?? list.confirming()?.id ?? null"
+    [flashId]="editor.flashedId() ?? list.flashedId()"
     (edit)="editor.openEdit($event)"
     (toggle)="list.askToggle($event)"
   />

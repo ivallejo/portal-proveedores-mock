@@ -30,6 +30,8 @@
       @for (menu of rows(); track menu.id; let i = $index) {
         <div
           class="row-hover animate-in grid min-h-[58px] grid-cols-[2.2fr_1.6fr_1fr_0.6fr_0.6fr_0.9fr_130px] items-center gap-4 border-b border-line-soft px-6 py-2 text-sm"
+          [class.row-selected]="menu.id === selectedId()"
+          [class.row-flash]="menu.id === flashId()"
           [class.opacity-70]="!menu.isActive"
           [style.animation-delay.ms]="i * 30"
         >

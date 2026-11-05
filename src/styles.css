@@ -353,8 +353,36 @@
     color: var(--color-muted-auth);
   }
 
+  .row-hover {
+    transition: background-color 0.15s ease;
+  }
+
   .row-hover:hover {
-    background: #f6f9ff;
+    background: #eef4fd;
+  }
+
+  /* Fila que se está editando o consultando (panel o diálogo abiertos). */
+  .row-selected,
+  .row-selected:hover {
+    background: var(--color-primary-soft);
+    box-shadow: inset 3px 0 0 var(--color-primary);
+  }
+
+  /* Fila que se acaba de guardar: se ilumina un momento al volver a la tabla (gana a `animate-in`, que es utilidad). */
+  .row-flash {
+    animation: row-flash 2.4s ease-out !important;
+  }
+
+  @keyframes row-flash {
+    0%,
+    35% {
+      background: #dcf3e5;
+      box-shadow: inset 3px 0 0 var(--color-success);
+    }
+    100% {
+      background: transparent;
+      box-shadow: inset 3px 0 0 transparent;
+    }
   }
 
   .option-card:hover:not([aria-disabled='true']) {

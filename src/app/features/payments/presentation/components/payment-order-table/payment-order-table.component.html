@@ -39,6 +39,9 @@
         @for (order of facade.pageRows(); track order.number; let i = $index) {
           <div
             class="row-hover animate-in grid h-[60px] grid-cols-[1.15fr_1.8fr_0.95fr_0.8fr_1.2fr_112px] items-center gap-4 border-b border-line-soft px-6 text-sm"
+            [class.row-selected]="
+              order.number === (facade.detail()?.number ?? facade.pdf()?.number)
+            "
             [style.animation-delay.ms]="i * 45"
           >
             <div class="font-bold tracking-[0.01em] tabular-nums">{{ order.number }}</div>

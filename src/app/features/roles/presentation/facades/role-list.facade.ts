@@ -21,6 +21,7 @@ import {
 } from '../../domain/rules/permission-rules';
 import { RoleForm } from './role-form';
 import { RoleFormErrors } from './role-form-errors';
+import { flashRow } from '../../../../shared/utils/flash-row.util';
 
 const PAGE_SIZE = 10;
 const EMPTY_FORM: RoleForm = { name: '', description: '', isActive: true };
@@ -75,6 +76,13 @@ export class RoleListFacade {
     menus: String(this.menus().length),
   }));
   readonly isNew = computed(() => this.editing() === 'new');
+  /** Fila marcada en la tabla: la que se edita o la que se va a activar/desactivar. */
+  readonly selectedId = computed(() => {
+    const editing = this.editing();
+    return (editing && editing !== 'new' ? editing.id : null) ?? this.confirming()?.id ?? null;
+  });
+  /** Fila que se acaba de guardar: se ilumina un momento en la tabla. */
+  readonly flashedId = signal<string | null>(null);
   readonly current = computed(() => {
     const editing = this.editing();
     return editing && editing !== 'new' ? editing : null;
@@ -185,6 +193,7 @@ export class RoleListFacade {
       )
       .subscribe({
         next: (saved) => {
+          flashRow(this.flashedId, saved.id);
           this.saving.set(false);
           this.editing.set(null);
           this.toast.show(role ? `Rol ${saved.name} actualizado.` : `Rol ${saved.name} creado.`);
@@ -213,6 +222,7 @@ export class RoleListFacade {
     this.toggling.set(true);
     this.changeStatus.execute(role.id, !role.isActive).subscribe({
       next: (saved) => {
+        flashRow(this.flashedId, saved.id);
         this.toggling.set(false);
         this.confirming.set(null);
         this.toast.show(

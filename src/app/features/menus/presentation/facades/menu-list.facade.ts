@@ -17,6 +17,7 @@ import { MENU_ICONS } from '../catalog/menu-icons';
 import { SessionMenuFacade } from './session-menu.facade';
 import { MenuForm } from './menu-form';
 import { MenuFormErrors } from './menu-form-errors';
+import { flashRow } from '../../../../shared/utils/flash-row.util';
 
 const EMPTY_FORM: MenuForm = {
   name: '',
@@ -80,6 +81,13 @@ export class MenuListFacade {
     };
   });
   readonly isNew = computed(() => this.editing() === 'new');
+  /** Fila marcada en la tabla: la que se edita o la que se va a activar/desactivar. */
+  readonly selectedId = computed(() => {
+    const editing = this.editing();
+    return (editing && editing !== 'new' ? editing.id : null) ?? this.confirming()?.id ?? null;
+  });
+  /** Fila que se acaba de guardar: se ilumina un momento en la tabla. */
+  readonly flashedId = signal<string | null>(null);
   readonly current = computed(() => {
     const editing = this.editing();
     return editing && editing !== 'new' ? editing : null;
@@ -190,6 +198,7 @@ export class MenuListFacade {
       )
       .subscribe({
         next: (saved) => {
+          flashRow(this.flashedId, saved.id);
           this.saving.set(false);
           this.editing.set(null);
           this.toast.show(
@@ -219,6 +228,7 @@ export class MenuListFacade {
     this.toggling.set(true);
     this.changeStatus.execute(menu.id, !menu.isActive).subscribe({
       next: (saved) => {
+        flashRow(this.flashedId, saved.id);
         this.toggling.set(false);
         this.confirming.set(null);
         this.toast.show(

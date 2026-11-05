@@ -18,6 +18,10 @@ import { userToggleVerb } from '../../catalog/user-toggle-verb.util';
 export class UserTableComponent {
   readonly rows = input.required<UserSummary[]>();
   readonly loading = input(false);
+  /** Fila que se está editando o consultando (panel o diálogo abiertos). */
+  readonly selectedId = input<string | null>(null);
+  /** Fila que se acaba de guardar: se ilumina un momento. */
+  readonly flashId = input<string | null>(null);
   readonly edit = output<UserSummary>();
   readonly toggle = output<UserSummary>();
 

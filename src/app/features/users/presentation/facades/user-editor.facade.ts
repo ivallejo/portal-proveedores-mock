@@ -24,6 +24,7 @@ import { UserEditorTab } from './user-editor-tab';
 import { UserForm } from './user-form';
 import { UserFormErrors } from './user-form-errors';
 import { UserListFacade } from './user-list.facade';
+import { flashRow } from '../../../../shared/utils/flash-row.util';
 
 const EMPTY_FORM: UserForm = {
   role: '',
@@ -78,6 +79,15 @@ export class UserEditorFacade {
   readonly sendingLink = signal(false);
 
   readonly isNew = computed(() => this.editing() === 'new');
+  /** Usuario que se está abriendo (antes de que llegue su detalle). */
+  private readonly openingId = signal<string | null>(null);
+  /** Fila marcada en la tabla mientras se abre o se edita el usuario. */
+  readonly selectedId = computed(() => {
+    const editing = this.editing();
+    return this.openingId() ?? (editing && editing !== 'new' ? editing.id : null);
+  });
+  /** Fila que se acaba de guardar: se ilumina un momento en la tabla. */
+  readonly flashedId = signal<string | null>(null);
   readonly detail = computed(() => {
     const editing = this.editing();
     return editing && editing !== 'new' ? editing : null;
@@ -174,14 +184,17 @@ export class UserEditorFacade {
     this.resetDrawer();
     this.tab.set(tab);
     this.detailLoading.set(true);
+    this.openingId.set(row.id);
     this.getUser.execute(row.id).subscribe({
       next: (detail) => {
         this.detailLoading.set(false);
+        this.openingId.set(null);
         this.fill(detail);
         this.editing.set(detail);
       },
       error: (error) => {
         this.detailLoading.set(false);
+        this.openingId.set(null);
         this.toast.show(userFacingMessage(error, 'No pudimos abrir el usuario.'), 4000);
       },
     });
@@ -347,6 +360,7 @@ export class UserEditorFacade {
         next: (saved) => {
           this.saving.set(false);
           this.editing.set(null);
+          flashRow(this.flashedId, saved.id);
           this.toast.show(this.savedMessage(saved, !!detail), saved.emailsSent ? 4500 : 9000);
           this.list.load();
         },
