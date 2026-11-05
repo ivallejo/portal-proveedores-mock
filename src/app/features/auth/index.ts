@@ -8,6 +8,7 @@ export type { SessionListenerPort } from './application/ports/out/session-listen
 export { SESSION_LISTENERS } from './di/auth.tokens';
 export { AUTH_PROVIDERS } from './di/auth.providers';
 export { SessionFacade } from './presentation/facades/session.facade';
+export { SessionKeeperFacade } from './presentation/facades/session-keeper.facade';
 export { authGuard } from './presentation/guards/auth.guard';
 export { roleGuard } from './presentation/guards/role.guard';
 export { rootRedirectGuard } from './presentation/guards/root-redirect.guard';

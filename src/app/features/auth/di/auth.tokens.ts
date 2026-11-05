@@ -6,6 +6,7 @@ import { LoginPort } from '../application/ports/in/login.port';
 import { LogoutPort } from '../application/ports/in/logout.port';
 import { LookupProviderPort } from '../application/ports/in/lookup-provider.port';
 import { RequestAccessKeyPort } from '../application/ports/in/request-access-key.port';
+import { RenewSessionPort } from '../application/ports/in/renew-session.port';
 import { RequestPasswordResetPort } from '../application/ports/in/request-password-reset.port';
 import { RestoreSessionPort } from '../application/ports/in/restore-session.port';
 import { UpdateSessionUserPort } from '../application/ports/in/update-session-user.port';
@@ -21,6 +22,7 @@ export const CHANGE_PASSWORD = new InjectionToken<ChangePasswordPort>('CHANGE_PA
 export const RESTORE_SESSION = new InjectionToken<RestoreSessionPort>('RESTORE_SESSION');
 export const UPDATE_SESSION_USER = new InjectionToken<UpdateSessionUserPort>('UPDATE_SESSION_USER');
 export const GET_ACCESS_TOKEN = new InjectionToken<GetAccessTokenPort>('GET_ACCESS_TOKEN');
+export const RENEW_SESSION = new InjectionToken<RenewSessionPort>('RENEW_SESSION');
 export const REQUEST_PASSWORD_RESET = new InjectionToken<RequestPasswordResetPort>(
   'REQUEST_PASSWORD_RESET',
 );

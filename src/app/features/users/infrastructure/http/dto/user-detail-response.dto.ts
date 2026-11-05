@@ -20,4 +20,6 @@ export interface UserDetailResponseDto {
   mustChangePassword: boolean;
   createdAtUtc: string;
   updatedAtUtc: string;
+  /** Falso si algún correo de la operación (activación, verificación, cambio de usuario) no se pudo enviar. */
+  emailsSent?: boolean;
 }

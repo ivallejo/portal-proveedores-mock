@@ -8,6 +8,11 @@ import { SpinnerComponent } from '../../../../../shared/ui/spinner/spinner.compo
 import { AuthLayoutComponent } from '../../../../../shared/ui/auth-layout/auth-layout.component';
 import { PasswordFieldComponent } from '../../../../../shared/ui/password-field/password-field.component';
 
+const SESSION_NOTICES: Record<string, string> = {
+  vencida: 'Tu sesión venció. Ingresa nuevamente para continuar.',
+  inactividad: 'Cerramos tu sesión por inactividad. Ingresa nuevamente para continuar.',
+};
+
 @Component({
   selector: 'app-login-page',
   imports: [
@@ -30,6 +35,9 @@ export class LoginPageComponent {
   readonly password = signal('');
   readonly loading = signal(false);
   readonly error = signal('');
+  /** Aviso cuando se llega aquí porque la sesión se cerró (`?sesion=vencida|inactividad`). */
+  readonly sessionNotice =
+    SESSION_NOTICES[this.route.snapshot.queryParamMap.get('sesion') ?? ''] ?? '';
 
   submit(event: Event): void {
     event.preventDefault();

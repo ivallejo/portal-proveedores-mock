@@ -18,6 +18,12 @@
       </p>
     </div>
 
+    @if (sessionNotice && !error()) {
+      <app-callout tone="info" icon="clock" heading="Tu sesión se cerró">{{
+        sessionNotice
+      }}</app-callout>
+    }
+
     <div class="flex flex-col gap-2">
       <label for="login-user" class="text-sm font-bold text-ink">RUC o usuario</label>
       <div class="relative flex">

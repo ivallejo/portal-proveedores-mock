@@ -16,10 +16,16 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
 
   return next(authorized).pipe(
     catchError((error: unknown) => {
-      // Sesión vencida o token inválido: se cierra la sesión y se vuelve al login.
+      // Sesión vencida o token inválido: se cierra la sesión y se vuelve al login con el aviso y la pantalla actual.
       if (error instanceof HttpErrorResponse && error.status === 401 && token) {
+        const returnUrl = router.url;
         session.logout();
-        void router.navigate(['/login']);
+        void router.navigate(['/login'], {
+          queryParams: {
+            sesion: 'vencida',
+            ...(returnUrl?.startsWith('/login') ? {} : { returnUrl }),
+          },
+        });
       }
       // Contraseña temporal sin cambiar (por ejemplo, sesión guardada de antes): se lleva a la pantalla de cambio.
       if (

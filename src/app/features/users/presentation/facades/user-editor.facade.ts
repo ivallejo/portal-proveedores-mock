@@ -347,12 +347,7 @@ export class UserEditorFacade {
         next: (saved) => {
           this.saving.set(false);
           this.editing.set(null);
-          this.toast.show(
-            detail
-              ? `${saved.displayName} se actualizó correctamente.`
-              : `Creamos a ${saved.displayName}. Enviamos el enlace de activación a ${saved.emails.find((email) => email.isPrimary)?.email}.`,
-            4500,
-          );
+          this.toast.show(this.savedMessage(saved, !!detail), saved.emailsSent ? 4500 : 9000);
           this.list.load();
         },
         error: (error) => {
@@ -363,6 +358,17 @@ export class UserEditorFacade {
   }
 
   // ——— Internos ———
+
+  /** Si un correo no salió, los cambios igual se guardaron: se avisa y se indica cómo reenviarlo. */
+  private savedMessage(saved: UserDetail, edited: boolean): string {
+    if (edited)
+      return saved.emailsSent
+        ? `${saved.displayName} se actualizó correctamente.`
+        : `${saved.displayName} se actualizó, pero no pudimos enviar uno de los correos de aviso.`;
+    return saved.emailsSent
+      ? `Creamos a ${saved.displayName}. Enviamos el enlace de activación a ${saved.emails.find((email) => email.isPrimary)?.email}.`
+      : `Creamos a ${saved.displayName}, pero no pudimos enviar el correo de activación. Reenvíalo desde la pestaña Seguridad.`;
+  }
 
   private resetDrawer(): void {
     this.tab.set('datos');
