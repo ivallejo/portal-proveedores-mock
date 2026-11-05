@@ -5,6 +5,7 @@ import { GetAccessTokenUseCase } from '../application/use-cases/get-access-token
 import { LoginUseCase } from '../application/use-cases/login.use-case';
 import { LogoutUseCase } from '../application/use-cases/logout.use-case';
 import { LookupProviderUseCase } from '../application/use-cases/lookup-provider.use-case';
+import { RenewSessionUseCase } from '../application/use-cases/renew-session.use-case';
 import { RequestAccessKeyUseCase } from '../application/use-cases/request-access-key.use-case';
 import { RequestPasswordResetUseCase } from '../application/use-cases/request-password-reset.use-case';
 import { RestoreSessionUseCase } from '../application/use-cases/restore-session.use-case';
@@ -21,6 +22,7 @@ import {
   LOGOUT,
   LOOKUP_PROVIDER,
   PROVIDER_DIRECTORY,
+  RENEW_SESSION,
   REQUEST_ACCESS_KEY,
   REQUEST_PASSWORD_RESET,
   RESTORE_SESSION,
@@ -53,6 +55,11 @@ export const AUTH_PROVIDERS: Provider[] = [
     useFactory: () => new UpdateSessionUserUseCase(inject(SESSION_STORE)),
   },
   { provide: GET_ACCESS_TOKEN, useFactory: () => new GetAccessTokenUseCase(inject(SESSION_STORE)) },
+  {
+    provide: RENEW_SESSION,
+    useFactory: () =>
+      new RenewSessionUseCase(inject(AUTHENTICATION_GATEWAY), inject(SESSION_STORE)),
+  },
   {
     provide: REQUEST_PASSWORD_RESET,
     useFactory: () => new RequestPasswordResetUseCase(inject(AUTHENTICATION_GATEWAY)),

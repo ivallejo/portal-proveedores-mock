@@ -9,6 +9,8 @@ import { PasswordResetResult } from '../../models/password-reset-result';
 export interface AuthenticationGatewayPort {
   login(command: LoginCommand): Observable<AuthSession>;
   changePassword(command: ChangePasswordCommand): Observable<AuthSession>;
+  /** Token nuevo para la misma sesión (falla con 401 si la sesión ya no se puede renovar). */
+  renewSession(): Observable<AuthSession>;
   requestPasswordReset(identifier: string): Observable<PasswordResetResult>;
   confirmPasswordLink(command: ConfirmPasswordLinkCommand): Observable<void>;
 }

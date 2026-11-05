@@ -22,4 +22,6 @@ export interface UserDetail {
   mustChangePassword: boolean;
   createdAtUtc: string;
   updatedAtUtc: string;
+  /** Falso si algún correo de la operación no se pudo enviar (el resto se guardó). */
+  emailsSent: boolean;
 }
