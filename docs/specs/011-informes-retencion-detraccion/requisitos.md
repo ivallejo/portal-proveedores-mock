@@ -33,13 +33,13 @@
 
 ## Requisitos
 
-- [ ] **R1 · Botones:** el detalle muestra los dos botones con los textos del diseño y «No aplica» cuando no corresponde.
-- [ ] **R2 · Vista previa de detracción:** el botón abre la vista previa con la hoja del diseño, zoom, imprimir y «Descargar PDF». Volver o Escape regresan al detalle, que sigue abierto.
-- [ ] **R3 · Comprobantes del informe:** incluye todos los comprobantes de la orden con esa misma constancia; los totales son la suma de esos comprobantes.
-- [ ] **R4 · Nombre del archivo:** al guardar se propone `Informe-detracciones-<constancia>.pdf`.
-- [ ] **R5 · Aviso:** la hoja conserva el aviso de que el documento es solo informativo.
-- [ ] **R6 · Datos faltantes:** ningún dato se inventa; se aplica lo que resuelvan D2, D3 y D4.
-- [ ] **R7 · Retención:** según D1.
+- [x] **R1 · Botones:** el detalle muestra los dos botones con los textos del diseño y «No aplica» cuando no corresponde.
+- [x] **R2 · Vista previa de detracción:** el botón abre la vista previa con la hoja del diseño, zoom, imprimir y «Descargar PDF». Volver o Escape regresan al detalle, que sigue abierto.
+- [x] **R3 · Comprobantes del informe:** incluye todos los comprobantes de la orden con esa misma constancia; los totales son la suma de esos comprobantes.
+- [x] **R4 · Nombre del archivo:** al guardar se propone `Informe-detracciones-<constancia>.pdf`.
+- [x] **R5 · Aviso:** la hoja conserva el aviso de que el documento es solo informativo.
+- [x] **R6 · Datos faltantes:** ningún dato se inventa; se aplica lo que resuelvan D2, D3 y D4.
+- [x] **R7 · Retención:** según D1.
 
 ## Decisiones (aprobadas el 2026-11-06)
 
