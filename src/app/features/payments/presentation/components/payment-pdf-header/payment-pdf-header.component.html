@@ -1,0 +1,36 @@
+<header
+  class="relative flex h-32 shrink-0 items-center justify-between overflow-hidden bg-[linear-gradient(120deg,#0B1D42_0%,#102A5C_55%,#163C82_100%)] px-11 text-white"
+>
+  <svg
+    width="360"
+    height="128"
+    viewBox="0 0 360 128"
+    fill="none"
+    aria-hidden="true"
+    class="absolute top-0 right-[150px]"
+  >
+    <path d="M250 -20 L310 15 L250 50 L190 15 Z" fill="#6F9BFF" fill-opacity="0.14" />
+    <path d="M190 15 L250 50 L250 120 L190 85 Z" fill="#3F6BD0" fill-opacity="0.12" />
+    <path d="M250 50 L310 15 L310 85 L250 120 Z" fill="#5A86EA" fill-opacity="0.14" />
+    <path d="M110 70 L140 87 L110 104 L80 87 Z" fill="#9CC0FF" fill-opacity="0.12" />
+  </svg>
+  <div class="relative flex items-center gap-3">
+    <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M24 3l18 10.4v21.2L24 45 6 34.6V13.4z" fill="#FFFFFF" />
+      <path d="M24 13l9 5.2v10.4L24 34l-9-5.4V18.2z" fill="#1A66DB" />
+      <path d="M24 13l9 5.2-9 5.2-9-5.2z" fill="#6FA5F5" />
+    </svg>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-base font-bold">{{ company() }}</span>
+      @if (detail(); as line) {
+        <span class="text-[10.5px] text-[#C7D7F5] tabular-nums">{{ line }}</span>
+      }
+    </div>
+  </div>
+  <div
+    class="relative flex min-w-[170px] flex-col items-center gap-0.5 rounded-[10px] bg-white px-4 py-2.5 text-ink"
+  >
+    <span class="text-[10px] font-bold tracking-[0.12em] text-primary">{{ label() }}</span>
+    <span class="text-[15px] font-bold tabular-nums">{{ number() }}</span>
+  </div>
+</header>

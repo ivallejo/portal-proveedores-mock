@@ -7,6 +7,7 @@ Huecos y dudas encontrados al probar o implementar el portal que necesitan una d
 | ID | Tema | Estado | Spec |
 |---|---|---|---|
 | [C-001](#c-001--seguimiento-de-los-documentos-por-el-proveedor) | Seguimiento de los documentos por el proveedor | Abierta | — |
+| [C-002](#c-002--datos-de-sap-para-los-informes-de-retención-y-detracción) | Datos de SAP para los informes de retención y detracción | Abierta | [011](specs/011-informes-retencion-detraccion/requisitos.md) |
 
 ---
 
@@ -37,3 +38,23 @@ Los flujos 01 y 02 terminan en «Registrar documento» y no indican cómo hace s
 **Propuesta (para conversar):** bandeja de solo lectura «Mis documentos» con los documentos registrados por el proveedor (o por el usuario), filtros por estado y fecha, y el detalle con archivos e historial, reutilizando los componentes de Documentos y Contabilización. La corrección de documentos observados quedaría como un segundo paso si negocio la pide.
 
 **Decisión:** _pendiente_
+
+---
+
+## C-002 · Datos de SAP para los informes de retención y detracción
+
+| Campo | Valor |
+|---|---|
+| Estado | **Abierta** |
+| Fecha | 2026-11-06 |
+| Origen | Diseño «Orden de pago · vista previa constancia de detracción» (Propuesta 4) |
+| Spec | [011](specs/011-informes-retencion-detraccion/requisitos.md) |
+
+**Situación actual:** por cada comprobante, `zconsopago` entrega solo el número de constancia y el porcentaje de detracción, la serie y el número de retención, y un monto por concepto. No entrega PDF.
+
+**Preguntas:**
+
+1. ¿SAP puede entregar el número de cuenta de detracciones del Banco de la Nación?
+2. ¿Qué significan T.Q. y T.B.S. en el informe, y SAP puede entregarlos?
+3. ¿La detracción puede mostrarse en soles y en dólares? ¿En qué moneda llega el monto cuando la orden está en dólares, y SAP puede entregar el tipo de cambio?
+4. ¿La fecha del informe es la de pago de la orden o la del depósito en el Banco de la Nación?
