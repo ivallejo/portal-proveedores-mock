@@ -1,0 +1,189 @@
+<article
+  class="op-sheet flex min-h-[1123px] w-[794px] flex-col bg-white text-ink print:min-h-[297mm] print:w-[210mm]"
+  [attr.aria-label]="title() + ' ' + report().number"
+>
+  <app-payment-pdf-header
+    [company]="report().order.companyName"
+    [detail]="headerDetail()"
+    [label]="title()"
+    [number]="'N° ' + report().number"
+  />
+
+  <div class="flex flex-col gap-5 px-11 pt-[26px]">
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-[12.5px] font-bold">
+        {{ isDetraction() ? 'Datos de la detracción' : 'Datos de la retención' }}
+      </h2>
+      <dl
+        class="m-0 grid gap-x-[18px] gap-y-4 rounded-[10px] border border-[#E3E8F0] bg-[#F8FAFD] px-[18px] py-4"
+        [class]="isDetraction() ? 'grid-cols-[1fr_1fr_0.8fr]' : 'grid-cols-2'"
+      >
+        <div class="flex flex-col gap-[3px]">
+          <dt class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">
+            {{ isDetraction() ? 'Nro. constancia' : 'Comprobante de retención' }}
+          </dt>
+          <dd class="m-0 text-xs font-bold tabular-nums">{{ report().number }}</dd>
+        </div>
+        @if (isDetraction()) {
+          <div class="flex flex-col gap-[3px]">
+            <dt class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">
+              Nro. cuenta de detracciones (BN)
+            </dt>
+            <dd class="m-0 text-xs font-bold text-[#8A93A3]">—</dd>
+          </div>
+        }
+        <div class="flex flex-col gap-[3px]">
+          <dt class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">
+            Fecha de pago
+          </dt>
+          <dd class="m-0 text-xs font-bold tabular-nums">
+            {{ formatDate(report().order.paidAt ?? '') }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <div class="grid grid-cols-2 gap-3.5">
+      @for (
+        party of [
+          {
+            role: 'Proveedor',
+            name: report().order.providerName,
+            ruc: report().order.providerRuc,
+          },
+          {
+            role: payerRole(),
+            name: report().order.companyName,
+            ruc: report().order.companyRuc,
+          },
+        ];
+        track party.role
+      ) {
+        <div class="flex flex-col gap-3 rounded-[10px] border border-[#E3E8F0] px-[18px] py-4">
+          <span class="text-[11px] font-bold text-primary">{{ party.role }}</span>
+          <div class="flex flex-col gap-[3px]">
+            <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase"
+              >Nombre / Razón social</span
+            >
+            <span class="text-xs font-bold">{{ party.name }}</span>
+          </div>
+          <div class="flex flex-col gap-[3px]">
+            <span class="text-[9px] font-bold tracking-[0.08em] text-[#6B7894] uppercase">RUC</span>
+            <span class="text-xs font-bold tabular-nums" [class.text-[#8A93A3]]="!party.ruc">{{
+              party.ruc || '—'
+            }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <section class="flex flex-col gap-2">
+      <h2 class="m-0 text-[12.5px] font-bold">
+        {{ isDetraction() ? 'Comprobantes con detracción' : 'Comprobantes con retención' }}
+      </h2>
+      <table class="w-full border-collapse text-[11px] tabular-nums">
+        <thead>
+          <tr class="bg-ink text-left text-[9.5px] tracking-[0.06em] text-white uppercase">
+            <th class="rounded-tl-md px-2.5 py-[9px] font-bold">Tipo doc.</th>
+            <th class="px-2.5 py-[9px] font-bold">Núm. docu.</th>
+            @if (isDetraction()) {
+              <th class="px-2.5 py-[9px] text-center font-bold">T.Q.</th>
+              <th class="px-2.5 py-[9px] text-center font-bold">T.B.S.</th>
+              <th class="px-2.5 py-[9px] text-right font-bold">% Detracción</th>
+              <th class="px-2.5 py-[9px] text-right font-bold">Monto detracción soles</th>
+              <th class="rounded-tr-md px-2.5 py-[9px] text-right font-bold">
+                Monto detracción dólares
+              </th>
+            } @else {
+              <th class="px-2.5 py-[9px] font-bold">Emisión</th>
+              <th class="px-2.5 py-[9px] text-right font-bold">Importe</th>
+              <th class="rounded-tr-md px-2.5 py-[9px] text-right font-bold">Monto retenido</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of report().documents; track doc.number) {
+            <tr class="break-inside-avoid border-b border-[#E6EAF0]">
+              <td class="p-2.5 whitespace-nowrap">{{ doc.type }}</td>
+              <td class="p-2.5 font-bold whitespace-nowrap">{{ doc.number }}</td>
+              @if (isDetraction()) {
+                <td class="p-2.5 text-center text-[#8A93A3]">—</td>
+                <td class="p-2.5 text-center text-[#8A93A3]">—</td>
+                <td class="p-2.5 text-right">{{ doc.detractionRate ?? '—' }}</td>
+                <td class="p-2.5 text-right">{{ inCurrency('PEN', doc.detraction) }}</td>
+                <td class="p-2.5 text-right">{{ inCurrency('USD', doc.detraction) }}</td>
+              } @else {
+                <td class="p-2.5">{{ formatDate(doc.issuedAt ?? '') }}</td>
+                <td class="p-2.5 text-right">{{ money(report().order.currency, doc.amount) }}</td>
+                <td class="p-2.5 text-right">
+                  {{ money(report().order.currency, doc.retention) }}
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <div class="flex break-inside-avoid justify-end">
+      <div
+        class="flex w-[300px] flex-col overflow-hidden rounded-lg border border-[#E3E8F0] text-[11px] tabular-nums"
+      >
+        @if (isDetraction()) {
+          <div class="flex justify-between px-3 py-2">
+            <span class="text-[#4A5A78]">Total detracción en dólares</span>
+            <span>{{ inCurrency('USD', report().total) }}</span>
+          </div>
+        }
+        <div class="flex items-center justify-between bg-primary px-3 py-[11px] text-white">
+          <span class="font-bold">{{
+            isDetraction() ? 'Total detracción en soles' : 'Total retenido'
+          }}</span>
+          <span class="text-[15px] font-bold">{{
+            isDetraction()
+              ? inCurrency('PEN', report().total)
+              : money(report().order.currency, report().total)
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      role="note"
+      class="flex break-inside-avoid items-start gap-3.5 rounded-[10px] bg-[#24394A] px-[18px] py-4 text-[#C9D3DC]"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        class="mt-px shrink-0"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5" />
+        <path d="M12 8h.01" />
+      </svg>
+      <span class="text-[11.5px] leading-[1.55] font-medium tracking-[0.02em] uppercase">
+        @if (isDetraction()) {
+          El presente documento es sólo para fines informativos, si Ud. desea obtener su constancia
+          de detracción puede ingresar a SUNAT con su Clave SOL.
+        } @else {
+          El presente documento es sólo para fines informativos y no reemplaza al comprobante de
+          retención.
+        }
+      </span>
+    </div>
+  </div>
+
+  <footer
+    class="mx-11 mt-auto mb-8 flex items-end justify-between gap-5 border-t border-[#E3E8F0] pt-4 text-[10px] text-[#4A5A78]"
+  >
+    <span>Documento generado el {{ generatedAt() }} · Portal de Proveedores</span>
+    <span class="text-[#6B7894]">{{ report().order.companyName }}</span>
+  </footer>
+</article>

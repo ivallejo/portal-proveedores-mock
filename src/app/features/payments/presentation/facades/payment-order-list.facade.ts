@@ -6,8 +6,11 @@ import { money } from '../../../../shared/utils/money-format.util';
 import { PaymentOrderFilter } from '../../application/models/payment-order-filter';
 import { EXPORT_PAYMENT_ORDERS, SEARCH_PAYMENT_ORDERS } from '../../di/payments.tokens';
 import { PaymentOrder } from '../../domain/models/payment-order';
+import { PaymentPdfDocument } from '../../domain/models/payment-pdf-document';
+import { WithholdingKind } from '../../domain/models/withholding-kind';
 import { totalPaidIn, withheldTotal } from '../../domain/rules/payment-order-rules';
 import { exportFileName } from '../../domain/rules/supplier-rules';
+import { withholdingReport } from '../../domain/rules/withholding-report-rules';
 import { SupplierScopeFacade } from './supplier-scope.facade';
 
 const PAGE_SIZE = 10;
@@ -33,8 +36,8 @@ export class PaymentOrderListFacade {
     () => !this.loading() && this.applied() !== null && this.orders().length > 0,
   );
   readonly detail = signal<PaymentOrder | null>(null);
-  /** Orden abierta en la vista previa del PDF. */
-  readonly pdf = signal<PaymentOrder | null>(null);
+  /** Documento abierto en la vista previa en PDF. */
+  readonly pdf = signal<PaymentPdfDocument | null>(null);
 
   readonly pageSize = PAGE_SIZE;
   readonly companyOptions = this.scope.companyOptions(
@@ -122,7 +125,12 @@ export class PaymentOrderListFacade {
 
   /** Abre la vista previa del PDF (A4) de la orden, desde el listado o desde su detalle. */
   openPdf(order: PaymentOrder): void {
-    this.pdf.set(order);
+    this.pdf.set({ kind: 'order', order });
+  }
+
+  /** Abre el informe de una constancia o comprobante de retención; el detalle sigue abierto debajo. */
+  openReport(order: PaymentOrder, kind: WithholdingKind, number: string): void {
+    this.pdf.set(withholdingReport(order, kind, number));
   }
 
   closePdf(): void {
