@@ -147,41 +147,41 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <div
-      role="note"
-      class="flex break-inside-avoid items-start gap-3.5 rounded-[10px] bg-[#24394A] px-[18px] py-4 text-[#C9D3DC]"
+  <div
+    role="note"
+    class="mx-11 mt-auto flex break-inside-avoid items-start gap-3 pt-5 pb-4 text-[#4A5A78]"
+  >
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      class="shrink-0"
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        class="mt-px shrink-0"
-      >
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 11v5" />
-        <path d="M12 8h.01" />
-      </svg>
-      <span class="text-[11.5px] leading-[1.55] font-medium tracking-[0.02em] uppercase">
-        @if (isDetraction()) {
-          El presente documento es sólo para fines informativos, si Ud. desea obtener su constancia
-          de detracción puede ingresar a SUNAT con su Clave SOL.
-        } @else {
-          El presente documento es sólo para fines informativos y no reemplaza al comprobante de
-          retención.
-        }
-      </span>
-    </div>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" />
+      <path d="M12 8h.01" />
+    </svg>
+    <span class="text-[10px] leading-[1.55] font-medium tracking-[0.02em] uppercase">
+      @if (isDetraction()) {
+        El presente documento es sólo para fines informativos, si Ud. desea obtener su constancia de
+        detracción puede ingresar a SUNAT con su Clave SOL.
+      } @else {
+        El presente documento es sólo para fines informativos y no reemplaza al comprobante de
+        retención.
+      }
+    </span>
   </div>
 
   <footer
-    class="mx-11 mt-auto mb-8 flex items-end justify-between gap-5 border-t border-[#E3E8F0] pt-4 text-[10px] text-[#4A5A78]"
+    class="mx-11 mb-8 flex items-end justify-between gap-5 border-t border-[#E3E8F0] pt-4 text-[10px] text-[#4A5A78]"
   >
     <span>Documento generado el {{ generatedAt() }} · Portal de Proveedores</span>
     <span class="text-[#6B7894]">{{ report().order.companyName }}</span>
