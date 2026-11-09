@@ -35,3 +35,4 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 | [008 · Recuperar con RUC o usuario](008-recuperar-con-usuario/requisitos.md) | Implementada | ¿Olvidaste tu contraseña? acepta el usuario del personal interno además del RUC |
 | [009 · Sesión y correos](009-sesion-y-correos/requisitos.md) | En curso | Renovación automática de la sesión, aviso de sesión vencida y alta de usuario aunque falle el correo |
 | [010 · Fila seleccionada](010-filas-seleccionadas/requisitos.md) | En curso | La fila que se edita queda marcada; al guardar se ilumina; hover más visible |
+| [011 · Informes de retención y detracción](011-informes-retencion-detraccion/requisitos.md) | En curso | Botones en el detalle de la orden de pago y vista previa en PDF de los informes (Propuesta 4) |

@@ -54,6 +54,6 @@
   <app-payment-order-detail-dialog [order]="order" />
 }
 
-@if (facade.pdf(); as order) {
-  <app-payment-order-pdf-viewer [order]="order" (closed)="facade.closePdf()" />
+@if (facade.pdf(); as pdf) {
+  <app-payment-order-pdf-viewer [pdf]="pdf" (closed)="facade.closePdf()" />
 }

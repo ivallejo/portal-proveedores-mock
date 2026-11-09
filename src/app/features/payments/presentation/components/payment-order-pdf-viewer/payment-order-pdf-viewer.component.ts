@@ -13,8 +13,10 @@ import {
 } from '@angular/core';
 import { IconComponent } from '../../../../../shared/ui/icon/icon.component';
 import { nowStamp } from '../../../../../shared/utils/date-format.util';
-import { PaymentOrder } from '../../../domain/models/payment-order';
+import { PaymentPdfDocument } from '../../../domain/models/payment-pdf-document';
+import { pdfDocumentName, pdfFileName } from '../../../domain/rules/withholding-report-rules';
 import { PaymentOrderPdfSheetComponent } from '../payment-order-pdf-sheet/payment-order-pdf-sheet.component';
+import { WithholdingReportSheetComponent } from '../withholding-report-sheet/withholding-report-sheet.component';
 
 /** Niveles de zoom de la vista previa; el índice 3 (95 %) es el de «Ajustar» en escritorio. */
 const ZOOM = [0.5, 0.67, 0.8, 0.95, 1.1, 1.25, 1.5];
@@ -22,14 +24,14 @@ const ZOOM = [0.5, 0.67, 0.8, 0.95, 1.1, 1.25, 1.5];
 const SHEET_WIDTH = 794;
 
 /**
- * Vista previa del PDF de una orden de pago (prototipo «PDF Orden de pago · Corporativa»).
+ * Vista previa en PDF de una orden de pago o de un informe de retención o detracción.
  * Imprimir y «Descargar PDF» abren la impresión del navegador, donde se elige «Guardar como PDF»;
- * el título del documento pasa a `OP-<número>` para que ese sea el nombre del archivo.
+ * el título de la página pasa a ser el nombre del archivo para que el navegador lo proponga.
  * Se monta en `<body>` para que al imprimir solo salga la hoja (ver `@media print` en styles.css).
  */
 @Component({
   selector: 'app-payment-order-pdf-viewer',
-  imports: [IconComponent, PaymentOrderPdfSheetComponent],
+  imports: [IconComponent, PaymentOrderPdfSheetComponent, WithholdingReportSheetComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'contents' },
   templateUrl: './payment-order-pdf-viewer.component.html',
@@ -38,7 +40,7 @@ export class PaymentOrderPdfViewerComponent {
   private readonly document = inject(DOCUMENT);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  readonly order = input.required<PaymentOrder>();
+  readonly pdf = input.required<PaymentPdfDocument>();
   readonly closed = output<void>();
 
   readonly generatedAt = signal(nowStamp());
@@ -47,7 +49,8 @@ export class PaymentOrderPdfViewerComponent {
   readonly zoomLabel = computed(() => `${Math.round(this.zoom() * 100)} %`);
   readonly canZoomIn = computed(() => this.zoomIndex() < ZOOM.length - 1);
   readonly canZoomOut = computed(() => this.zoomIndex() > 0);
-  readonly fileName = computed(() => `OP-${this.order().number}.pdf`);
+  readonly fileName = computed(() => pdfFileName(this.pdf()));
+  readonly documentName = computed(() => pdfDocumentName(this.pdf()));
 
   constructor() {
     const body = this.document.body;

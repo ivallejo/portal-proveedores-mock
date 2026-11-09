@@ -4,6 +4,7 @@ import { money } from '../../../../../shared/utils/money-format.util';
 import { PaymentOrder } from '../../../domain/models/payment-order';
 import { amountInWords } from '../../../domain/rules/amount-in-words';
 import { grossTotal, withheldTotal } from '../../../domain/rules/payment-order-rules';
+import { PaymentPdfHeaderComponent } from '../payment-pdf-header/payment-pdf-header.component';
 
 /**
  * Hoja A4 (794 × 1123 px a 96 ppp) de la orden de pago, diseño «Corporativa» del prototipo.
@@ -11,6 +12,7 @@ import { grossTotal, withheldTotal } from '../../../domain/rules/payment-order-r
  */
 @Component({
   selector: 'app-payment-order-pdf-sheet',
+  imports: [PaymentPdfHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
   templateUrl: './payment-order-pdf-sheet.component.html',
