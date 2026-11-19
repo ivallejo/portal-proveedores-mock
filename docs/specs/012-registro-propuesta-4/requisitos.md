@@ -2,7 +2,7 @@
 
 | Campo  | Valor                                                                                                                                                                                     |
 | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Estado | **Aprobada** · 2026-11-19: se sigue el flujo de la Propuesta 4 con las propuestas D1–D4                                                                                                   |
+| Estado | **En curso** · aprobada el 2026-11-19: se sigue el flujo de la Propuesta 4 con las propuestas D1–D4                                                                                       |
 | Fecha  | 2026-11-19                                                                                                                                                                                |
 | Origen | Diseño «Propuesta 4», pantallas de registro (`P4_RegistrarDoc` y sus 18 estados: Con OC, Sin OC y Especiales) comparadas con lo implementado                                              |
 | Repos  | Frontend y backend (nuestros); al cliente solo cuando se pida                                                                                                                             |
@@ -16,30 +16,30 @@ La pantalla Registrar documentos ya tiene la estructura de la Propuesta 4: tarje
 
 ### R1 · Tipo de entrega en órdenes de Servicio
 
-- [ ] Con tipo de orden **Servicio** aparece «Tipo de entrega»: **Entregado a bordo** (por defecto) o **Entregado en almacén**. Con **Bien** no aparece.
-- [ ] El campo del número se llama **N° de carrier** (ej. `CR-2026-00527`) con Bien o con Servicio entregado en almacén, y **N° de orden de compra** (ej. `4500012873`) con Servicio entregado a bordo.
-- [ ] Cambiar el tipo de orden o de entrega limpia el número y el resultado de la validación.
-- [ ] El tipo de entrega se envía al backend, se guarda en el documento y se muestra en el detalle de las bandejas.
-- [ ] La validación en SAP (servicio 01) usa lo que defina D1 para el carrier de almacén.
+- [x] Con tipo de orden **Servicio** aparece «Tipo de entrega»: **Entregado a bordo** (por defecto) o **Entregado en almacén**. Con **Bien** no aparece.
+- [x] El campo del número se llama **N° de carrier** (ej. `CR-2026-00527`) con Bien o con Servicio entregado en almacén, y **N° de orden de compra** (ej. `4500012873`) con Servicio entregado a bordo.
+- [x] Cambiar el tipo de orden o de entrega limpia el número y el resultado de la validación.
+- [x] El tipo de entrega se envía al backend, se guarda en el documento y se muestra en el detalle de las bandejas.
+- [x] La validación en SAP (servicio 01) usa lo que defina D1 para el carrier de almacén.
 
 ### R2 · La orden se valida al registrar
 
-- [ ] Desaparece el botón «Validar orden»; los archivos se pueden cargar desde el inicio, sin el aviso «Valida la orden para habilitar la carga».
-- [ ] «Registrar documento» valida primero la orden (barra «Validando orden», botón «Validando orden…») y, si es válida, registra («Registrando…»).
-- [ ] Si la orden no es válida: no se registra, el número queda marcado en rojo con «SAP no encontró la orden de compra | el carrier {N°} para la sociedad seleccionada, o ya no tiene saldo por facturar. Corrige el número y vuelve a registrar.» y el pie muestra «No se registró el documento: la orden no es válida en SAP.». Los archivos cargados se conservan.
-- [ ] El avance cuenta «N° de orden de compra» o «N° de carrier» como paso cuando hay número (ya no «Orden validada»).
-- [ ] Sujeto a D2: cambia la regla del flujo 01 «los archivos se habilitan solo con la orden validada».
+- [x] Desaparece el botón «Validar orden»; los archivos se pueden cargar desde el inicio, sin el aviso «Valida la orden para habilitar la carga».
+- [x] «Registrar documento» valida primero la orden (barra «Validando orden», botón «Validando orden…») y, si es válida, registra («Registrando…»).
+- [x] Si la orden no es válida: no se registra, el número queda marcado en rojo con «SAP no encontró la orden de compra | el carrier {N°} para la sociedad seleccionada, o ya no tiene saldo por facturar. Corrige el número y vuelve a registrar.» y el pie muestra «No se registró el documento: la orden no es válida en SAP.». Los archivos cargados se conservan.
+- [x] El avance cuenta «N° de orden de compra» o «N° de carrier» como paso cuando hay número (ya no «Orden validada»).
+- [x] Sujeto a D2: cambia la regla del flujo 01 «los archivos se habilitan solo con la orden validada».
 
 ### R3 · Textos del resultado
 
-- [ ] Éxito, datos siempre en este orden: **N° de documento, Sociedad, Importe, Estado**.
-- [ ] Éxito Con OC: «La factura {N°} quedó asociada a la orden {N° de orden} con estado Pendiente de contabilización.»
-- [ ] Éxito Sin OC del proveedor: «La factura {N°} fue enviada a {aprobador} para su aprobación. Le enviamos un correo con el detalle.»
-- [ ] Éxito Sin OC del usuario interno: «La factura {N°} se registró directamente como Pendiente de contabilización.»
-- [ ] Éxito Especiales: «El {tipo de documento} {N°} se registró correctamente con estado Pendiente de contabilización.»
-- [ ] Error electrónico: «SAP rechazó el documento {N°}: ya fue registrado anteriormente para {sociedad} o su contenido no coincide con la validación de SUNAT.» Si el backend devuelve un motivo más preciso (por ejemplo, el RUC del XML no es el del proveedor), se muestra ese motivo.
-- [ ] Error Especiales: «SUNAT no reconoce el documento {N°} para el RUC {RUC}, o ya fue registrado en SAP. Verifica los datos del documento.»
-- [ ] «La factura» se usa solo cuando el comprobante es una factura; para otros tipos (nota de crédito, recibo por honorarios) se usa su nombre.
+- [x] Éxito, datos siempre en este orden: **N° de documento, Sociedad, Importe, Estado**.
+- [x] Éxito Con OC: «La factura {N°} quedó asociada a la orden {N° de orden} con estado Pendiente de contabilización.»
+- [x] Éxito Sin OC del proveedor: «La factura {N°} fue enviada a {aprobador} para su aprobación. Le enviamos un correo con el detalle.»
+- [x] Éxito Sin OC del usuario interno: «La factura {N°} se registró directamente como Pendiente de contabilización.»
+- [x] Éxito Especiales: «El {tipo de documento} {N°} se registró correctamente con estado Pendiente de contabilización.»
+- [x] Error electrónico: «SAP rechazó el documento {N°}: ya fue registrado anteriormente para {sociedad} o su contenido no coincide con la validación de SUNAT.» Si el backend devuelve un motivo más preciso (por ejemplo, el RUC del XML no es el del proveedor), se muestra ese motivo.
+- [x] Error Especiales: «SUNAT no reconoce el documento {N°} para el RUC {RUC}, o ya fue registrado en SAP. Verifica los datos del documento.»
+- [x] «La factura» se usa solo cuando el comprobante es una factura; para otros tipos (nota de crédito, recibo por honorarios) se usa su nombre.
 
 ## Decisiones (aprobadas el 2026-11-19)
 
