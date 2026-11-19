@@ -70,11 +70,16 @@
               >
                 <span class="flex flex-col gap-0.5"
                   ><span class="text-muted">Tipo de orden</span
-                  ><span class="font-bold">{{ doc.orderType }}</span></span
-                >
+                  ><span class="font-bold">{{ doc.orderType }}</span>
+                  @if (doc.deliveryType) {
+                    <span class="text-[12.5px] text-muted">{{ doc.deliveryType }}</span>
+                  }
+                </span>
                 <span class="flex flex-col gap-0.5">
                   <span class="text-muted">{{
-                    doc.orderType === 'Bien' ? 'N° de carrier' : 'N° de orden de compra'
+                    doc.orderType === 'Bien' || doc.deliveryType === 'Entregado en almacén'
+                      ? 'N° de carrier'
+                      : 'N° de orden de compra'
                   }}</span>
                   <span class="font-bold tabular-nums">{{ doc.orderNumber }}</span>
                 </span>

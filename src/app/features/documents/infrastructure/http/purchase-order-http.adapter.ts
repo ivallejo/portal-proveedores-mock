@@ -4,9 +4,10 @@ import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { API_BASE_URL } from '../../../../core/config/api-base-url.token';
 import { toUserFacingError } from '../../../../core/http/to-user-facing-error';
 import { PurchaseOrderValidatorPort } from '../../application/ports/out/purchase-order-validator.port';
+import { DeliveryType } from '../../domain/models/delivery-type';
 import { OrderType } from '../../domain/models/order-type';
 import { PurchaseOrder } from '../../domain/models/purchase-order';
-import { toApiOrderType, toPurchaseOrder } from '../mappers/document.mapper';
+import { toApiDeliveryType, toApiOrderType, toPurchaseOrder } from '../mappers/document.mapper';
 import { PurchaseOrderResponseDto } from './dto/purchase-order-response.dto';
 import { ValidateOrderRequestDto } from './dto/validate-order-request.dto';
 
@@ -16,8 +17,18 @@ export class PurchaseOrderHttpAdapter implements PurchaseOrderValidatorPort {
   private readonly http = inject(HttpClient);
   private readonly url = `${inject(API_BASE_URL)}/documents/orders/validate`;
 
-  validate(companyCode: string, type: OrderType, number: string): Observable<PurchaseOrder | null> {
-    const body: ValidateOrderRequestDto = { companyCode, orderType: toApiOrderType(type), number };
+  validate(
+    companyCode: string,
+    type: OrderType,
+    delivery: DeliveryType | undefined,
+    number: string,
+  ): Observable<PurchaseOrder | null> {
+    const body: ValidateOrderRequestDto = {
+      companyCode,
+      orderType: toApiOrderType(type),
+      deliveryType: toApiDeliveryType(delivery),
+      number,
+    };
     return this.http.post<PurchaseOrderResponseDto>(this.url, body).pipe(
       map(toPurchaseOrder),
       catchError((error: unknown) =>

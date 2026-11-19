@@ -13,6 +13,7 @@ import {
   VALIDATE_PURCHASE_ORDER,
 } from '../../di/documents.tokens';
 import { DocumentRejectedError } from '../../domain/errors/document-rejected.error';
+import { DeliveryType } from '../../domain/models/delivery-type';
 import { ElectronicDocument } from '../../domain/models/electronic-document';
 import { OrderType } from '../../domain/models/order-type';
 import { PortalDocument } from '../../domain/models/portal-document';
@@ -28,7 +29,12 @@ import {
   attachmentError,
   isCdrRequired,
   issuerMismatchError,
+  orderDelivery,
+  orderNumberField,
   parseAmount,
+  registeredText,
+  rejectedElectronicText,
+  rejectedSpecialText,
   seriesFromFileName,
 } from '../../domain/rules/registration-rules';
 import { ACCEPT } from '../catalog/accepted-extensions';
@@ -67,6 +73,7 @@ export class RegisterDocumentFacade {
   readonly entry = signal<RegisterEntry>('oc');
   readonly company = signal('');
   readonly orderType = signal<OrderType>('Servicio');
+  readonly deliveryType = signal<DeliveryType>('Entregado a bordo');
   readonly orderNumber = signal('');
   readonly orderState = signal<'idle' | 'busy' | 'ok' | 'bad'>('idle');
   readonly order = signal<PurchaseOrder | null>(null);
@@ -120,7 +127,10 @@ export class RegisterDocumentFacade {
     () => this.xmlDocument()?.series || seriesFromFileName(this.slots().xml.name) || '',
   );
   readonly cdrRequired = computed(() => isCdrRequired(this.series()));
-  readonly filesLocked = computed(() => this.entry() === 'oc' && this.orderState() !== 'ok');
+  /** Etiqueta, ejemplo y nombre del número: N° de carrier (bien o servicio en almacén) u N° de orden de compra. */
+  readonly orderField = computed(() =>
+    orderNumberField(this.orderType(), orderDelivery(this.orderType(), this.deliveryType())),
+  );
   readonly uploading = computed(
     () =>
       Object.values(this.slots()).some((slot) => slot.state === 'uploading') ||
@@ -137,7 +147,7 @@ export class RegisterDocumentFacade {
   readonly isSettlement = computed(() => this.special().type === 'Liquidación de cobranzas');
 
   readonly progressLabel = computed(() => {
-    if (this.orderState() === 'busy') return 'Validando orden en SAP';
+    if (this.orderState() === 'busy') return 'Validando orden';
     if (this.registering()) return 'Registrando documento';
     return '';
   });
@@ -147,7 +157,8 @@ export class RegisterDocumentFacade {
     const slots = this.slots();
     const entry = this.entry();
     const checks: RegisterCheck[] = [{ label: 'Sociedad', ok: !!this.company() }];
-    if (entry === 'oc') checks.push({ label: 'Orden validada', ok: this.orderState() === 'ok' });
+    if (entry === 'oc')
+      checks.push({ label: this.orderField().label, ok: !!this.orderNumber().trim() });
     if (this.pendingApproval())
       checks.push({ label: 'Área y aprobador', ok: !!(this.area() && this.approver()) });
     if (entry === 'esp') {
@@ -216,11 +227,15 @@ export class RegisterDocumentFacade {
   }
 
   setOrderType(type: OrderType): void {
-    if (this.orderState() === 'busy') return;
+    if (this.locked()) return;
     this.orderType.set(type);
-    this.orderNumber.set('');
-    this.order.set(null);
-    this.orderState.set('idle');
+    this.clearOrder();
+  }
+
+  setDeliveryType(delivery: DeliveryType): void {
+    if (this.locked()) return;
+    this.deliveryType.set(delivery);
+    this.clearOrder();
   }
 
   setOrderNumber(value: string): void {
@@ -228,28 +243,6 @@ export class RegisterDocumentFacade {
     this.order.set(null);
     this.orderState.set('idle');
     this.formError.set('');
-  }
-
-  validateOrder(): void {
-    if (this.orderState() === 'busy') return;
-    if (!this.company() || !this.orderNumber().trim()) {
-      this.formError.set('Selecciona la sociedad e ingresa el número.');
-      return;
-    }
-    this.formError.set('');
-    this.orderState.set('busy');
-    this.validatePurchaseOrder
-      .execute(this.company(), this.orderType(), this.orderNumber())
-      .subscribe({
-        next: (order) => {
-          this.order.set(order);
-          this.orderState.set(order ? 'ok' : 'bad');
-        },
-        error: (error) => {
-          this.orderState.set('idle');
-          this.formError.set(userFacingMessage(error, 'No fue posible validar la orden en SAP.'));
-        },
-      });
   }
 
   setArea(area: string): void {
@@ -337,7 +330,30 @@ export class RegisterDocumentFacade {
       this.formError.set(`Falta completar: ${names.join(', ')}.`);
       return;
     }
-    this.submit();
+    if (this.entry() === 'oc') this.validateOrderAndSubmit();
+    else this.submit();
+  }
+
+  /** Con OC: valida la orden en SAP (servicio 01) y, si es válida, registra. */
+  private validateOrderAndSubmit(): void {
+    if (this.orderState() === 'busy') return;
+    this.formError.set('');
+    this.orderState.set('busy');
+    const type = this.orderType();
+    this.validatePurchaseOrder
+      .execute(this.company(), type, orderDelivery(type, this.deliveryType()), this.orderNumber())
+      .subscribe({
+        next: (order) => {
+          this.order.set(order);
+          this.orderState.set(order ? 'ok' : 'bad');
+          if (order) this.submit();
+          else this.formError.set('No se registró el documento: la orden no es válida en SAP.');
+        },
+        error: (error) => {
+          this.orderState.set('idle');
+          this.formError.set(userFacingMessage(error, 'No fue posible validar la orden en SAP.'));
+        },
+      });
   }
 
   /** Tras un rechazo de SAP/SUNAT: vuelve al formulario con los mismos datos para corregirlos. */
@@ -385,14 +401,16 @@ export class RegisterDocumentFacade {
       return null;
     }
     if (this.entry() === 'oc' && !order) {
-      this.formError.set('Valida la orden antes de registrar el documento.');
+      this.formError.set('No se registró el documento: la orden no es válida en SAP.');
       return null;
     }
     return {
       entryType: this.entry() === 'oc' ? 'Con OC' : 'Sin OC',
       companyCode: this.company(),
       order:
-        this.entry() === 'oc' && order ? { type: order.type, number: order.number } : undefined,
+        this.entry() === 'oc' && order
+          ? { type: order.type, delivery: order.delivery, number: order.number }
+          : undefined,
       approverId: this.pendingApproval() ? this.approver() : undefined,
       xml: slots.xml.file,
       pdf: slots.pdf.file,
@@ -430,67 +448,48 @@ export class RegisterDocumentFacade {
   }
 
   private successResult(doc: PortalDocument): RegisterResult {
-    const company = doc.companyName;
-    if (doc.entryType === 'Documento especial') {
-      return {
-        ok: true,
-        title: 'Documento registrado',
-        text: `El ${doc.documentType.toLowerCase()} ${doc.number} se registró correctamente con estado ${doc.status}.`,
-        chips: [
-          { label: 'N° de documento', value: doc.number },
-          { label: 'Sociedad', value: company },
-          { label: 'Estado', value: doc.status, tone: 'info' },
-        ],
-        mail: '',
-      };
-    }
     const pending = doc.status === 'Pendiente de aprobación';
     return {
       ok: true,
-      title: pending ? 'Documento registrado y enviado a aprobación' : 'Documento registrado',
-      text: `El documento ${doc.number} se registró correctamente con estado ${doc.status}.`,
+      title: 'Documento registrado',
+      text: registeredText(doc),
       chips: [
         { label: 'N° de documento', value: doc.number },
-        { label: 'Sociedad', value: company },
-        doc.entryType === 'Con OC'
-          ? {
-              label: doc.orderType === 'Bien' ? 'N° de carrier' : 'Orden de compra',
-              value: doc.orderNumber ?? '',
-            }
-          : { label: 'Total', value: money(doc.currency, doc.amount) },
+        { label: 'Sociedad', value: doc.companyName },
+        { label: 'Importe', value: money(doc.currency, doc.amount) },
         { label: 'Estado', value: doc.status, tone: pending ? 'warn' : 'info' },
       ],
-      mail: pending
-        ? `Enviamos un correo a ${doc.approver} (${doc.approverEmail}) para que apruebe el documento.`
-        : '',
+      mail: '',
     };
   }
 
+  /** Rechazo de SAP/SUNAT o duplicado: texto del diseño y, aparte, el motivo que devolvió el servidor. */
   private failureResult(message: string): RegisterResult {
+    const company = this.catalog.company(this.company())?.name ?? '';
     if (this.entry() === 'esp') {
+      const form = this.special();
+      const number = form.number.trim().toUpperCase();
       return {
         ok: false,
         title: 'Documento no válido',
-        text: message,
+        text: rejectedSpecialText(number, form.ruc),
         chips: [
-          { label: 'N° de documento', value: this.special().number.trim().toUpperCase() },
-          {
-            label: 'Validación',
-            value: this.isSettlement() ? 'SAP + SUNAT' : 'Duplicidad en SAP',
-            tone: 'danger',
-          },
+          { label: 'N° de documento', value: number },
+          { label: 'Sociedad', value: company },
+          { label: 'Motivo', value: message, tone: 'danger' },
         ],
         mail: '',
       };
     }
+    const number = this.xmlDocument()?.number ?? '';
     return {
       ok: false,
       title: 'Documento electrónico no válido o ya registrado',
-      text: `${message} No se registró el documento${this.pendingApproval() ? ' ni se envió a aprobación' : ''}.`,
+      text: rejectedElectronicText(number, company),
       chips: [
-        { label: 'N° de documento', value: this.xmlDocument()?.number ?? '' },
-        { label: 'Sociedad', value: this.catalog.company(this.company())?.name ?? '' },
-        { label: 'Respuesta SAP', value: 'Documento no válido o duplicado', tone: 'danger' },
+        { label: 'N° de documento', value: number },
+        { label: 'Sociedad', value: company },
+        { label: 'Motivo', value: message, tone: 'danger' },
       ],
       mail: '',
     };
@@ -522,6 +521,13 @@ export class RegisterDocumentFacade {
     if (mismatch) this.patchSlot('xml', { error: mismatch });
   }
 
+  private clearOrder(): void {
+    this.orderNumber.set('');
+    this.order.set(null);
+    this.orderState.set('idle');
+    this.formError.set('');
+  }
+
   private patchSlot(slot: AttachmentSlot, patch: Partial<SlotState>): void {
     this.slots.update((slots) => ({ ...slots, [slot]: { ...slots[slot], ...patch } }));
   }
@@ -537,6 +543,7 @@ export class RegisterDocumentFacade {
   private resetForm(): void {
     this.company.set('');
     this.orderType.set('Servicio');
+    this.deliveryType.set('Entregado a bordo');
     this.orderNumber.set('');
     this.order.set(null);
     this.orderState.set('idle');

@@ -29,16 +29,18 @@
       type="button"
       class="btn h-12 min-w-[210px] text-white shadow-[0_8px_18px_rgba(22,104,227,0.22)]"
       [class]="
-        facade.registering()
+        facade.locked()
           ? 'bg-primary-busy'
           : facade.ready()
             ? 'btn-primary'
             : 'bg-[#9DB8E6] hover:bg-[#8AA9DE]'
       "
-      [attr.aria-busy]="facade.registering()"
+      [attr.aria-busy]="facade.locked()"
       (click)="facade.register()"
     >
-      @if (facade.registering()) {
+      @if (facade.orderState() === 'busy') {
+        <app-spinner [size]="18" />Validando orden…
+      } @else if (facade.registering()) {
         <app-spinner [size]="18" />{{
           facade.entry() === 'esp' && facade.isSettlement()
             ? 'Validando en SAP y SUNAT…'

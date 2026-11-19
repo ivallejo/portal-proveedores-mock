@@ -8,7 +8,13 @@ import {
 import {
   MAX_ATTACHMENT_SIZE,
   attachmentError,
+  documentNoun,
+  isCarrierOrder,
   isCdrRequired,
+  orderDelivery,
+  orderNumberField,
+  registeredText,
+  rejectedElectronicText,
   issuerMismatchError,
   parseAmount,
   seriesFromFileName,
@@ -73,5 +79,53 @@ describe('registration rules', () => {
     expect(needsApprover(['Administrador'], true)).toBeFalse();
     expect(isValidObservationEmail('cxp@empresa.pe')).toBeTrue();
     expect(isValidObservationEmail('cxp@empresa')).toBeFalse();
+  });
+});
+
+describe('order and result rules (Propuesta 4)', () => {
+  it('pide N° de carrier con bien o con servicio entregado en almacén', () => {
+    expect(isCarrierOrder('Bien', undefined)).toBeTrue();
+    expect(isCarrierOrder('Servicio', 'Entregado en almacén')).toBeTrue();
+    expect(isCarrierOrder('Servicio', 'Entregado a bordo')).toBeFalse();
+    expect(orderDelivery('Bien', 'Entregado en almacén')).toBeUndefined();
+    expect(orderDelivery('Servicio', 'Entregado a bordo')).toBe('Entregado a bordo');
+    expect(orderNumberField('Servicio', 'Entregado a bordo').label).toBe('N° de orden de compra');
+    expect(orderNumberField('Servicio', 'Entregado en almacén').placeholder).toBe(
+      'Ej. CR-2026-00527',
+    );
+    expect(orderNumberField('Bien', undefined).noun).toBe('el carrier');
+  });
+
+  it('arma el texto del resultado según el tipo de ingreso y de comprobante', () => {
+    const base = {
+      number: 'F001-1',
+      documentType: 'Factura electrónica',
+      status: 'Pendiente de contabilización',
+    };
+    expect(
+      registeredText({ ...base, entryType: 'Con OC', orderNumber: '4500012873' } as never),
+    ).toBe(
+      'La factura F001-1 quedó asociada a la orden 4500012873 con estado Pendiente de contabilización.',
+    );
+    expect(
+      registeredText({
+        ...base,
+        entryType: 'Sin OC',
+        status: 'Pendiente de aprobación',
+        approver: 'María Torres',
+      } as never),
+    ).toBe(
+      'La factura F001-1 fue enviada a María Torres para su aprobación. Le enviamos un correo con el detalle.',
+    );
+    expect(registeredText({ ...base, entryType: 'Sin OC' } as never)).toBe(
+      'La factura F001-1 se registró directamente como Pendiente de contabilización.',
+    );
+    expect(documentNoun('Recibo por honorarios electrónico')).toEqual({
+      noun: 'El recibo por honorarios',
+      feminine: false,
+    });
+    expect(rejectedElectronicText('F001-1', 'Naviera')).toContain(
+      'ya fue registrado anteriormente para Naviera',
+    );
   });
 });
