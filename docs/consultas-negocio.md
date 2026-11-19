@@ -78,5 +78,5 @@ Los flujos 01 y 02 terminan en «Registrar documento» y no indican cómo hace s
 **Preguntas:**
 
 1. Con Servicio entregado en almacén, ¿se valida un carrier igual que con Bien? ¿En el mismo servicio 01 de SAP (SERTICA) y con qué dato distingue SAP el tipo de entrega?
-2. ¿Negocio acepta que la orden se valide al registrar, aunque el proveedor cargue los archivos antes? Si es así, se actualiza el flujo 01.
-3. ¿Los documentos de Servicio ya registrados se consideran «entregado a bordo»?
+2. ~~¿Negocio acepta que la orden se valide al registrar?~~ Decidido el 2026-11-19: se sigue el flujo de la Propuesta 4 y se actualiza el flujo 01.
+3. ~~¿Los documentos de Servicio ya registrados se consideran «entregado a bordo»?~~ Decidido el 2026-11-19: sí.
