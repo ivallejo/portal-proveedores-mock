@@ -5,6 +5,7 @@ import { AttachmentTag } from '../../domain/models/attachment-tag';
 import { DocumentStatus } from '../../domain/models/document-status';
 import { EntryType } from '../../domain/models/entry-type';
 import { HistoryEventKind } from '../../domain/models/history-event-kind';
+import { DeliveryType } from '../../domain/models/delivery-type';
 import { OrderType } from '../../domain/models/order-type';
 import { PortalDocument } from '../../domain/models/portal-document';
 import { PurchaseOrder } from '../../domain/models/purchase-order';
@@ -51,6 +52,18 @@ export function toApiStatus(status: string): ApiDocumentStatus | '' {
 
 export function toApiOrderType(type: OrderType): 'Goods' | 'Service' {
   return type === 'Bien' ? 'Goods' : 'Service';
+}
+
+export function toApiDeliveryType(
+  delivery: DeliveryType | undefined,
+): 'OnBoard' | 'Warehouse' | undefined {
+  if (!delivery) return undefined;
+  return delivery === 'Entregado en almacén' ? 'Warehouse' : 'OnBoard';
+}
+
+function fromApiDeliveryType(delivery: 'OnBoard' | 'Warehouse' | null): DeliveryType | undefined {
+  if (!delivery) return undefined;
+  return delivery === 'Warehouse' ? 'Entregado en almacén' : 'Entregado a bordo';
 }
 
 function fromApiOrderType(type: 'Goods' | 'Service' | null): OrderType | undefined {
@@ -131,6 +144,7 @@ export function toPortalDocument(item: DocumentDetailResponseDto): PortalDocumen
     approverEmail: item.approverEmail ?? undefined,
     approvedAt: item.approvedAtUtc ? stamp(item.approvedAtUtc) : undefined,
     orderType: fromApiOrderType(item.orderType),
+    deliveryType: fromApiDeliveryType(item.deliveryType),
     orderNumber: item.orderNumber ?? undefined,
     orderBalance: item.orderBalance ?? undefined,
     orderDescription: item.orderDescription ?? undefined,
@@ -154,6 +168,7 @@ export function toPurchaseOrder(dto: PurchaseOrderResponseDto): PurchaseOrder {
   return {
     number: dto.number,
     type: fromApiOrderType(dto.orderType) ?? 'Servicio',
+    delivery: fromApiDeliveryType(dto.deliveryType),
     description: dto.description,
     balance: dto.balance,
   };
@@ -169,6 +184,8 @@ export function toRegistrationForm(command: RegisterElectronicDocumentCommand): 
   form.append('CompanyCode', command.companyCode);
   if (command.order) {
     form.append('OrderType', toApiOrderType(command.order.type));
+    const delivery = toApiDeliveryType(command.order.delivery);
+    if (delivery) form.append('DeliveryType', delivery);
     form.append('OrderNumber', command.order.number);
   }
   if (command.approverId) form.append('ApproverId', command.approverId);

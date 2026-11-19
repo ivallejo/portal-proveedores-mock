@@ -4,21 +4,22 @@ Huecos y dudas encontrados al probar o implementar el portal que necesitan una d
 
 **Estados:** `Abierta` → `Decidida` (con spec o sin cambios) · `Descartada`.
 
-| ID | Tema | Estado | Spec |
-|---|---|---|---|
-| [C-001](#c-001--seguimiento-de-los-documentos-por-el-proveedor) | Seguimiento de los documentos por el proveedor | Abierta | — |
-| [C-002](#c-002--datos-de-sap-para-los-informes-de-retención-y-detracción) | Datos de SAP para los informes de retención y detracción | Abierta | [011](specs/011-informes-retencion-detraccion/requisitos.md) |
+| ID                                                                              | Tema                                                           | Estado  | Spec                                                         |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------- | ------------------------------------------------------------ |
+| [C-001](#c-001--seguimiento-de-los-documentos-por-el-proveedor)                 | Seguimiento de los documentos por el proveedor                 | Abierta | —                                                            |
+| [C-002](#c-002--datos-de-sap-para-los-informes-de-retención-y-detracción)       | Datos de SAP para los informes de retención y detracción       | Abierta | [011](specs/011-informes-retencion-detraccion/requisitos.md) |
+| [C-003](#c-003--tipo-de-entrega-y-validación-de-la-orden-en-el-registro-con-oc) | Tipo de entrega y validación de la orden en el registro Con OC | Abierta | [012](specs/012-registro-propuesta-4/requisitos.md)          |
 
 ---
 
 ## C-001 · Seguimiento de los documentos por el proveedor
 
-| Campo | Valor |
-|---|---|
-| Estado | **Abierta** |
-| Fecha | 2026-10-19 |
+| Campo  | Valor                                                                                                 |
+| ------ | ----------------------------------------------------------------------------------------------------- |
+| Estado | **Abierta**                                                                                           |
+| Fecha  | 2026-10-19                                                                                            |
 | Origen | Prueba del [flujo 01](flujos/01-registro-con-oc.md) con el proveedor Saga Falabella (`F001-00000601`) |
-| Flujos | 01 · Con OC, 02 · Sin OC |
+| Flujos | 01 · Con OC, 02 · Sin OC                                                                              |
 
 **Situación actual:** el documento se registra y se guarda (estado, archivos e historial), pero **el proveedor no tiene ninguna pantalla donde verlo**. Su menú es Inicio, Orden de pago, Estado de factura y Registrar documentos:
 
@@ -29,6 +30,7 @@ Huecos y dudas encontrados al probar o implementar el portal que necesitan una d
 Los flujos 01 y 02 terminan en «Registrar documento» y no indican cómo hace seguimiento el proveedor.
 
 **Preguntas:**
+
 1. ¿El proveedor debe ver los documentos que registró en el portal y su estado (pendiente de aprobación, pendiente de contabilización, observado, rechazado)?
 2. ¿Debe ver el detalle: archivos, historial y los motivos de rechazo u observación?
 3. ¿Puede actuar sobre un documento **observado** (por ejemplo, reemplazar archivos o volver a enviarlo) o solo verlo y registrar uno nuevo?
@@ -43,12 +45,12 @@ Los flujos 01 y 02 terminan en «Registrar documento» y no indican cómo hace s
 
 ## C-002 · Datos de SAP para los informes de retención y detracción
 
-| Campo | Valor |
-|---|---|
-| Estado | **Abierta** |
-| Fecha | 2026-11-06 |
+| Campo  | Valor                                                                        |
+| ------ | ---------------------------------------------------------------------------- |
+| Estado | **Abierta**                                                                  |
+| Fecha  | 2026-11-06                                                                   |
 | Origen | Diseño «Orden de pago · vista previa constancia de detracción» (Propuesta 4) |
-| Spec | [011](specs/011-informes-retencion-detraccion/requisitos.md) |
+| Spec   | [011](specs/011-informes-retencion-detraccion/requisitos.md)                 |
 
 **Situación actual:** por cada comprobante, `zconsopago` entrega solo el número de constancia y el porcentaje de detracción, la serie y el número de retención, y un monto por concepto. No entrega PDF.
 
@@ -58,3 +60,23 @@ Los flujos 01 y 02 terminan en «Registrar documento» y no indican cómo hace s
 2. ¿Qué significan T.Q. y T.B.S. en el informe, y SAP puede entregarlos?
 3. ¿La detracción puede mostrarse en soles y en dólares? ¿En qué moneda llega el monto cuando la orden está en dólares, y SAP puede entregar el tipo de cambio?
 4. ¿La fecha del informe es la de pago de la orden o la del depósito en el Banco de la Nación?
+
+---
+
+## C-003 · Tipo de entrega y validación de la orden en el registro Con OC
+
+| Campo  | Valor                                               |
+| ------ | --------------------------------------------------- |
+| Estado | **Abierta**                                         |
+| Fecha  | 2026-11-19                                          |
+| Origen | Diseño «Propuesta 4», registro Con OC               |
+| Flujos | 01 · Con OC                                         |
+| Spec   | [012](specs/012-registro-propuesta-4/requisitos.md) |
+
+**Situación actual:** el flujo 01 distingue Bien (N° de carrier) y Servicio (N° de orden de compra), y los archivos se habilitan solo con la orden validada en SAP (servicio 01). La Propuesta 4 agrega, para Servicio, el tipo de entrega «a bordo» o «en almacén»; con «en almacén» se pide el N° de carrier. Además, valida la orden al registrar y permite cargar los archivos antes.
+
+**Preguntas:**
+
+1. Con Servicio entregado en almacén, ¿se valida un carrier igual que con Bien? ¿En el mismo servicio 01 de SAP (SERTICA) y con qué dato distingue SAP el tipo de entrega?
+2. ~~¿Negocio acepta que la orden se valide al registrar?~~ Decidido el 2026-11-19: se sigue el flujo de la Propuesta 4 y se actualiza el flujo 01.
+3. ~~¿Los documentos de Servicio ya registrados se consideran «entregado a bordo»?~~ Decidido el 2026-11-19: sí.

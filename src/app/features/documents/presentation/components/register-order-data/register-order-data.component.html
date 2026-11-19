@@ -7,7 +7,7 @@
         label="Sociedad"
         placeholder="Selecciona la sociedad"
         [options]="facade.companyOptions()"
-        [disabled]="facade.orderState() === 'busy'"
+        [disabled]="facade.locked()"
         [invalid]="!!facade.formError() && !facade.company()"
         [value]="facade.company()"
         (valueChange)="facade.setCompany($event)"
@@ -19,7 +19,7 @@
           aria-label="Tipo de orden"
           class="grid grid-cols-2 gap-1 rounded-xl bg-[#EEF2F8] p-[3px]"
         >
-          @for (type of ['Bien', 'Servicio']; track type) {
+          @for (type of orderTypes; track type) {
             <button
               type="button"
               role="radio"
@@ -30,66 +30,70 @@
                   : 'bg-transparent text-body'
               "
               [attr.aria-checked]="facade.orderType() === type"
-              (click)="facade.setOrderType($any(type))"
+              [disabled]="facade.locked()"
+              (click)="facade.setOrderType(type)"
             >
               {{ type }}
             </button>
           }
         </div>
       </div>
-      <div class="flex flex-col gap-2 sm:col-span-2">
-        <label for="rg-nro" class="field-label">{{
-          facade.orderType() === 'Bien' ? 'N° de carrier' : 'N° de orden de compra'
-        }}</label>
-        <div class="flex flex-col gap-2.5 sm:flex-row">
-          <input
-            id="rg-nro"
-            type="text"
-            class="field min-w-0 flex-1 uppercase tracking-[0.02em] tabular-nums"
-            [class.border-[#86C9A0]!]="facade.orderState() === 'ok'"
-            [placeholder]="facade.orderType() === 'Bien' ? 'Ej. CR-2026-00418' : 'Ej. 4500012873'"
-            [attr.aria-invalid]="
-              facade.orderState() === 'bad' || (!!facade.formError() && !facade.orderNumber())
-            "
-            [value]="facade.orderNumber()"
-            (input)="onOrderNumber($event)"
-            (keyup.enter)="facade.validateOrder()"
-          />
-          <button
-            type="button"
-            class="btn shrink-0 px-[22px] text-white"
-            [class]="facade.orderState() === 'busy' ? 'bg-primary-busy' : 'btn-primary'"
-            [attr.aria-busy]="facade.orderState() === 'busy'"
-            (click)="facade.validateOrder()"
+      @if (facade.orderType() === 'Servicio') {
+        <div class="flex flex-col gap-2 sm:col-span-2">
+          <span class="field-label">Tipo de entrega</span>
+          <div
+            role="radiogroup"
+            aria-label="Tipo de entrega"
+            class="grid grid-cols-2 gap-1 rounded-xl bg-[#EEF2F8] p-[3px]"
           >
-            @if (facade.orderState() === 'busy') {
-              <app-spinner [size]="18" />Validando en SAP…
-            } @else {
-              <app-icon name="shield-check" [size]="18" />{{
-                facade.orderState() === 'ok' ? 'Validar nuevamente' : 'Validar orden'
-              }}
+            @for (delivery of deliveryTypes; track delivery) {
+              <button
+                type="button"
+                role="radio"
+                class="flex h-[38px] items-center justify-center rounded-[9px] px-2 text-sm font-bold"
+                [class]="
+                  facade.deliveryType() === delivery
+                    ? 'bg-white text-primary shadow-segment'
+                    : 'bg-transparent text-body'
+                "
+                [attr.aria-checked]="facade.deliveryType() === delivery"
+                [disabled]="facade.locked()"
+                (click)="facade.setDeliveryType(delivery)"
+              >
+                {{ delivery }}
+              </button>
             }
-          </button>
+          </div>
         </div>
+      }
+      <div class="flex flex-col gap-2 sm:col-span-2">
+        <label for="rg-nro" class="field-label">{{ facade.orderField().label }}</label>
+        <input
+          id="rg-nro"
+          type="text"
+          class="field min-w-0 uppercase tracking-[0.02em] tabular-nums"
+          [class.border-[#D92D20]!]="facade.orderState() === 'bad'"
+          [placeholder]="facade.orderField().placeholder"
+          [disabled]="facade.locked()"
+          [attr.aria-invalid]="
+            facade.orderState() === 'bad' || (!!facade.formError() && !facade.orderNumber())
+          "
+          [attr.aria-describedby]="facade.orderState() === 'bad' ? 'rg-nro-error' : null"
+          [value]="facade.orderNumber()"
+          (input)="onOrderNumber($event)"
+          (keyup.enter)="facade.register()"
+        />
         @if (facade.orderState() === 'bad') {
           <span
+            id="rg-nro-error"
             role="alert"
             class="animate-in flex items-start gap-1.5 text-[13px] text-danger-text"
           >
             <app-icon name="alert-circle" [size]="16" [stroke]="2" class="mt-px shrink-0" />
             <span
-              >SAP no encontró la
-              {{ facade.orderType() === 'Bien' ? 'entrega con carrier' : 'orden de compra' }}
-              {{ facade.orderNumber() }} para la sociedad, o ya no tiene saldo por facturar.</span
-            >
-          </span>
-        }
-        @if (facade.order(); as validOrder) {
-          <span class="animate-in flex items-start gap-1.5 text-[13px] text-success-text">
-            <app-icon name="circle-check" [size]="16" [stroke]="2" class="mt-px shrink-0" />
-            <span
-              >Orden válida · {{ validOrder.description }} · saldo
-              <strong class="tabular-nums">{{ money('PEN', validOrder.balance) }}</strong></span
+              >SAP no encontró {{ facade.orderField().noun }} {{ facade.orderNumber() }} para la
+              sociedad seleccionada, o ya no tiene saldo por facturar. Corrige el número y vuelve a
+              registrar.</span
             >
           </span>
         }

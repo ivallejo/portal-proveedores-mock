@@ -26,6 +26,7 @@ export interface DocumentDetailResponseDto {
   approvedAtUtc: string | null;
   approvalReference: string | null;
   orderType: 'Goods' | 'Service' | null;
+  deliveryType: 'OnBoard' | 'Warehouse' | null;
   orderNumber: string | null;
   orderBalance: number | null;
   orderDescription: string | null;

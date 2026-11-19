@@ -4,6 +4,7 @@ import { DocumentItem } from './document-item';
 import { DocumentStatus } from './document-status';
 import { EntryType } from './entry-type';
 import { HistoryEvent } from './history-event';
+import { DeliveryType } from './delivery-type';
 import { OrderType } from './order-type';
 import { RejectionStage } from './rejection-stage';
 
@@ -38,6 +39,7 @@ export interface PortalDocument {
   approverEmail?: string;
   approvedAt?: string;
   orderType?: OrderType;
+  deliveryType?: DeliveryType;
   orderNumber?: string;
   orderBalance?: number;
   orderDescription?: string;

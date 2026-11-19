@@ -7,19 +7,7 @@
       <app-icon name="file" [size]="14" [stroke]="2" />{{ facade.filesProgress() }}
     </span>
   </div>
-  @if (facade.filesLocked()) {
-    <span
-      class="inline-flex h-[30px] items-center gap-2 self-start rounded-full bg-[#F1F4F9] px-3 text-[12.5px] font-medium text-[#3B4A66]"
-    >
-      <app-icon name="lock" [size]="14" [stroke]="2" />Valida la orden para habilitar la carga
-    </span>
-  }
-  <div
-    class="flex flex-col gap-2.5"
-    [class.pointer-events-none]="facade.filesLocked()"
-    [class.opacity-45]="facade.filesLocked()"
-    [attr.inert]="facade.filesLocked() ? '' : null"
-  >
+  <div class="flex flex-col gap-2.5">
     @if (facade.entry() === 'esp') {
       <app-file-drop
         tag="PDF"

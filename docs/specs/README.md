@@ -23,16 +23,17 @@ Todo cambio de comportamiento del portal (front o backend) parte de una spec esc
 
 ## Índice
 
-| Spec | Estado | Resumen |
-|---|---|---|
-| [001 · Flujos documentales v2](001-flujos-documentales-v2/requisitos.md) | Implementada | Ajustes de Con OC, Sin OC y Contabilización a los flujos de negocio del 2026-10-17 |
-| [002 · Archivos en Blob Storage](002-archivos-en-blob-storage/requisitos.md) | Implementada | Adjuntos en Azure Blob Storage (Azurite en desarrollo) |
-| [003 · Lineamientos técnicos](003-lineamientos-tecnicos/requisitos.md) | En curso | Cumplir `LIN-WEB-PROV-001` de TI: Angular 22, ambientes QAS, IIS, sin mocks en producción, scripts SQL, README |
-| [004 · Política de contraseñas](004-politica-contrasenas/requisitos.md) | Implementada | Política 3.1 de la compañía: 12 caracteres, 3 de 4 tipos, sin nombre ni palabras comunes, vigencia de 90 días e historial de 5 |
-| [005 · Rango de 1 mes y Excel](005-rango-y-excel-pagos/requisitos.md) | Implementada | Orden de pago y Estado de factura: rango máximo de 1 mes (front y back) y descarga en Excel |
-| [006 · Usuario libre y documento](006-usuario-y-documento/requisitos.md) | Implementada | Usuario de texto libre para el personal interno, documento (DNI, CE, pasaporte) aparte; se ingresa solo con el usuario |
-| [007 · Áreas en varias sociedades](007-areas-multisociedad/requisitos.md) | Implementada | Un área pertenece a una o más sociedades; nombre único; migración que une áreas repetidas |
-| [008 · Recuperar con RUC o usuario](008-recuperar-con-usuario/requisitos.md) | Implementada | ¿Olvidaste tu contraseña? acepta el usuario del personal interno además del RUC |
-| [009 · Sesión y correos](009-sesion-y-correos/requisitos.md) | En curso | Renovación automática de la sesión, aviso de sesión vencida y alta de usuario aunque falle el correo |
-| [010 · Fila seleccionada](010-filas-seleccionadas/requisitos.md) | En curso | La fila que se edita queda marcada; al guardar se ilumina; hover más visible |
-| [011 · Informes de retención y detracción](011-informes-retencion-detraccion/requisitos.md) | En curso | Botones en el detalle de la orden de pago y vista previa en PDF de los informes (Propuesta 4) |
+| Spec                                                                                        | Estado       | Resumen                                                                                                                        |
+| ------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [001 · Flujos documentales v2](001-flujos-documentales-v2/requisitos.md)                    | Implementada | Ajustes de Con OC, Sin OC y Contabilización a los flujos de negocio del 2026-10-17                                             |
+| [002 · Archivos en Blob Storage](002-archivos-en-blob-storage/requisitos.md)                | Implementada | Adjuntos en Azure Blob Storage (Azurite en desarrollo)                                                                         |
+| [003 · Lineamientos técnicos](003-lineamientos-tecnicos/requisitos.md)                      | En curso     | Cumplir `LIN-WEB-PROV-001` de TI: Angular 22, ambientes QAS, IIS, sin mocks en producción, scripts SQL, README                 |
+| [004 · Política de contraseñas](004-politica-contrasenas/requisitos.md)                     | Implementada | Política 3.1 de la compañía: 12 caracteres, 3 de 4 tipos, sin nombre ni palabras comunes, vigencia de 90 días e historial de 5 |
+| [005 · Rango de 1 mes y Excel](005-rango-y-excel-pagos/requisitos.md)                       | Implementada | Orden de pago y Estado de factura: rango máximo de 1 mes (front y back) y descarga en Excel                                    |
+| [006 · Usuario libre y documento](006-usuario-y-documento/requisitos.md)                    | Implementada | Usuario de texto libre para el personal interno, documento (DNI, CE, pasaporte) aparte; se ingresa solo con el usuario         |
+| [007 · Áreas en varias sociedades](007-areas-multisociedad/requisitos.md)                   | Implementada | Un área pertenece a una o más sociedades; nombre único; migración que une áreas repetidas                                      |
+| [008 · Recuperar con RUC o usuario](008-recuperar-con-usuario/requisitos.md)                | Implementada | ¿Olvidaste tu contraseña? acepta el usuario del personal interno además del RUC                                                |
+| [009 · Sesión y correos](009-sesion-y-correos/requisitos.md)                                | En curso     | Renovación automática de la sesión, aviso de sesión vencida y alta de usuario aunque falle el correo                           |
+| [010 · Fila seleccionada](010-filas-seleccionadas/requisitos.md)                            | En curso     | La fila que se edita queda marcada; al guardar se ilumina; hover más visible                                                   |
+| [011 · Informes de retención y detracción](011-informes-retencion-detraccion/requisitos.md) | En curso     | Botones en el detalle de la orden de pago y vista previa en PDF de los informes (Propuesta 4)                                  |
+| [012 · Registro según la Propuesta 4](012-registro-propuesta-4/requisitos.md)               | Borrador     | Tipo de entrega en órdenes de Servicio, la orden se valida al registrar y textos del resultado                                 |

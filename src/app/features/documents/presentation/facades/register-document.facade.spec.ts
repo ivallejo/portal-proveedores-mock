@@ -68,15 +68,39 @@ describe('RegisterDocumentFacade', () => {
     expect(internal.entry()).toBe('sin');
   });
 
-  it('una orden que SAP no reconoce queda marcada', () => {
+  it('la orden se valida al registrar; si SAP no la reconoce no registra y conserva los archivos', () => {
     const facade = setup(['Proveedor']);
-    facade.validateOrder();
-    expect(facade.formError()).toContain('Selecciona la sociedad');
+    const file = (name: string) => ({
+      state: 'ok' as const,
+      file: new File(['x'], name),
+      name,
+      size: '1 KB',
+      error: '',
+    });
     facade.setCompany('1001');
     facade.setOrderNumber('4500001');
-    facade.validateOrder();
-    expect(validate).toHaveBeenCalledWith('1001', 'Servicio', '4500001');
+    facade.slots.set({
+      xml: file('F001-1.xml'),
+      pdf: file('F001-1.pdf'),
+      cdr: file('R-F001-1.zip'),
+    });
+    expect(facade.ready()).toBeTrue();
+    facade.register();
+    expect(validate).toHaveBeenCalledWith('1001', 'Servicio', 'Entregado a bordo', '4500001');
     expect(facade.orderState()).toBe('bad');
+    expect(facade.formError()).toBe('No se registró el documento: la orden no es válida en SAP.');
+    expect(facade.result()).toBeNull();
+    expect(facade.slots().xml.name).toBe('F001-1.xml');
+
+    // Cambiar el tipo de entrega limpia el número y la validación.
+    facade.setDeliveryType('Entregado en almacén');
+    expect(facade.orderNumber()).toBe('');
+    expect(facade.orderState()).toBe('idle');
+    expect(facade.orderField().label).toBe('N° de carrier');
+    facade.setOrderType('Bien');
+    facade.setOrderNumber('CR-1');
+    facade.register();
+    expect(validate).toHaveBeenCalledWith('1001', 'Bien', undefined, 'CR-1');
   });
 
   it('no registra sin los datos y archivos requeridos y dice qué falta', () => {
@@ -85,7 +109,7 @@ describe('RegisterDocumentFacade', () => {
     expect(facade.filesProgress()).toBe('0 de 3');
     facade.register();
     expect(facade.formError()).toBe(
-      'Falta completar: sociedad, orden validada, XML, PDF, CDR de SUNAT.',
+      'Falta completar: sociedad, n° de orden de compra, XML, PDF, CDR de SUNAT.',
     );
     expect(facade.result()).toBeNull();
   });
@@ -133,7 +157,12 @@ describe('RegisterDocumentFacade', () => {
       jasmine.objectContaining({ number: 'bt-1', amount: 1250.5, type: 'Boleto aéreo' }),
     );
     expect(facade.result()?.ok).toBeFalse();
-    expect(facade.result()?.text).toBe('El documento ya está registrado en SAP.');
+    expect(facade.result()?.text).toBe(
+      'SUNAT no reconoce el documento BT-1 para el RUC 20512345678, o ya fue registrado en SAP. Verifica los datos del documento.',
+    );
+    expect(facade.result()?.chips.find((chip) => chip.label === 'Motivo')?.value).toBe(
+      'El documento ya está registrado en SAP.',
+    );
 
     // «Corregir y reintentar» vuelve al formulario con los mismos datos.
     facade.retry();
